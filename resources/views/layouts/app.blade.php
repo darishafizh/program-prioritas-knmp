@@ -3,17 +3,16 @@
 
 @include('layouts.head')
 
-<body class="loading" data-layout-color="light" data-leftbar-theme="dark" data-layout-mode="fluid"
+<body class="loading" data-layout-color="light" data-layout="topnav" data-leftbar-theme="dark" data-layout-mode="fluid"
     data-rightbar-onstart="true">
     <!-- Begin page -->
     <div class="wrapper">
-
-        @include('layouts.navigation')
 
         <div class="content-page">
             <div class="content">
 
                 @include('layouts.header')
+                @include('layouts.navigation')
 
                 @include('layouts.components')
 
