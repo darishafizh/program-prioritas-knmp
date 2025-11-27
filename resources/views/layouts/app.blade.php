@@ -3,26 +3,34 @@
 
 @include('layouts.head')
 
-<body>
-    <div class="container-scroller">
+<body class="loading" data-layout-color="light" data-leftbar-theme="dark" data-layout-mode="fluid"
+    data-rightbar-onstart="true">
+    <!-- Begin page -->
+    <div class="wrapper">
 
-        @include('layouts.navbar')
+        @include('layouts.navigation')
 
-        <div class="container-fluid page-body-wrapper">
+        <div class="content-page">
+            <div class="content">
 
-            @include('layouts.settings')
-            @include('layouts.sidebar')
+                @include('layouts.header')
 
-            <div class="main-panel">
-                <div class="content-wrapper">
+                @include('layouts.components')
+
+                <div class="container-fluid">
                     @yield('content')
                 </div>
 
-                @include('layouts.footer')
-
             </div>
+
+            @include('layouts.footer')
+
         </div>
     </div>
+
+    @include('layouts.settings')
+
+    <div class="rightbar-overlay"></div>
 
     @include('layouts.foot')
 

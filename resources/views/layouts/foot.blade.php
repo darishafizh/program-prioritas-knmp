@@ -1,16 +1,32 @@
-<!-- base:js -->
-<script src="vendors/js/vendor.bundle.base.js"></script>
-<!-- endinject -->
-<!-- Plugin js for this page-->
-<script src="vendors/chart.js/Chart.min.js"></script>
-<!-- End plugin js for this page-->
-<!-- inject:js -->
-<script src="js/off-canvas.js"></script>
-<script src="js/hoverable-collapse.js"></script>
-<script src="js/template.js"></script>
-<script src="js/settings.js"></script>
-<script src="js/todolist.js"></script>
-<!-- endinject -->
-<!-- Custom js for this page-->
-<script src="js/dashboard.js"></script>
-<!-- End custom js for this page-->
+<!-- bundle -->
+<script src="{{ asset('assets/js/vendor.min.js') }}"></script>
+<script src="{{ asset('assets/js/app.min.js') }}"></script>
+<script src="{{ asset('assets/js/custom.js') }}"></script>
+
+<!-- third party js -->
+<script src="{{ asset('assets/js/vendor/apexcharts.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/jquery-jvectormap-1.2.2.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/jquery-jvectormap-world-mill-en.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/dataTables.bootstrap5.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/responsive.bootstrap5.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/buttons.bootstrap5.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/buttons.flash.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/buttons.print.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/dataTables.keyTable.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/dataTables.select.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/fixedColumns.bootstrap5.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/fixedHeader.bootstrap5.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- third party js ends -->
+
+<!-- demo app -->
+<script src="{{ asset('assets/js/pages/demo.dashboard.js') }}"></script>
+<script src="{{ asset('assets/js/pages/demo.datatable-init.js') }}"></script>
+{{-- <script src="{{ asset('assets/js/pages/demo.dashboard-analytics.js') }}"></script> --}}
+<!-- end demo js-->
+
+@stack('script')
