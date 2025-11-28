@@ -15,9 +15,12 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () { return view('dashboard.index'); })->name('dashboard');
-
+        
     Route::get('/dashboard/informasi-umum', [InformasiUmumController::class, 'create'])->name('informasi_umum.create');
     Route::post('/dashboard/informasi-umum', [InformasiUmumController::class, 'store'])->name('informasi_umum.store');
+
+    // Forms route
+    Route::get('/forms', function () { return view('forms.index'); })->name('forms.index');
 
     // Profile routes
     Route::get('/dashboard/profile', [ProfileController::class, 'index'])->name('profile.index');
