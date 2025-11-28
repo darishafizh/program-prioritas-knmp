@@ -286,6 +286,11 @@
                         <h6 class="text-overflow m-0">Welcome !</h6>
                     </div>
 
+                    <a href="{{ route('profile.index') }}" class="dropdown-item notify-item">
+                        <i class="mdi mdi-account-circle me-1"></i>
+                        <span>My Profile</span>
+                    </a>
+
                     <!-- item-->
                     <a href="javascript:void(0);" class="dropdown-item notify-item">
                         <i class="mdi mdi-account-circle me-1"></i>
@@ -311,10 +316,13 @@
                     </a>
 
                     <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <i class="mdi mdi-logout me-1"></i>
-                        <span>Logout</span>
-                    </a>
+                    <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                        @csrf
+                        <button type="submit" class="dropdown-item notify-item" style="border: none; background: none; width: 100%; text-align: left;">
+                            <i class="mdi mdi-logout me-1"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
 
                 </div>
             </li>
