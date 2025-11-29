@@ -1,25 +1,19 @@
-<div class="topnav">
+<div class="topnav bg-info">
     <div class="container-fluid">
         <nav class="navbar navbar-dark navbar-expand-lg topnav-menu">
 
             <div class="collapse navbar-collapse" id="topnav-menu-content">
                 <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-dashboards" role="button"
-                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="uil-dashboard me-1"></i>Dashboards <div class="arrow-down"></div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="topnav-dashboards" role="button" data-bs-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i class="uil-dashboard me-1"></i>Dashboard
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="topnav-dashboards">
-                            <a href="dashboard-analytics.html" class="dropdown-item">Analytics</a>
-                            <a href="index.html" class="dropdown-item">Ecommerce</a>
-                            <a href="dashboard-projects.html" class="dropdown-item">Projects</a>
-                            <a href="dashboard-wallet.html" class="dropdown-item">E-Wallet</a>
-                        </div>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="uil-apps me-1"></i>Apps <div class="arrow-down"></div>
+                            <i class="uil-apps me-1"></i>Sosial-Ekonomi <div class="arrow-down"></div>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="topnav-apps">
                             <a href="apps-calendar.html" class="dropdown-item">Calendar</a>
@@ -65,9 +59,9 @@
                                 </div>
                             </div>
                             <div class="dropdown">
-                                <a class="dropdown-item dropdown-toggle arrow-none" href="#"
-                                    id="topnav-project" role="button" data-bs-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">
+                                <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-project"
+                                    role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
                                     Projects <div class="arrow-down"></div>
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="topnav-project">
@@ -96,7 +90,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-pages"
                             role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="uil-copy-alt me-1"></i>Pages <div class="arrow-down"></div>
+                            <i class="uil-copy-alt me-1"></i>Infrastruktur & Sarpras<div class="arrow-down"></div>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="topnav-pages">
                             <div class="dropdown">
@@ -147,7 +141,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-components"
                             role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="uil-package me-1"></i>Components <div class="arrow-down"></div>
+                            <i class="uil-package me-1"></i>Lingkungan Pesisir<div class="arrow-down"></div>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="topnav-components">
                             <a href="widgets.html" class="dropdown-item">Widgets</a>
@@ -275,7 +269,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-layouts"
                             role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="uil-window me-1"></i>Layouts <div class="arrow-down"></div>
+                            <i class="uil-window me-1"></i>Kelembangaan & Pemberdayaan <div class="arrow-down"></div>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="topnav-layouts">
                             <a href="index.html" class="dropdown-item">Vertical</a>

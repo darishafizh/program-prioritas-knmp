@@ -14,8 +14,6 @@
                 @include('layouts.header')
                 @include('layouts.navigation')
 
-                @include('layouts.components')
-
                 <div class="container-fluid">
                     @yield('content')
                 </div>

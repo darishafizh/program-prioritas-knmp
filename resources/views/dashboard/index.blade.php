@@ -7,6 +7,20 @@
             <div class="page-title-box">
                 <div class="page-title-right">
                     <form class="d-flex">
+                    </form>
+                </div>
+                <h4 class="page-title">Dashboard</h4>
+            </div>
+        </div>
+    </div>
+    <!-- end page title -->
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card p-3">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="exampleInputEmail1" class="form-label">Pilih KNMP</label>
                         <select class="form-control select2" data-toggle="select2">
                             <option>Select</option>
                             <optgroup label="Alaskan/Hawaiian Time Zone">
@@ -70,16 +84,17 @@
                                 <option value="WV">West Virginia</option>
                             </optgroup>
                         </select>
-                        <a href="{{ route('forms.index') }}" class="btn btn-primary ms-2">
+                    </div>
+
+                    <div class="col-6 d-flex float-end justify-content-end">
+                        <a href="{{ route('forms.index') }}" class="btn btn-primary align-self-end">
                             Input Data
                         </a>
-                    </form>
+                    </div>
                 </div>
-                <h4 class="page-title">Dashboard</h4>
             </div>
         </div>
     </div>
-    <!-- end page title -->
 
     <div class="row">
         <div class="col-xl-5 col-lg-6">
