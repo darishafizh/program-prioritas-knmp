@@ -26,7 +26,8 @@
 <!-- demo app -->
 <script src="{{ asset('assets/js/pages/demo.dashboard.js') }}"></script>
 <script src="{{ asset('assets/js/pages/demo.datatable-init.js') }}"></script>
-{{-- <script src="{{ asset('assets/js/pages/demo.dashboard-analytics.js') }}"></script> --}}
+<script src="{{ asset('assets/js/pages/demo.dashboard-analytics.js') }}"></script>
+<script src="{{ asset('assets/js/pages/demo.dashboard-projects.js') }}"></script>
 <!-- end demo js-->
 
 @stack('script')
