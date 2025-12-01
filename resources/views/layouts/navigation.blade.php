@@ -29,25 +29,16 @@
                         </div>
                     </li> --}}
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button"
-                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="uil-chart me-1"></i>Laporan <div class="arrow-down"></div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('laporan.index') }}" id="topnav-dashboards" role="button">
+                            <i class="uil-chart me-1"></i>Laporan
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="topnav-apps">
-                            <a href="apps-calendar.html" class="dropdown-item">Capaian Indikator</a>
-                            <a href="apps-chat.html" class="dropdown-item">Profil KNMP</a>
-                            <a href="apps-chat.html" class="dropdown-item">Aset & Infrastruktur</a>
-                            <a href="apps-chat.html" class="dropdown-item">Tenaga Kerja</a>
-                            <a href="apps-chat.html" class="dropdown-item">Kesejahteraan</a>
-                            <a href="apps-chat.html" class="dropdown-item">Indeks Kebahagiaan</a>
-                        </div>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="#" id="topnav-dashboards" role="button"
-                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="uil-users-alt me-1"></i>User Manajemen
+                        <a class="nav-link" href="{{ route('user_management.index') }}" id="topnav-dashboards"
+                            role="button">
+                            <i class="uil-users-alt me-1"></i>User Management
                         </a>
                     </li>
                 </ul>

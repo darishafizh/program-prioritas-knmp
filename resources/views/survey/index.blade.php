@@ -11,9 +11,11 @@
                 </div>
                 <h4 class="page-title">Survey KNMP</h4>
                 <p class="text-muted font-14">
-                    DataTables has the ability to show tables with horizontal scrolling, which is very useful for when
-                    you have a wide
-                    table, but want to constrain it to a limited horizontal display area.
+                    Menu ini adalah daftar Kampung Nelayan Merah Putih (KNMP) yang menjadi target survei. Di halaman
+                    ini,
+                    Anda dapat melihat daftar KNMP beserta informasi terkait seperti desa, kecamatan, kabupaten, dan
+                    provinsi.
+                    Untuk memulai pengisian survei, klik tombol "Input Survey" pada baris KNMP yang diinginkan.
                 </p>
             </div>
         </div>
@@ -192,9 +194,10 @@
                                     <td>{{ $knmp->kabupaten ?? 'N/A' }}</td>
                                     <td>{{ $knmp->provinsi ?? 'N/A' }}</td>
                                     <td>
-                                        <a type="button" href="{{ route('forms.index', $knmp->id) }}" class="btn btn-primary"
-                                            data-bs-container="#tooltip-container2" data-bs-toggle="tooltip"
-                                            data-bs-placement="left" title="Input Survey"><i class="mdi mdi-pencil-box"></i>
+                                        <a type="button" href="{{ route('forms.index', $knmp->id) }}"
+                                            class="btn btn-primary" data-bs-container="#tooltip-container2"
+                                            data-bs-toggle="tooltip" data-bs-placement="left" title="Input Survey"><i
+                                                class="mdi mdi-pencil-box"></i>
                                         </a>
                                         <a type="button" href="" class="btn btn-success"
                                             data-bs-container="#tooltip-container2" data-bs-toggle="tooltip"

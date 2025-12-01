@@ -40,13 +40,28 @@ Route::middleware('auth')->group(function () {
     // ==============================
     Route::group(['prefix' => 'survey'], function () {
         Route::get('/', [SurveyController::class, 'index'])->name('survey.index');
+
+        Route::group(['prefix' => 'forms'], function () {
+            Route::get('/{knmp}', [FormsController::class, 'index'])->name('forms.index');
+        });
     });
 
     // ==============================
     // FORM ROUTES
     // ==============================
-    Route::group(['prefix' => 'forms'], function () {
-        Route::get('/{knmp}', [FormsController::class, 'index'])->name('forms.index');
+
+    // ==============================
+    // REPORT ROUTES
+    // ==============================
+    Route::group(['prefix' => 'laporan'], function () {
+        Route::get('/', [FormsController::class, 'index'])->name('laporan.index');
+    });
+
+    // ==============================
+    // USER MANAGEMENT ROUTES
+    // ==============================
+    Route::group(['prefix' => 'user_management'], function () {
+        Route::get('/', [FormsController::class, 'index'])->name('user_management.index');
     });
 
 

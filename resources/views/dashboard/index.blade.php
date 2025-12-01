@@ -23,11 +23,7 @@
                         <i class="mdi mdi-map-marker-radius widget-icon"></i>
                     </div>
                     <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Total Lokasi KNMP</h5>
-                    <h3 class="mt-3 mb-3">36,254</h3>
-                    <p class="mb-0 text-muted">
-                        <span class="text-success me-2"><i class="mdi mdi-arrow-up-bold"></i> 5.27%</span>
-                        <span class="text-nowrap">Since last month</span>
-                    </p>
+                    <h3 class="mt-3 mb-3">65</h3>
                 </div> <!-- end card-body-->
             </div> <!-- end card-->
         </div> <!-- end col-->
@@ -40,10 +36,6 @@
                     </div>
                     <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Total Survey</h5>
                     <h3 class="mt-3 mb-3">36,254</h3>
-                    <p class="mb-0 text-muted">
-                        <span class="text-success me-2"><i class="mdi mdi-arrow-up-bold"></i> 5.27%</span>
-                        <span class="text-nowrap">Since last month</span>
-                    </p>
                 </div> <!-- end card-body-->
             </div> <!-- end card-->
         </div> <!-- end col-->
@@ -56,10 +48,6 @@
                     </div>
                     <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Tingkat Kelengkapan Data</h5>
                     <h3 class="mt-3 mb-3">36,254</h3>
-                    <p class="mb-0 text-muted">
-                        <span class="text-success me-2"><i class="mdi mdi-arrow-up-bold"></i> 5.27%</span>
-                        <span class="text-nowrap">Since last month</span>
-                    </p>
                 </div> <!-- end card-body-->
             </div> <!-- end card-->
         </div> <!-- end col-->
@@ -72,10 +60,6 @@
                     </div>
                     <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Rata-rata Capaian Indikator</h5>
                     <h3 class="mt-3 mb-3">36,254</h3>
-                    <p class="mb-0 text-muted">
-                        <span class="text-success me-2"><i class="mdi mdi-arrow-up-bold"></i> 5.27%</span>
-                        <span class="text-nowrap">Since last month</span>
-                    </p>
                 </div> <!-- end card-body-->
             </div> <!-- end card-->
         </div> <!-- end col-->
@@ -88,10 +72,6 @@
                     </div>
                     <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Rata-rata Indeks Kebahagiaan</h5>
                     <h3 class="mt-3 mb-3">36,254</h3>
-                    <p class="mb-0 text-muted">
-                        <span class="text-success me-2"><i class="mdi mdi-arrow-up-bold"></i> 5.27%</span>
-                        <span class="text-nowrap">Since last month</span>
-                    </p>
                 </div> <!-- end card-body-->
             </div> <!-- end card-->
         </div> <!-- end col-->
@@ -105,10 +85,6 @@
                     <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Desa dengan Aset
                         Bertamabah</h5>
                     <h3 class="mt-3 mb-3">36,254</h3>
-                    <p class="mb-0 text-muted">
-                        <span class="text-success me-2"><i class="mdi mdi-arrow-up-bold"></i> 5.27%</span>
-                        <span class="text-nowrap">Since last month</span>
-                    </p>
                 </div> <!-- end card-body-->
             </div> <!-- end card-->
         </div> <!-- end col-->
