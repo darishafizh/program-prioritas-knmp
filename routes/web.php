@@ -4,12 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InformasiUmumController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormsController;
 use App\Http\Controllers\KeteranganEnumeratorController;
+use App\Http\Controllers\SurveyController;
 
-Route::get('/', function () {
-    return redirect()->route('dashboard');
-});
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.perform');
@@ -17,9 +16,12 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    })->name('dashboard');
+    // ==============================
+    // DASHBOARD ROUTES
+    // ==============================
+    Route::group(['prefix' => 'dashboard'], function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
+    });
 
     // Dashboard - Informasi Umum
     Route::get('/dashboard/informasi-umum', [InformasiUmumController::class, 'create'])
@@ -32,9 +34,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/dashboard/profile', [ProfileController::class, 'store'])->name('profile.store');
 
+
+    // ==============================
+    // SURVEY ROUTES
+    // ==============================
+    Route::group(['prefix' => 'survey'], function () {
+        Route::get('/', [SurveyController::class, 'index'])->name('survey.index');
+    });
+
     // ==============================
     // FORM ROUTES
     // ==============================
+    Route::group(['prefix' => 'forms'], function () {
+        Route::get('/{knmp}', [FormsController::class, 'index'])->name('forms.index');
+    });
+
+
     Route::prefix('forms')->as('forms.')->group(function () {
 
         // Halaman utama Forms

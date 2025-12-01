@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('manajemen', function (Blueprint $table) {
+        Schema::create('knmp', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('knmp_id')->unique()->constrained('knmp')->cascadeOnDelete();
-            $table->text('mitra_pengelolaan_aset')->nullable();
-            $table->decimal('kebutuhan_anggaran', 15, 2)->nullable();
+            $table->string('nama', 255);
+            $table->unsignedBigInteger('provinsi_id')->nullable();
+            $table->unsignedBigInteger('kabupaten_id')->nullable();
+            $table->unsignedBigInteger('kecamatan_id')->nullable();
+            $table->unsignedBigInteger('desa_id')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('manajemen');
+        Schema::dropIfExists('knmp');
     }
 };

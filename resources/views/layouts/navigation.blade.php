@@ -5,27 +5,18 @@
             <div class="collapse navbar-collapse" id="topnav-menu-content">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="#" id="topnav-dashboards" role="button" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link" href="{{ route('dashboard.index') }}" id="topnav-dashboards" role="button">
                             <i class="uil-dashboard me-1"></i>Dashboard
                         </a>
                     </li>
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button"
-                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="uil-home me-1"></i>Survey KNMP <div class="arrow-down"></div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('survey.index') }}" id="topnav-dashboards" role="button">
+                            <i class="uil-home me-1"></i>Survey KNMP
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="topnav-apps">
-                            <a href="apps-calendar.html" class="dropdown-item">Data Desa</a>
-                            <a href="apps-chat.html" class="dropdown-item">Mulai Survey</a>
-                            <a href="apps-chat.html" class="dropdown-item">Lanjutkan Survey</a>
-                            <a href="apps-chat.html" class="dropdown-item">Form Kuesioner</a>
-                            <a href="apps-chat.html" class="dropdown-item">Arsip Survey</a>
-                        </div>
                     </li>
 
-                    <li class="nav-item dropdown">
+                    {{-- <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="uil-bag-alt me-1"></i>Kuesioner <div class="arrow-down"></div>
@@ -36,7 +27,7 @@
                             <a href="apps-chat.html" class="dropdown-item">Opsi Jawaban</a>
                             <a href="apps-chat.html" class="dropdown-item">Versi Kuesioner</a>
                         </div>
-                    </li>
+                    </li> --}}
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button"
