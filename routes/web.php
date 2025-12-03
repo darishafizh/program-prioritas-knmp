@@ -23,17 +23,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
     });
 
-    // Dashboard - Informasi Umum
-    Route::get('/dashboard/informasi-umum', [InformasiUmumController::class, 'create'])
-        ->name('informasi_umum.create');
-    Route::post('/dashboard/informasi-umum', [InformasiUmumController::class, 'store'])
-        ->name('informasi_umum.store');
-
-    // Dashboard - Profile
-    Route::get('/dashboard/profile', [ProfileController::class, 'index'])->name('profile.index');
-    Route::get('/dashboard/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::post('/dashboard/profile', [ProfileController::class, 'store'])->name('profile.store');
-
 
     // ==============================
     // SURVEY ROUTES
@@ -41,14 +30,22 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'survey'], function () {
         Route::get('/', [SurveyController::class, 'index'])->name('survey.index');
 
+        // ==============================
+        // FORMS ROUTES
+        // ==============================
         Route::group(['prefix' => 'forms'], function () {
             Route::get('/{knmp}', [FormsController::class, 'index'])->name('forms.index');
+            Route::post('/store_profile_knmp/{knmp}', [FormsController::class, 'store_profile_knmp'])->name('forms.store_profile_knmp');
+            Route::post('/store_progres_knmp/{knmp}', [FormsController::class, 'store_progres_knmp'])->name('forms.store_progres_knmp');
+            Route::post('/store_tanggapan_masyarakat/{knmp}', [FormsController::class, 'store_tanggapan_masyarakat'])->name('forms.store_tanggapan_masyarakat');
+            Route::post('/store_tingkat_kebahagiaan/{knmp}', [FormsController::class, 'store_tingkat_kebahagiaan'])->name('forms.store_tingkat_kebahagiaan');
+            Route::post('/store_informasi_responden/{knmp}', [FormsController::class, 'store_informasi_responden'])->name('forms.store_informasi_responden');
+            Route::post('/store_informasi_usaha/{knmp}', [FormsController::class, 'store_informasi_usaha'])->name('forms.store_informasi_usaha');
+            Route::post('/store_pemasaran_perikanan/{knmp}', [FormsController::class, 'store_pemasaran_perikanan'])->name('forms.store_pemasaran_perikanan');
+            Route::post('/store_pendapatan_rt/{knmp}', [FormsController::class, 'store_pendapatan_rt'])->name('forms.store_pendapatan_rt');
+            Route::post('/store_sosial_kelembagaan/{knmp}', [FormsController::class, 'store_sosial_kelembagaan'])->name('forms.store_sosial_kelembagaan');
         });
     });
-
-    // ==============================
-    // FORM ROUTES
-    // ==============================
 
     // ==============================
     // REPORT ROUTES

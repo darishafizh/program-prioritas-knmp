@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProfileKNMP extends Model
+class ProfileKnmp extends Model
 {
     use HasFactory;
     protected $table = 'profile_knmp';
+    protected $primaryKey = 'id';
     protected $fillable = [
+        'knmp_id',
         'jml_penduduk_des',
         'jml_nelayan',
         'pendapatan_rata_rata_nelayan',

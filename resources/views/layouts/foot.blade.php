@@ -20,6 +20,7 @@
 <script src="{{ asset('assets/js/vendor/dataTables.select.min.js') }}"></script>
 <script src="{{ asset('assets/js/vendor/fixedColumns.bootstrap5.min.js') }}"></script>
 <script src="{{ asset('assets/js/vendor/fixedHeader.bootstrap5.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/dropzone.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- third party js ends -->
 
@@ -28,6 +29,7 @@
 <script src="{{ asset('assets/js/pages/demo.datatable-init.js') }}"></script>
 <script src="{{ asset('assets/js/pages/demo.dashboard-analytics.js') }}"></script>
 <script src="{{ asset('assets/js/pages/demo.dashboard-projects.js') }}"></script>
+<script src="{{ asset('assets/js/ui/component.fileupload.js') }}"></script>
 <!-- end demo js-->
 
 @stack('script')

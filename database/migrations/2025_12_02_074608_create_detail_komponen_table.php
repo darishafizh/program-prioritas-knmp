@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::create('detail_komponen', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('knmp_id')->constrained('knmp')->onDelete('cascade');
+            $table->foreignId('knmp_id')->constrained('profile_knmp')->onDelete('cascade');
+
             $table->string('jenis_komponen', 255);
-            $table->integer('target_unit');
-            $table->integer('realisasi_unit')->default(0);
-            $table->decimal('persentase_realisasi', 5, 2)->default(0.00);
-            $table->bigInteger('anggaran');
-            $table->bigInteger('realisasi_anggaran')->default(0);
-            $table->decimal('persentase_realisasi_anggaran', 5, 2)->default(0.00);
+            $table->integer('target_unit')->nullable();
+            $table->decimal('progress_persen', 5, 2)->nullable(); // Menggunakan Progress (%) dari kuesioner
+            $table->bigInteger('anggaran')->nullable(); // Anggaran (Rp)
+            $table->bigInteger('realisasi_anggaran')->nullable();
+            $table->decimal('persen_realisasi_anggaran', 5, 2)->nullable();
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }
