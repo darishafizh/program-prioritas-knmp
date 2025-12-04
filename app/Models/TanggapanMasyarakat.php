@@ -11,7 +11,6 @@ class TanggapanMasyarakat extends Model
 
     protected $table = 'tanggapan_masyarakat';
     protected $primaryKey = 'id';
-
     protected $fillable = [
         'knmp_id',
         'kesesuaian_kebutuhan',
@@ -23,12 +22,11 @@ class TanggapanMasyarakat extends Model
     ];
 
     protected $casts = [
-        'kesesuaian_kebutuhan' => 'boolean', // Memastikan kolom ini diperlakukan sebagai boolean
+        'kesesuaian_kebutuhan' => 'boolean',
     ];
 
     public function knmp()
     {
-        // Asumsi tabel utama yang dirujuk adalah ProfilKNMP atau knmp
-        return $this->belongsTo(ProfileKnmp::class, 'knmp_id');
+        return $this->belongsTo(Knmp::class, 'knmp_id');
     }
 }

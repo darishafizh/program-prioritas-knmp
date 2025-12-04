@@ -6,16 +6,22 @@
         (Rp/bulan)</label>
     <div class="row">
         <div class="col-md-6">
-            <div class="mb-3"><label class="form-label">Pendapatan Perikanan (Rp/bulan) (A)</label>
-                <input type="number" name="pendapatan_perikanan" class="form-control" step="any">
+            <div class="mb-3">
+                <label class="form-label">Pendapatan Perikanan (Rp/bulan) (A)</label>
+                <input type="number" id="pendapatan_perikanan" name="pendapatan_perikanan" class="form-control"
+                    step="any">
             </div>
-            <div class="mb-3"><label class="form-label">Pendapatan di luar Perikanan (Rp/bulan) (B)</label>
-                <input type="number" name="pendapatan_non_perikanan" class="form-control" step="any">
+
+            <div class="mb-3">
+                <label class="form-label">Pendapatan di luar Perikanan (Rp/bulan) (B)</label>
+                <input type="number" id="pendapatan_non_perikanan" name="pendapatan_non_perikanan" class="form-control"
+                    step="any">
             </div>
         </div>
         <div class="col-md-6">
-            <div class="mb-3"><label class="form-label">Total pendapatan rumah tangga (Rp/bulan) (A+B)</label>
-                <input type="number" name="pendapatan_total" class="form-control" readonly
+            <div class="mb-3">
+                <label class="form-label">Total pendapatan rumah tangga (Rp/bulan) (A+B)</label>
+                <input type="number" id="pendapatan_total" name="pendapatan_total" class="form-control" readonly
                     placeholder="Otomatis dihitung (A+B)" step="any">
             </div>
         </div>
@@ -140,3 +146,14 @@
         <button type="submit" class="btn btn-primary">Simpan Informasi Pendapatan</button>
     </div>
 </form>
+
+<script>
+    function hitungTotal() {
+        const a = parseFloat(document.getElementById('pendapatan_perikanan').value) || 0;
+        const b = parseFloat(document.getElementById('pendapatan_non_perikanan').value) || 0;
+        document.getElementById('pendapatan_total').value = a + b;
+    }
+
+    document.getElementById('pendapatan_perikanan').addEventListener('input', hitungTotal);
+    document.getElementById('pendapatan_non_perikanan').addEventListener('input', hitungTotal);
+</script>

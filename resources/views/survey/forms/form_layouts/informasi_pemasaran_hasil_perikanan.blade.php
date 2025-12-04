@@ -22,7 +22,7 @@
             <div class="mb-3"><label class="form-label">Pengepul (Kg/Trip)</label>
                 <input type="number" name="pemasaran_pengepul_kg" class="form-control" step="any">
             </div>
-            <div class="mb-3"><label class="form-label">Pedagang Besar (PT, CV, BUMD, BUMDES) (Kg/Trip)</label>
+            <div class="mb-3"><label class="form-label">Pedagang Besar (PT, CV, BUMD, BUMDES)</label>
                 <input type="number" name="pemasaran_pedagang_besar_kg" class="form-control" step="any">
             </div>
             <div class="mb-3"><label class="form-label">Lainnya (sebutkan) (Kg/Trip)</label>

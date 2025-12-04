@@ -56,7 +56,7 @@
                         <h5 class="m-0">
                             <a class="custom-accordion-title d-block pt-2 pb-2" data-bs-toggle="collapse"
                                 href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                1. Profil KNMP
+                                A. Profil KNMP
                             </a>
                         </h5>
                     </div>
@@ -73,7 +73,7 @@
                         <h5 class="m-0">
                             <a class="custom-accordion-title collapsed d-block pt-2 pb-2" data-bs-toggle="collapse"
                                 href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                2. Progress Pembangungn KNMP
+                                B. Progress Pembangungn KNMP
                             </a>
                         </h5>
                     </div>
@@ -88,7 +88,7 @@
                         <h5 class="m-0">
                             <a class="custom-accordion-title collapsed d-block pt-2 pb-2" data-bs-toggle="collapse"
                                 href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                3. Tanggapan Masyarakat Terkait Pembangunan KNMP
+                                C. Tanggapan Masyarakat Terkait Pembangunan KNMP
                             </a>
                         </h5>
                     </div>
@@ -105,7 +105,7 @@
                         <h5 class="m-0">
                             <a class="custom-accordion-title collapsed d-block pt-2 pb-2" data-bs-toggle="collapse"
                                 href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                4. Tingkat Kebahagiaan Nelayan
+                                D. Tingkat Kebahagiaan Nelayan
                             </a>
                         </h5>
                     </div>
@@ -122,7 +122,7 @@
                         <h5 class="m-0">
                             <a class="custom-accordion-title collapsed d-block pt-2 pb-2" data-bs-toggle="collapse"
                                 href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                                5. Informasi Responden
+                                E. Informasi Responden
                             </a>
                         </h5>
                     </div>
@@ -139,7 +139,7 @@
                         <h5 class="m-0">
                             <a class="custom-accordion-title collapsed d-block pt-2 pb-2" data-bs-toggle="collapse"
                                 href="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
-                                6. Informasi Usaha (Kondisi Existing)
+                                F. Informasi Usaha (Kondisi Existing)
                             </a>
                         </h5>
                     </div>
@@ -156,7 +156,7 @@
                         <h5 class="m-0">
                             <a class="custom-accordion-title collapsed d-block pt-2 pb-2" data-bs-toggle="collapse"
                                 href="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
-                                7. Informasi Pemasaran Hasil Perikanan (Kondisi Existing)
+                                G. Informasi Pemasaran Hasil Perikanan (Kondisi Existing)
                             </a>
                         </h5>
                     </div>
@@ -173,7 +173,7 @@
                         <h5 class="m-0">
                             <a class="custom-accordion-title collapsed d-block pt-2 pb-2" data-bs-toggle="collapse"
                                 href="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
-                                8. Informasi Pendapatan Rumah Tangga (Kondisi Existing)
+                                H. Informasi Pendapatan Rumah Tangga (Kondisi Existing)
                             </a>
                         </h5>
                     </div>
@@ -190,7 +190,7 @@
                         <h5 class="m-0">
                             <a class="custom-accordion-title collapsed d-block pt-2 pb-2" data-bs-toggle="collapse"
                                 href="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
-                                9. Sosial dan Kelembagaan (Kondisi Existing)
+                                I. Sosial dan Kelembagaan (Kondisi Existing)
                             </a>
                         </h5>
                     </div>
@@ -207,7 +207,7 @@
                         <h5 class="m-0">
                             <a class="custom-accordion-title collapsed d-block pt-2 pb-2" data-bs-toggle="collapse"
                                 href="#collapseEleven" aria-expanded="false" aria-controls="collapseEleven">
-                                10. Evidence
+                                J. Evidence
                             </a>
                         </h5>
                     </div>

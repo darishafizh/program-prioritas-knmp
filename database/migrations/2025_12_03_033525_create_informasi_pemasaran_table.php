@@ -13,15 +13,10 @@ return new class extends Migration
     {
         Schema::create('informasi_pemasaran', function (Blueprint $table) {
             $table->id();
-            // Relasi ke tabel wawancara
-            $table->foreignId('wawancara_id')->constrained('wawancara')->onDelete('cascade')->unique();
+            $table->foreignId('knmp_id')->constrained('profile_knmp')->onDelete('cascade')->unique();
 
-            // Jawaban Pertanyaan No. 2
-            $table->boolean('terdapat_kendala_pemasaran')->default(false);
-            $table->text('penjelasan_kendala_pemasaran')->nullable();
-
-            // Jawaban Pertanyaan No. 3
-            $table->text('cara_penanganan_ikan')->nullable();
+            $table->text('kendala_pemasaran_text')->nullable(); // Jawaban P2
+            $table->text('cara_penanganan_ikan')->nullable();    // Jawaban P3
             $table->timestamps();
         });
     }

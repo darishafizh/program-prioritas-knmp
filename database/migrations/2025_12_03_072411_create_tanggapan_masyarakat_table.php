@@ -13,10 +13,15 @@ return new class extends Migration
     {
         Schema::create('tanggapan_masyarakat', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('knmp_id')->constrained('knmp')->onDelete('cascade');
-            $table->boolean('kesesuaian_kebutuhan');
+            $table->unsignedBigInteger('knmp_id');
+            $table->foreign('knmp_id')
+                ->references('id')
+                ->on('knmp')
+                ->onDelete('cascade');
+
+            $table->boolean('kesesuaian_kebutuhan')->nullable();
             $table->text('item_tidak_sesuai')->nullable();
-            $table->string('tingkat_kesenangan', 50);
+            $table->string('tingkat_kesenangan')->nullable();
             $table->text('alasan_tidak_senang')->nullable();
             $table->text('harapan_masyarakat')->nullable();
             $table->text('masukan_saran_perbaikan')->nullable();
