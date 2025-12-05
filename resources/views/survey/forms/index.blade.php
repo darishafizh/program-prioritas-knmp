@@ -25,10 +25,11 @@
                         <div class="col-6">
                             <ul class="list-unstyled mb-0">
                                 <li>
-                                    <p class="mb-2"><span class="fw-bold me-2">Desa:</span> {{ $knmp->desa ?? 'N/A' }}
+                                    <p class="mb-2"><span class="fw-bold me-2">Desa:</span>
+                                        {{ $knmp->village->name ?? 'N/A' }}
                                     </p>
                                     <p class="mb-0"><span class="fw-bold me-2">Kecamatan:</span>
-                                        {{ $knmp->kecamatan ?? 'N/A' }}</p>
+                                        {{ $knmp->district->name ?? 'N/A' }}</p>
                                 </li>
                             </ul>
                         </div>
@@ -36,9 +37,9 @@
                             <ul class="list-unstyled mb-0">
                                 <li>
                                     <p class="mb-2"><span class="fw-bold me-2">Kabupaten:</span>
-                                        {{ $knmp->kabupaten ?? 'N/A' }}</p>
+                                        {{ $knmp->regency->name ?? 'N/A' }}</p>
                                     <p class="mb-0"><span class="fw-bold me-2">Provinsi:</span>
-                                        {{ $knmp->provinsi ?? 'N/A' }}</p>
+                                        {{ $knmp->province->name ?? 'N/A' }}</p>
                                 </li>
                             </ul>
                         </div>
@@ -122,7 +123,7 @@
                         <h5 class="m-0">
                             <a class="custom-accordion-title collapsed d-block pt-2 pb-2" data-bs-toggle="collapse"
                                 href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                                E. Informasi Responden
+                            E. Informasi Responden
                             </a>
                         </h5>
                     </div>

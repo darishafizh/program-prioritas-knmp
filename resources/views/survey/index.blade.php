@@ -189,10 +189,10 @@
                             @foreach ($knmps as $knmp)
                                 <tr>
                                     <td>{{ $knmp->nama ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->desa ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->kecamatan ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->kabupaten ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->provinsi ?? 'N/A' }}</td>
+                                    <td>{{ $knmp->village->name ?? 'N/A' }}</td>
+                                    <td>{{ $knmp->district->name ?? 'N/A' }}</td>
+                                    <td>{{ $knmp->regency->name ?? 'N/A' }}</td>
+                                    <td>{{ $knmp->province->name ?? 'N/A' }}</td>
                                     <td>
                                         <a type="button" href="{{ route('forms.index', $knmp->id) }}"
                                             class="btn btn-primary" data-bs-container="#tooltip-container2"

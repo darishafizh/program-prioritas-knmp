@@ -103,45 +103,45 @@
 
             <div class="mb-3">
                 <label class="form-label">Provinsi</label>
-                <select class="form-control select2" name="provinsi" id="provinsi" data-toggle="select2">
-                    <option value="">-- Pilih Provinsi --</option>
-                    <optgroup label="Alaskan/Hawaiian Time Zone">
-                        <option value="AK">Alaska</option>
-                        <option value="HI">Hawaii</option>
-                    </optgroup>
+                <select class="form-control select2" name="province_id" id="province_id" data-toggle="select2">
+                    @foreach ($provinces as $prov)
+                        <option value="{{ $prov->id }}" {{ $knmp->province_id == $prov->id ? 'selected' : '' }}>
+                            {{ $prov->name }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Kabupaten</label>
-                <select class="form-control select2" name="kabupaten" id="kabupaten" data-toggle="select2">
-                    <option value="">-- Pilih Kabupaten --</option>
-                    <optgroup label="Alaskan/Hawaiian Time Zone">
-                        <option value="AK">Alaska</option>
-                        <option value="HI">Hawaii</option>
-                    </optgroup>
+                <select class="form-control select2" name="regency_id" id="regency_id" data-toggle="select2">
+                    @foreach ($regencies as $kab)
+                        <option value="{{ $kab->id }}" {{ $knmp->regency_id == $kab->id ? 'selected' : '' }}>
+                            {{ $kab->name }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Kecamatan</label>
-                <select class="form-control select2" name="kecamatan" id="kecamatan" data-toggle="select2">
-                    <option value="">-- Pilih Kecamatan --</option>
-                    <optgroup label="Alaskan/Hawaiian Time Zone">
-                        <option value="AK">Alaska</option>
-                        <option value="HI">Hawaii</option>
-                    </optgroup>
+                <select class="form-control select2" name="district_id" id="district_id" data-toggle="select2">
+                    @foreach ($districts as $kec)
+                        <option value="{{ $kec->id }}" {{ $knmp->district_id == $kec->id ? 'selected' : '' }}>
+                            {{ $kec->name }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Desa</label>
-                <select class="form-control select2" name="desa" id="desa" data-toggle="select2">
-                    <option value="">-- Pilih Desa --</option>
-                    <optgroup label="Alaskan/Hawaiian Time Zone">
-                        <option value="AK">Alaska</option>
-                        <option value="HI">Hawaii</option>
-                    </optgroup>
+                <select class="form-control select2" name="village_id" id="village_id" data-toggle="select2">
+                    @foreach ($villages as $desa)
+                        <option value="{{ $desa->id }}" {{ $knmp->village_id == $desa->id ? 'selected' : '' }}>
+                            {{ $desa->name }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
 

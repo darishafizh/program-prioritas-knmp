@@ -12,9 +12,29 @@ class Knmp extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'nama',
-        'desa_id',
-        'kecamatan_id',
-        'kabupaten_id',
-        'provinsi_id',
+        'province_id',
+        'regency_id',
+        'district_id',
+        'village_id',
     ];
+
+    public function province()
+    {
+        return $this->belongsTo(KnmpProvinces::class, 'province_id');
+    }
+
+    public function regency()
+    {
+        return $this->belongsTo(KnmpRegencies::class, 'regency_id');
+    }
+
+    public function district()
+    {
+        return $this->belongsTo(KnmpDistricts::class, 'district_id');
+    }
+
+    public function village()
+    {
+        return $this->belongsTo(KnmpVillages::class, 'village_id');
+    }
 }

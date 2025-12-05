@@ -23,8 +23,8 @@ class InformasiPemasaran extends Model
         return $this->belongsTo(Knmp::class, 'knmp_id');
     }
 
-    public function detailPenjualan()
+    public function detail_pemasaran()
     {
-        return $this->hasOne(DetailPenjualanIkan::class, 'pemasaran_id');
+        return $this->hasOne(DetailPemasaranIkan::class, 'pemasaran_id');
     }
 }

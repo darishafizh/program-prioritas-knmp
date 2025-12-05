@@ -5,17 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\DetailKomponen;
 use App\Models\DetailPemasaranIkan;
 use App\Models\DetailPenjualanIkan;
+use App\Models\District;
 use App\Models\InformasiPemasaran;
 use App\Models\InformasiPendapatanRumahTangga;
+use App\Models\InformasiResponden;
 use App\Models\InformasiUsaha;
 use App\Models\InformasiUsahaIkan;
 use App\Models\Kendala;
 use App\Models\Knmp as ModelsKnmp;
+use App\Models\KnmpDistricts;
+use App\Models\KnmpProvinces;
+use App\Models\KnmpRegencies;
+use App\Models\KnmpVillages;
 use App\Models\ProfileKnmp;
 use App\Models\ProgresTambahan;
+use App\Models\Province;
+use App\Models\Regency;
 use App\Models\SosialKelembagaan;
 use App\Models\TanggapanMasyarakat;
 use App\Models\TingkatKebahagiaanNelayan;
+use App\Models\Village;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -23,8 +33,19 @@ class FormsController extends Controller
 {
     public function index($knmpId)
     {
-        $knmp = ModelsKnmp::findOrFail($knmpId);
-        return view('survey.forms.index', compact('knmp'));
+        $knmp = ModelsKnmp::with([
+            'province',
+            'regency',
+            'district',
+            'village'
+        ])->findOrFail($knmpId);
+
+        $provinces = KnmpProvinces::where('id', $knmp->province_id)->get();
+        $regencies = KnmpRegencies::where('id', $knmp->regency_id)->get();
+        $districts = KnmpDistricts::where('id', $knmp->district_id)->get();
+        $villages = KnmpVillages::where('id', $knmp->village_id)->get();
+
+        return view('survey.forms.index', compact('knmp', 'provinces', 'regencies', 'districts', 'villages'));
     }
 
     public function store_profile_knmp(Request $request)
@@ -204,6 +225,50 @@ class FormsController extends Controller
         }
 
         return back()->with('success', 'Data tingkat kebahagiaan berhasil disimpan.');
+    }
+
+    public function store_informasi_responden(Request $request, $knmpId)
+    {
+        $validated = $request->validate([
+            'nama_responden' => 'nullable|string|max:255',
+            'nik' => 'nullable|string|max:20',
+            'nomor_kusuka' => 'nullable|string|max:30',
+            'tempat_lahir' => 'nullable|string|max:255',
+            'tanggal_lahir' => 'nullable|date',
+            'umur' => 'nullable|integer|min:0',
+            'jenis_kelamin' => 'nullable|in:Laki-laki,Perempuan',
+            'suku_bangsa' => 'nullable|string|max:255',
+            'pendidikan_terakhir' => 'nullable|string|max:255',
+            'wpp' => 'nullable|string|max:255',
+            'alamat' => 'nullable|string|max:255',
+            'no_hp_responden' => 'nullable|string|max:20',
+
+            'jumlah_anggota_rumah' => 'nullable|integer|min:0',
+            'jumlah_anggota_perempuan_rumah' => 'nullable|integer|min:0',
+            'jumlah_anggota_bekerja' => 'nullable|integer|min:0',
+            'jumlah_anggota_perempuan_bekerja' => 'nullable|integer|min:0',
+
+            'jumlah_abk' => 'nullable|integer|min:0',
+            'pengalaman_usaha' => 'nullable|integer|min:0',
+
+            'province_id' => 'nullable|integer',
+            'regency_id' => 'nullable|integer',
+            'district_id' => 'nullable|integer',
+            'village_id' => 'nullable|integer',
+
+            'tanggal_wawancara' => 'nullable|date',
+            'nama_enumerator' => 'nullable|string|max:255',
+            'jenis_kelamin_enumerator' => 'nullable|in:Laki-laki,Perempuan',
+            'no_hp_enumerator' => 'nullable|string|max:20',
+        ]);
+
+        $validated['knmp_id'] = $knmpId;
+
+        InformasiResponden::create($validated);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Informasi responden berhasil disimpan');
     }
 
     public function store_informasi_usaha(Request $request)
