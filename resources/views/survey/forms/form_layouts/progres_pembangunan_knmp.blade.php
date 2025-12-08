@@ -1,260 +1,304 @@
-{{-- Bagian 1: Detail Rencana Pembangunan KNMP --}}
-<div class="mb-2 d-flex align-items-center">
-    <button type="button" id="btn-add-komponen" class="btn btn-sm btn-primary">Tambah Komponen</button>
-    <div id="add-komponen-chooser" class="btn-group ms-2 d-none" role="group" aria-label="Pilih jenis komponen">
-        <button type="button" class="btn btn-sm btn-outline-primary choose-komponen" data-section="A">Konstruksi</button>
-        <button type="button" class="btn btn-sm btn-outline-primary choose-komponen" data-section="B">Bantuan Kapal,
-            Mesin, API</button>
-        <button type="button" class="btn btn-sm btn-outline-primary choose-komponen" data-section="C">Bantuan Sarana
-            Rantai Dingin</button>
-        <button type="button" class="btn btn-sm btn-outline-primary choose-komponen" data-section="D">SPBU
-            Nelayan</button>
+<form action="{{ route('survey.forms.store_progres_pembangunan_knmp', ['knmp' => $knmp->id]) }}" method="POST">
+
+    @csrf
+
+    {{-- ================================
+    1. PROFIL PROYEK KNMP
+================================ --}}
+    <div class="card mb-3">
+        <div class="card-header fw-bold">1. Profil Proyek KNMP</div>
+        <div class="card-body">
+
+            <div class="mb-3">
+                <label class="form-label">Total Anggaran (Rp)</label>
+                <input type="number" name="total_anggaran" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Anggaran Konstruksi (Rp)</label>
+                <input type="number" name="anggaran_konstruksi" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Anggaran Pengadaan Sarpras (Rp)</label>
+                <input type="number" name="anggaran_sarpras" class="form-control">
+            </div>
+
+        </div>
     </div>
-</div>
 
-<div class="table-responsive">
-    <table class="table w-100 nowrap" id="scroll-horizontal-datatable">
-        <thead class="table-light text-center align-middle">
-            <tr>
-                <th>Jenis Komponen</th>
-                <th>Target (unit)</th>
-                <th>Realisasi (unit)</th>
-                <th>% Realisasi</th>
-                <th>Anggaran (Rp)</th>
-                <th>Realisasi Anggaran (Rp)</th>
-                <th>% Realisasi Anggaran</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php
-                $sections = [
-                    'A' => [
-                        'Konstruksi' => [
-                            'Tambatan Perahu / Dermaga',
-                            'Shelter pendaratan ikan',
-                            'Bengkel/ Docking kapal nelayan',
-                            'Kantor pengelola',
-                            'Sentra kuliner produk perikanan',
-                            'Balai Pertemuan Nelayan',
-                            'Shelter perbaikan jaring',
-                            'Shelter Cool Box',
-                            'Bangunan Tapak Cold Storage',
-                            'Miniplan pengolahan ikan',
-                            'Kios perbekalan',
-                            'Tempat pembuangan sampah dan IPAL',
-                            'Musholla',
-                            'Sarana toilet umum',
-                            'Jalan di kawasan lahan pembangunan',
-                            'Penerangan umum',
-                            'Pagar, gapura, dan/atau landmark',
-                            'Parkir',
-                            'Talud / Revetment Sungai dan Laut',
-                        ],
-                    ],
-                    'B' => [
-                        'Bantuan Kapal, Mesin dan API' => [
-                            'Kapal penangkap ikan',
-                            'Mesin kapal perikanan',
-                            'Alat Penangkap Ikan',
-                        ],
-                    ],
-                    'C' => [
-                        'Bantuan Sarana Rantai Dingin' => [
-                            'Cold Storage',
-                            'Pabrik Es Balok',
-                            'Pabrik Es Slurry',
-                            'Kendaraan Berpendingin',
-                            'Cool Box',
-                        ],
-                    ],
-                    'D' => [
-                        'SPBU Nelayan' => [],
-                    ],
-                ];
-            @endphp
 
-            @foreach ($sections as $sectionCode => $sectionData)
-                @foreach ($sectionData as $judul => $items)
-                    <tr class="table-secondary">
-                        <td colspan="8" class="fw-bold">{{ $sectionCode }}. {{ $judul }}</td>
-                    </tr>
-                    @if (!empty($items))
-                        @foreach ($items as $idx => $item)
-                            <tr data-section="{{ $sectionCode }}" data-index="{{ $idx + 1 }}">
-                                <td>
-                                    <label class="form-label fw-bold">{{ $sectionCode }}.{{ $idx + 1 }}.
-                                        {{ $item }}</label>
-                                </td>
-                                <td>
-                                    <input type="number"
-                                        name="komponen[{{ $sectionCode }}][{{ $idx + 1 }}][target]"
-                                        class="form-control">
-                                </td>
-                                <td>
-                                    <input type="number"
-                                        name="komponen[{{ $sectionCode }}][{{ $idx + 1 }}][realisasi]"
-                                        class="form-control">
-                                </td>
-                                <td>
-                                    <input type="number"
-                                        name="komponen[{{ $sectionCode }}][{{ $idx + 1 }}][persen]"
-                                        class="form-control" readonly>
-                                </td>
-                                <td>
-                                    <input type="number"
-                                        name="komponen[{{ $sectionCode }}][{{ $idx + 1 }}][anggaran]"
-                                        class="form-control">
-                                </td>
-                                <td>
-                                    <input type="number"
-                                        name="komponen[{{ $sectionCode }}][{{ $idx + 1 }}][realisasi_anggaran]"
-                                        class="form-control">
-                                </td>
-                                <td>
-                                    <input type="number"
-                                        name="komponen[{{ $sectionCode }}][{{ $idx + 1 }}][persen_anggaran]"
-                                        class="form-control" readonly>
-                                </td>
-                                <td class="text-center">
-                                    <button type="button" class="btn btn-sm btn-outline-primary btn-edit">Edit</button>
-                                    <button type="button" class="btn btn-sm btn-success btn-save d-none">Save</button>
-                                    <button type="button"
-                                        class="btn btn-sm btn-secondary btn-cancel d-none">Cancel</button>
-                                    <button type="button" class="btn btn-sm btn-danger btn-delete ms-1">Delete</button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    @else
-                        <tr data-section="{{ $sectionCode }}" data-index="1">
-                            <td>
-                                <label class="form-label fw-bold">{{ $sectionCode }}.1. (Isi Nama Komponen)</label>
-                            </td>
-                            <td><input type="number" name="komponen[{{ $sectionCode }}][1][target]"
-                                    class="form-control"></td>
-                            <td><input type="number" name="komponen[{{ $sectionCode }}][1][realisasi]"
-                                    class="form-control"></td>
-                            <td><input type="number" name="komponen[{{ $sectionCode }}][1][persen]"
-                                    class="form-control"></td>
-                            <td><input type="number" name="komponen[{{ $sectionCode }}][1][anggaran]"
-                                    class="form-control"></td>
-                            <td><input type="number" name="komponen[{{ $sectionCode }}][1][realisasi_anggaran]"
-                                    class="form-control"></td>
-                            <td><input type="number" name="komponen[{{ $sectionCode }}][1][persen_anggaran]"
-                                    class="form-control"></td>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-outline-primary btn-edit">Edit</button>
-                                <button type="button" class="btn btn-sm btn-success btn-save d-none">Save</button>
-                                <button type="button"
-                                    class="btn btn-sm btn-secondary btn-cancel d-none">Cancel</button>
-                                <button type="button" class="btn btn-sm btn-danger btn-delete ms-1">Delete</button>
-                            </td>
+
+    {{-- ================================
+    2. DETAIL RENCANA PEMBANGUNAN
+================================ --}}
+    <div class="card mb-3">
+        <div class="card-header fw-bold">2. Detail Rencana Pembangunan KNMP Tahun 2025</div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light text-center">
+                        <tr>
+                            <th style="width: 50px">No</th>
+                            <th>Jenis Komponen</th>
+                            <th style="width: 130px">Target (unit)</th>
+                            <th style="width: 130px">Progres (%)</th>
+                            <th>Keterangan (Estimasi penyelesaian s.d 31 Des)</th>
                         </tr>
-                    @endif
-                @endforeach
-            @endforeach
-        </tbody>
-    </table>
+                    </thead>
+                    <tbody>
 
-    <template id="progres-knmp-row-template">
-        <tr data-section="__SECTION__" data-index="__INDEX__">
-            <td class="text-center">__SECTION__.__INDEX__</td>
-            <td><input type="text" name="komponen[__SECTION__][__INDEX__][nama]" class="form-control"></td>
-            <td><input type="number" name="komponen[__SECTION__][__INDEX__][target]" class="form-control"></td>
-            <td><input type="number" name="komponen[__SECTION__][__INDEX__][realisasi]" class="form-control"></td>
-            <td><input type="number" name="komponen[__SECTION__][__INDEX__][persen]" class="form-control" readonly>
-            </td>
-            <td><input type="number" name="komponen[__SECTION__][__INDEX__][anggaran]" class="form-control"></td>
-            <td><input type="number" name="komponen[__SECTION__][__INDEX__][realisasi_anggaran]"
-                    class="form-control"></td>
-            <td><input type="number" name="komponen[__SECTION__][__INDEX__][persen_anggaran]" class="form-control"
-                    readonly></td>
-            <td class="text-center">
-                <button type="button" class="btn btn-sm btn-outline-primary btn-edit">Edit</button>
-                <button type="button" class="btn btn-sm btn-success btn-save">Save</button>
-                <button type="button" class="btn btn-sm btn-secondary btn-cancel">Cancel</button>
-                <button type="button" class="btn btn-sm btn-danger btn-delete ms-1">Delete</button>
-            </td>
-        </tr>
-    </template>
-</div>
+                        {{-- ===== A. KONSTRUKSI ===== --}}
+                        <tr class="table-secondary fw-bold">
+                            <td colspan="5">A. Konstruksi</td>
+                        </tr>
 
-{{-- Bagian 2: Kendala --}}
-<div class="mt-3">
-    <label><strong>Kendala dalam proses pembangunan KNMP:</strong></label>
-    @php
-        $kendalaOptions = [
+                        @php
+                        $konstruksi = [
+                        'Tambatan Perahu / Dermaga — (Tuliskan dimensi bangunan)',
+                        'Shelter pendaratan ikan',
+                        'Bengkel / Docking kapal nelayan',
+                        'Kantor pengelola',
+                        'Sentra kuliner produk perikanan',
+                        'Balai Pertemuan Nelayan',
+                        'Shelter perbaikan jaring',
+                        'Shelter Cool Box',
+                        'Bangunan Tapak Cold Storage',
+                        'Miniplan pengolahan ikan',
+                        'Kios perbekalan',
+                        'Tempat pembuangan sampah dan IPAL',
+                        'Musholla',
+                        'Sarana toilet umum',
+                        'Jalan di kawasan lahan pembangunan',
+                        'Penerangan umum',
+                        'Pagar, gapura, dan/atau landmark',
+                        'Parkir',
+                        'Talud / Revetment Sungai dan Laut',
+                        ];
+                        @endphp
+
+                        @foreach ($konstruksi as $i => $item)
+                        <tr>
+                            <td class="text-center">{{ $i + 1 }}</td>
+                            <td>
+                                {{ $item }}
+                                <input type="hidden" name="konstruksi[{{ $i }}][komponen]" value="{{ $item }}">
+                            </td>
+                            <td><input type="number" name="konstruksi[{{ $i }}][target]" class="form-control"></td>
+                            <td><input type="number" name="konstruksi[{{ $i }}][progress]" class="form-control"></td>
+                            <td><textarea name="konstruksi[{{ $i }}][keterangan]" rows="2" class="form-control"></textarea></td>
+                        </tr>
+                        @endforeach
+
+
+
+                        {{-- ===== B. Bantuan Kapal, Mesin, API ===== --}}
+                        <tr class="table-secondary fw-bold">
+                            <td colspan="5">B. Bantuan Kapal, Mesin dan API</td>
+                        </tr>
+
+                        @php
+                        $bantuan_b = [
+                        'Kapal penangkap ikan',
+                        'Mesin kapal perikanan',
+                        'Alat Penangkap Ikan',
+                        ];
+                        @endphp
+
+                        @foreach ($bantuan_b as $i => $item)
+                        <tr>
+                            <td class="text-center">{{ $i + 1 }}</td>
+                            <td>
+                                {{ $item }}
+                                <input type="hidden" name="bantuan_b[{{ $i }}][komponen]" value="{{ $item }}">
+                            </td>
+
+                            <td><input type="number" name="bantuan_b[{{ $i }}][target]" class="form-control"></td>
+                            <td><input type="number" name="bantuan_b[{{ $i }}][progress]" class="form-control"></td>
+                            <td><textarea name="bantuan_b[{{ $i }}][keterangan]" rows="2" class="form-control"></textarea></td>
+                        </tr>
+                        @endforeach
+
+
+
+                        {{-- ===== C. Bantuan Sarana Rantai Dingin ===== --}}
+                        <tr class="table-secondary fw-bold">
+                            <td colspan="5">C. Bantuan Sarana Rantai Dingin</td>
+                        </tr>
+
+                        @php
+                        $bantuan_c = [
+                        'Cold Storage',
+                        'Pabrik Es Balok',
+                        'Pabrik Es Slurry',
+                        'Kendaraan Berpendingin',
+                        'Cool Box',
+                        ];
+                        @endphp
+
+                        @foreach ($bantuan_c as $i => $item)
+                        <tr>
+                            <td class="text-center">{{ $i + 1 }}</td>
+                            <td>
+                                {{ $item }}
+                                <input type="hidden" name="bantuan_c[{{ $i }}][komponen]" value="{{ $item }}">
+                            </td>
+
+                            <td><input type="number" name="bantuan_c[{{ $i }}][target]" class="form-control"></td>
+                            <td><input type="number" name="bantuan_c[{{ $i }}][progress]" class="form-control"></td>
+                            <td><textarea name="bantuan_c[{{ $i }}][keterangan]" rows="2" class="form-control"></textarea></td>
+                        </tr>
+                        @endforeach
+
+
+
+                        {{-- ===== D. SPBU Nelayan ===== --}}
+                        <tr class="table-secondary fw-bold">
+                            <td colspan="5">D. SPBU Nelayan</td>
+                        </tr>
+
+                        <tr>
+                            <td class="text-center">1</td>
+                            <td>
+                                SPBU Nelayan
+                                <input type="hidden" name="spbu[komponen]" value="SPBU Nelayan">
+                            </td>
+
+                            <td><input type="number" name="spbu[target]" class="form-control"></td>
+                            <td><input type="number" name="spbu[progress]" class="form-control"></td>
+                            <td><textarea name="spbu[keterangan]" rows="2" class="form-control"></textarea></td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    {{-- ================================
+    3. TENAGA KERJA
+================================ --}}
+    <div class="card mb-3">
+        <div class="card-header fw-bold">3. Tenaga Kerja yang Terlibat</div>
+
+        <div class="card-body">
+
+            <div class="mb-2 fw-bold">1. Tenaga kerja terlibat dalam konstruksi KNMP:</div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label>a. Laki-laki</label>
+                    <input type="number" name="tk_konstruksi_l" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label>b. Perempuan</label>
+                    <input type="number" name="tk_konstruksi_p" class="form-control">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label>2. Upah tenaga kerja / hari (Rp)</label>
+                <input type="number" name="upah_per_hari" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label>3. Lama bekerja di proyek (jumlah hari)</label>
+                <input type="number" name="lama_bekerja" class="form-control">
+            </div>
+
+            <div class="mb-2 fw-bold">4. Tenaga kerja yang terlibat dalam konstruksi KNMP:</div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label>a. Tenaga kerja lokal (orang)</label>
+                    <input type="number" name="tk_lokal" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label>b. Tenaga kerja dari luar (orang)</label>
+                    <input type="number" name="tk_luar" class="form-control">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label>5. Tenaga kerja non-konstruksi (jika ada, sebutkan)</label>
+                <textarea name="tk_non_konstruksi" rows="3" class="form-control"></textarea>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    {{-- ================================
+    4. KENDALA PEMBANGUNAN
+================================ --}}
+    <div class="card mb-3">
+        <div class="card-header fw-bold">4. Kendala dalam proses pembangunan KNMP</div>
+
+        <div class="card-body">
+
+            @php
+            $kendala = [
             'Faktor cuaca',
+            'Ketersediaan tenaga kerja',
             'Ketersediaan material bahan bangunan',
             'Akses ke lokasi (jalan kurang memadai)',
-            'Ketersediaan Listrik',
+            'Ketersediaan listrik',
             'Ketersediaan BBM',
             'Ketersediaan air bersih',
-            'Jaringan Internet',
-        ];
-    @endphp
-    @foreach ($kendalaOptions as $idx => $k)
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="kendala[]" value="{{ $k }}"
-                id="kendala{{ $idx }}">
-            <label class="form-check-label" for="kendala{{ $idx }}">{{ $k }}</label>
+            'Jaringan internet',
+            ];
+            @endphp
+
+            @foreach ($kendala as $i => $item)
+            <div class="form-check mb-1">
+                <input class="form-check-input" type="checkbox" name="kendala[]" value="{{ $item }}" id="kendala{{ $i }}">
+                <label class="form-check-label" for="kendala{{ $i }}">
+                    {{ $item }}
+                </label>
+            </div>
+            @endforeach
+
         </div>
-    @endforeach
-</div>
-
-{{-- Bagian 3: CCTV --}}
-<div class="mt-3">
-    <label><strong>Apakah sudah CCTV terpasang?</strong></label>
-    <div class="form-check">
-        <input class="form-check-input" type="radio" name="cctv" value="Ya" id="cctv1">
-        <label class="form-check-label" for="cctv1">Ya</label>
     </div>
-    <div class="form-check">
-        <input class="form-check-input" type="radio" name="cctv" value="Tidak" id="cctv2">
-        <label class="form-check-label" for="cctv2">Tidak</label>
+
+
+
+    {{-- ================================
+    5. CCTV TERPASANG ?
+================================ --}}
+    <div class="card mb-3">
+        <div class="card-header fw-bold">5. Apakah CCTV telah terpasang?</div>
+
+        <div class="card-body">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="cctv" value="Ya" id="cctvYes">
+                <label class="form-check-label" for="cctvYes">Ya</label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="cctv" value="Tidak" id="cctvNo">
+                <label class="form-check-label" for="cctvNo">Tidak</label>
+            </div>
+        </div>
     </div>
-</div>
 
-<script>
-    (function() {
-        const table = document.getElementById('progres-knmp-table');
-        const addBtn = document.getElementById('btn-add-komponen');
-        const chooser = document.getElementById('add-komponen-chooser');
-        const template = document.getElementById('progres-knmp-row-template').innerHTML;
 
-        function toggleEditMode(row, editing) {
-            row.querySelectorAll('input').forEach(i => i.readOnly = !editing);
-            row.querySelectorAll('.btn-edit,.btn-save,.btn-cancel').forEach(btn => {
-                if (btn.classList.contains('btn-edit')) btn.classList.toggle('d-none', editing);
-                if (btn.classList.contains('btn-save')) btn.classList.toggle('d-none', !editing);
-                if (btn.classList.contains('btn-cancel')) btn.classList.toggle('d-none', !editing);
-            });
-        }
 
-        table.querySelectorAll('tr[data-section]').forEach(tr => toggleEditMode(tr, false));
+    {{-- ================================
+     BUTTON SIMPAN
+================================ --}}
+    <div class="text-end mt-3 mb-5">
+        <button class="btn btn-primary px-4" type="submit">
+            Simpan
+        </button>
+    </div>
 
-        table.addEventListener('click', e => {
-            const tr = e.target.closest('tr');
-            if (!tr) return;
-            if (e.target.classList.contains('btn-edit')) toggleEditMode(tr, true);
-            if (e.target.classList.contains('btn-save')) toggleEditMode(tr, false);
-            if (e.target.classList.contains('btn-cancel')) toggleEditMode(tr, false);
-            if (e.target.classList.contains('btn-delete')) tr.remove();
-        });
 
-        addBtn.addEventListener('click', () => chooser.classList.toggle('d-none'));
-        chooser.querySelectorAll('.choose-komponen').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const section = btn.dataset.section;
-                const idx = table.querySelectorAll(`tr[data-section="${section}"]`).length + 1;
-                const tmp = document.createElement('tbody');
-                tmp.innerHTML = template.replace(/__SECTION__/g, section).replace(/__INDEX__/g,
-                    idx);
-                table.querySelector('tbody').appendChild(tmp.querySelector('tr'));
-                toggleEditMode(table.querySelector(`tr[data-section="${section}"]:last-child`),
-                    true);
-                chooser.classList.add('d-none');
-            });
-        });
-    })();
-</script>
+</form>

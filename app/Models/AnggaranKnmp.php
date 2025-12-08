@@ -27,6 +27,6 @@ class AnggaranKnmp extends Model
 
     public function profile_knmp()
     {
-        return $this->belongsTo(ProfileKnmp::class, 'knmp_id');
+        return $this->belongsTo(ProfilKnmp::class, 'knmp_id');
     }
 }

@@ -73,7 +73,7 @@
                         <h5 class="m-0">
                             <a class="custom-accordion-title collapsed d-block pt-2 pb-2" data-bs-toggle="collapse"
                                 href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                2. Progress Pembangungn KNMP
+                                2. Progres Pembangunan KNMP
                             </a>
                         </h5>
                     </div>

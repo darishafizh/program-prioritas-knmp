@@ -7,21 +7,35 @@ use Illuminate\Database\Eloquent\Model;
 class ProfilKnmp extends Model
 {
     // jika nama tabel tidak plural standar, set explicit:
-    protected $table = 'profil_knmp';
+    protected $table = 'profile_knmp';
 
     protected $fillable = [
-        'jumlah_penduduk_desa',
-        'jumlah_nelayan',
-        'pendapatan_rata_rata',
-        'alokasi_konstruksi',
-        'alokasi_upah',
-        'tk_laki_laki',
-        'tk_perempuan',
-        'tk_lokal',
-        'tk_luar',
-        'volume_produksi',
+        'knmp_id',
+        'jml_penduduk_des',
+        'jml_nelayan',
+        'pendapatan_rata_rata_nelayan',
+        'volume_produksi_ton',
         'nilai_produksi',
-        'calon_kopdesmp',
+
+        'komoditas_utama_1',
+        'komoditas_utama_2',
+        'harga_rata_komoditas_1',
+        'harga_rata_komoditas_2',
+
+        'infra_jalan_akses',
+        'infra_listrik',
+        'infra_air_bersih',
+        'infra_internet',
+        'infra_ipal',
+        'infra_dermaga_tambat',
+        'infra_tpi',
+        'infra_cold_storage',
+        'infra_pabrik_es',
+        'infra_kantor_koperasi',
+        'infra_bengkel_nelayan',
+        'infra_waserda',
+
+        'calon_koperasi',
         'nama_ketua',
         'sk_kopdeskel',
         'nomor_induk_kopdeskel',

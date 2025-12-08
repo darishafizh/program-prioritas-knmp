@@ -1,8 +1,9 @@
-<form method="POST" action="{{ route('forms.store_profile_knmp', ['knmp' => $knmp->id]) }}">
+<form method="POST" action="{{ route('survey.forms.store_profile_knmp', ['knmp' => $knmp->id]) }}">
+
     @csrf
-    <input type="text" hidden name="knmp_id" value="{{ $knmp->id ?? '' }}">
+    <input type="hidden" name="knmp_id" value="{{ $knmp->id }}">
     <div class="row">
-        <input type="hidden" name="knmp_id" value="{{ $profil->id ?? 0 }}">
+
 
         <div class="col-6">
             <div class="mb-3">

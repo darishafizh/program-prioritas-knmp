@@ -29,6 +29,6 @@ class TanggapanMasyarakat extends Model
     public function knmp()
     {
         // Asumsi tabel utama yang dirujuk adalah ProfilKNMP atau knmp
-        return $this->belongsTo(ProfileKnmp::class, 'knmp_id');
+        return $this->belongsTo(ProfilKnmp::class, 'knmp_id');
     }
 }
