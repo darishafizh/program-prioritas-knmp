@@ -199,10 +199,10 @@
                                             data-bs-toggle="tooltip" data-bs-placement="left" title="Input Survey"><i
                                                 class="mdi mdi-pencil-box"></i>
                                         </a>
-                                        <a type="button" href="" class="btn btn-success"
+                                        {{-- <a type="button" href="" class="btn btn-success"
                                             data-bs-container="#tooltip-container2" data-bs-toggle="tooltip"
                                             data-bs-placement="top" title="Lihat Detail"><i class="mdi mdi-eye"></i>
-                                        </a>
+                                        </a> --}}
                                         <a type="button" href="" class="btn btn-danger"
                                             data-bs-container="#tooltip-container2" data-bs-toggle="tooltip"
                                             data-bs-placement="top" title="Lihat PDF"><i class="mdi mdi-file-pdf-box"></i>

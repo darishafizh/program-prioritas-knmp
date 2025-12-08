@@ -21,6 +21,7 @@
 <script src="{{ asset('assets/js/vendor/fixedColumns.bootstrap5.min.js') }}"></script>
 <script src="{{ asset('assets/js/vendor/fixedHeader.bootstrap5.min.js') }}"></script>
 <script src="{{ asset('assets/js/vendor/dropzone.min.js') }}"></script>
+<script src="{{ asset('assets/js/vendor/chart.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- third party js ends -->
 

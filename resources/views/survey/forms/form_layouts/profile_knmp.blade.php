@@ -1,9 +1,7 @@
 <form method="POST" action="{{ route('forms.store_profile_knmp', ['knmp' => $knmp->id]) }}">
     @csrf
-    <input type="text" hidden name="knmp_id" value="{{ $knmp->id ?? '' }}">
+    <input type="hidden" name="knmp_id" value="{{ $knmp->id ?? 0 }}">
     <div class="row">
-        <input type="hidden" name="knmp_id" value="{{ $profil->id ?? 0 }}">
-
         <div class="col-6">
             <div class="mb-3">
                 <label class="form-label">Jumlah Penduduk Desa</label>
@@ -67,57 +65,57 @@
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="infrastruktur_pendukung[]"
                             value="jalan_akses" id="infra_jalan">
-                        <label class="form-check-label" for="infra_jalan">Jalan akses (ada/tidak)</label>
+                        <label class="form-check-label" for="infra_jalan">Jalan akses</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="infrastruktur_pendukung[]" value="listrik"
                             id="infra_listrik">
-                        <label class="form-check-label" for="infra_listrik">Listrik (ada/tidak)</label>
+                        <label class="form-check-label" for="infra_listrik">Listrik</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="infrastruktur_pendukung[]"
                             value="air_bersih" id="infra_air">
-                        <label class="form-check-label" for="infra_air">Air bersih (ada/tidak)</label>
+                        <label class="form-check-label" for="infra_air">Air bersih</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="infrastruktur_pendukung[]"
                             value="internet" id="infra_internet">
-                        <label class="form-check-label" for="infra_internet">Internet (ada/tidak)</label>
+                        <label class="form-check-label" for="infra_internet">Internet</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="infrastruktur_pendukung[]"
                             value="ipal" id="infra_ipal">
-                        <label class="form-check-label" for="infra_ipal">IPAL (ada/tidak)</label>
+                        <label class="form-check-label" for="infra_ipal">IPAL</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="infrastruktur_pendukung[]"
                             value="dermaga_tambat" id="infra_dermaga">
-                        <label class="form-check-label" for="infra_dermaga">Dermaga/tambat labuh (ada/tidak)</label>
+                        <label class="form-check-label" for="infra_dermaga">Dermaga/tambat labuh</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="infrastruktur_pendukung[]"
                             value="tpi" id="infra_tpi">
-                        <label class="form-check-label" for="infra_tpi">TPI (ada/tidak)</label>
+                        <label class="form-check-label" for="infra_tpi">TPI</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="infrastruktur_pendukung[]"
                             value="cold_storage" id="infra_cs">
-                        <label class="form-check-label" for="infra_cs">Cold Storage (ada/tidak)</label>
+                        <label class="form-check-label" for="infra_cs">Cold Storage</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="infrastruktur_pendukung[]"
                             value="pabrik_es" id="infra_es">
-                        <label class="form-check-label" for="infra_es">Pabrik es (ada/tidak)</label>
+                        <label class="form-check-label" for="infra_es">Pabrik es</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="infrastruktur_pendukung[]"
                             value="kantor_koperasi" id="infra_koperasi">
-                        <label class="form-check-label" for="infra_koperasi">Kantor Koperasi (ada/tidak)</label>
+                        <label class="form-check-label" for="infra_koperasi">Kantor Koperasi</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="infrastruktur_pendukung[]"
                             value="bengkel_nelayan" id="infra_bengkel">
-                        <label class="form-check-label" for="infra_bengkel">Bengkel Nelayan (ada/tidak)</label>
+                        <label class="form-check-label" for="infra_bengkel">Bengkel Nelayan</label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="infrastruktur_pendukung[]"

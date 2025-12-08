@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BuktiUpload;
 use App\Models\DetailKomponen;
 use App\Models\DetailPemasaranIkan;
 use App\Models\DetailPenjualanIkan;
@@ -18,6 +19,8 @@ use App\Models\KnmpProvinces;
 use App\Models\KnmpRegencies;
 use App\Models\KnmpVillages;
 use App\Models\ProfileKnmp;
+use App\Models\ProgresKnmp;
+use App\Models\ProgresKnmpDetail;
 use App\Models\ProgresTambahan;
 use App\Models\Province;
 use App\Models\Regency;
@@ -48,28 +51,25 @@ class FormsController extends Controller
         return view('survey.forms.index', compact('knmp', 'provinces', 'regencies', 'districts', 'villages'));
     }
 
+    // A. Profile KNMP
     public function store_profile_knmp(Request $request)
     {
         $validatedData = $request->validate([
-            // --- PROFILE KNMP (Disinkronkan dengan Input HTML Baru) ---
-            'knmp_id'                       => 'required|integer|min:0',
+            'knmp_id'                       => 'required|integer|min:1',
             'jumlah_penduduk'               => 'required|integer|min:0',
             'jumlah_nelayan'                => 'required|integer|min:0',
             'pendapatan_rata_rata'          => 'required|numeric|min:0',
             'volume_produksi'               => 'required|numeric|min:0',
             'nilai_produksi'                => 'required|numeric|min:0',
 
-            // Komoditas dan Harga
             'komoditas_1'                   => 'nullable|string|max:255',
             'komoditas_2'                   => 'nullable|string|max:255',
-            'harga_komoditas_1'             => 'nullable|numeric|min:0', // Baru
-            'harga_komoditas_2'             => 'nullable|numeric|min:0', // Baru
+            'harga_komoditas_1'             => 'nullable|numeric|min:0',
+            'harga_komoditas_2'             => 'nullable|numeric|min:0',
 
-            // Infrastruktur
             'infrastruktur_pendukung'       => 'nullable|array',
             'infrastruktur_pendukung.*'     => 'string|max:50',
 
-            // Data Koperasi & Anggota
             'calon_koperasi'                => 'nullable|string|max:255',
             'nama_ketua'                    => 'nullable|string|max:255',
             'sk_kopdeskel'                  => 'nullable|string|max:255',
@@ -81,10 +81,10 @@ class FormsController extends Controller
 
         try {
             DB::beginTransaction();
-            $infrastrukturYangAda = $request->input('infrastruktur_pendukung', []);
+
+            $infra = $request->input('infrastruktur_pendukung', []);
 
             $profilData = [
-                // Data Utama Profil KNMP
                 'knmp_id'                      => $validatedData['knmp_id'],
                 'jml_penduduk_des'             => $validatedData['jumlah_penduduk'],
                 'jml_nelayan'                  => $validatedData['jumlah_nelayan'],
@@ -92,87 +92,126 @@ class FormsController extends Controller
                 'volume_produksi_ton'          => $validatedData['volume_produksi'],
                 'nilai_produksi'               => $validatedData['nilai_produksi'],
 
-                // Data Komoditas Utama & Harga
-                'komoditas_utama_1'            => $validatedData['komoditas_1'],
-                'komoditas_utama_2'            => $validatedData['komoditas_2'],
-                'harga_rata_komoditas_1'       => $validatedData['harga_komoditas_1'],
-                'harga_rata_komoditas_2'       => $validatedData['harga_komoditas_2'],
+                'komoditas_utama_1'            => $validatedData['komoditas_1'] ?? null,
+                'komoditas_utama_2'            => $validatedData['komoditas_2'] ?? null,
+                'harga_rata_komoditas_1'       => $validatedData['harga_komoditas_1'] ?? null,
+                'harga_rata_komoditas_2'       => $validatedData['harga_komoditas_2'] ?? null,
 
-                // Data Infrastruktur (Memetakan Checkbox ke Kolom Boolean)
-                'infra_jalan_akses'            => in_array('jalan_akses', $infrastrukturYangAda),
-                'infra_listrik'                => in_array('listrik', $infrastrukturYangAda),
-                'infra_air_bersih'             => in_array('air_bersih', $infrastrukturYangAda),
-                'infra_internet'               => in_array('internet', $infrastrukturYangAda),
-                'infra_ipal'                   => in_array('ipal', $infrastrukturYangAda),
-                'infra_dermaga_tambat'         => in_array('dermaga_tambat', $infrastrukturYangAda),
-                'infra_tpi'                    => in_array('tpi', $infrastrukturYangAda),
-                'infra_cold_storage'           => in_array('cold_storage', $infrastrukturYangAda),
-                'infra_pabrik_es'              => in_array('pabrik_es', $infrastrukturYangAda),
-                'infra_kantor_koperasi'        => in_array('kantor_koperasi', $infrastrukturYangAda),
-                'infra_bengkel_nelayan'        => in_array('bengkel_nelayan', $infrastrukturYangAda),
-                'infra_waserda'                => in_array('waserda', $infrastrukturYangAda),
+                'infra_jalan_akses'            => in_array('jalan_akses', $infra),
+                'infra_listrik'                => in_array('listrik', $infra),
+                'infra_air_bersih'             => in_array('air_bersih', $infra),
+                'infra_internet'               => in_array('internet', $infra),
+                'infra_ipal'                   => in_array('ipal', $infra),
+                'infra_dermaga_tambat'         => in_array('dermaga_tambat', $infra),
+                'infra_tpi'                    => in_array('tpi', $infra),
+                'infra_cold_storage'           => in_array('cold_storage', $infra),
+                'infra_pabrik_es'              => in_array('pabrik_es', $infra),
+                'infra_kantor_koperasi'        => in_array('kantor_koperasi', $infra),
+                'infra_bengkel_nelayan'        => in_array('bengkel_nelayan', $infra),
+                'infra_waserda'                => in_array('waserda', $infra),
 
-                // Data Koperasi dan Lokasi
-                'calon_koperasi'               => $validatedData['calon_koperasi'],
-                'nama_ketua'                   => $validatedData['nama_ketua'],
-                'sk_kopdeskel'                 => $validatedData['sk_kopdeskel'],
-                'nomor_induk_kopdeskel'        => $validatedData['nomor_induk'],
-                'jumlah_anggota_laki'          => $validatedData['jumlah_anggota_laki'],
-                'jumlah_anggota_perempuan'     => $validatedData['jumlah_anggota_perempuan'],
-                'koordinat_lokasi'             => $validatedData['koordinat_lokasi'],
+                'calon_koperasi'               => $validatedData['calon_koperasi'] ?? null,
+                'nama_ketua'                   => $validatedData['nama_ketua'] ?? null,
+                'sk_kopdeskel'                 => $validatedData['sk_kopdeskel'] ?? null,
+                'nomor_induk_kopdeskel'        => $validatedData['nomor_induk'] ?? null,
+                'jumlah_anggota_laki'          => $validatedData['jumlah_anggota_laki'] ?? 0,
+                'jumlah_anggota_perempuan'     => $validatedData['jumlah_anggota_perempuan'] ?? 0,
+                'koordinat_lokasi'             => $validatedData['koordinat_lokasi'] ?? null,
             ];
 
-            $knmpId = $validatedData['knmp_id'];
-
-            $profil = ProfileKnmp::updateOrCreate(
-                ['id' => ($knmpId > 0) ? $knmpId : null],
+            ProfileKnmp::updateOrCreate(
+                ['knmp_id' => $validatedData['knmp_id']],
                 $profilData
             );
 
             DB::commit();
-
             return redirect()->back()->with('success', 'Data Profil KNMP berhasil disimpan dan diperbarui!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data Profile KNMP. Error: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
-    public function store_tanggapan_masyarakat(Request $request)
+    // B. Progres Tambahan
+    public function store_progres_knmp(Request $request)
     {
-        $validatedData = $request->validate([
-            'knmp_id'              => 'required|integer|exists:knmp,id',
-            'sesuai_kebutuhan'     => 'required|string|in:Ya, sesuai,Tidak sesuai',
-            'tidak_sesuai_item'    => 'required_if:sesuai_kebutuhan,Tidak sesuai|nullable|string',
-            'senang'               => 'required|string|in:Senang,Biasa saja,Tidak Senang',
-            'alasan_tidak_senang'  => 'required_if:senang,Tidak Senang|nullable|string',
-            'harapan_masyarakat'   => 'required|string',
-            'masukan_saran'        => 'required|string',
+        $progres = ProgresKnmp::create([
+            'knmp_id'  => $request->knmp_id ?? null,
+
+            'anggaran_total'      => $request->anggaran_total,
+            'anggaran_konstruksi' => $request->anggaran_konstruksi,
+            'anggaran_sarpras'    => $request->anggaran_sarpras,
+
+            'tk_total'  => $request->tk_total,
+            'tk_laki'   => $request->tk_laki,
+            'tk_perempuan' => $request->tk_perempuan,
+            'tk_upah'   => $request->tk_upah,
+            'tk_durasi' => $request->tk_durasi,
+            'tk_lokal'  => $request->tk_lokal,
+            'tk_luar'   => $request->tk_luar,
+
+            'tk_non_konstruksi_jumlah' => $request->tk_non_konstruksi_jumlah,
+            'tk_non_konstruksi_ket'    => $request->tk_non_konstruksi_ket,
+
+            'kendala' => $request->kendala ?? [],
+            'cctv'    => $request->cctv,
         ]);
 
+        // 2. Simpan detail komponen
+        if ($request->progress) {
+            foreach ($request->progress as $kode => $items) {
+                foreach ($items as $index => $row) {
+                    ProgresKnmpDetail::create([
+                        'progres_id' => $progres->id,
+                        'kode'       => $kode,
+                        'komponen'   => $row['komponen'] ?? null,
+                        'target'     => $row['target'] ?? null,
+                        'persen'     => $row['persen'] ?? null,
+                        'keterangan' => $row['keterangan'] ?? null,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->back()->with('success', 'Data progres KNMP berhasil disimpan.');
+    }
+
+    // C. Tanggapan Masyarakat
+    public function store_tanggapan_masyarakat(Request $request, $knmpId)
+    {
         try {
-            $kesesuaianBoolean = ($validatedData['sesuai_kebutuhan'] === 'Ya, sesuai');
+            $validated = $request->validate([
+                'knmp_id'              => 'required|integer|min:1',
+                'kesesuaian_kebutuhan' => 'required',
+                'item_tidak_sesuai' => 'nullable|string',
+                'tingkat_kesenangan' => 'required|string',
+                'alasan_tidak_senang' => 'nullable|string',
+                'harapan_masyarakat' => 'nullable|string',
+                'masukan_saran_perbaikan' => 'nullable|string',
+            ]);
 
-            $dataToStore = [
-                'kesesuaian_kebutuhan'    => $kesesuaianBoolean,
-                'item_tidak_sesuai'       => $validatedData['tidak_sesuai_item'] ?? null,
-                'tingkat_kesenangan'      => $validatedData['senang'],
-                'alasan_tidak_senang'     => $validatedData['alasan_tidak_senang'] ?? null,
-                'harapan_masyarakat'      => $validatedData['harapan_masyarakat'] ?? null,
-                'masukan_saran_perbaikan' => $validatedData['masukan_saran'] ?? null,
-            ];
+            $validated['kesesuaian_kebutuhan'] =
+                ($request->kesesuaian_kebutuhan == 'Ya' || $request->kesesuaian_kebutuhan == 1) ? 1 : 0;
 
-            TanggapanMasyarakat::updateOrCreate(
-                ['knmp_id' => $validatedData['knmp_id']],
-                $dataToStore
-            );
+            if ($validated['kesesuaian_kebutuhan'] == 1) {
+                $validated['item_tidak_sesuai'] = null;
+            }
 
-            return redirect()->back()->with('success', 'Tanggapan masyarakat berhasil disimpan/diperbarui.');
-        } catch (\Exception $e) {
+            if ($request->tingkat_kesenangan != 'Tidak Senang') {
+                $validated['alasan_tidak_senang'] = null;
+            }
+
+            $validated['knmp_id'] = $knmpId;
+
+            TanggapanMasyarakat::create($validated);
+
+            return back()->with('success', 'Data tanggapan berhasil disimpan.');
+        } catch (Exception $e) {
             throw $e;
         }
     }
 
+    // D. Tingkat Kebahagiaan Nelayan
     public function store_tingkat_kebahagiaan(Request $request)
     {
         // Validasi dasar
@@ -227,6 +266,7 @@ class FormsController extends Controller
         return back()->with('success', 'Data tingkat kebahagiaan berhasil disimpan.');
     }
 
+    // E. Informasi Responden
     public function store_informasi_responden(Request $request, $knmpId)
     {
         $validated = $request->validate([
@@ -271,6 +311,7 @@ class FormsController extends Controller
             ->with('success', 'Informasi responden berhasil disimpan');
     }
 
+    // F. Informasi Usaha Perikanan
     public function store_informasi_usaha(Request $request)
     {
         try {
@@ -310,6 +351,7 @@ class FormsController extends Controller
         }
     }
 
+    // G. Informasi Pemasaran Perikanan
     public function store_pemasaran_perikanan(Request $request)
     {
         $validatedData = $request->validate([
@@ -360,6 +402,7 @@ class FormsController extends Controller
         }
     }
 
+    // H. Informasi Pendapatan Rumah Tangga
     public function store_pendapatan_rt(Request $request)
     {
         // Validasi
@@ -388,6 +431,7 @@ class FormsController extends Controller
         return redirect()->back()->with('success', 'Informasi pendapatan rumah tangga berhasil disimpan.');
     }
 
+    // I. Sosial & Kelembagaan
     public function store_sosial_kelembagaan(Request $request)
     {
         $validated = $request->validate([
@@ -417,6 +461,32 @@ class FormsController extends Controller
             'status' => 'success',
             'message' => 'Data sosial & kelembagaan berhasil disimpan.',
             'data' => $data
+        ]);
+    }
+
+    // J. Upload Bukti File
+    public function store_bukti_upload(Request $request)
+    {
+        if (!$request->hasFile('file')) {
+            return response()->json(['error' => 'No file uploaded'], 400);
+        }
+
+        $file = $request->file('file');
+
+        $path = $file->store('bukti', 'public');
+
+        $upload = BuktiUpload::create([
+            'knmp_id'    => $request->knmp_id ?? null,
+            'nama_file'  => $file->getClientOriginalName(),
+            'path_file'  => $path,
+            'tipe_file'  => $file->getClientMimeType(),
+            'ukuran_file' => $file->getSize(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'file_id' => $upload->id,
+            'path'    => $path
         ]);
     }
 }

@@ -22,26 +22,46 @@
                     <h4 class="header-title mb-3">{{ $knmp->nama ?? 'Nama KNMP Tidak Ditemukan' }}</h4>
 
                     <div class="row">
-                        <div class="col-6">
-                            <ul class="list-unstyled mb-0">
-                                <li>
-                                    <p class="mb-2"><span class="fw-bold me-2">Desa:</span>
-                                        {{ $knmp->village->name ?? 'N/A' }}
-                                    </p>
-                                    <p class="mb-0"><span class="fw-bold me-2">Kecamatan:</span>
-                                        {{ $knmp->district->name ?? 'N/A' }}</p>
-                                </li>
-                            </ul>
+                        <div class="col-5">
+                            <div class="row">
+                                <div class="col-3">
+                                    <p class="mb-0 fw-bold">Desa</p>
+                                    <p class="mb-0 fw-bold">Kecamatan</p>
+                                    <p class="mb-0 fw-bold">Kabupaten</p>
+                                    <p class="mb-0 fw-bold">Provinsi</p>
+                                </div>
+
+                                <div class="col-1">
+                                    <p class="mb-0"><span class="fw-bold me-2">:</span></p>
+                                    <p class="mb-0"><span class="fw-bold me-2">:</span></p>
+                                    <p class="mb-0"><span class="fw-bold me-2">:</span></p>
+                                    <p class="mb-0"><span class="fw-bold me-2">:</span></p>
+                                </div>
+
+                                <div class="col-8">
+                                    <p class="mb-0">{{ $knmp->village->name ?? 'N/A' }}</p>
+                                    <p class="mb-0">{{ $knmp->district->name ?? 'N/A' }}</p>
+                                    <p class="mb-0">{{ $knmp->regency->name ?? 'N/A' }}</p>
+                                    <p class="mb-0">{{ $knmp->province->name ?? 'N/A' }}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-6">
-                            <ul class="list-unstyled mb-0">
-                                <li>
-                                    <p class="mb-2"><span class="fw-bold me-2">Kabupaten:</span>
-                                        {{ $knmp->regency->name ?? 'N/A' }}</p>
-                                    <p class="mb-0"><span class="fw-bold me-2">Provinsi:</span>
-                                        {{ $knmp->province->name ?? 'N/A' }}</p>
-                                </li>
-                            </ul>
+                        <div class="col-7">
+                            <div class="mb-4">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="flex-shrink-0">
+                                        <i class="mdi mdi-progress-wrench widget-icon bg-primary-lighten text-primary"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-2">
+                                        <h5 class="my-0 fw-semibold">Progres Pembangunan KNMP</h5>
+                                    </div>
+                                    <h5 class="my-0">145/160</h5>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: 58%" aria-valuenow="91"
+                                        aria-valuemin="0" aria-valuemax="100">58%</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -123,7 +143,7 @@
                         <h5 class="m-0">
                             <a class="custom-accordion-title collapsed d-block pt-2 pb-2" data-bs-toggle="collapse"
                                 href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                            E. Informasi Responden
+                                E. Informasi Responden
                             </a>
                         </h5>
                     </div>
@@ -208,7 +228,7 @@
                         <h5 class="m-0">
                             <a class="custom-accordion-title collapsed d-block pt-2 pb-2" data-bs-toggle="collapse"
                                 href="#collapseEleven" aria-expanded="false" aria-controls="collapseEleven">
-                                J. Evidence
+                                J. Bukti Pendukung
                             </a>
                         </h5>
                     </div>
@@ -219,13 +239,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-12">
-            <div class="card d-flex justify-content-end">
-                <button type="button" class="btn btn-secondary m-2">Simpan Draft</button>
-                <button type="submit" class="btn btn-primary m-2">Simpan Jawaban</button>
             </div>
         </div>
     </div>

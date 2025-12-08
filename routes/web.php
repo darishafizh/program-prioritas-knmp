@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormsController;
 use App\Http\Controllers\KeteranganEnumeratorController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SurveyController;
 
 
@@ -44,6 +45,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/store_pemasaran_perikanan/{knmp}', [FormsController::class, 'store_pemasaran_perikanan'])->name('forms.store_pemasaran_perikanan');
             Route::post('/store_pendapatan_rt/{knmp}', [FormsController::class, 'store_pendapatan_rt'])->name('forms.store_pendapatan_rt');
             Route::post('/store_sosial_kelembagaan/{knmp}', [FormsController::class, 'store_sosial_kelembagaan'])->name('forms.store_sosial_kelembagaan');
+            Route::post('/store_sosial_kelembagaan/{knmp}', [FormsController::class, 'store_sosial_kelembagaan'])->name('forms.store_sosial_kelembagaan');
+            Route::post('/store_bukti_upload/{knmp}', [FormsController::class, 'store_bukti_upload'])->name('forms.store_bukti_upload');
         });
     });
 
@@ -51,7 +54,7 @@ Route::middleware('auth')->group(function () {
     // REPORT ROUTES
     // ==============================
     Route::group(['prefix' => 'laporan'], function () {
-        Route::get('/', [FormsController::class, 'index'])->name('laporan.index');
+        Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
     });
 
     // ==============================
