@@ -2,12 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\TitikKoordinasi;
 
 class DashboardController extends Controller
 {
-    function index()
+    public function index()
     {
-        return view('dashboard.index');
+        $desa_knmp = TitikKoordinasi::select('nama', 'latitude', 'longitude')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get()
+            ->map(function ($d) {
+                return [
+                    'nama' => $d->nama,
+                    'latitude' => (float) $d->latitude,
+                    'longitude' => (float) $d->longitude,
+                ];
+            })->values();
+
+        return view('dashboard.index', compact('desa_knmp'));
     }
 }

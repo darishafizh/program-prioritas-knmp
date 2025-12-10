@@ -15,14 +15,19 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.perform');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+
 Route::middleware('auth')->group(function () {
+
+    // ==============================
+    // DASHBOARD ROUTES (NO PREFIX)
+    // ==============================
+
 
     // ==============================
     // DASHBOARD ROUTES
     // ==============================
-    Route::group(['prefix' => 'dashboard'], function () {
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
-    });
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
 
 
     // ==============================
@@ -50,12 +55,14 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+
     // ==============================
     // REPORT ROUTES
     // ==============================
     Route::group(['prefix' => 'laporan'], function () {
         Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
     });
+
 
     // ==============================
     // USER MANAGEMENT ROUTES
@@ -129,7 +136,3 @@ Route::middleware('auth')->group(function () {
             ->name('profil_knmp.create');
     });
 });
-
-Route::get('/forms', function () {
-    return view('forms.index');
-})->name('forms.index');
