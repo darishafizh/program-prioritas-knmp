@@ -35,6 +35,7 @@
 
     {{-- BAGIAN 2: PROGRESS PEMBANGUNAN --}}
     <h5 class="mb-1">2. Detail Rencana Pembangunan KNMP</h5>
+
     <div class="table-responsive">
         <table class="table table-bordered table-striped mb-3 align-middle">
             <thead class="table-primary text-center">
@@ -46,6 +47,7 @@
                     <th>Keterangan</th>
                 </tr>
             </thead>
+
             <tbody>
                 @php
                 $components = [
@@ -95,27 +97,25 @@
                 @endphp
 
                 @foreach ($components as $code => $section)
+
                 <tr class="table-secondary fw-bold">
                     <td colspan="5">{{ $code }}. {{ $section['title'] }}</td>
                 </tr>
 
                 @foreach ($section['items'] as $index => $item)
                 <tr>
-                    {{-- No --}}
                     <td class="text-center">{{ $index + 1 }}
                         <input type="hidden"
                             name="progress[{{ $code }}][{{ $index }}][kode]"
                             value="{{ $code }}">
                     </td>
 
-                    {{-- Nama Komponen --}}
                     <td>{{ $item }}
                         <input type="hidden"
                             name="progress[{{ $code }}][{{ $index }}][komponen]"
                             value="{{ $item }}">
                     </td>
 
-                    {{-- Target --}}
                     <td>
                         <input type="number"
                             name="progress[{{ $code }}][{{ $index }}][target]"
@@ -123,7 +123,6 @@
                             value="{{ old('progress.' . $code . '.' . $index . '.target') }}">
                     </td>
 
-                    {{-- Progres (%) --}}
                     <td>
                         <div class="input-group input-group-sm">
                             <input type="number"
@@ -135,7 +134,6 @@
                         </div>
                     </td>
 
-                    {{-- Keterangan --}}
                     <td>
                         <input type="text"
                             name="progress[{{ $code }}][{{ $index }}][keterangan]"
@@ -145,6 +143,7 @@
                     </td>
                 </tr>
                 @endforeach
+
                 @endforeach
             </tbody>
         </table>
@@ -152,6 +151,7 @@
 
     {{-- BAGIAN 3: TENAGA KERJA --}}
     <h5 class="mb-1">3. Tenaga Kerja</h5>
+
     <table class="table table-bordered mb-3 align-middle">
         <thead class="table-primary text-center">
             <tr>
@@ -160,12 +160,15 @@
                 <th>Jawaban</th>
             </tr>
         </thead>
+
         <tbody>
+
+            {{-- HAPUS FIELD TOTAL TENAGA KERJA (sesuai permintaan) --}}
+            {{-- DIGANTIKAN LANGSUNG DENGAN RINCIAN LAKI-LAKI & PEREMPUAN --}}
 
             <tr>
                 <td class="text-center">1.</td>
                 <td>Tenaga Kerja yang terlibat dalam konstruksi KNMP</td>
-                <td><input type="number" name="tk_total" class="form-control" value="{{ old('tk_total') }}"></td>
             </tr>
 
             <tr>
@@ -222,6 +225,7 @@
                     </div>
                 </td>
             </tr>
+
         </tbody>
     </table>
 
@@ -277,7 +281,8 @@
         </div>
     </div>
 
-    <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-5">
-        <button type="submit" class="btn btn-primary px-5">Simpan</button>
+    <div class="d-flex justify-content-end mt-3">
+        <button type="submit" class="btn btn-primary">Simpan</button>
     </div>
+
 </form>

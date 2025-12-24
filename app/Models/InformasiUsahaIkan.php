@@ -12,6 +12,7 @@ class InformasiUsahaIkan extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'informasi_usaha_id',
+        'responden_id',
         'jenis',
         'kg_trip',
         'persen'
@@ -20,5 +21,9 @@ class InformasiUsahaIkan extends Model
     public function usaha()
     {
         return $this->belongsTo(InformasiUsaha::class, 'informasi_usaha_id');
+    }
+    public function responden()
+    {
+        return $this->belongsTo(InformasiResponden::class, 'responden_id');
     }
 }

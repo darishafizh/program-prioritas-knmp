@@ -41,9 +41,15 @@ Route::middleware('auth')->group(function () {
         // ==============================
         Route::group(['prefix' => 'forms'], function () {
             Route::get('/{knmp}', [FormsController::class, 'index'])->name('forms.index');
+            Route::get('/{knmp}/edit-responden', [FormsController::class, 'editRespondenList'])->name('forms.edit-responden');
+            
+            // Store routes
             Route::post('/store_profile_knmp/{knmp}', [FormsController::class, 'store_profile_knmp'])->name('forms.store_profile_knmp');
             Route::post('/store_progres_knmp/{knmp}', [FormsController::class, 'store_progres_knmp'])->name('forms.store_progres_knmp');
-            Route::post('/store_tanggapan_masyarakat/{knmp}', [FormsController::class, 'store_tanggapan_masyarakat'])->name('forms.store_tanggapan_masyarakat');
+            Route::post(
+                '/store_tanggapan_masyarakat/{knmp}',
+                [FormsController::class, 'store_tanggapan_masyarakat']
+            )->name('forms.store_tanggapan_masyarakat');
             Route::post('/store_tingkat_kebahagiaan/{knmp}', [FormsController::class, 'store_tingkat_kebahagiaan'])->name('forms.store_tingkat_kebahagiaan');
             Route::post('/store_informasi_responden/{knmp}', [FormsController::class, 'store_informasi_responden'])->name('forms.store_informasi_responden');
             Route::post('/store_informasi_usaha/{knmp}', [FormsController::class, 'store_informasi_usaha'])->name('forms.store_informasi_usaha');
@@ -51,7 +57,27 @@ Route::middleware('auth')->group(function () {
             Route::post('/store_pendapatan_rt/{knmp}', [FormsController::class, 'store_pendapatan_rt'])->name('forms.store_pendapatan_rt');
             Route::post('/store_sosial_kelembagaan/{knmp}', [FormsController::class, 'store_sosial_kelembagaan'])->name('forms.store_sosial_kelembagaan');
             Route::post('/store_sosial_kelembagaan/{knmp}', [FormsController::class, 'store_sosial_kelembagaan'])->name('forms.store_sosial_kelembagaan');
-            Route::post('/store_bukti_upload/{knmp}', [FormsController::class, 'store_bukti_upload'])->name('forms.store_bukti_upload');
+            
+            // Edit/Update routes
+            Route::post('/update_profile_knmp/{knmp}', [FormsController::class, 'update_profile_knmp'])->name('forms.update_profile_knmp');
+            Route::post('/update_progres_knmp/{knmp}', [FormsController::class, 'update_progres_knmp'])->name('forms.update_progres_knmp');
+            Route::post('/update_tanggapan_masyarakat/{knmp}', [FormsController::class, 'update_tanggapan_masyarakat'])->name('forms.update_tanggapan_masyarakat');
+            
+            // File upload routes
+            Route::post('/bukti-upload', [FormsController::class, 'store_bukti_upload'])
+                ->name('forms.store_bukti_upload');
+            Route::delete('/bukti-upload', [FormsController::class, 'delete_bukti_upload'])
+                ->name('forms.delete_bukti_upload');
+            Route::delete('/bukti-upload/{id}', [FormsController::class, 'delete_bukti_single'])
+                ->name('forms.delete_bukti_single');
+            
+            // Evidence & PDF routes
+            Route::get('/evidence/{knmp}', [FormsController::class, 'evidence'])
+                ->name('survey.evidence');
+            Route::get('/questionnaires-pdf/{knmp}', [FormsController::class, 'questionnairesListPdf'])
+                ->name('survey.questionnaires-pdf');
+            Route::get('/questionnaire-pdf/{knmp}/{responden}', [FormsController::class, 'generateRespondenQuestionnairesPdf'])
+                ->name('survey.questionnaire-pdf');
         });
     });
 
@@ -62,6 +88,17 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'laporan'], function () {
         Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
     });
+
+    Route::middleware('auth')->group(function () {
+        Route::prefix('survey')->group(function () {
+
+            Route::get(
+                '/evidence/{knmp}',
+                [FormsController::class, 'evidence']
+            )->name('survey.evidence');
+        });
+    });
+
 
 
     // ==============================

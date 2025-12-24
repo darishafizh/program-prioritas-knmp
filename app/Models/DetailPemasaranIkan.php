@@ -14,6 +14,7 @@ class DetailPemasaranIkan extends Model
 
     protected $fillable = [
         'pemasaran_id',
+        'responden_id',
         'eceran_kg',
         'koperasi_kg',
         'tengkulak_kg',

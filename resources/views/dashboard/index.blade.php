@@ -31,7 +31,7 @@
             <div class="card-body">
                 <div class="float-end"><i class="mdi mdi-clipboard-text-search widget-icon"></i></div>
                 <h5 class="text-muted fw-normal mt-0">Total Survey</h5>
-                <h3 class="mt-3 mb-3">36,254</h3>
+                <h3 class="mt-3 mb-3">{{ number_format($totalSurveyTerisi, 0, ',', '.') }}</h3>
             </div>
         </div>
     </div>
@@ -41,7 +41,7 @@
             <div class="card-body">
                 <div class="float-end"><i class="mdi mdi-database-check widget-icon"></i></div>
                 <h5 class="text-muted fw-normal mt-0">Tingkat Kelengkapan Data</h5>
-                <h3 class="mt-3 mb-3">36,254</h3>
+                <h3 class="mt-3 mb-3">{{ number_format($tingkatKelengkapanData, 2, ',', '.') }}%</h3>
             </div>
         </div>
     </div>
@@ -54,7 +54,7 @@
             <div class="card-body">
                 <div class="float-end"><i class="mdi mdi-bullseye-arrow widget-icon"></i></div>
                 <h5 class="text-muted fw-normal mt-0">Rata-rata Capaian Indikator</h5>
-                <h3 class="mt-3 mb-3">36,254</h3>
+                <h3 class="mt-3 mb-3">{{ number_format($capaianIndikator, 2, ',', '.') }}%</h3>
             </div>
         </div>
     </div>
@@ -64,7 +64,7 @@
             <div class="card-body">
                 <div class="float-end"><i class="mdi mdi-emoticon-happy widget-icon"></i></div>
                 <h5 class="text-muted fw-normal mt-0">Rata-rata Indeks Kebahagiaan</h5>
-                <h3 class="mt-3 mb-3">36,254</h3>
+                <h3 class="mt-3 mb-3">{{ number_format($rataRataKebahagiaan, 2, ',', '.') }}</h3>
             </div>
         </div>
     </div>
@@ -74,7 +74,7 @@
             <div class="card-body">
                 <div class="float-end"><i class="mdi mdi-home-group-plus widget-icon"></i></div>
                 <h5 class="text-muted fw-normal mt-0">Desa dengan Aset Bertambah</h5>
-                <h3 class="mt-3 mb-3">36,254</h3>
+                <h3 class="mt-3 mb-3">{{ number_format($desaAsetBertambah, 0, ',', '.') }}</h3>
             </div>
         </div>
     </div>
@@ -183,35 +183,72 @@
 
 @endsection
 
-{{-- Leaflet Map Script --}}
 @push('scripts')
-<script>
-    var map = L.map('map-knmp').setView([-2.5, 118], 5);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+<script>
+    /* ===================================
+       FIX: Prevent duplicate map instance
+    =================================== */
+    if (window.mapInstance) {
+        window.mapInstance.remove();
+    }
+
+    var map = L.map("map-knmp").setView([-2.5, 118], 5);
+    window.mapInstance = map;
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19
     }).addTo(map);
 
-    // ICON MERAH
+    /* ===================================
+       ICON MERAH (VALID CDN)
+    =================================== */
     var redIcon = new L.Icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+        iconUrl: "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-red.png",
+        shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
-        shadowSize: [41, 41]
+        shadowSize: [41, 41],
     });
 
+    /* ===================================
+       LOAD DATA DARI CONTROLLER
+    =================================== */
     var desaKNMP = @json($desa_knmp ?? []);
 
     desaKNMP.forEach(function(item) {
-        if (item.latitude && item.longitude) {
+        if (item.latitude !== null && item.longitude !== null) {
+
             L.marker([item.latitude, item.longitude], {
                     icon: redIcon
                 })
                 .addTo(map)
-                .bindPopup("<b>" + item.nama + "</b>");
+                .bindPopup(
+                    "<b>" + (item.nama ?? "Lokasi KNMP " + item.id) + "</b><br>" +
+                    "Lat: " + item.latitude + "<br>" +
+                    "Lng: " + item.longitude
+                );
         }
     });
+
+    /* ===================================
+       FIX MAP RENDER
+    =================================== */
+    setTimeout(() => map.invalidateSize(), 300);
 </script>
+
+
+
+<style>
+    /* FIX: Leaflet icon tidak terkena CSS bootstrap/theme */
+    .leaflet-marker-icon,
+    .leaflet-marker-shadow {
+        max-width: none !important;
+        max-height: none !important;
+        image-rendering: auto !important;
+        display: block !important;
+    }
+</style>
+
 @endpush

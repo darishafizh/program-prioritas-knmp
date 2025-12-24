@@ -14,6 +14,7 @@ class InformasiUsaha extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'knmp_id',
+        'responden_id',
         'nama_kapal',
         'tahun_pembuatan',
         'ukuran_gt',
@@ -41,6 +42,7 @@ class InformasiUsaha extends Model
         'total_biaya_operasional'
     ];
 
+
     public function knmp()
     {
         return $this->belongsTo(Knmp::class, 'knmp_id');
@@ -49,5 +51,9 @@ class InformasiUsaha extends Model
     public function ikan()
     {
         return $this->hasMany(InformasiUsahaIkan::class);
+    }
+    public function responden()
+    {
+        return $this->belongsTo(InformasiResponden::class, 'responden_id');
     }
 }

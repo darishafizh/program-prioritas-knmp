@@ -14,6 +14,7 @@ class TingkatKebahagiaanNelayan extends Model
 
     protected $fillable = [
         'knmp_id',
+        'responden_id', 
         'nomor_soal',
         'kategori',
         'jawaban_teks',
@@ -23,5 +24,9 @@ class TingkatKebahagiaanNelayan extends Model
     public function knmp()
     {
         return $this->belongsTo(Knmp::class, 'knmp_id');
+    }
+    public function responden()
+    {
+        return $this->belongsTo(InformasiResponden::class, 'responden_id');
     }
 }

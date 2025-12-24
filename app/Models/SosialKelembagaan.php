@@ -8,15 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class SosialKelembagaan extends Model
 {
     use HasFactory;
+
     protected $table = 'sosial_kelembagaan';
-    protected $primaryKey = 'id';
+
     protected $fillable = [
         'knmp_id',
+        'responden_id',
+
         'anggota_kelompok',
         'manfaat_kelompok',
         'anggota_koperasi',
         'tertarik_koperasi',
         'manfaat_koperasi',
+
         'koperasi_rapat_tahunan',
         'koperasi_partisipasi_aktif',
         'koperasi_pengurus_kompeten',
@@ -25,9 +29,12 @@ class SosialKelembagaan extends Model
         'koperasi_jaringan_pasar',
         'koperasi_kepercayaan_usaha',
     ];
-
     public function knmp()
     {
         return $this->belongsTo(Knmp::class, 'knmp_id');
+    }
+    public function responden()
+    {
+        return $this->belongsTo(InformasiResponden::class, 'responden_id');
     }
 }

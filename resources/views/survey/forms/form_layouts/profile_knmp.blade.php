@@ -164,8 +164,8 @@
     </div>
 
     <div class="row">
-        <div class="col-12 justify-content-end d-flex">
-            <button type="submit" class="btn btn-primary m-2">Simpan Jawaban</button>
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
     </div>
 </form>

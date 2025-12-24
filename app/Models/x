@@ -8,17 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class InformasiPendapatanRumahTangga extends Model
 {
     use HasFactory;
-
     protected $table = 'informasi_pendapatan_rumah_tangga';
-
+    protected $primaryKey = 'id';
     protected $fillable = [
         'knmp_id',
-        'responden_id',
-
         'pendapatan_perikanan',
         'pendapatan_non_perikanan',
         'pendapatan_total',
-
         'kontribusi_nelayan_persen',
         'jumlah_sumber_penghasilan',
         'ketergantungan_perikanan',
@@ -27,13 +23,9 @@ class InformasiPendapatanRumahTangga extends Model
         'kontribusi_perempuan_persen',
     ];
 
+    // Relasi ke knmp
     public function knmp()
     {
-        return $this->belongsTo(Knmp::class);
-    }
-
-    public function responden()
-    {
-        return $this->belongsTo(InformasiResponden::class);
+        return $this->belongsTo(Knmp::class, 'knmp_id');
     }
 }

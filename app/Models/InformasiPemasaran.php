@@ -14,6 +14,7 @@ class InformasiPemasaran extends Model
 
     protected $fillable = [
         'knmp_id',
+        'responden_id',
         'kendala_pemasaran_text',
         'cara_penanganan_ikan',
     ];
@@ -26,5 +27,9 @@ class InformasiPemasaran extends Model
     public function detail_pemasaran()
     {
         return $this->hasOne(DetailPemasaranIkan::class, 'pemasaran_id');
+    }
+    public function responden()
+    {
+        return $this->belongsTo(InformasiResponden::class, 'responden_id');
     }
 }

@@ -65,4 +65,34 @@ class InformasiResponden extends Model
     {
         return $this->belongsTo(KnmpVillages::class, 'village_id');
     }
+
+    public function tingkatKebahagiaan()
+    {
+        return $this->hasMany(TingkatKebahagiaanNelayan::class, 'responden_id');
+    }
+
+    public function tanggapanMasyarakat()
+    {
+        return $this->hasOne(TanggapanMasyarakat::class, 'responden_id');
+    }
+
+    public function informasiUsaha()
+    {
+        return $this->hasMany(InformasiUsaha::class, 'responden_id');
+    }
+
+    public function informasiPemasaran()
+    {
+        return $this->hasOne(InformasiPemasaran::class, 'responden_id');
+    }
+
+    public function pendapatanRt()
+    {
+        return $this->hasOne(InformasiPendapatanRumahTangga::class, 'responden_id');
+    }
+
+    public function sosialKelembagaan()
+    {
+        return $this->hasOne(SosialKelembagaan::class, 'responden_id');
+    }
 }

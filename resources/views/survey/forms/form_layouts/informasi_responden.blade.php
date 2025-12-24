@@ -3,79 +3,108 @@
     {{-- Hidden field untuk knmp_id (asumsi) --}}
     <input type="hidden" name="knmp_id" value="{{ $knmp->id ?? '' }}">
 
+    {{-- ========================= --}}
+    {{-- PILIH RESPONDEN --}}
+    {{-- ========================= --}}
+    <div class="mb-4">
+        <label class="form-label fw-bold">
+            Responden
+        </label>
+
+        <select name="responden_id_select"
+            class="form-select @error('responden_id_select') is-invalid @enderror"
+            required>
+            <option value="">-- Pilih Responden --</option>
+            @foreach ($respondenList as $r)
+            @php
+                $isSelected = old('responden_id_select') == $r->id || 
+                             ($selectedRespondenId && $selectedRespondenId == $r->id && !old('responden_id_select')) ||
+                             (isset($selectedRespondenData['informasi_responden']) && $selectedRespondenData['informasi_responden'] && $selectedRespondenData['informasi_responden']->id == $r->id && !old('responden_id_select'));
+            @endphp
+            <option value="{{ $r->id }}" {{ $isSelected ? 'selected' : '' }}>
+                {{ $r->nama_responden }} ({{ $r->nik }})
+            </option>
+            @endforeach
+        </select>
+
+        @error('responden_id_select')
+        <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+
     <div class="row">
         <div class="col-md-6">
 
             <div class="mb-3">
                 <label class="form-label">Nama Responden</label>
-                <input type="text" name="nama_responden" class="form-control">
+                <input type="text" name="nama_responden" class="form-control" value="{{ old('nama_responden') }}">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Nomor Induk Kependudukan (NIK)</label>
-                <input type="text" name="nik" class="form-control">
+                <input type="text" name="nik" class="form-control" value="{{ old('nik') }}">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Nomor Kusuka</label>
-                <input type="text" name="nomor_kusuka" class="form-control">
+                <input type="text" name="nomor_kusuka" class="form-control" value="{{ old('nomor_kusuka') }}">
             </div>
 
             <label class="form-label">Tempat, Tanggal Lahir</label>
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <input type="text" name="tempat_lahir" class="form-control" placeholder="Tempat Lahir">
+                        <input type="text" name="tempat_lahir" class="form-control" placeholder="Tempat Lahir" value="{{ old('tempat_lahir') }}">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <input type="date" name="tanggal_lahir" id="tanggal_lahir" class="form-control">
+                        <input type="date" name="tanggal_lahir" id="tanggal_lahir" class="form-control" value="{{ old('tanggal_lahir') }}">
                     </div>
                 </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Umur</label>
-                <input type="number" name="umur" id="umur" class="form-control" readonly>
+                <input type="number" name="umur" id="umur" class="form-control" readonly value="{{ old('umur') }}">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Jenis Kelamin</label>
                 <select name="jenis_kelamin" class="form-select">
-                    <option value="">-- Pilih --</option>
-                    <option value="Laki-laki">Laki-laki</option>
-                    <option value="Perempuan">Perempuan</option>
+                    <option value="" {{ old('jenis_kelamin') == '' ? 'selected' : '' }}>-- Pilih --</option>
+                    <option value="Laki-laki" {{ old('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                    <option value="Perempuan" {{ old('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                 </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Suku Bangsa</label>
-                <input type="text" name="suku_bangsa" class="form-control">
+                <input type="text" name="suku_bangsa" class="form-control" value="{{ old('suku_bangsa') }}">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Pendidikan terakhir</label>
-                <input type="text" name="pendidikan_terakhir" class="form-control">
+                <input type="text" name="pendidikan_terakhir" class="form-control" value="{{ old('pendidikan_terakhir') }}">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">WPP Penangkapan Ikan</label>
-                <input type="text" name="wpp" class="form-control">
+                <input type="text" name="wpp" class="form-control" value="{{ old('wpp') }}">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Alamat (Jl/RT/RW)</label>
-                <input type="text" name="alamat" class="form-control" placeholder="Jl/RT/RW">
+                <input type="text" name="alamat" class="form-control" placeholder="Jl/RT/RW" value="{{ old('alamat') }}">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Jumlah anggota keluarga yang tinggal di rumah</label>
-                <input type="number" name="jumlah_anggota_rumah" class="form-control">
+                <input type="number" name="jumlah_anggota_rumah" class="form-control" value="{{ old('jumlah_anggota_rumah') }}">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Jumlah anggota keluarga perempuan yg tinggal di rumah</label>
-                <input type="number" name="jumlah_anggota_perempuan_rumah" class="form-control">
+                <input type="number" name="jumlah_anggota_perempuan_rumah" class="form-control" value="{{ old('jumlah_anggota_perempuan_rumah') }}">
             </div>
         </div>
 
@@ -83,31 +112,31 @@
 
             <div class="mb-3">
                 <label class="form-label">Jumlah anggota keluarga yang bekerja</label>
-                <input type="number" name="jumlah_anggota_bekerja" class="form-control">
+                <input type="number" name="jumlah_anggota_bekerja" class="form-control" value="{{ old('jumlah_anggota_bekerja') }}">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Jumlah anggota keluarga perempuan yang bekerja</label>
-                <input type="number" name="jumlah_anggota_perempuan_bekerja" class="form-control">
+                <input type="number" name="jumlah_anggota_perempuan_bekerja" class="form-control" value="{{ old('jumlah_anggota_perempuan_bekerja') }}">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Jumlah ABK dalam satu kapal</label>
-                <input type="number" name="jumlah_abk" class="form-control">
+                <input type="number" name="jumlah_abk" class="form-control" value="{{ old('jumlah_abk') }}">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Pengalaman Usaha (Tahun)</label>
-                <input type="number" name="pengalaman_usaha" class="form-control">
+                <input type="number" name="pengalaman_usaha" class="form-control" value="{{ old('pengalaman_usaha') }}">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Provinsi</label>
                 <select class="form-control select2" name="province_id" id="province_id" data-toggle="select2">
                     @foreach ($provinces as $prov)
-                        <option value="{{ $prov->id }}" {{ $knmp->province_id == $prov->id ? 'selected' : '' }}>
-                            {{ $prov->name }}
-                        </option>
+                    <option value="{{ $prov->id }}" {{ $knmp->province_id == $prov->id ? 'selected' : '' }}>
+                        {{ $prov->name }}
+                    </option>
                     @endforeach
                 </select>
             </div>
@@ -116,9 +145,9 @@
                 <label class="form-label">Kabupaten</label>
                 <select class="form-control select2" name="regency_id" id="regency_id" data-toggle="select2">
                     @foreach ($regencies as $kab)
-                        <option value="{{ $kab->id }}" {{ $knmp->regency_id == $kab->id ? 'selected' : '' }}>
-                            {{ $kab->name }}
-                        </option>
+                    <option value="{{ $kab->id }}" {{ $knmp->regency_id == $kab->id ? 'selected' : '' }}>
+                        {{ $kab->name }}
+                    </option>
                     @endforeach
                 </select>
             </div>
@@ -127,9 +156,9 @@
                 <label class="form-label">Kecamatan</label>
                 <select class="form-control select2" name="district_id" id="district_id" data-toggle="select2">
                     @foreach ($districts as $kec)
-                        <option value="{{ $kec->id }}" {{ $knmp->district_id == $kec->id ? 'selected' : '' }}>
-                            {{ $kec->name }}
-                        </option>
+                    <option value="{{ $kec->id }}" {{ $knmp->district_id == $kec->id ? 'selected' : '' }}>
+                        {{ $kec->name }}
+                    </option>
                     @endforeach
                 </select>
             </div>
@@ -138,16 +167,16 @@
                 <label class="form-label">Desa</label>
                 <select class="form-control select2" name="village_id" id="village_id" data-toggle="select2">
                     @foreach ($villages as $desa)
-                        <option value="{{ $desa->id }}" {{ $knmp->village_id == $desa->id ? 'selected' : '' }}>
-                            {{ $desa->name }}
-                        </option>
+                    <option value="{{ $desa->id }}" {{ $knmp->village_id == $desa->id ? 'selected' : '' }}>
+                        {{ $desa->name }}
+                    </option>
                     @endforeach
                 </select>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">No. Telp/HP Responden</label>
-                <input type="text" name="no_hp_responden" class="form-control">
+                <input type="text" name="no_hp_responden" class="form-control" value="{{ old('no_hp_responden') }}">
             </div>
 
             <div class="mb-3">
@@ -178,7 +207,7 @@
     </div>
 
     <div class="d-flex justify-content-end mt-3">
-        <button type="submit" class="btn btn-primary">Simpan Informasi</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
     </div>
 </form>
 

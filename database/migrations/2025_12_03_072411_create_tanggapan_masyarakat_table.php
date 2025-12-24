@@ -13,18 +13,31 @@ return new class extends Migration
     {
         Schema::create('tanggapan_masyarakat', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('knmp_id');
-            $table->foreign('knmp_id')
-                ->references('id')
-                ->on('knmp')
-                ->onDelete('cascade');
 
+            // ===============================
+            // RELASI KE KNMP (DESA)
+            // ===============================
+            $table->foreignId('knmp_id')
+                ->constrained('knmp')
+                ->cascadeOnDelete();
+
+            // ===============================
+            // RELASI KE RESPONDEN (WAJIB)
+            // ===============================
+            $table->foreignId('responden_id')
+                ->constrained('informasi_responden')
+                ->cascadeOnDelete();
+
+            // ===============================
+            // ISI KUESIONER
+            // ===============================
             $table->boolean('kesesuaian_kebutuhan')->nullable();
             $table->text('item_tidak_sesuai')->nullable();
             $table->string('tingkat_kesenangan')->nullable();
             $table->text('alasan_tidak_senang')->nullable();
             $table->text('harapan_masyarakat')->nullable();
             $table->text('masukan_saran_perbaikan')->nullable();
+
             $table->timestamps();
         });
     }

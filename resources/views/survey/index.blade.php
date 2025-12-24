@@ -1,28 +1,28 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- start page title -->
-    <div class="row">
-        <div class="col-12">
-            <div class="page-title-box">
-                <div class="page-title-right">
-                    <form class="d-flex">
-                    </form>
-                </div>
-                <h4 class="page-title">Survey KNMP</h4>
-                <p class="text-muted font-14">
-                    Menu ini adalah daftar Kampung Nelayan Merah Putih (KNMP) yang menjadi target survei. Di halaman
-                    ini,
-                    Anda dapat melihat daftar KNMP beserta informasi terkait seperti desa, kecamatan, kabupaten, dan
-                    provinsi.
-                    Untuk memulai pengisian survei, klik tombol "Input Survey" pada baris KNMP yang diinginkan.
-                </p>
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <form class="d-flex">
+                </form>
             </div>
+            <h4 class="page-title">Survey KNMP</h4>
+            <p class="text-muted font-14">
+                Menu ini adalah daftar Kampung Nelayan Merah Putih (KNMP) yang menjadi target survei. Di halaman
+                ini,
+                Anda dapat melihat daftar KNMP beserta informasi terkait seperti desa, kecamatan, kabupaten, dan
+                provinsi.
+                Untuk memulai pengisian survei, klik tombol "Input Survey" pada baris KNMP yang diinginkan.
+            </p>
         </div>
     </div>
-    <!-- end page title -->
+</div>
+<!-- end page title -->
 
-    {{-- <div class="row">
+{{-- <div class="row">
         <div class="col-12">
             <div class="card p-3">
                 <div class="row">
@@ -168,58 +168,65 @@
         </div>
     </div> --}}
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="header-title mb-3">Daftar knmp</h4>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title mb-3">Daftar knmp</h4>
 
-                    <table id="scroll-horizontal-datatable" class="table table-striped w-100 nowrap">
-                        <thead>
-                            <tr>
-                                <th>Nama KNMP</th>
-                                <th>Desa</th>
-                                <th>Kecamatan</th>
-                                <th>Kabupaten</th>
-                                <th>Provinsi</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($knmps as $knmp)
-                                <tr>
-                                    <td>{{ $knmp->nama ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->village->name ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->district->name ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->regency->name ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->province->name ?? 'N/A' }}</td>
-                                    <td>
-                                        <a type="button" href="{{ route('forms.index', $knmp->id) }}"
-                                            class="btn btn-primary" data-bs-container="#tooltip-container2"
-                                            data-bs-toggle="tooltip" data-bs-placement="left" title="Input Survey"><i
-                                                class="mdi mdi-pencil-box"></i>
-                                        </a>
-                                        {{-- <a type="button" href="" class="btn btn-success"
+                <table id="scroll-horizontal-datatable" class="table table-striped w-100 nowrap">
+                    <thead>
+                        <tr>
+                            <th>Nama KNMP</th>
+                            <th>Desa</th>
+                            <th>Kecamatan</th>
+                            <th>Kabupaten</th>
+                            <th>Provinsi</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($knmps as $knmp)
+                        <tr>
+                            <td>{{ $knmp->nama ?? 'N/A' }}</td>
+                            <td>{{ $knmp->village->name ?? 'N/A' }}</td>
+                            <td>{{ $knmp->district->name ?? 'N/A' }}</td>
+                            <td>{{ $knmp->regency->name ?? 'N/A' }}</td>
+                            <td>{{ $knmp->province->name ?? 'N/A' }}</td>
+                            <td>
+                                <a type="button" href="{{ route('forms.index', $knmp->id) }}"
+                                    class="btn btn-primary" data-bs-container="#tooltip-container2"
+                                    data-bs-toggle="tooltip" data-bs-placement="left" title="Input Survey"><i
+                                        class="mdi mdi-pencil-box"></i>
+                                </a>
+                                <a type="button" href="{{ route('forms.edit-responden', $knmp->id) }}"
+                                    class="btn btn-warning" data-bs-container="#tooltip-container2"
+                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Responden"><i
+                                        class="mdi mdi-account-edit"></i>
+                                </a>
+                                {{-- <a type="button" href="" class="btn btn-success"
                                             data-bs-container="#tooltip-container2" data-bs-toggle="tooltip"
                                             data-bs-placement="top" title="Lihat Detail"><i class="mdi mdi-eye"></i>
                                         </a> --}}
-                                        <a type="button" href="" class="btn btn-danger"
-                                            data-bs-container="#tooltip-container2" data-bs-toggle="tooltip"
-                                            data-bs-placement="top" title="Lihat PDF"><i class="mdi mdi-file-pdf-box"></i>
-                                        </a>
-                                        <a type="button" href="" class="btn btn-info"
-                                            data-bs-container="#tooltip-container2" data-bs-toggle="tooltip"
-                                            data-bs-placement="right" title="Evidence"><i
-                                                class="mdi mdi-file-image-marker"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                <a type="button" href="{{ route('survey.questionnaires-pdf', $knmp->id) }}" class="btn btn-danger"
+                                    data-bs-container="#tooltip-container2" data-bs-toggle="tooltip"
+                                    data-bs-placement="top" title="Lihat PDF"><i class="mdi mdi-file-pdf-box"></i>
+                                </a>
+                                <a href="{{ route('survey.evidence', $knmp->id) }}"
+                                    class="btn btn-info"
+                                    data-bs-toggle="tooltip"
+                                    title="Evidence">
+                                    <i class="mdi mdi-file-image-marker"></i>
+                                </a>
 
-                </div> <!-- end card body-->
-            </div> <!-- end card -->
-        </div><!-- end col-->
-    </div> <!-- end row-->
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+            </div> <!-- end card body-->
+        </div> <!-- end card -->
+    </div><!-- end col-->
+</div> <!-- end row-->
 @endsection

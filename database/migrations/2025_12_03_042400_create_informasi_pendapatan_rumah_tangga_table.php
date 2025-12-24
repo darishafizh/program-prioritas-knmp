@@ -13,8 +13,12 @@ return new class extends Migration
     {
         Schema::create('informasi_pendapatan_rumah_tangga', function (Blueprint $table) {
             $table->id();
+
             $table->unsignedBigInteger('knmp_id');
+            $table->unsignedBigInteger('responden_id');
+
             $table->foreign('knmp_id')->references('id')->on('knmp')->onDelete('cascade');
+            $table->foreign('responden_id')->references('id')->on('informasi_responden')->onDelete('cascade');
 
             $table->decimal('pendapatan_perikanan', 15, 2)->nullable();
             $table->decimal('pendapatan_non_perikanan', 15, 2)->nullable();
@@ -26,6 +30,7 @@ return new class extends Migration
             $table->string('stabilitas_pendapatan')->nullable();
             $table->string('keterlibatan_perempuan')->nullable();
             $table->string('kontribusi_perempuan_persen')->nullable();
+
             $table->timestamps();
         });
     }

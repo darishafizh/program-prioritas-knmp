@@ -6,16 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('sosial_kelembagaan', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('knmp_id')
-                ->constrained('knmp')
-                ->onDelete('cascade');
+
+            $table->unsignedBigInteger('knmp_id');
+            $table->unsignedBigInteger('responden_id');
 
             $table->string('anggota_kelompok')->nullable();
             $table->string('manfaat_kelompok')->nullable();
@@ -32,12 +29,13 @@ return new class extends Migration
             $table->string('koperasi_kepercayaan_usaha')->nullable();
 
             $table->timestamps();
+
+            // FK boleh, tapi tidak wajib
+            $table->foreign('knmp_id')->references('id')->on('knmp')->onDelete('cascade');
+            $table->foreign('responden_id')->references('id')->on('informasi_responden')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('sosial_kelembagaan');
