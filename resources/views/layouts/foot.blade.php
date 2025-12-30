@@ -26,19 +26,16 @@
 <!-- third party js ends -->
 
 <!-- demo app -->
-<script src="{{ asset('assets/js/pages/demo.dashboard.js') }}"></script>
-<script src="{{ asset('assets/js/pages/demo.datatable-init.js') }}"></script>
-<script src="{{ asset('assets/js/pages/demo.dashboard-analytics.js') }}"></script>
-<script src="{{ asset('assets/js/pages/demo.dashboard-projects.js') }}"></script>
+
 <script src="{{ asset('assets/js/ui/component.fileupload.js') }}"></script>
 <!-- end demo js -->
 
 <!-- Safe Bootstrap component init -->
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
 
         // Tooltip
-        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
             try {
                 let instance = bootstrap.Tooltip.getInstance(el);
                 if (instance) instance.dispose();
@@ -52,7 +49,7 @@
         });
 
         // Popover
-        document.querySelectorAll('[data-bs-toggle="popover"]').forEach(function(el) {
+        document.querySelectorAll('[data-bs-toggle="popover"]').forEach(function (el) {
             try {
                 let instance = bootstrap.Popover.getInstance(el);
                 if (instance) instance.dispose();
@@ -66,7 +63,7 @@
         });
 
         // Offcanvas (jika ada)
-        document.querySelectorAll('.offcanvas').forEach(function(el) {
+        document.querySelectorAll('.offcanvas').forEach(function (el) {
             try {
                 let instance = bootstrap.Offcanvas.getInstance(el);
                 if (!instance) new bootstrap.Offcanvas(el);

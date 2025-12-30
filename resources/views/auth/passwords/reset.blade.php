@@ -1,0 +1,52 @@
+@extends('layouts.auth_simple')
+
+@section('content')
+    <div class="card login-card">
+        <div class="card-body">
+            <h4 class="login-title text-center">Update Password</h4>
+            <p class="login-subtitle text-center">Masukan password baru Anda.</p>
+
+            <form method="POST" action="{{ route('password.update') }}">
+                @csrf
+
+                <input type="hidden" name="token" value="{{ $token }}">
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email"
+                        value="{{ $email ?? old('email') }}" required autocomplete="email" autofocus readonly>
+
+                    @error('email')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password Baru</label>
+                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
+                        name="password" required autocomplete="new-password">
+
+                    @error('password')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+
+                <div class="mb-3">
+                    <label for="password-confirm" class="form-label">Konfirmasi Password Baru</label>
+                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required
+                        autocomplete="new-password">
+                </div>
+
+                <div class="mb-0 text-center">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="mdi mdi-lock-reset me-1"></i> Reset Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endsection

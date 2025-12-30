@@ -1,435 +1,197 @@
 @extends('layouts.app')
 
 @section('content')
-<style>
-    .page-title-box {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 30px 0;
-        border-radius: 12px;
-        margin-bottom: 30px;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-    }
+    <link rel="stylesheet" href="{{ asset('css/survey-custom.css') }}">
 
-    .page-title-box h4 {
-        color: white;
-        font-weight: 700;
-        margin-bottom: 10px;
-    }
-
-    .page-title-box p {
-        color: rgba(255, 255, 255, 0.9);
-        margin: 0;
-        font-size: 14px;
-    }
-
-    .breadcrumb-nav {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 20px;
-    }
-
-    .breadcrumb-nav a {
-        color: #667eea;
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.3s ease;
-    }
-
-    .breadcrumb-nav a:hover {
-        color: #764ba2;
-    }
-
-    .breadcrumb-nav span {
-        color: #999;
-    }
-
-    /* Header Info */
-    .info-card {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 30px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        border-left: 4px solid #667eea;
-    }
-
-    .info-card h6 {
-        font-size: 12px;
-        font-weight: 600;
-        color: #999;
-        text-transform: uppercase;
-        margin-bottom: 5px;
-    }
-
-    .info-card p {
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-        margin: 0;
-    }
-
-    /* Responden List */
-    .responden-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
-        margin-top: 20px;
-    }
-
-    .responden-card {
-        background: white;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-        border: 2px solid #f0f0f0;
-    }
-
-    .responden-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
-        border-color: #667eea;
-    }
-
-    .responden-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .avatar {
-        width: 50px;
-        height: 50px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-    }
-
-    .responden-header .info {
-        flex: 1;
-    }
-
-    .responden-header h5 {
-        margin: 0 0 5px 0;
-        font-weight: 700;
-        font-size: 16px;
-    }
-
-    .responden-header p {
-        margin: 0;
-        font-size: 13px;
-        opacity: 0.9;
-    }
-
-    /* Responden Body */
-    .responden-body {
-        padding: 20px;
-    }
-
-    .detail-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 0;
-        border-bottom: 1px solid #f5f5f5;
-        font-size: 13px;
-    }
-
-    .detail-row:last-child {
-        border-bottom: none;
-    }
-
-    .responden-body .detail-label {
-        color: #999;
-        font-weight: 500;
-    }
-
-    .responden-body .detail-value {
-        color: #333;
-        font-weight: 600;
-        text-align: right;
-    }
-
-    .status-badge {
-        display: inline-block;
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        margin-top: 10px;
-    }
-
-    .status-badge.complete {
-        background: #d4edda;
-        color: #155724;
-    }
-
-    .status-badge.incomplete {
-        background: #f8d7da;
-        color: #721c24;
-    }
-
-    .responden-footer {
-        padding: 20px;
-        border-top: 1px solid #f0f0f0;
-        display: flex;
-        gap: 10px;
-    }
-
-    .btn-edit {
-        flex: 1;
-        padding: 10px 15px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 13px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        text-decoration: none;
-    }
-
-    .btn-edit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        color: white;
-    }
-
-    /* Empty State */
-    .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-        background: #f8f9fa;
-        border-radius: 12px;
-        margin-top: 30px;
-    }
-
-    .empty-state i {
-        font-size: 80px;
-        color: #ddd;
-        display: block;
-        margin-bottom: 20px;
-    }
-
-    .empty-state h5 {
-        color: #999;
-        margin-bottom: 10px;
-    }
-
-    .empty-state p {
-        color: #ccc;
-        margin: 0;
-    }
-
-    /* Back Button */
-    .btn-back {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        background: white;
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        color: #333;
-        text-decoration: none;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        font-size: 13px;
-        margin-bottom: 20px;
-    }
-
-    .btn-back:hover {
-        background: #f5f5f5;
-        border-color: #667eea;
-        color: #667eea;
-    }
-
-    /* Responsive */
-    @media (max-width: 1200px) {
-        .responden-list {
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        }
-    }
-
-    @media (max-width: 768px) {
-        .responden-list {
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        }
-
-        .page-title-box {
-            padding: 20px 0;
-        }
-
-        .page-title-box h4 {
-            font-size: 20px;
-        }
-
-        .info-card {
-            padding: 15px;
-        }
-
-        .info-card p {
-            font-size: 14px;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .responden-list {
-            grid-template-columns: 1fr;
-        }
-
-        .responden-footer {
-            flex-direction: column;
-        }
-
-        .btn-edit {
-            width: 100%;
-        }
-
-        .page-title-box h4 {
-            font-size: 18px;
-        }
-
-        .breadcrumb-nav {
-            font-size: 12px;
-        }
-    }
-</style>
-
-<!-- Breadcrumb -->
-<div class="breadcrumb-nav">
-    <a href="{{ route('survey.index') }}">Survey</a>
-    <span>/</span>
-    <span>Edit Responden</span>
-</div>
-
-<!-- Header Title -->
-<div class="page-title-box">
-    <h4>
-        <i class="mdi mdi-pencil-box"></i> Edit Data Responden
-    </h4>
-    <p>Edit dan kelola data responden per individu di {{ $knmp->nama ?? 'KNMP' }}</p>
-</div>
-
-<!-- Info Card -->
-<div class="info-card">
+    <!-- start page title -->
     <div class="row">
-        <div class="col-md-4">
-            <h6>Kampung Nelayan</h6>
-            <p>{{ $knmp->nama ?? 'N/A' }}</p>
-        </div>
-        <div class="col-md-4">
-            <h6>Total Responden</h6>
-            <p>{{ count($responden) }} Responden</p>
-        </div>
-        <div class="col-md-4">
-            <h6>Data Terisi</h6>
-            <p>{{ $responden->filter(fn($r) => $r['is_complete'])->count() }}/{{ count($responden) }}</p>
-        </div>
-    </div>
-</div>
-
-<!-- Back Button -->
-<a href="{{ route('survey.index') }}" class="btn-back">
-    <i class="mdi mdi-arrow-left"></i>
-    Kembali ke Menu Survey
-</a>
-
-<!-- Responden List -->
-@if($responden->isEmpty())
-    <div class="empty-state">
-        <i class="mdi mdi-account-multiple"></i>
-        <h5>Belum Ada Responden</h5>
-        <p>Tidak ada responden yang telah didaftarkan untuk KNMP ini</p>
-    </div>
-@else
-    <div class="responden-list">
-        @foreach($responden as $item)
-            <div class="responden-card">
-                <!-- Header -->
-                <div class="responden-header">
-                    <div class="avatar">
-                        @if($item['jenis_kelamin'] === 'Perempuan')
-                            👩
-                        @else
-                            👨
-                        @endif
-                    </div>
-                    <div class="info">
-                        <h5>{{ $item['nama_responden'] }}</h5>
-                        <p>NIK: {{ $item['nik'] }}</p>
-                    </div>
-                </div>
-
-                <!-- Body -->
-                <div class="responden-body">
-                    <div class="detail-row">
-                        <span class="detail-label">Jenis Kelamin</span>
-                        <span class="detail-value">{{ $item['jenis_kelamin'] }}</span>
-                    </div>
-
-                    <div class="detail-row">
-                        <span class="detail-label">Tanggal Wawancara</span>
-                        <span class="detail-value">
-                            {{ \Carbon\Carbon::parse($item['tanggal_wawancara'])->format('d/m/Y') }}
-                        </span>
-                    </div>
-
-                    <div class="detail-row">
-                        <span class="detail-label">Enumerator</span>
-                        <span class="detail-value">{{ $item['nama_enumerator'] }}</span>
-                    </div>
-
-                    <div class="detail-row">
-                        <span class="detail-label">Jawaban Terisi</span>
-                        <span class="detail-value">{{ $item['total_answers'] }} Soal</span>
-                    </div>
-
-                    @if($item['last_updated'])
-                        <div class="detail-row">
-                            <span class="detail-label">Terakhir Diperbarui</span>
-                            <span class="detail-value">
-                                {{ \Carbon\Carbon::parse($item['last_updated'])->format('d/m/Y H:i') }}
-                            </span>
-                        </div>
-                    @endif
-
-                    <!-- Status Badge -->
-                    @if($item['is_complete'])
-                        <span class="status-badge complete">
-                            <i class="mdi mdi-check-circle"></i> Terisi
-                        </span>
-                    @else
-                        <span class="status-badge incomplete">
-                            <i class="mdi mdi-alert-circle"></i> Belum Terisi
-                        </span>
-                    @endif
-                </div>
-
-                <!-- Footer -->
-                <div class="responden-footer">
-                    <a href="{{ route('forms.index', $knmp->id) }}?responden={{ $item['id'] }}" class="btn-edit">
-                        <i class="mdi mdi-pencil"></i>
-                        Edit Data
-                    </a>
+        <div class="col-12">
+            <div class="page-title-box d-flex align-items-center justify-content-between"
+                style="background: transparent; box-shadow: none; padding: 15px 0; margin-bottom: 20px;">
+                <h4 class="page-title mb-0">
+                    <i class="mdi mdi-account-edit-outline me-1"></i> Edit Data Responden
+                </h4>
+                <div class="page-title-right">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb bg-transparent m-0 p-0">
+                            <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}"><i
+                                        class="mdi mdi-home-outline"></i></a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('survey.index') }}">Survey</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Edit Responden</li>
+                        </ol>
+                    </nav>
                 </div>
             </div>
-        @endforeach
+        </div>
     </div>
-@endif
+    <!-- end page title -->
+
+    <!-- Header Title -->
+    <div class="page-title-box">
+        <h4>
+            <i class="mdi mdi-pencil-box"></i> Edit Data Responden
+        </h4>
+        <p>Edit dan kelola data responden per individu di {{ $knmp->nama ?? 'KNMP' }}</p>
+    </div>
+
+    <!-- Info Card -->
+    <div class="info-card">
+        <div class="row">
+            <div class="col-md-4">
+                <h6>Kampung Nelayan</h6>
+                <p>{{ $knmp->nama ?? 'N/A' }}</p>
+            </div>
+            <div class="col-md-4">
+                <h6>Total Responden</h6>
+                <p>{{ count($responden) }} Responden</p>
+            </div>
+            <div class="col-md-4">
+                <h6>Data Terisi</h6>
+                <p>{{ $responden->filter(fn($r) => $r['is_complete'])->count() }}/{{ count($responden) }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete All Section -->
+    @if(!$responden->isEmpty())
+        <div class="delete-all-section">
+            <button type="button" class="btn-delete-all" onclick="deleteAllResponden()">
+                <i class="mdi mdi-trash-can"></i>
+                Hapus Semua Responden
+            </button>
+        </div>
+    @endif
+
+    <!-- Bulk Actions Bar -->
+    <div class="bulk-actions" id="bulkActions">
+        <div class="d-flex align-items-center">
+            <input type="checkbox" id="selectAll" class="me-3" style="width: 20px; height: 20px; cursor: pointer;">
+            <span class="selected-count"><span id="selectedCount">0</span> responden dipilih</span>
+        </div>
+        <div>
+            <button type="button" class="btn btn-light btn-sm me-2" onclick="deselectAll()">
+                <i class="mdi mdi-close me-1"></i>Batal
+            </button>
+            <button type="button" class="btn btn-warning btn-sm" onclick="deleteSelected()">
+                <i class="mdi mdi-trash-can me-1"></i>Hapus Terpilih
+            </button>
+        </div>
+    </div>
+
+    <!-- Responden List -->
+    @if($responden->isEmpty())
+        <div class="empty-state">
+            <i class="mdi mdi-account-multiple"></i>
+            <h5>Belum Ada Responden</h5>
+            <p>Tidak ada responden yang telah didaftarkan untuk KNMP ini</p>
+        </div>
+    @else
+        <div class="responden-list">
+            @foreach($responden as $item)
+                <div class="responden-card" id="responden-{{ $item['id'] }}" data-responden-id="{{ $item['id'] }}">
+                    <!-- Checkbox -->
+                    <label class="responden-checkbox">
+                        <input type="checkbox" class="responden-check" value="{{ $item['id'] }}" onchange="updateSelection()">
+                    </label>
+
+                    <!-- Header -->
+                    <div class="responden-header">
+                        <div class="avatar">
+                            @if($item['jenis_kelamin'] === 'Perempuan')
+                                👩
+                            @else
+                                👨
+                            @endif
+                        </div>
+                        <div class="info">
+                            <h5>{{ $item['nama_responden'] }}</h5>
+                            <p>NIK: {{ $item['nik'] }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="responden-body">
+                        <div class="detail-row">
+                            <span class="detail-label">Jenis Kelamin</span>
+                            <span class="detail-value">{{ $item['jenis_kelamin'] }}</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="detail-label">Tanggal Wawancara</span>
+                            <span class="detail-value">
+                                {{ \Carbon\Carbon::parse($item['tanggal_wawancara'])->format('d/m/Y') }}
+                            </span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="detail-label">Enumerator</span>
+                            <span class="detail-value">{{ $item['nama_enumerator'] }}</span>
+                        </div>
+
+                        <div class="detail-row">
+                            <span class="detail-label">Form Terisi</span>
+                            <span class="detail-value">{{ $item['filled_forms'] }}/{{ $item['total_forms'] }} Form</span>
+                        </div>
+
+                        @if($item['last_updated'])
+                            <div class="detail-row">
+                                <span class="detail-label">Terakhir Diperbarui</span>
+                                <span class="detail-value">
+                                    {{ \Carbon\Carbon::parse($item['last_updated'])->format('d/m/Y H:i') }}
+                                </span>
+                            </div>
+                        @endif
+
+                        <!-- Status Badge -->
+                        @if($item['is_complete'])
+                            <span class="status-badge complete">
+                                <i class="mdi mdi-check-circle"></i> Terisi
+                            </span>
+                        @else
+                            <span class="status-badge incomplete">
+                                <i class="mdi mdi-alert-circle"></i> Belum Terisi
+                            </span>
+                        @endif
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="responden-footer">
+                        <a href="{{ route('forms.index', $knmp->id) }}?responden={{ $item['id'] }}" class="btn-edit">
+                            <i class="mdi mdi-pencil"></i>
+                            Edit Data
+                        </a>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+
+    <!-- Form untuk Bulk Delete -->
+    <form id="bulkDeleteForm" action="{{ route('forms.delete_responden') }}" method="POST" class="d-none">
+        @csrf
+        @method('DELETE')
+    </form>
+
+    <!-- Custom Dialog Overlay -->
+    <div id="customDialogOverlay" class="custom-dialog-overlay">
+        <div id="customDialog" class="custom-dialog warning">
+            <div class="custom-dialog-icon-circle">
+                <span id="dialogIcon">⚠</span>
+            </div>
+            <h3 class="custom-dialog-title" id="dialogTitle">Konfirmasi Penghapusan</h3>
+            <p class="custom-dialog-message" id="dialogMessage">Apakah Anda yakin ingin menghapus responden?</p>
+            <div class="custom-dialog-actions" id="dialogActions">
+                <button type="button" class="custom-dialog-btn cancel" onclick="closeCustomDialog()">
+                    Batal
+                </button>
+                <button type="button" class="custom-dialog-btn confirm" id="confirmDialogBtn">
+                    Hapus
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{{ asset('js/survey-custom.js') }}"></script>
 
 @endsection

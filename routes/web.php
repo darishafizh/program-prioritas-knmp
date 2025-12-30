@@ -9,14 +9,31 @@ use App\Http\Controllers\FormsController;
 use App\Http\Controllers\KeteranganEnumeratorController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SurveyController;
+use App\Http\Controllers\RespondenController;
+use App\Http\Controllers\EvidenceController;
+use App\Http\Controllers\ReportController;
 
+
+Route::get('/', function () {
+    return redirect()->route('login');
+});
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login'])->name('login.perform');
+Route::post('/login', [LoginController::class, 'login'])->name('login.perform')->middleware('throttle:5,1');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Password Reset Routes
+Route::get('password/reset', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('password/email', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('password/reset/{token}', [App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
 
 
 Route::middleware('auth')->group(function () {
+
+    // Change Password Routes
+    Route::get('password/change', [App\Http\Controllers\Auth\ChangePasswordController::class, 'edit'])->name('password.change');
+    Route::post('password/change', [App\Http\Controllers\Auth\ChangePasswordController::class, 'update'])->name('password.change.update');
 
     // ==============================
     // DASHBOARD ROUTES (NO PREFIX)
@@ -41,8 +58,9 @@ Route::middleware('auth')->group(function () {
         // ==============================
         Route::group(['prefix' => 'forms'], function () {
             Route::get('/{knmp}', [FormsController::class, 'index'])->name('forms.index');
-            Route::get('/{knmp}/edit-responden', [FormsController::class, 'editRespondenList'])->name('forms.edit-responden');
-            
+            Route::get('/{knmp}/edit-responden', [RespondenController::class, 'editRespondenList'])->name('forms.edit-responden');
+            Route::delete('/delete-responden', [RespondenController::class, 'delete_responden'])->name('forms.delete_responden');
+
             // Store routes
             Route::post('/store_profile_knmp/{knmp}', [FormsController::class, 'store_profile_knmp'])->name('forms.store_profile_knmp');
             Route::post('/store_progres_knmp/{knmp}', [FormsController::class, 'store_progres_knmp'])->name('forms.store_progres_knmp');
@@ -51,33 +69,36 @@ Route::middleware('auth')->group(function () {
                 [FormsController::class, 'store_tanggapan_masyarakat']
             )->name('forms.store_tanggapan_masyarakat');
             Route::post('/store_tingkat_kebahagiaan/{knmp}', [FormsController::class, 'store_tingkat_kebahagiaan'])->name('forms.store_tingkat_kebahagiaan');
-            Route::post('/store_informasi_responden/{knmp}', [FormsController::class, 'store_informasi_responden'])->name('forms.store_informasi_responden');
+            Route::post('/store_informasi_responden/{knmp}', [RespondenController::class, 'store_informasi_responden'])->name('forms.store_informasi_responden');
             Route::post('/store_informasi_usaha/{knmp}', [FormsController::class, 'store_informasi_usaha'])->name('forms.store_informasi_usaha');
             Route::post('/store_pemasaran_perikanan/{knmp}', [FormsController::class, 'store_pemasaran_perikanan'])->name('forms.store_pemasaran_perikanan');
             Route::post('/store_pendapatan_rt/{knmp}', [FormsController::class, 'store_pendapatan_rt'])->name('forms.store_pendapatan_rt');
             Route::post('/store_sosial_kelembagaan/{knmp}', [FormsController::class, 'store_sosial_kelembagaan'])->name('forms.store_sosial_kelembagaan');
-            Route::post('/store_sosial_kelembagaan/{knmp}', [FormsController::class, 'store_sosial_kelembagaan'])->name('forms.store_sosial_kelembagaan');
-            
+
             // Edit/Update routes
             Route::post('/update_profile_knmp/{knmp}', [FormsController::class, 'update_profile_knmp'])->name('forms.update_profile_knmp');
             Route::post('/update_progres_knmp/{knmp}', [FormsController::class, 'update_progres_knmp'])->name('forms.update_progres_knmp');
             Route::post('/update_tanggapan_masyarakat/{knmp}', [FormsController::class, 'update_tanggapan_masyarakat'])->name('forms.update_tanggapan_masyarakat');
-            
+
             // File upload routes
-            Route::post('/bukti-upload', [FormsController::class, 'store_bukti_upload'])
+            Route::post('/bukti-upload', [EvidenceController::class, 'store_bukti_upload'])
                 ->name('forms.store_bukti_upload');
-            Route::delete('/bukti-upload', [FormsController::class, 'delete_bukti_upload'])
+            Route::delete('/bukti-upload', [EvidenceController::class, 'delete_bukti_upload'])
                 ->name('forms.delete_bukti_upload');
-            Route::delete('/bukti-upload/{id}', [FormsController::class, 'delete_bukti_single'])
+            Route::delete('/bukti-upload/{id}', [EvidenceController::class, 'delete_bukti_single'])
                 ->name('forms.delete_bukti_single');
-            
+
             // Evidence & PDF routes
-            Route::get('/evidence/{knmp}', [FormsController::class, 'evidence'])
+            Route::get('/evidence/{knmp}', [EvidenceController::class, 'evidence'])
                 ->name('survey.evidence');
-            Route::get('/questionnaires-pdf/{knmp}', [FormsController::class, 'questionnairesListPdf'])
+            Route::get('/questionnaires-pdf/{knmp}', [ReportController::class, 'questionnairesListPdf'])
                 ->name('survey.questionnaires-pdf');
-            Route::get('/questionnaire-pdf/{knmp}/{responden}', [FormsController::class, 'generateRespondenQuestionnairesPdf'])
+            Route::get('/questionnaire-pdf/{knmp}/{responden}', [ReportController::class, 'generateRespondenQuestionnairesPdf'])
                 ->name('survey.questionnaire-pdf');
+
+            // Export Excel route
+            Route::get('/export-excel/{knmp?}', [RespondenController::class, 'exportExcel'])
+                ->name('forms.export-excel');
         });
     });
 
@@ -89,15 +110,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
     });
 
-    Route::middleware('auth')->group(function () {
-        Route::prefix('survey')->group(function () {
-
-            Route::get(
-                '/evidence/{knmp}',
-                [FormsController::class, 'evidence']
-            )->name('survey.evidence');
-        });
+    // ==============================
+    // ACTIVITY LOG ROUTES (Admin Only)
+    // ==============================
+    Route::group(['prefix' => 'activity-log', 'middleware' => 'role:admin'], function () {
+        Route::get('/', [App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-log.index');
     });
+
+    // Note: survey.evidence route already defined above in survey/forms group
 
 
 

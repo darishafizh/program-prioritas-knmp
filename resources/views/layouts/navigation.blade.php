@@ -1,11 +1,14 @@
-<div class="topnav bg-info">
+<div class="topnav" style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);">
     <div class="container-fluid">
         <nav class="navbar navbar-expand-lg navbar-dark topnav-menu">
 
             {{-- Toggler / Hamburger --}}
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topnav-menu-content" aria-controls="topnav-menu-content" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topnav-menu-content"
+                aria-controls="topnav-menu-content" aria-expanded="false" aria-label="Toggle navigation">
                 {{-- Icon putih proporsional --}}
-                <span class="navbar-toggler-icon-custom"></span>
+                <span class="navbar-toggler-icon-custom">
+                    <div></div>
+                </span>
             </button>
 
             {{-- Menu --}}
@@ -59,11 +62,12 @@
     /* Hamburger custom sesuai tinggi navbar */
     .navbar-toggler-icon-custom {
         display: inline-block;
-        width: 10px;
-        /* Lebar ikon */
-        height: 10px;
-        /* Tinggi area ikon */
+        width: 24px;
+        /* Lebar standar */
+        height: 18px;
+        /* Tinggi proporsional untuk 3 garis */
         position: relative;
+        vertical-align: middle;
     }
 
     .navbar-toggler-icon-custom::before,
@@ -72,10 +76,10 @@
         content: "";
         display: block;
         height: 2px;
-        /* Ketebalan garis: cukup tipis agar 3 garis terlihat */
-        background-color: #fff;
-        /* Putih agar kontras dengan bg-info */
-        border-radius: 1px;
+        /* Ketebalan garis */
+        background-color: rgba(255, 255, 255, 0.8);
+        /* Warna putih agak transparan sesuai gambar */
+        border-radius: 2px;
         position: absolute;
         width: 100%;
         transition: all 0.3s ease;
@@ -84,24 +88,14 @@
     /* Posisi garis */
     .navbar-toggler-icon-custom::before {
         top: 0;
-        /* Garis atas */
     }
 
     .navbar-toggler-icon-custom div {
         top: 50%;
-        /* Garis tengah */
         transform: translateY(-50%);
     }
 
     .navbar-toggler-icon-custom::after {
         bottom: 0;
-        /* Garis bawah */
     }
 </style>
-
-<!-- Button toggler -->
-<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topnav-menu-content" aria-controls="topnav-menu-content" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon-custom">
-        <div></div>
-    </span>
-</button>

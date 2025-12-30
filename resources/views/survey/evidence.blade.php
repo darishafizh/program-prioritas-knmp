@@ -1,0 +1,64 @@
+@extends('layouts.app')
+
+@section('content')
+    <link rel="stylesheet" href="{{ asset('css/evidence-custom.css') }}">
+
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-flex align-items-center justify-content-between"
+                style="background: transparent; box-shadow: none; padding: 15px 0; margin-bottom: 20px;">
+                <h4 class="page-title mb-0">
+                    <i class="mdi mdi-file-image-marker me-1"></i> Bukti Pendukung
+                </h4>
+                <div class="page-title-right">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb bg-transparent m-0 p-0">
+                            <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}"><i
+                                        class="mdi mdi-home-outline"></i></a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('survey.index') }}">Survey</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Bukti Pendukung</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end page title -->
+
+    <!-- Header Title -->
+    <div class="page-title-box-evidence">
+        <h4>
+            <i class="mdi mdi-file-image-marker me-2"></i>Bukti Pendukung
+        </h4>
+        <p>Kelola bukti pendukung dan dokumentasi untuk {{ $knmp->nama ?? 'KNMP' }}</p>
+    </div>
+
+    <!-- Info Card -->
+    <div class="info-card">
+        <div class="row">
+            <div class="col-md-4">
+                <h6>Kampung Nelayan</h6>
+                <p>{{ $knmp->nama ?? 'N/A' }}</p>
+            </div>
+            <div class="col-md-4">
+                <h6>Lokasi</h6>
+                <p>{{ $knmp->village->name ?? 'N/A' }}, {{ $knmp->district->name ?? 'N/A' }}</p>
+            </div>
+            <div class="col-md-4">
+                <h6>Total File</h6>
+                <p>{{ count($buktiUploads ?? []) }} File diupload</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Evidence Content -->
+    <div class="card">
+        <div class="card-body">
+            @include('survey.forms.form_layouts.evidence')
+        </div>
+    </div>
+
+
+    <script src="{{ asset('js/evidence-custom.js') }}"></script>
+@endsection

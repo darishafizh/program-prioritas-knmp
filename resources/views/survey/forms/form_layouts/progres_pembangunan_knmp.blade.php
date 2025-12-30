@@ -19,17 +19,17 @@
         <div class="col-md-4">
             <label class="form-label">Total Anggaran (Rp)</label>
             <input type="number" name="anggaran_total" class="form-control"
-                value="{{ old('anggaran_total') }}" placeholder="22.000.000.000">
+                value="{{ old('anggaran_total', $progresKnmp->anggaran_total ?? '') }}" placeholder="22.000.000.000">
         </div>
         <div class="col-md-4">
             <label class="form-label">Anggaran Konstruksi (Rp)</label>
             <input type="number" name="anggaran_konstruksi" class="form-control"
-                value="{{ old('anggaran_konstruksi') }}" placeholder="2.000.000.000">
+                value="{{ old('anggaran_konstruksi', $progresKnmp->anggaran_konstruksi ?? '') }}" placeholder="2.000.000.000">
         </div>
         <div class="col-md-4">
             <label class="form-label">Anggaran Pengadaan Sarpras (Rp)</label>
             <input type="number" name="anggaran_sarpras" class="form-control"
-                value="{{ old('anggaran_sarpras') }}" placeholder="200.000.000">
+                value="{{ old('anggaran_sarpras', $progresKnmp->anggaran_sarpras ?? '') }}" placeholder="200.000.000">
         </div>
     </div>
 
@@ -103,6 +103,13 @@
                 </tr>
 
                 @foreach ($section['items'] as $index => $item)
+                @php
+                    // Find existing data for this komponen from $progresKnmp->details
+                    $existingDetail = null;
+                    if (isset($progresKnmp) && $progresKnmp && $progresKnmp->details) {
+                        $existingDetail = $progresKnmp->details->where('kode', $code)->where('komponen', $item)->first();
+                    }
+                @endphp
                 <tr>
                     <td class="text-center">{{ $index + 1 }}
                         <input type="hidden"
@@ -120,7 +127,7 @@
                         <input type="number"
                             name="progress[{{ $code }}][{{ $index }}][target]"
                             class="form-control form-control-sm"
-                            value="{{ old('progress.' . $code . '.' . $index . '.target') }}">
+                            value="{{ old('progress.' . $code . '.' . $index . '.target', $existingDetail->target ?? '') }}">
                     </td>
 
                     <td>
@@ -128,7 +135,7 @@
                             <input type="number"
                                 name="progress[{{ $code }}][{{ $index }}][persen]"
                                 class="form-control"
-                                value="{{ old('progress.' . $code . '.' . $index . '.persen') }}"
+                                value="{{ old('progress.' . $code . '.' . $index . '.persen', $existingDetail->persen ?? '') }}"
                                 max="100">
                             <span class="input-group-text">%</span>
                         </div>
@@ -138,7 +145,7 @@
                         <input type="text"
                             name="progress[{{ $code }}][{{ $index }}][keterangan]"
                             class="form-control form-control-sm"
-                            value="{{ old('progress.' . $code . '.' . $index . '.keterangan') }}"
+                            value="{{ old('progress.' . $code . '.' . $index . '.keterangan', $existingDetail->keterangan ?? '') }}"
                             placeholder="Contoh: Dimensi bangunan...">
                     </td>
                 </tr>
@@ -174,25 +181,25 @@
             <tr>
                 <td></td>
                 <td class="ps-4">a. Laki-Laki</td>
-                <td><input type="number" name="tk_laki" class="form-control" value="{{ old('tk_laki') }}"></td>
+                <td><input type="number" name="tk_laki" class="form-control" value="{{ old('tk_laki', $progresKnmp->tk_laki ?? '') }}"></td>
             </tr>
 
             <tr>
                 <td></td>
                 <td class="ps-4">b. Perempuan</td>
-                <td><input type="number" name="tk_perempuan" class="form-control" value="{{ old('tk_perempuan') }}"></td>
+                <td><input type="number" name="tk_perempuan" class="form-control" value="{{ old('tk_perempuan', $progresKnmp->tk_perempuan ?? '') }}"></td>
             </tr>
 
             <tr>
                 <td class="text-center">2.</td>
                 <td>Upah tenaga kerja/hari (Rp)</td>
-                <td><input type="number" name="tk_upah" class="form-control" value="{{ old('tk_upah') }}"></td>
+                <td><input type="number" name="tk_upah" class="form-control" value="{{ old('tk_upah', $progresKnmp->tk_upah ?? '') }}"></td>
             </tr>
 
             <tr>
                 <td class="text-center">3.</td>
                 <td>Lama bekerja di proyek (jumlah hari)</td>
-                <td><input type="number" name="tk_durasi" class="form-control" value="{{ old('tk_durasi') }}"></td>
+                <td><input type="number" name="tk_durasi" class="form-control" value="{{ old('tk_durasi', $progresKnmp->tk_durasi ?? '') }}"></td>
             </tr>
 
             <tr>
@@ -204,13 +211,13 @@
             <tr>
                 <td></td>
                 <td class="ps-4">a. Lokal</td>
-                <td><input type="number" name="tk_lokal" class="form-control" value="{{ old('tk_lokal') }}"></td>
+                <td><input type="number" name="tk_lokal" class="form-control" value="{{ old('tk_lokal', $progresKnmp->tk_lokal ?? '') }}"></td>
             </tr>
 
             <tr>
                 <td></td>
                 <td class="ps-4">b. Dari luar</td>
-                <td><input type="number" name="tk_luar" class="form-control" value="{{ old('tk_luar') }}"></td>
+                <td><input type="number" name="tk_luar" class="form-control" value="{{ old('tk_luar', $progresKnmp->tk_luar ?? '') }}"></td>
             </tr>
 
             <tr>
@@ -219,9 +226,9 @@
                 <td>
                     <div class="input-group">
                         <input type="number" name="tk_non_konstruksi_jumlah" class="form-control"
-                            value="{{ old('tk_non_konstruksi_jumlah') }}">
+                            value="{{ old('tk_non_konstruksi_jumlah', $progresKnmp->tk_non_konstruksi_jumlah ?? '') }}">
                         <input type="text" name="tk_non_konstruksi_ket" class="form-control w-50"
-                            value="{{ old('tk_non_konstruksi_ket') }}" placeholder="Jenis pekerjaan">
+                            value="{{ old('tk_non_konstruksi_ket', $progresKnmp->tk_non_konstruksi_ket ?? '') }}" placeholder="Jenis pekerjaan">
                     </div>
                 </td>
             </tr>
@@ -245,6 +252,12 @@
             'Ketersediaan air bersih',
             'Jaringan Internet',
             ];
+            // Parse existing kendala from $progresKnmp
+            $existingKendala = [];
+            if (isset($progresKnmp) && $progresKnmp && $progresKnmp->kendala) {
+                $existingKendala = is_array($progresKnmp->kendala) ? $progresKnmp->kendala : json_decode($progresKnmp->kendala, true) ?? [];
+            }
+            $kendalaChecked = is_array(old('kendala')) ? old('kendala') : $existingKendala;
             @endphp
 
             @foreach ($kendalas as $k)
@@ -254,7 +267,7 @@
                     name="kendala[]"
                     value="{{ $k }}"
                     id="k_{{ Str::slug($k) }}"
-                    {{ (is_array(old('kendala')) && in_array($k, old('kendala'))) ? 'checked' : '' }}>
+                    {{ in_array($k, $kendalaChecked) ? 'checked' : '' }}>
                 <label class="form-check-label" for="k_{{ Str::slug($k) }}">{{ $k }}</label>
             </div>
             @endforeach
@@ -266,15 +279,19 @@
 
             <p>Apakah CCTV sudah terpasang?</p>
 
+            @php
+            $cctvValue = old('cctv', $progresKnmp->cctv ?? null);
+            @endphp
+
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="cctv" id="cctv_ya" value="Ya"
-                    {{ old('cctv') == 'Ya' ? 'checked' : '' }}>
+                    {{ $cctvValue == 'Ya' ? 'checked' : '' }}>
                 <label class="form-check-label" for="cctv_ya">Ya</label>
             </div>
 
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="cctv" id="cctv_tidak" value="Tidak"
-                    {{ old('cctv') == 'Tidak' ? 'checked' : '' }}>
+                    {{ $cctvValue == 'Tidak' ? 'checked' : '' }}>
                 <label class="form-check-label" for="cctv_tidak">Tidak</label>
             </div>
 

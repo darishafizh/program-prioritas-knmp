@@ -102,16 +102,16 @@
                         perikanan?</label>
                 <div>
                         <div class="form-check form-check-inline"><input type="radio" name="ketergantungan_perikanan"
-                                        value="Sangat bergantung" class="form-check-input" id="kp_1"><label
+                                        value="Sangat bergantung" class="form-check-input" id="kp_1" {{ old('ketergantungan_perikanan') == 'Sangat bergantung' ? 'checked' : '' }}><label
                                         class="form-check-label" for="kp_1">Sangat bergantung</label></div>
                         <div class="form-check form-check-inline"><input type="radio" name="ketergantungan_perikanan"
-                                        value="Cukup bergantung" class="form-check-input" id="kp_2"><label class="form-check-label"
+                                        value="Cukup bergantung" class="form-check-input" id="kp_2" {{ old('ketergantungan_perikanan') == 'Cukup bergantung' ? 'checked' : '' }}><label class="form-check-label"
                                         for="kp_2">Cukup bergantung</label></div>
                         <div class="form-check form-check-inline"><input type="radio" name="ketergantungan_perikanan"
-                                        value="Sedikit bergantung" class="form-check-input" id="kp_3"><label
+                                        value="Sedikit bergantung" class="form-check-input" id="kp_3" {{ old('ketergantungan_perikanan') == 'Sedikit bergantung' ? 'checked' : '' }}><label
                                         class="form-check-label" for="kp_3">Sedikit bergantung</label></div>
                         <div class="form-check form-check-inline"><input type="radio" name="ketergantungan_perikanan"
-                                        value="Tidak bergantung" class="form-check-input" id="kp_4"><label class="form-check-label"
+                                        value="Tidak bergantung" class="form-check-input" id="kp_4" {{ old('ketergantungan_perikanan') == 'Tidak bergantung' ? 'checked' : '' }}><label class="form-check-label"
                                         for="kp_4">Tidak bergantung</label></div>
                 </div>
         </div>
@@ -120,16 +120,16 @@
                 <label class="form-label">5. Bagaimana Anda menilai tingkat stabilitas pendapatan nelayan?</label>
                 <div>
                         <div class="form-check form-check-inline"><input type="radio" name="stabilitas_pendapatan"
-                                        value="Stabil sepanjang tahun" class="form-check-input" id="sp_1"><label
+                                        value="Stabil sepanjang tahun" class="form-check-input" id="sp_1" {{ old('stabilitas_pendapatan') == 'Stabil sepanjang tahun' ? 'checked' : '' }}><label
                                         class="form-check-label" for="sp_1">Stabil sepanjang tahun</label></div>
                         <div class="form-check form-check-inline"><input type="radio" name="stabilitas_pendapatan"
-                                        value="Cenderung stabil" class="form-check-input" id="sp_2"><label class="form-check-label"
+                                        value="Cenderung stabil" class="form-check-input" id="sp_2" {{ old('stabilitas_pendapatan') == 'Cenderung stabil' ? 'checked' : '' }}><label class="form-check-label"
                                         for="sp_2">Cenderung stabil</label></div>
                         <div class="form-check form-check-inline"><input type="radio" name="stabilitas_pendapatan"
-                                        value="Tidak stabil" class="form-check-input" id="sp_3"><label class="form-check-label"
+                                        value="Tidak stabil" class="form-check-input" id="sp_3" {{ old('stabilitas_pendapatan') == 'Tidak stabil' ? 'checked' : '' }}><label class="form-check-label"
                                         for="sp_3">Tidak stabil</label></div>
                         <div class="form-check form-check-inline"><input type="radio" name="stabilitas_pendapatan"
-                                        value="Sangat tidak stabil" class="form-check-input" id="sp_4"><label
+                                        value="Sangat tidak stabil" class="form-check-input" id="sp_4" {{ old('stabilitas_pendapatan') == 'Sangat tidak stabil' ? 'checked' : '' }}><label
                                         class="form-check-label" for="sp_4">Sangat tidak stabil</label></div>
                 </div>
         </div>
@@ -139,16 +139,16 @@
                         rumah tangga?</label>
                 <div>
                         <div class="form-check form-check-inline"><input type="radio" name="keterlibatan_perempuan"
-                                        value="Selalu" class="form-check-input" id="kprm_1"><label class="form-check-label"
+                                        value="Selalu" class="form-check-input" id="kprm_1" {{ old('keterlibatan_perempuan') == 'Selalu' ? 'checked' : '' }}><label class="form-check-label"
                                         for="kprm_1">Selalu</label></div>
                         <div class="form-check form-check-inline"><input type="radio" name="keterlibatan_perempuan"
-                                        value="Sering" class="form-check-input" id="kprm_2"><label class="form-check-label"
+                                        value="Sering" class="form-check-input" id="kprm_2" {{ old('keterlibatan_perempuan') == 'Sering' ? 'checked' : '' }}><label class="form-check-label"
                                         for="kprm_2">Sering</label></div>
                         <div class="form-check form-check-inline"><input type="radio" name="keterlibatan_perempuan"
-                                        value="Jarang" class="form-check-input" id="kprm_3"><label class="form-check-label"
+                                        value="Jarang" class="form-check-input" id="kprm_3" {{ old('keterlibatan_perempuan') == 'Jarang' ? 'checked' : '' }}><label class="form-check-label"
                                         for="kprm_3">Jarang</label></div>
                         <div class="form-check form-check-inline"><input type="radio" name="keterlibatan_perempuan"
-                                        value="Tidak pernah" class="form-check-input" id="kprm_4"><label class="form-check-label"
+                                        value="Tidak pernah" class="form-check-input" id="kprm_4" {{ old('keterlibatan_perempuan') == 'Tidak pernah' ? 'checked' : '' }}><label class="form-check-label"
                                         for="kprm_4">Tidak pernah</label></div>
                 </div>
         </div>
@@ -157,20 +157,20 @@
                 <label class="form-label">7. Berapa rata-rata kontribusi perempuan dalam pendapatan rumah tangga?</label>
                 <div>
                         <div class="form-check form-check-inline"><input type="radio" name="kontribusi_perempuan_persen"
-                                        value="Lebih dari 75%" class="form-check-input" id="kp_prs_1"><label class="form-check-label"
+                                        value="Lebih dari 75%" class="form-check-input" id="kp_prs_1" {{ old('kontribusi_perempuan_persen') == 'Lebih dari 75%' ? 'checked' : '' }}><label class="form-check-label"
                                         for="kp_prs_1">Lebih dari 75%</label></div>
                         <div class="form-check form-check-inline"><input type="radio" name="kontribusi_perempuan_persen"
-                                        value="51%–75%" class="form-check-input" id="kp_prs_2"><label class="form-check-label"
+                                        value="51%–75%" class="form-check-input" id="kp_prs_2" {{ old('kontribusi_perempuan_persen') == '51%–75%' ? 'checked' : '' }}><label class="form-check-label"
                                         for="kp_prs_2">51%–75%</label></div>
                         <div class="form-check form-check-inline"><input type="radio" name="kontribusi_perempuan_persen"
-                                        value="25%–50%" class="form-check-input" id="kp_prs_3"><label class="form-check-label"
+                                        value="25%–50%" class="form-check-input" id="kp_prs_3" {{ old('kontribusi_perempuan_persen') == '25%–50%' ? 'checked' : '' }}><label class="form-check-label"
                                         for="kp_prs_3">25%–50%</label></div>
                         <div class="form-check form-check-inline"><input type="radio" name="kontribusi_perempuan_persen"
-                                        value="Kurang dari 25%" class="form-check-input" id="kp_prs_4"><label class="form-check-label"
+                                        value="Kurang dari 25%" class="form-check-input" id="kp_prs_4" {{ old('kontribusi_perempuan_persen') == 'Kurang dari 25%' ? 'checked' : '' }}><label class="form-check-label"
                                         for="kp_prs_4">Kurang dari 25%</label></div>
                         <div class="form-check form-check-inline"><input type="radio" name="kontribusi_perempuan_persen"
                                         value="Perempuan tidak dilibatkan dalam kegiatan ekonomi rumah tangga" class="form-check-input"
-                                        id="kp_prs_5"><label class="form-check-label" for="kp_prs_5">Perempuan tidak dilibatkan dalam
+                                        id="kp_prs_5" {{ old('kontribusi_perempuan_persen') == 'Perempuan tidak dilibatkan dalam kegiatan ekonomi rumah tangga' ? 'checked' : '' }}><label class="form-check-label" for="kp_prs_5">Perempuan tidak dilibatkan dalam
                                         kegiatan ekonomi rumah tangga</label></div>
                 </div>
         </div>
@@ -181,12 +181,25 @@
 </form>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const pendPerikanan = document.getElementById('pendapatan_perikanan');
+        const pendNonPerikanan = document.getElementById('pendapatan_non_perikanan');
+        const pendTotal = document.getElementById('pendapatan_total');
+
         function hitungTotal() {
-                const a = parseFloat(document.getElementById('pendapatan_perikanan').value) || 0;
-                const b = parseFloat(document.getElementById('pendapatan_non_perikanan').value) || 0;
-                document.getElementById('pendapatan_total').value = a + b;
+            const a = parseFloat(pendPerikanan.value) || 0;
+            const b = parseFloat(pendNonPerikanan.value) || 0;
+            if (pendTotal) {
+                pendTotal.value = a + b;
+            }
         }
 
-        document.getElementById('pendapatan_perikanan').addEventListener('input', hitungTotal);
-        document.getElementById('pendapatan_non_perikanan').addEventListener('input', hitungTotal);
+        if (pendPerikanan) {
+            pendPerikanan.addEventListener('input', hitungTotal);
+        }
+
+        if (pendNonPerikanan) {
+            pendNonPerikanan.addEventListener('input', hitungTotal);
+        }
+    });
 </script>

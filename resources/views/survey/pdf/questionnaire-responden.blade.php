@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kuesioner {{ $responden->nama_responden }}</title>
     <style>
+        @page {
+            margin: 20mm 15mm 20mm 15mm;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,15 +17,20 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
+            font-family: 'DejaVu Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.5;
             color: #333;
             background: white;
+            font-size: 11px;
+        }
+
+        img {
+            image-orientation: from-image;
         }
 
         .page {
             page-break-after: always;
-            padding: 40px;
+            padding: 15px 0;
         }
 
         .page:last-child {
@@ -29,69 +39,64 @@
 
         /* Header Styles */
         .header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 20px;
-        }
-
-        .header-logo {
-            width: 80px;
-            height: 80px;
-            margin-right: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .header-logo img {
-            max-width: 100%;
-            max-height: 100%;
-        }
-
-        .header-content {
-            flex: 1;
             text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 15px;
         }
 
-        .header-content h1 {
-            color: #667eea;
-            font-size: 22px;
-            margin-bottom: 3px;
+        .header h1 {
+            color: #2563eb;
+            font-size: 18px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .header-content p {
+        .header p {
             color: #666;
-            font-size: 12px;
-            margin: 2px 0;
+            font-size: 11px;
+            margin: 3px 0;
         }
 
         .header .knmp-info {
-            background: #f8f9fa;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
             padding: 10px 15px;
             border-radius: 5px;
             margin-top: 15px;
             font-size: 11px;
-            text-align: center;
+        }
+
+        .header .knmp-info strong {
+            color: #2563eb;
+            font-size: 12px;
         }
 
         /* Section Styles */
         .section {
-            margin-bottom: 30px;
-            page-break-inside: avoid;
+            margin-bottom: 20px;
         }
 
         .section-title {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #2563eb;
             color: white;
-            padding: 12px 15px;
-            border-radius: 5px;
-            font-size: 13px;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-size: 12px;
             font-weight: 700;
             margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sub-section-title {
+            color: #2563eb;
+            font-size: 11px;
+            font-weight: 700;
+            margin: 15px 0 10px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         /* Table Styles */
@@ -103,59 +108,64 @@
         }
 
         table th {
-            background: #e9ecef;
-            color: #333;
-            padding: 8px;
+            background: #f3f4f6;
+            color: #374151;
+            padding: 8px 10px;
             text-align: left;
             font-weight: 600;
-            border: 1px solid #dee2e6;
+            border: 1px solid #e5e7eb;
         }
 
         table td {
-            padding: 6px 8px;
-            border: 1px solid #dee2e6;
+            padding: 7px 10px;
+            border: 1px solid #e5e7eb;
+            vertical-align: top;
         }
 
         table tr:nth-child(even) {
-            background: #f8f9fa;
+            background: #f9fafb;
         }
 
         /* Info Box */
         .info-box {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-left: 4px solid #2563eb;
             padding: 12px 15px;
             margin-bottom: 15px;
-            border-radius: 3px;
-            font-size: 11px;
+            border-radius: 4px;
         }
 
+        .info-row,
         .info-box-row {
-            display: flex;
+            display: table;
+            width: 100%;
             margin-bottom: 6px;
         }
 
+        .info-row:last-child,
         .info-box-row:last-child {
             margin-bottom: 0;
         }
 
         .info-label {
+            display: table-cell;
             font-weight: 600;
-            color: #667eea;
-            width: 35%;
-            min-width: 120px;
+            color: #4b5563;
+            width: 40%;
+            padding-right: 10px;
         }
 
         .info-value {
-            color: #333;
-            flex: 1;
+            display: table-cell;
+            color: #111827;
         }
 
         /* Divider */
         .divider {
             border: 0;
-            border-top: 2px dashed #dee2e6;
-            margin: 20px 0;
+            border-top: 1px dashed #d1d5db;
+            margin: 15px 0;
         }
 
         /* Text Alignment */
@@ -167,47 +177,104 @@
             text-align: right;
         }
 
+        .text-bold {
+            font-weight: 600;
+        }
+
         /* Empty Message */
         .empty-message {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
             padding: 10px 12px;
+            border-radius: 4px;
+            color: #92400e;
+        }
+
+        /* Status Badge */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
             border-radius: 3px;
-            font-size: 11px;
-            color: #856404;
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
         }
 
         /* Image Gallery */
         .image-gallery {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
             margin-bottom: 15px;
         }
 
         .image-item {
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
+            display: inline-block;
+            width: 30%;
+            margin: 1%;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
             overflow: hidden;
-            text-align: center;
-            background: #f8f9fa;
+            vertical-align: top;
         }
 
         .image-item img {
             width: 100%;
             height: auto;
-            max-height: 200px;
+            max-height: 150px;
             object-fit: contain;
-            display: block;
         }
 
         .image-item-info {
-            padding: 8px;
+            padding: 6px;
             font-size: 9px;
-            border-top: 1px solid #dee2e6;
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
         }
 
-        /* Responsive */
+        /* Page Footer */
+        .page-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 9px;
+            color: #9ca3af;
+            padding: 10px 0;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Cover Page */
+        .cover-center {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .cover-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .cover-title {
+            color: #2563eb;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .cover-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        /* Print Optimization */
         @media print {
             body {
                 margin: 0;
@@ -216,36 +283,80 @@
 
             .page {
                 page-break-before: avoid;
+            }
+
+            .section {
                 page-break-inside: avoid;
             }
         }
     </style>
 </head>
+
 <body>
     {{-- ============================= --}}
     {{-- HALAMAN 1: COVER & INFO --}}
     {{-- ============================= --}}
     <div class="page">
-        <div class="header">
-            <div class="header-logo">
-                <div style="text-align: center; font-size: 24px;">⚓</div>
-            </div>
-            <div class="header-content">
-                <h1>KUESIONER SURVEI KNMP</h1>
-                <p>Kampung Nelayan Merah Putih</p>
-                <p style="font-size: 10px; color: #999;">Kementerian Kelautan dan Perikanan</p>
-                <div class="knmp-info">
-                    <div style="font-weight: 700;">{{ $knmp->nama_knmp ?? 'N/A' }}</div>
-                    <div>{{ $knmp->village->name ?? 'N/A' }}, {{ $knmp->district->name ?? 'N/A' }}, {{ $knmp->regency->name ?? 'N/A' }}, {{ $knmp->province->name ?? 'N/A' }}</div>
-                </div>
-            </div>
+        <table style="width: 100%; border-bottom: 3px solid #2563eb; margin-bottom: 20px; padding-bottom: 10px;">
+            <tr>
+                <td style="width: 80px; text-align: center; vertical-align: middle; border: none; padding-right: 15px;">
+                    @php
+                        $path = public_path('assets/images/logo-kkp.png');
+                        $logoExists = file_exists($path);
+                    @endphp
+                    @if($logoExists)
+                        <img src="{{ $path }}" style="width: 70px; height: auto;" alt="Logo KKP">
+                    @else
+                        <div
+                            style="width: 70px; height: 70px; background: #f0f9ff; border: 1px dashed #2563eb; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #2563eb; border-radius: 50%;">
+                            Logo
+                        </div>
+                    @endif
+                </td>
+                <td style="text-align: center; vertical-align: middle; border: none;">
+                    <h1 style="color: #2563eb; font-size: 18px; margin: 0; text-transform: uppercase;">KUESIONER SURVEI
+                        KNMP</h1>
+                    <p style="margin: 5px 0 0 0; color: #333; font-weight: bold; font-size: 12px;">Kampung Nelayan Merah
+                        Putih</p>
+                    <p style="margin: 2px 0 0 0; font-size: 10px; color: #6b7280;">Kementerian Kelautan dan Perikanan
+                        Republik Indonesia</p>
+                </td>
+                <td style="width: 80px; border: none;"></td> <!-- Balance for centering -->
+            </tr>
+        </table>
+
+        <div class="knmp-info" style="text-align: center;">
+            <strong>{{ $knmp->nama_knmp ?? 'N/A' }}</strong><br>
+            {{ $knmp->village->name ?? 'N/A' }}, {{ $knmp->district->name ?? 'N/A' }},
+            {{ $knmp->regency->name ?? 'N/A' }}, {{ $knmp->province->name ?? 'N/A' }}
         </div>
 
         <hr class="divider">
 
-        <div class="section">
-            <p style="font-size: 11px; color: #666; margin-bottom: 10px;">Informasi lengkap responden terdapat pada halaman Section E.</p>
+        <div class="info-box">
+            <div class="info-row">
+                <span class="info-label">Nama Responden</span>
+                <span class="info-value"><strong>{{ $responden->nama_responden }}</strong></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">NIK</span>
+                <span class="info-value">{{ $responden->nik }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Tanggal Wawancara</span>
+                <span
+                    class="info-value">{{ \Carbon\Carbon::parse($responden->tanggal_wawancara)->format('d F Y') }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Enumerator</span>
+                <span class="info-value">{{ $responden->nama_enumerator }}</span>
+            </div>
         </div>
+
+        <p style="font-size: 10px; color: #6b7280; margin-top: 20px;">
+            Dokumen ini berisi hasil kuesioner lengkap yang telah diisi oleh responden.
+            Informasi detail responden terdapat pada Section E.
+        </p>
     </div>
 
     {{-- ============================= --}}
@@ -257,33 +368,35 @@
 
             <div class="section">
                 <div class="info-box">
-                    <div class="info-box-row">
+                    <div class="info-row">
                         <span class="info-label">Jumlah Penduduk</span>
-                        <span class="info-value">{{ number_format($profileKnmp->jml_penduduk_des ?? 0, 0, ',', '.') }} jiwa</span>
+                        <span class="info-value">{{ number_format($profileKnmp->jml_penduduk_des ?? 0, 0, ',', '.') }}
+                            jiwa</span>
                     </div>
-                    <div class="info-box-row">
+                    <div class="info-row">
                         <span class="info-label">Jumlah Nelayan</span>
-                        <span class="info-value">{{ number_format($profileKnmp->jml_nelayan ?? 0, 0, ',', '.') }} orang</span>
+                        <span class="info-value">{{ number_format($profileKnmp->jml_nelayan ?? 0, 0, ',', '.') }}
+                            orang</span>
                     </div>
-                    <div class="info-box-row">
-                        <span class="info-label">Pendapatan Rata-rata Nelayan</span>
-                        <span class="info-value">Rp {{ number_format($profileKnmp->pendapatan_rata_rata_nelayan ?? 0, 0, ',', '.') }}</span>
+                    <div class="info-row">
+                        <span class="info-label">Pendapatan Rata-rata</span>
+                        <span class="info-value">Rp
+                            {{ number_format($profileKnmp->pendapatan_rata_rata_nelayan ?? 0, 0, ',', '.') }}</span>
                     </div>
-                    <div class="info-box-row">
+                    <div class="info-row">
                         <span class="info-label">Volume Produksi</span>
-                        <span class="info-value">{{ number_format($profileKnmp->volume_produksi_ton ?? 0, 2, ',', '.') }} ton/tahun</span>
+                        <span class="info-value">{{ number_format($profileKnmp->volume_produksi_ton ?? 0, 2, ',', '.') }}
+                            ton/tahun</span>
                     </div>
-                    <div class="info-box-row">
+                    <div class="info-row">
                         <span class="info-label">Nilai Produksi</span>
-                        <span class="info-value">Rp {{ number_format($profileKnmp->nilai_produksi ?? 0, 0, ',', '.') }}</span>
+                        <span class="info-value">Rp
+                            {{ number_format($profileKnmp->nilai_produksi ?? 0, 0, ',', '.') }}</span>
                     </div>
-                    <div class="info-box-row">
-                        <span class="info-label">Komoditas Utama 1</span>
-                        <span class="info-value">{{ $profileKnmp->komoditas_utama_1 ?? '-' }}</span>
-                    </div>
-                    <div class="info-box-row">
-                        <span class="info-label">Komoditas Utama 2</span>
-                        <span class="info-value">{{ $profileKnmp->komoditas_utama_2 ?? '-' }}</span>
+                    <div class="info-row">
+                        <span class="info-label">Komoditas Utama</span>
+                        <span
+                            class="info-value">{{ $profileKnmp->komoditas_utama_1 ?? '-' }}{{ $profileKnmp->komoditas_utama_2 ? ', ' . $profileKnmp->komoditas_utama_2 : '' }}</span>
                     </div>
                 </div>
             </div>
@@ -307,7 +420,8 @@
                         </div>
                         <div class="info-box-row">
                             <span class="info-label">Anggaran Konstruksi</span>
-                            <span class="info-value">Rp {{ number_format($progres->anggaran_konstruksi ?? 0, 0, ',', '.') }}</span>
+                            <span class="info-value">Rp
+                                {{ number_format($progres->anggaran_konstruksi ?? 0, 0, ',', '.') }}</span>
                         </div>
                         <div class="info-box-row">
                             <span class="info-label">Anggaran Sarpras</span>
@@ -315,7 +429,8 @@
                         </div>
                         <div class="info-box-row">
                             <span class="info-label">Tenaga Kerja Total</span>
-                            <span class="info-value">{{ $progres->tk_total ?? 0 }} orang (L: {{ $progres->tk_laki ?? 0 }}, P: {{ $progres->tk_perempuan ?? 0 }})</span>
+                            <span class="info-value">{{ $progres->tk_total ?? 0 }} orang (L: {{ $progres->tk_laki ?? 0 }}, P:
+                                {{ $progres->tk_perempuan ?? 0 }})</span>
                         </div>
                         <div class="info-box-row">
                             <span class="info-label">Tenaga Kerja Lokal</span>
@@ -370,7 +485,8 @@
                 <div class="info-box">
                     <div class="info-box-row">
                         <span class="info-label">Kesesuaian Kebutuhan</span>
-                        <span class="info-value">{{ $tanggapanMasyarakat->kesesuaian_kebutuhan ? '✓ Ya, Sesuai' : '✗ Tidak Sesuai' }}</span>
+                        <span
+                            class="info-value">{{ $tanggapanMasyarakat->kesesuaian_kebutuhan ? '✓ Ya, Sesuai' : '✗ Tidak Sesuai' }}</span>
                     </div>
                     @if(!$tanggapanMasyarakat->kesesuaian_kebutuhan && $tanggapanMasyarakat->item_tidak_sesuai)
                         <div class="info-box-row">
@@ -410,7 +526,8 @@
 
             @foreach($tingkatKebahagiaan as $kategori => $soals)
                 <div class="section">
-                    <h4 style="color: #667eea; margin-bottom: 10px; font-size: 11px;">{{ ucfirst(str_replace('_', ' ', $kategori)) }}</h4>
+                    <h4 style="color: #667eea; margin-bottom: 10px; font-size: 11px;">
+                        {{ ucfirst(str_replace('_', ' ', $kategori)) }}</h4>
                     <table>
                         <thead>
                             <tr>
@@ -424,7 +541,8 @@
                             @foreach($soals as $soal)
                                 <tr>
                                     <td style="text-align: center;">{{ $soal->nomor_soal }}</td>
-                                    <td>{{ $tingkatKebahagiaan_pertanyaan[$soal->kategori][$soal->nomor_soal] ?? 'Soal ' . $soal->nomor_soal }}</td>
+                                    <td>{{ $tingkatKebahagiaan_pertanyaan[$soal->kategori][$soal->nomor_soal] ?? 'Soal ' . $soal->nomor_soal }}
+                                    </td>
                                     <td>{{ $soal->jawaban_teks }}</td>
                                     <td style="text-align: center;">{{ $soal->skor_nilai }}</td>
                                 </tr>
@@ -459,7 +577,8 @@
                     </div>
                     <div class="info-box-row">
                         <span class="info-label">Tanggal Lahir</span>
-                        <span class="info-value">{{ \Carbon\Carbon::parse($responden->tanggal_lahir)->format('d/m/Y') }}</span>
+                        <span
+                            class="info-value">{{ \Carbon\Carbon::parse($responden->tanggal_lahir)->format('d/m/Y') }}</span>
                     </div>
                     <div class="info-box-row">
                         <span class="info-label">Umur</span>
@@ -479,7 +598,8 @@
                     </div>
                     <div class="info-box-row">
                         <span class="info-label">Tanggal Wawancara</span>
-                        <span class="info-value">{{ \Carbon\Carbon::parse($responden->tanggal_wawancara)->format('d/m/Y') }}</span>
+                        <span
+                            class="info-value">{{ \Carbon\Carbon::parse($responden->tanggal_wawancara)->format('d/m/Y') }}</span>
                     </div>
                     <div class="info-box-row">
                         <span class="info-label">Enumerator</span>
@@ -531,11 +651,13 @@
                         </div>
                         <div class="info-box-row">
                             <span class="info-label">Penjualan per Trip</span>
-                            <span class="info-value">Rp {{ number_format($usaha->penjualan_rp_per_trip ?? 0, 0, ',', '.') }}</span>
+                            <span class="info-value">Rp
+                                {{ number_format($usaha->penjualan_rp_per_trip ?? 0, 0, ',', '.') }}</span>
                         </div>
                         <div class="info-box-row">
                             <span class="info-label">Total Biaya Operasional</span>
-                            <span class="info-value">Rp {{ number_format($usaha->total_biaya_operasional ?? 0, 0, ',', '.') }}</span>
+                            <span class="info-value">Rp
+                                {{ number_format($usaha->total_biaya_operasional ?? 0, 0, ',', '.') }}</span>
                         </div>
                     </div>
 
@@ -596,27 +718,33 @@
                         <tbody>
                             <tr>
                                 <td>Eceran</td>
-                                <td style="text-align: center;">{{ number_format($informasiPemasaran->detail_pemasaran->eceran_kg ?? 0, 2) }}</td>
+                                <td style="text-align: center;">
+                                    {{ number_format($informasiPemasaran->detail_pemasaran->eceran_kg ?? 0, 2) }}</td>
                             </tr>
                             <tr>
                                 <td>Koperasi</td>
-                                <td style="text-align: center;">{{ number_format($informasiPemasaran->detail_pemasaran->koperasi_kg ?? 0, 2) }}</td>
+                                <td style="text-align: center;">
+                                    {{ number_format($informasiPemasaran->detail_pemasaran->koperasi_kg ?? 0, 2) }}</td>
                             </tr>
                             <tr>
                                 <td>Tengkulak</td>
-                                <td style="text-align: center;">{{ number_format($informasiPemasaran->detail_pemasaran->tengkulak_kg ?? 0, 2) }}</td>
+                                <td style="text-align: center;">
+                                    {{ number_format($informasiPemasaran->detail_pemasaran->tengkulak_kg ?? 0, 2) }}</td>
                             </tr>
                             <tr>
                                 <td>Pengepul</td>
-                                <td style="text-align: center;">{{ number_format($informasiPemasaran->detail_pemasaran->pengepul_kg ?? 0, 2) }}</td>
+                                <td style="text-align: center;">
+                                    {{ number_format($informasiPemasaran->detail_pemasaran->pengepul_kg ?? 0, 2) }}</td>
                             </tr>
                             <tr>
                                 <td>Pedagang Besar</td>
-                                <td style="text-align: center;">{{ number_format($informasiPemasaran->detail_pemasaran->pedagang_besar_kg ?? 0, 2) }}</td>
+                                <td style="text-align: center;">
+                                    {{ number_format($informasiPemasaran->detail_pemasaran->pedagang_besar_kg ?? 0, 2) }}</td>
                             </tr>
                             <tr>
                                 <td>Lainnya</td>
-                                <td style="text-align: center;">{{ number_format($informasiPemasaran->detail_pemasaran->lainnya_kg ?? 0, 2) }}</td>
+                                <td style="text-align: center;">
+                                    {{ number_format($informasiPemasaran->detail_pemasaran->lainnya_kg ?? 0, 2) }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -636,15 +764,18 @@
                 <div class="info-box">
                     <div class="info-box-row">
                         <span class="info-label">Pendapatan Perikanan</span>
-                        <span class="info-value">Rp {{ number_format($pendapatanRt->pendapatan_perikanan ?? 0, 0, ',', '.') }}</span>
+                        <span class="info-value">Rp
+                            {{ number_format($pendapatanRt->pendapatan_perikanan ?? 0, 0, ',', '.') }}</span>
                     </div>
                     <div class="info-box-row">
                         <span class="info-label">Pendapatan Non-Perikanan</span>
-                        <span class="info-value">Rp {{ number_format($pendapatanRt->pendapatan_non_perikanan ?? 0, 0, ',', '.') }}</span>
+                        <span class="info-value">Rp
+                            {{ number_format($pendapatanRt->pendapatan_non_perikanan ?? 0, 0, ',', '.') }}</span>
                     </div>
                     <div class="info-box-row">
                         <span class="info-label">Pendapatan Total</span>
-                        <span class="info-value"><strong>Rp {{ number_format($pendapatanRt->pendapatan_total ?? 0, 0, ',', '.') }}</strong></span>
+                        <span class="info-value"><strong>Rp
+                                {{ number_format($pendapatanRt->pendapatan_total ?? 0, 0, ',', '.') }}</strong></span>
                     </div>
                     <div class="info-box-row">
                         <span class="info-label">Kontribusi Nelayan</span>
@@ -768,11 +899,48 @@
 
                 {{-- Gambar Gallery --}}
                 @if($gambarFiles->count() > 0)
-                    <h4 style="color: #667eea; margin-bottom: 10px; font-size: 11px;">Foto Dokumentasi</h4>
+                    <h4 style="color: #2563eb; margin-bottom: 10px; font-size: 11px;">Foto Dokumentasi</h4>
                     <div class="image-gallery">
                         @foreach($gambarFiles as $file)
+                            @php
+                                $imagePath = public_path('storage/'.$file->path_file);
+                                $displaySrc = $imagePath;
+                                
+                                // Logic Rotasi Gambar (Manual Fix untuk DomPDF)
+                                try {
+                                    if (file_exists($imagePath) && function_exists('exif_read_data')) {
+                                        $extension = strtolower(pathinfo($imagePath, PATHINFO_EXTENSION));
+                                        if (in_array($extension, ['jpg', 'jpeg'])) {
+                                            $exif = @exif_read_data($imagePath);
+                                            if (!empty($exif['Orientation']) && in_array($exif['Orientation'], [3, 6, 8])) {
+                                                $source = @imagecreatefromjpeg($imagePath);
+                                                if ($source) {
+                                                    $rotate = null;
+                                                    switch ($exif['Orientation']) {
+                                                        case 3: $rotate = imagerotate($source, 180, 0); break;
+                                                        case 6: $rotate = imagerotate($source, -90, 0); break;
+                                                        case 8: $rotate = imagerotate($source, 90, 0); break;
+                                                    }
+                                                    
+                                                    if ($rotate) {
+                                                        ob_start();
+                                                        imagejpeg($rotate);
+                                                        $imageData = ob_get_clean();
+                                                        $displaySrc = 'data:image/jpeg;base64,' . base64_encode($imageData);
+                                                        imagedestroy($rotate);
+                                                    }
+                                                    imagedestroy($source);
+                                                }
+                                            }
+                                        }
+                                    }
+                                } catch (\Exception $e) {
+                                    // Fallback to original path if processing fails
+                                    $displaySrc = $imagePath;
+                                }
+                            @endphp
                             <div class="image-item">
-                                <img src="{{ public_path('storage/'.$file->path_file) }}" alt="{{ $file->nama_file }}">
+                                <img src="{{ $displaySrc }}" alt="{{ $file->nama_file }}">
                                 <div class="image-item-info">
                                     <strong>{{ Illuminate\Support\Str::limit($file->nama_file, 20) }}</strong>
                                     <div style="color: #999; margin-top: 2px;">{{ number_format($file->ukuran_file / 1024, 1) }} KB</div>
@@ -820,16 +988,46 @@
     {{-- HALAMAN PENUTUP --}}
     {{-- ============================= --}}
     <div class="page">
-        <div style="text-align: center; padding: 100px 0;">
-            <div style="font-size: 40px; margin-bottom: 20px;">✓</div>
-            <h3 style="color: #667eea; margin-bottom: 20px;">Dokumen Kuesioner Selesai</h3>
-            <p style="color: #666; margin-bottom: 10px;">Laporan ini dibuat otomatis oleh Sistem Kuesioner KNMP</p>
-            <p style="color: #999; font-size: 10px; margin-top: 30px;">
-                Tanggal Cetak: {{ now()->format('d Maret Y H:i:s') }}<br>
-                Responden: {{ $responden->nama_responden }}<br>
-                KNMP: {{ $knmp->nama_knmp }}
-            </p>
+        <div class="cover-center">
+            <div class="cover-icon">
+                @php
+                    $path = public_path('assets/images/logo-kkp.png');
+                    $logoExists = file_exists($path);
+                @endphp
+                @if($logoExists)
+                    <img src="{{ $path }}" style="width: 100px; height: auto;" alt="Logo KKP">
+                @else
+                    <div style="font-size: 64px;">⚓</div>
+                @endif
+            </div>
+            <h3 class="cover-title">Dokumen Kuesioner Selesai</h3>
+            <p class="cover-subtitle">Laporan ini dibuat otomatis oleh Sistem Kuesioner KNMP</p>
+
+            <div style="margin-top: 40px; padding: 20px; background: #f9fafb; border-radius: 8px;">
+                <table style="width: 80%; margin: 0 auto; border: none;">
+                    <tr style="background: transparent;">
+                        <td style="border: none; text-align: right; padding: 5px 10px; color: #6b7280;">Tanggal Cetak:
+                        </td>
+                        <td style="border: none; text-align: left; padding: 5px 10px;">{{ now()->format('d F Y, H:i') }}
+                            WIB</td>
+                    </tr>
+                    <tr style="background: transparent;">
+                        <td style="border: none; text-align: right; padding: 5px 10px; color: #6b7280;">Responden:</td>
+                        <td style="border: none; text-align: left; padding: 5px 10px;">
+                            <strong>{{ $responden->nama_responden }}</strong></td>
+                    </tr>
+                    <tr style="background: transparent;">
+                        <td style="border: none; text-align: right; padding: 5px 10px; color: #6b7280;">NIK:</td>
+                        <td style="border: none; text-align: left; padding: 5px 10px;">{{ $responden->nik }}</td>
+                    </tr>
+                    <tr style="background: transparent;">
+                        <td style="border: none; text-align: right; padding: 5px 10px; color: #6b7280;">KNMP:</td>
+                        <td style="border: none; text-align: left; padding: 5px 10px;">{{ $knmp->nama_knmp }}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 </body>
+
 </html>

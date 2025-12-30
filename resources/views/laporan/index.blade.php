@@ -64,3 +64,9 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <!-- demo:js -->
+    <script src="{{ asset('assets/js/pages/demo.dashboard-projects.js') }}"></script>
+    <!-- enddemo -->
+@endpush

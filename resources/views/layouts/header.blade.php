@@ -1,22 +1,25 @@
 <div class="navbar-custom topnav-navbar">
-    <div class="container-fluid">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
 
         <!-- LOGO -->
         <a href="{{ route('dashboard.index') }}" class="topnav-logo">
-            <span class="topnav-logo-lg">
+            <span class="topnav-logo-lg d-flex align-items-center">
                 <img src="{{ asset('assets/images/logo.png') }}" alt="" height="48">
 
-                <span class="ms-2 fw-bold font-size-16 text-secondary">
+                <span class="ms-2 fw-bold font-size-16 text-secondary d-none d-sm-block">
                     KEMENTERIAN KELAUTAN DAN PERIKANAN
                 </span>
+                <span class="ms-2 fw-bold font-size-12 text-secondary d-block d-sm-none">
+                    KKP
+                </span>
             </span>
-
-            <span class="topnav-logo-sm">
-                <img src="assets/images/logo.png" alt="" height="32">
-            </span>
+            {{-- Hiding the small logo logic as we want the text likely --}}
+            {{-- <span class="topnav-logo-sm d-none">
+                <img src="{{ asset('assets/images/logo.png') }}" alt="" height="32">
+            </span> --}}
         </a>
 
-        <ul class="list-unstyled topbar-menu float-end mb-0">
+        <ul class="list-unstyled topbar-menu mb-0">
             <li class="notification-list">
                 <a class="nav-link end-bar-toggle" href="javascript: void(0);">
                     <i class="dripicons-gear noti-icon"></i>
@@ -41,6 +44,12 @@
                     <div class=" dropdown-header noti-title">
                         <h6 class="text-overflow m-0">Welcome !</h6>
                     </div>
+
+                    <!-- item-->
+                    <a href="{{ route('password.change') }}" class="dropdown-item notify-item">
+                        <i class="mdi mdi-account-key me-1"></i>
+                        <span>Ganti Password</span>
+                    </a>
 
                     <!-- item-->
                     <form action="{{ route('logout') }}" method="POST" style="display: inline;">
