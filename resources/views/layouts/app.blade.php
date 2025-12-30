@@ -201,7 +201,6 @@
         <div class="content-page">
             <div class="content">
                 @include('layouts.header')
-                @include('layouts.navigation')
 
                 <div class="container-fluid">
                     @yield('content')
@@ -211,8 +210,6 @@
         </div>
     </div>
 
-    @include('layouts.settings')
-    <div class="rightbar-overlay"></div>
     @include('layouts.foot')
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>

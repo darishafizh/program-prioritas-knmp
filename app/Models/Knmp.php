@@ -39,4 +39,9 @@ class Knmp extends Model
     {
         return $this->belongsTo(KnmpVillages::class, 'village_id');
     }
+
+    public function buktiUploads()
+    {
+        return $this->hasMany(BuktiUpload::class, 'knmp_id');
+    }
 }

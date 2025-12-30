@@ -79,23 +79,23 @@
     });
 </script>
 
-
 <!-- start page title -->
 <div class="row">
     <div class="col-12">
         <div class="page-title-box">
+            <div class="page-title-left">
+                <h4 class="page-title"><i class="mdi mdi-clipboard-text-outline me-2"></i>Kuesioner KNMP</h4>
+                <small class="text-muted">{{ $knmp->nama ?? 'Data KNMP' }}</small>
+            </div>
             <div class="page-title-right">
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb bg-transparent m-0 p-0">
-                        <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}"><i
-                                    class="mdi mdi-home-outline"></i></a>
-                        </li>
-                        <li class="breadcrumb-item"><a href="{{ url('/survey') }}">Survey</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Kuesioner KNMP</li>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Beranda</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('survey.index') }}">Survey</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Kuesioner</li>
                     </ol>
                 </nav>
             </div>
-            <h4 class="page-title"><i class="mdi mdi-clipboard-text-outline me-2"></i>Kuesioner KNMP</h4>
         </div>
     </div>
 </div>
@@ -113,8 +113,7 @@
                     </div>
                     <div class="ms-3">
                         <h4 class="mb-1 text-white fw-bold">{{ $knmp->nama ?? 'Nama KNMP Tidak Ditemukan' }}</h4>
-                        <p class="mb-0 text-white-50 small"><i class="mdi mdi-map-marker me-1"></i>Kawasan Nelayan
-                            Modern Perkotaan</p>
+                        <p class="mb-0 text-white-50 small"><i class="mdi mdi-map-marker me-1"></i>Kampung Nelayan Merah Putih</p>
                     </div>
                 </div>
             </div>
@@ -239,12 +238,17 @@
                             aria-controls="collapseA">
                             <div class="survey-section-indicator bg-primary">A</div>
                             <div class="survey-section-icon text-primary">
-                                <i class="mdi mdi-account-card-details-outline"></i>
+                                <i class="mdi mdi-home-city-outline"></i>
                             </div>
                             <div class="survey-section-content">
                                 <span class="survey-section-title">Profil KNMP</span>
-                                <span class="survey-section-desc">Data identitas kawasan nelayan</span>
+                                <span class="survey-section-desc">Data identitas kampung nelayan</span>
                             </div>
+                            @if(($sectionCounts['A'] ?? 0) > 0)
+                                <span class="badge bg-success ms-auto">{{ $sectionCounts['A'] }} Data</span>
+                            @else
+                                <span class="badge bg-secondary ms-auto">Belum Diisi</span>
+                            @endif
                         </button>
                     </h2>
                     <div id="collapseA" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -268,6 +272,11 @@
                                 <span class="survey-section-title">Proses Pembangunan KNMP</span>
                                 <span class="survey-section-desc">Informasi progres pembangunan</span>
                             </div>
+                            @if(($sectionCounts['B'] ?? 0) > 0)
+                                <span class="badge bg-success ms-auto">{{ $sectionCounts['B'] }} Data</span>
+                            @else
+                                <span class="badge bg-secondary ms-auto">Belum Diisi</span>
+                            @endif
                         </button>
                     </h2>
                     <div id="collapseB" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -277,7 +286,7 @@
                     </div>
                 </div>
 
-                <!-- C. Tanggapan Masyarakat -->
+                <!-- C. Informasi Responden -->
                 <div class="accordion-item survey-accordion-item">
                     <h2 class="accordion-header" id="headingC">
                         <button class="accordion-button collapsed survey-accordion-btn" type="button"
@@ -285,22 +294,27 @@
                             aria-controls="collapseC">
                             <div class="survey-section-indicator bg-success">C</div>
                             <div class="survey-section-icon text-success">
-                                <i class="mdi mdi-account-group-outline"></i>
+                                <i class="mdi mdi-account-outline"></i>
                             </div>
                             <div class="survey-section-content">
-                                <span class="survey-section-title">Tanggapan Masyarakat</span>
-                                <span class="survey-section-desc">Terkait pembangunan KNMP</span>
+                                <span class="survey-section-title">Informasi Responden</span>
+                                <span class="survey-section-desc">Data pribadi responden</span>
                             </div>
+                            @if(($sectionCounts['C'] ?? 0) > 0)
+                                <span class="badge bg-primary ms-auto">{{ $sectionCounts['C'] }} Responden</span>
+                            @else
+                                <span class="badge bg-secondary ms-auto">Belum Ada</span>
+                            @endif
                         </button>
                     </h2>
                     <div id="collapseC" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body survey-accordion-body">
-                            @include('survey.forms.form_layouts.tanggapan_masyarakat')
+                            @include('survey.forms.form_layouts.informasi_responden')
                         </div>
                     </div>
                 </div>
 
-                <!-- D. Tingkat Kebahagiaan Nelayan -->
+                <!-- D. Tanggapan Masyarakat -->
                 <div class="accordion-item survey-accordion-item">
                     <h2 class="accordion-header" id="headingD">
                         <button class="accordion-button collapsed survey-accordion-btn" type="button"
@@ -308,22 +322,27 @@
                             aria-controls="collapseD">
                             <div class="survey-section-indicator bg-warning">D</div>
                             <div class="survey-section-icon text-warning">
-                                <i class="mdi mdi-emoticon-happy-outline"></i>
+                                <i class="mdi mdi-account-group-outline"></i>
                             </div>
                             <div class="survey-section-content">
-                                <span class="survey-section-title">Tingkat Kebahagiaan Nelayan</span>
-                                <span class="survey-section-desc">Survei kesejahteraan nelayan</span>
+                                <span class="survey-section-title">Tanggapan Masyarakat</span>
+                                <span class="survey-section-desc">Terkait pembangunan KNMP</span>
                             </div>
+                            @if(($sectionCounts['D'] ?? 0) > 0)
+                                <span class="badge bg-primary ms-auto">{{ $sectionCounts['D'] }} Responden</span>
+                            @else
+                                <span class="badge bg-secondary ms-auto">Belum Ada</span>
+                            @endif
                         </button>
                     </h2>
                     <div id="collapseD" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body survey-accordion-body">
-                            @include('survey.forms.form_layouts.tingkat_kebahagiaan_nelayan')
+                            @include('survey.forms.form_layouts.tanggapan_masyarakat')
                         </div>
                     </div>
                 </div>
 
-                <!-- E. Informasi Responden -->
+                <!-- E. Tingkat Kebahagiaan Nelayan -->
                 <div class="accordion-item survey-accordion-item">
                     <h2 class="accordion-header" id="headingE">
                         <button class="accordion-button collapsed survey-accordion-btn" type="button"
@@ -331,17 +350,22 @@
                             aria-controls="collapseE">
                             <div class="survey-section-indicator bg-danger">E</div>
                             <div class="survey-section-icon text-danger">
-                                <i class="mdi mdi-account-outline"></i>
+                                <i class="mdi mdi-emoticon-happy-outline"></i>
                             </div>
                             <div class="survey-section-content">
-                                <span class="survey-section-title">Informasi Responden</span>
-                                <span class="survey-section-desc">Data pribadi responden</span>
+                                <span class="survey-section-title">Tingkat Kebahagiaan Nelayan</span>
+                                <span class="survey-section-desc">Survei kesejahteraan nelayan</span>
                             </div>
+                            @if(($sectionCounts['E'] ?? 0) > 0)
+                                <span class="badge bg-primary ms-auto">{{ $sectionCounts['E'] }} Responden</span>
+                            @else
+                                <span class="badge bg-secondary ms-auto">Belum Ada</span>
+                            @endif
                         </button>
                     </h2>
                     <div id="collapseE" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body survey-accordion-body">
-                            @include('survey.forms.form_layouts.informasi_responden')
+                            @include('survey.forms.form_layouts.tingkat_kebahagiaan_nelayan')
                         </div>
                     </div>
                 </div>
@@ -360,6 +384,11 @@
                                 <span class="survey-section-title">Informasi Usaha</span>
                                 <span class="survey-section-desc">Kondisi existing usaha</span>
                             </div>
+                            @if(($sectionCounts['F'] ?? 0) > 0)
+                                <span class="badge bg-primary ms-auto">{{ $sectionCounts['F'] }} Responden</span>
+                            @else
+                                <span class="badge bg-secondary ms-auto">Belum Ada</span>
+                            @endif
                         </button>
                     </h2>
                     <div id="collapseF" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -383,6 +412,11 @@
                                 <span class="survey-section-title">Informasi Pemasaran Hasil Perikanan</span>
                                 <span class="survey-section-desc">Data distribusi dan penjualan</span>
                             </div>
+                            @if(($sectionCounts['G'] ?? 0) > 0)
+                                <span class="badge bg-primary ms-auto">{{ $sectionCounts['G'] }} Responden</span>
+                            @else
+                                <span class="badge bg-secondary ms-auto">Belum Ada</span>
+                            @endif
                         </button>
                     </h2>
                     <div id="collapseG" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -406,6 +440,11 @@
                                 <span class="survey-section-title">Informasi Pendapatan Rumah Tangga</span>
                                 <span class="survey-section-desc">Data ekonomi keluarga</span>
                             </div>
+                            @if(($sectionCounts['H'] ?? 0) > 0)
+                                <span class="badge bg-primary ms-auto">{{ $sectionCounts['H'] }} Responden</span>
+                            @else
+                                <span class="badge bg-secondary ms-auto">Belum Ada</span>
+                            @endif
                         </button>
                     </h2>
                     <div id="collapseH" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -429,6 +468,11 @@
                                 <span class="survey-section-title">Sosial dan Kelembagaan</span>
                                 <span class="survey-section-desc">Struktur organisasi masyarakat</span>
                             </div>
+                            @if(($sectionCounts['I'] ?? 0) > 0)
+                                <span class="badge bg-primary ms-auto">{{ $sectionCounts['I'] }} Responden</span>
+                            @else
+                                <span class="badge bg-secondary ms-auto">Belum Ada</span>
+                            @endif
                         </button>
                     </h2>
                     <div id="collapseI" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -452,6 +496,11 @@
                                 <span class="survey-section-title">Bukti Pendukung</span>
                                 <span class="survey-section-desc">Upload dokumen dan foto</span>
                             </div>
+                            @if(($sectionCounts['J'] ?? 0) > 0)
+                                <span class="badge bg-success ms-auto">{{ $sectionCounts['J'] }} File</span>
+                            @else
+                                <span class="badge bg-secondary ms-auto">Belum Ada</span>
+                            @endif
                         </button>
                     </h2>
                     <div id="collapseJ" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -698,7 +747,7 @@
             width: 1rem;
             height: 1rem;
             flex-shrink: 0;
-            margin-left: auto;
+            margin-left: 0.75rem;
         }
 
         .survey-section-indicator {
@@ -733,6 +782,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.15rem;
+            flex-grow: 1;
         }
 
         .survey-section-title {
@@ -746,10 +796,80 @@
             color: #64748b;
         }
 
+        /* Section Badge */
+        .survey-accordion-btn .badge {
+            flex-shrink: 0;
+            font-size: 0.7rem;
+            padding: 0.35rem 0.65rem;
+        }
+
         .survey-accordion-body {
             padding: 1.5rem;
             background: #fcfcfd;
             border-top: 1px solid #e2e8f0;
+        }
+
+        /* ================================================= */
+        /* FORM SECTION HEADER STYLES */
+        /* ================================================= */
+        .form-section-header {
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .form-section-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
+        }
+
+        .form-section-icon i {
+            font-size: 28px;
+        }
+
+        .form-section-icon.bg-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+        }
+
+        .form-section-icon.bg-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .form-section-icon.bg-info {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+
+        .form-section-icon.bg-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .form-section-icon.bg-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .form-section-icon.bg-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        }
+
+        .form-section-icon.bg-purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .form-section-icon.bg-teal {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+        }
+
+        .form-section-icon.bg-pink {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+        }
+
+        .form-section-icon.bg-orange {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
         }
 
         /* ================================================= */

@@ -1,61 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!-- Mirrored from coderthemes.com/hyper/saas/pages-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 29 Jul 2022 10:21:16 GMT -->
-
 <head>
     <meta charset="utf-8" />
     <title>Log In | Monev KNMP - KKP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
-    <meta content="Coderthemes" name="author" />
+    <meta content="Sistem Monitoring dan Evaluasi KNMP" name="description" />
+    <meta content="Kementerian Kelautan dan Perikanan" name="author" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('assets/images/logo.png') }}">`
+    <link rel="shortcut icon" href="{{ asset('assets/images/logo.png') }}">
 
-    <!-- App css -->
-    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-    <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-</head>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<body class="loading" data-layout-config='{"darkMode":false}'
-    style="margin: 0 !important; padding: 0 !important; overflow: hidden !important;">
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" rel="stylesheet">
+
     <style>
-        *,
-        *::before,
-        *::after {
+        :root {
+            --kkp-primary: #0054A6;
+            --kkp-primary-dark: #003D7A;
+            --kkp-primary-light: #0066CC;
+            --kkp-accent: #00A9CE;
+        }
+
+        *, *::before, *::after {
             box-sizing: border-box;
         }
 
-        html,
-        body {
-            margin: 0 !important;
-            padding: 0 !important;
-            overflow: hidden !important;
-            height: 100% !important;
-            width: 100% !important;
-        }
-
-        body.loading {
-            margin: 0 !important;
-            padding: 0 !important;
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
         .login-wrapper {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
+            position: fixed;
+            inset: 0;
+            display: flex;
             height: 100vh;
             width: 100vw;
-            display: flex;
-            overflow: hidden;
         }
 
         .login-left-panel {
-            background: linear-gradient(135deg, #003d7a 0%, #00529b 50%, #0066cc 100%);
+            background: linear-gradient(135deg, var(--kkp-primary-dark) 0%, var(--kkp-primary) 50%, var(--kkp-primary-light) 100%);
             height: 100vh;
             width: 50%;
             display: flex;
@@ -75,7 +71,7 @@
             right: -50%;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
             pointer-events: none;
         }
 
@@ -90,21 +86,27 @@
             pointer-events: none;
         }
 
-        .login-left-panel .logo-container {
+        .logo-container {
             position: relative;
             z-index: 1;
             text-align: center;
         }
 
-        .login-left-panel .logo-container img {
-            width: 180px;
+        .logo-container img {
+            width: 160px;
             height: auto;
-            margin-bottom: 40px;
+            margin-bottom: 35px;
             filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.3));
+            animation: float 3s ease-in-out infinite;
         }
 
-        .login-left-panel .ministry-name {
-            font-size: 2rem;
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .ministry-name {
+            font-size: 1.85rem;
             font-weight: 700;
             text-align: center;
             text-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
@@ -113,8 +115,8 @@
             letter-spacing: 0.5px;
         }
 
-        .login-left-panel .ministry-subtitle {
-            font-size: 1.1rem;
+        .ministry-subtitle {
+            font-size: 1rem;
             opacity: 0.9;
             margin-top: 20px;
             text-align: center;
@@ -122,7 +124,7 @@
             letter-spacing: 0.3px;
         }
 
-        .login-left-panel .footer-text {
+        .footer-text {
             position: absolute;
             bottom: 30px;
             left: 0;
@@ -139,104 +141,134 @@
             height: 100vh;
             width: 50%;
             padding: 40px;
-            background-color: #f5f7fa;
+            background: linear-gradient(180deg, #f8f9fc 0%, #eef1f7 100%);
             position: relative;
         }
 
         .login-card {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             border: none;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
             background: #ffffff;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .login-card .card-body {
-            padding: 50px 40px;
+            padding: 48px 40px;
         }
 
-        .login-card .login-title {
+        .login-title {
             font-size: 1.6rem;
             font-weight: 700;
             color: #1a1a2e;
             margin-bottom: 8px;
         }
 
-        .login-card .login-subtitle {
+        .login-subtitle {
             color: #6c757d;
-            margin-bottom: 35px;
+            margin-bottom: 32px;
             font-size: 0.95rem;
             line-height: 1.5;
         }
 
-        .login-card .form-label {
+        .form-label {
             font-weight: 600;
             color: #333;
-            font-size: 0.9rem;
+            font-size: 0.875rem;
             margin-bottom: 8px;
         }
 
-        .login-card .form-control {
+        .form-control {
             border-radius: 12px;
             padding: 14px 18px;
             border: 1.5px solid #e0e5ec;
             transition: all 0.3s ease;
             font-size: 0.95rem;
             background: #f8f9fc;
+            font-family: 'Poppins', sans-serif;
         }
 
-        .login-card .form-control:focus {
-            border-color: #0066cc;
-            box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.1);
+        .form-control:focus {
+            border-color: var(--kkp-primary);
+            box-shadow: 0 0 0 4px rgba(0, 84, 166, 0.12);
             background: #ffffff;
+            outline: none;
         }
 
-        .login-card .form-control::placeholder {
+        .form-control::placeholder {
             color: #adb5bd;
         }
 
-        .login-card .input-group-text {
+        .input-group-text {
             background: #f8f9fc;
             border: 1.5px solid #e0e5ec;
             border-left: none;
+            border-radius: 0 12px 12px 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .login-card .btn-primary {
+        .input-group-text:hover {
+            background: #eef1f7;
+        }
+
+        .btn-primary {
             width: 100%;
             padding: 14px;
             border-radius: 12px;
             font-weight: 600;
             font-size: 1rem;
-            background: linear-gradient(135deg, #0066cc 0%, #004d99 100%);
+            background: linear-gradient(135deg, var(--kkp-primary) 0%, var(--kkp-primary-dark) 100%);
             border: none;
             transition: all 0.3s ease;
             letter-spacing: 0.3px;
+            font-family: 'Poppins', sans-serif;
         }
 
-        .login-card .btn-primary:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 102, 204, 0.35);
-            background: linear-gradient(135deg, #0077e6 0%, #0066cc 100%);
+            box-shadow: 0 8px 25px rgba(0, 84, 166, 0.35);
+            background: linear-gradient(135deg, var(--kkp-primary-light) 0%, var(--kkp-primary) 100%);
         }
 
-        .login-card .btn-primary:active {
+        .btn-primary:active {
             transform: translateY(0);
         }
 
-        .login-card .form-check-input:checked {
-            background-color: #0066cc;
-            border-color: #0066cc;
+        .form-check-input:checked {
+            background-color: var(--kkp-primary);
+            border-color: var(--kkp-primary);
         }
 
-        .login-card a {
-            color: #0066cc;
+        a {
+            color: var(--kkp-primary);
             text-decoration: none;
             transition: color 0.2s ease;
         }
 
-        .login-card a:hover {
-            color: #004d99;
+        a:hover {
+            color: var(--kkp-primary-dark);
+        }
+
+        .alert {
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 0.875rem;
+        }
+
+        .password-eye {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
         }
 
         @media (max-width: 991.98px) {
@@ -250,25 +282,25 @@
             .login-left-panel {
                 width: 100%;
                 height: auto;
-                min-height: 280px;
+                min-height: 260px;
                 padding: 40px 30px;
             }
 
-            .login-left-panel .logo-container img {
-                width: 100px;
+            .logo-container img {
+                width: 90px;
                 margin-bottom: 20px;
             }
 
-            .login-left-panel .ministry-name {
-                font-size: 1.4rem;
+            .ministry-name {
+                font-size: 1.35rem;
             }
 
-            .login-left-panel .ministry-subtitle {
-                font-size: 0.95rem;
+            .ministry-subtitle {
+                font-size: 0.9rem;
                 margin-top: 12px;
             }
 
-            .login-left-panel .footer-text {
+            .footer-text {
                 display: none;
             }
 
@@ -279,11 +311,13 @@
             }
 
             .login-card .card-body {
-                padding: 35px 25px;
+                padding: 32px 24px;
             }
         }
     </style>
+</head>
 
+<body>
     <div class="login-wrapper">
         <!-- Left Panel - Logo -->
         <div class="login-left-panel">
@@ -293,9 +327,7 @@
                 <p class="ministry-subtitle">Sistem Monitoring dan Evaluasi KNMP</p>
             </div>
             <div class="footer-text">
-                ©
-                <script>document.write(new Date().getFullYear())</script> Monev KNMP - Kementerian Kelautan dan
-                Perikanan
+                © <script>document.write(new Date().getFullYear())</script> Monev KNMP - Kementerian Kelautan dan Perikanan
             </div>
         </div>
 
@@ -307,24 +339,22 @@
                     <p class="login-subtitle text-center">Masukan email dan password Anda untuk mengakses sistem.</p>
 
                     @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert"
-                            style="border-radius: 12px;">
-                            <i class="mdi mdi-block-helper me-2"></i> {{ session('error') }}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="mdi mdi-alert-circle me-2"></i>{{ session('error') }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
 
                     @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert"
-                            style="border-radius: 12px;">
-                            <i class="mdi mdi-check-all me-2"></i> {{ session('success') }}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="mdi mdi-check-circle me-2"></i>{{ session('success') }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
 
                     @if ($errors->any())
-                        <div class="alert alert-danger" style="border-radius: 12px;">
-                            <ul class="mb-0">
+                        <div class="alert alert-danger">
+                            <ul class="mb-0 ps-3">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
                                 @endforeach
@@ -342,16 +372,14 @@
                         </div>
 
                         <div class="mb-3">
-                            <a href="{{ route('password.request') }}" class="text-muted float-end"><small>Lupa
-                                    password?</small></a>
+                            <a href="{{ route('password.request') }}" class="text-muted float-end"><small>Lupa password?</small></a>
                             <label for="password" class="form-label">Password</label>
-                            <div class="input-group input-group-merge">
+                            <div class="input-group">
                                 <input type="password" id="password" class="form-control" name="password" required
                                     placeholder="Masukan password anda" style="border-radius: 12px 0 0 12px;">
-                                <div class="input-group-text" data-password="false"
-                                    style="border-radius: 0 12px 12px 0;">
-                                    <span class="password-eye"></span>
-                                </div>
+                                <span class="input-group-text" onclick="togglePassword()">
+                                    <i class="mdi mdi-eye" id="toggleIcon"></i>
+                                </span>
                             </div>
                         </div>
 
@@ -373,12 +401,25 @@
         </div>
     </div>
 
-    <!-- bundle -->
-    <script src="assets/js/vendor.min.js"></script>
-    <script src="assets/js/app.min.js"></script>
-
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function togglePassword() {
+            var passwordInput = document.getElementById('password');
+            var toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('mdi-eye');
+                toggleIcon.classList.add('mdi-eye-off');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('mdi-eye-off');
+                toggleIcon.classList.add('mdi-eye');
+            }
+        }
+    </script>
 </body>
-
-<!-- Mirrored from coderthemes.com/hyper/saas/pages-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 29 Jul 2022 10:21:16 GMT -->
 
 </html>

@@ -252,6 +252,20 @@ class FormsController extends Controller
             }
         }
 
+        // ✅ HITUNG DATA UNTUK BADGE SETIAP SECTION
+        $sectionCounts = [
+            'A' => ProfileKnmp::where('knmp_id', $knmp->id)->count(), // Profil KNMP (1 per KNMP)
+            'B' => ProgresKnmp::where('knmp_id', $knmp->id)->count(), // Progres KNMP (1 per KNMP)
+            'C' => InformasiResponden::where('knmp_id', $knmp->id)->count(), // Informasi Responden (banyak)
+            'D' => TanggapanMasyarakat::where('knmp_id', $knmp->id)->count(), // Tanggapan Masyarakat (per responden)
+            'E' => TingkatKebahagiaanNelayan::where('knmp_id', $knmp->id)->distinct('responden_id')->count('responden_id'), // Tingkat Kebahagiaan (per responden)
+            'F' => InformasiUsaha::where('knmp_id', $knmp->id)->count(), // Informasi Usaha (per responden)
+            'G' => InformasiPemasaran::where('knmp_id', $knmp->id)->count(), // Pemasaran (per responden)
+            'H' => InformasiPendapatanRumahTangga::where('knmp_id', $knmp->id)->count(), // Pendapatan RT (per responden)
+            'I' => SosialKelembagaan::where('knmp_id', $knmp->id)->count(), // Sosial Kelembagaan (per responden)
+            'J' => BuktiUpload::where('knmp_id', $knmp->id)->count(), // Bukti Upload (banyak per KNMP)
+        ];
+
         // ✅ KIRIM LIST RESPONDEN & BUKTI UPLOADS KE VIEW
         return view('survey.forms.index', compact(
             'knmp',
@@ -267,7 +281,8 @@ class FormsController extends Controller
             'tanggapanMasyarakat',
             'selectedRespondenId',
             'selectedResponden',
-            'selectedRespondenData'
+            'selectedRespondenData',
+            'sectionCounts'
         ));
     }
 

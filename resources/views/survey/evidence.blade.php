@@ -6,16 +6,15 @@
     <!-- start page title -->
     <div class="row">
         <div class="col-12">
-            <div class="page-title-box d-flex align-items-center justify-content-between"
-                style="background: transparent; box-shadow: none; padding: 15px 0; margin-bottom: 20px;">
-                <h4 class="page-title mb-0">
-                    <i class="mdi mdi-file-image-marker me-1"></i> Bukti Pendukung
-                </h4>
+            <div class="page-title-box">
+                <div class="page-title-left">
+                    <h4 class="page-title"><i class="mdi mdi-file-image-marker me-2"></i>Bukti Pendukung</h4>
+                    <small class="text-muted">{{ $knmp->nama ?? 'KNMP' }}</small>
+                </div>
                 <div class="page-title-right">
                     <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb bg-transparent m-0 p-0">
-                            <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}"><i
-                                        class="mdi mdi-home-outline"></i></a></li>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Beranda</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('survey.index') }}">Survey</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Bukti Pendukung</li>
                         </ol>

@@ -4,9 +4,9 @@
     <!-- start page title -->
     <div class="row">
         <div class="col-12">
-            <div class="page-title-box d-flex align-items-center justify-content-between">
-                <div>
-                    <h4 class="page-title mb-0">Dashboard</h4>
+            <div class="page-title-box">
+                <div class="page-title-left">
+                    <h4 class="page-title">Dashboard</h4>
                     <small class="text-muted">Data: {{ $periodLabel ?? 'Semua Waktu' }}</small>
                 </div>
                 <div class="page-title-right">
@@ -51,65 +51,101 @@
 
     {{-- Statistic Cards - Baris 1 --}}
     <div class="row">
-        <div class="col-lg-4">
+        <div class="col-lg-4 col-md-6">
             <div class="card widget-flat">
                 <div class="card-body">
-                    <div class="float-end"><i class="mdi mdi-map-marker-radius widget-icon"></i></div>
-                    <h5 class="text-muted fw-normal mt-0">Total Lokasi KNMP</h5>
-                    <h3 class="mt-3 mb-3">{{ number_format(count($desa_knmp), 0, ',', '.') }}</h3>
+                    <div class="widget-icon">
+                        <i class="mdi mdi-map-marker-radius"></i>
+                    </div>
+                    <h5>Total Lokasi KNMP</h5>
+                    <h3>{{ number_format(count($desa_knmp), 0, ',', '.') }}</h3>
+                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
+                        <i class="mdi mdi-trending-up text-success me-1"></i>
+                        Lokasi tersebar di seluruh Indonesia
+                    </p>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-4">
+        <div class="col-lg-4 col-md-6">
             <div class="card widget-flat">
                 <div class="card-body">
-                    <div class="float-end"><i class="mdi mdi-clipboard-text-search widget-icon"></i></div>
-                    <h5 class="text-muted fw-normal mt-0">Total Survey</h5>
-                    <h3 class="mt-3 mb-3">{{ number_format($totalSurveyTerisi, 0, ',', '.') }}</h3>
+                    <div class="widget-icon" style="background: linear-gradient(135deg, #10B981 0%, #34D399 100%); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
+                        <i class="mdi mdi-clipboard-text-search"></i>
+                    </div>
+                    <h5>Total Survey</h5>
+                    <h3>{{ number_format($totalSurveyTerisi, 0, ',', '.') }}</h3>
+                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
+                        <i class="mdi mdi-check-circle text-success me-1"></i>
+                        Survey terisi lengkap
+                    </p>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-4">
+        <div class="col-lg-4 col-md-6">
             <div class="card widget-flat">
                 <div class="card-body">
-                    <div class="float-end"><i class="mdi mdi-database-check widget-icon"></i></div>
-                    <h5 class="text-muted fw-normal mt-0">Tingkat Kelengkapan Data</h5>
-                    <h3 class="mt-3 mb-3">{{ number_format($tingkatKelengkapanData, 2, ',', '.') }}%</h3>
+                    <div class="widget-icon" style="background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+                        <i class="mdi mdi-database-check"></i>
+                    </div>
+                    <h5>Tingkat Kelengkapan Data</h5>
+                    <h3>{{ number_format($tingkatKelengkapanData, 2, ',', '.') }}%</h3>
+                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
+                        <i class="mdi mdi-information-outline text-info me-1"></i>
+                        Dari total seluruh data
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Statistic Cards - Baris 2 --}}
-    <div class="row mt-3">
-        <div class="col-lg-4">
+    <div class="row">
+        <div class="col-lg-4 col-md-6">
             <div class="card widget-flat">
                 <div class="card-body">
-                    <div class="float-end"><i class="mdi mdi-bullseye-arrow widget-icon"></i></div>
-                    <h5 class="text-muted fw-normal mt-0">Rata-rata Capaian Indikator</h5>
-                    <h3 class="mt-3 mb-3">{{ number_format($capaianIndikator, 2, ',', '.') }}%</h3>
+                    <div class="widget-icon" style="background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);">
+                        <i class="mdi mdi-bullseye-arrow"></i>
+                    </div>
+                    <h5>Rata-rata Capaian Indikator</h5>
+                    <h3>{{ number_format($capaianIndikator, 2, ',', '.') }}%</h3>
+                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
+                        <i class="mdi mdi-chart-line text-primary me-1"></i>
+                        Target tercapai
+                    </p>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-4">
+        <div class="col-lg-4 col-md-6">
             <div class="card widget-flat">
                 <div class="card-body">
-                    <div class="float-end"><i class="mdi mdi-emoticon-happy widget-icon"></i></div>
-                    <h5 class="text-muted fw-normal mt-0">Rata-rata Indeks Kebahagiaan</h5>
-                    <h3 class="mt-3 mb-3">{{ number_format($rataRataKebahagiaan, 2, ',', '.') }}</h3>
+                    <div class="widget-icon" style="background: linear-gradient(135deg, #EC4899 0%, #F472B6 100%); box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);">
+                        <i class="mdi mdi-emoticon-happy"></i>
+                    </div>
+                    <h5>Rata-rata Indeks Kebahagiaan</h5>
+                    <h3>{{ number_format($rataRataKebahagiaan, 2, ',', '.') }}</h3>
+                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
+                        <i class="mdi mdi-thumb-up text-success me-1"></i>
+                        Skala 1-10
+                    </p>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-4">
+        <div class="col-lg-4 col-md-6">
             <div class="card widget-flat">
                 <div class="card-body">
-                    <div class="float-end"><i class="mdi mdi-home-group-plus widget-icon"></i></div>
-                    <h5 class="text-muted fw-normal mt-0">Desa dengan Aset Bertambah</h5>
-                    <h3 class="mt-3 mb-3">{{ number_format($desaAsetBertambah, 0, ',', '.') }}</h3>
+                    <div class="widget-icon" style="background: linear-gradient(135deg, #06B6D4 0%, #22D3EE 100%); box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);">
+                        <i class="mdi mdi-home-group-plus"></i>
+                    </div>
+                    <h5>Desa dengan Aset Bertambah</h5>
+                    <h3>{{ number_format($desaAsetBertambah, 0, ',', '.') }}</h3>
+                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
+                        <i class="mdi mdi-arrow-up-bold text-success me-1"></i>
+                        Pertumbuhan positif
+                    </p>
                 </div>
             </div>
         </div>

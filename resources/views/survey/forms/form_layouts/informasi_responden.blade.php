@@ -1,4 +1,4 @@
-<form method="POST" action="{{ route('survey.forms.store_informasi_responden', ['knmp' => $knmp->id]) }}">
+<form method="POST" action="{{ route('forms.store_informasi_responden', ['knmp' => $knmp->id]) }}">
     @csrf
     {{-- Hidden field untuk knmp_id (asumsi) --}}
     <input type="hidden" name="knmp_id" value="{{ $knmp->id ?? '' }}">
