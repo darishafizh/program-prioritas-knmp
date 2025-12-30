@@ -2,6 +2,38 @@
     @csrf
 
     <input type="hidden" name="knmp_id" value="{{ $knmp->id }}">
+    <input type="hidden" name="active_section" value="collapseFour">
+
+
+    {{-- ========================= --}}
+    {{-- PILIH RESPONDEN --}}
+    {{-- ========================= --}}
+    <div class="mb-4">
+        <label class="form-label fw-bold">
+            Responden
+        </label>
+
+        <select name="responden_id" class="form-select @error('responden_id') is-invalid @enderror" required>
+            <option value="">-- Pilih Responden --</option>
+            @foreach ($respondenList as $r)
+                @php
+                    $tingkatKebahagiaanData = isset($selectedRespondenData['tingkat_kebahagiaan']) ? $selectedRespondenData['tingkat_kebahagiaan'] : null;
+                    $tingkatKebahagiaanFirst = $tingkatKebahagiaanData && $tingkatKebahagiaanData->count() > 0 ? $tingkatKebahagiaanData->first() : null;
+                    $isSelected = old('responden_id') == $r->id ||
+                        ($selectedRespondenId && $selectedRespondenId == $r->id && !old('responden_id')) ||
+                        ($tingkatKebahagiaanFirst && $tingkatKebahagiaanFirst->responden_id == $r->id && !old('responden_id'));
+                @endphp
+                <option value="{{ $r->id }}" {{ $isSelected ? 'selected' : '' }}>
+                    {{ $r->nama_responden }} ({{ $r->nik }})
+                </option>
+            @endforeach
+        </select>
+
+        @error('responden_id')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+
 
     @php
         $pilihan = ['Sangat Tidak Setuju', 'Tidak Setuju', 'Netral', 'Setuju', 'Sangat Setuju'];
@@ -65,27 +97,28 @@
                     echo '<label class="form-label"><strong>' . $no . '.</strong> ' . $text . '</label>';
                     echo '<div>';
                     foreach ($pilihan as $value) {
+                        $fieldName = $prefix . '_' . $no;
                         $id = $prefix . '_' . $no . '_' . \Illuminate\Support\Str::slug($value);
+                        $checked = old($fieldName) == $value ? 'checked' : '';
                         echo '<div class="form-check form-check-inline">';
                         echo '<input class="form-check-input" type="radio" name="' .
-                            $prefix .
-                            '_' .
-                            $no .
+                            $fieldName .
                             '" id="' .
                             $id .
                             '" value="' .
                             $value .
-                            '" required>';
+                            '" ' .
+                            $checked .
+                            '>';
+
                         echo '<label class="form-check-label" for="' . $id . '">' . $value . '</label>';
                         echo '</div>';
                     }
                     echo '</div>
-        </div>';
+                </div>';
                 }
             }
-        @endphp
-
-        <!-- Kepuasan Hidup Personal -->
+        @endphp <!-- Kepuasan Hidup Personal -->
         <div id="sectionKebahagiaan">
 
             {{-- Kategori: A.1 Kepuasan Hidup Personal --}}

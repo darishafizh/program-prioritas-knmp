@@ -1,304 +1,305 @@
-<form action="{{ route('survey.forms.store_progres_pembangunan_knmp', ['knmp' => $knmp->id]) }}" method="POST">
+{{-- ALERT ERROR VALIDASI --}}
+@if ($errors->any())
+<div class="alert alert-danger">
+    <strong>Terjadi kesalahan:</strong>
+    <ul class="mb-0">
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
 
+<form action="{{ route('forms.store_progres_knmp', ['knmp' => $knmp->id]) }}" method="POST">
     @csrf
 
-    {{-- ================================
-    1. PROFIL PROYEK KNMP
-================================ --}}
-    <div class="card mb-3">
-        <div class="card-header fw-bold">1. Profil Proyek KNMP</div>
-        <div class="card-body">
-
-            <div class="mb-3">
-                <label class="form-label">Total Anggaran (Rp)</label>
-                <input type="number" name="total_anggaran" class="form-control">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Anggaran Konstruksi (Rp)</label>
-                <input type="number" name="anggaran_konstruksi" class="form-control">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Anggaran Pengadaan Sarpras (Rp)</label>
-                <input type="number" name="anggaran_sarpras" class="form-control">
-            </div>
-
+    {{-- BAGIAN 1: PROFIL PROYEK --}}
+    <h5 class="mb-1">1. Profil Proyek KNMP</h5>
+    <div class="row g-3 mb-3">
+        <div class="col-md-4">
+            <label class="form-label">Total Anggaran (Rp)</label>
+            <input type="number" name="anggaran_total" class="form-control"
+                value="{{ old('anggaran_total', $progresKnmp->anggaran_total ?? '') }}" placeholder="22.000.000.000">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Anggaran Konstruksi (Rp)</label>
+            <input type="number" name="anggaran_konstruksi" class="form-control"
+                value="{{ old('anggaran_konstruksi', $progresKnmp->anggaran_konstruksi ?? '') }}" placeholder="2.000.000.000">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Anggaran Pengadaan Sarpras (Rp)</label>
+            <input type="number" name="anggaran_sarpras" class="form-control"
+                value="{{ old('anggaran_sarpras', $progresKnmp->anggaran_sarpras ?? '') }}" placeholder="200.000.000">
         </div>
     </div>
 
+    {{-- BAGIAN 2: PROGRESS PEMBANGUNAN --}}
+    <h5 class="mb-1">2. Detail Rencana Pembangunan KNMP</h5>
 
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped mb-3 align-middle">
+            <thead class="table-primary text-center">
+                <tr>
+                    <th>No</th>
+                    <th>Jenis Komponen</th>
+                    <th>Target (unit)</th>
+                    <th>Progres (%)</th>
+                    <th>Keterangan</th>
+                </tr>
+            </thead>
 
-    {{-- ================================
-    2. DETAIL RENCANA PEMBANGUNAN
-================================ --}}
-    <div class="card mb-3">
-        <div class="card-header fw-bold">2. Detail Rencana Pembangunan KNMP Tahun 2025</div>
+            <tbody>
+                @php
+                $components = [
+                'A' => [
+                'title' => 'Konstruksi',
+                'items' => [
+                'Tambatan Perahu / Dermaga',
+                'Shelter pendaratan ikan',
+                'Bengkel/ Docking kapal nelayan',
+                'Kantor pengelola',
+                'Sentra kuliner produk perikanan',
+                'Balai Pertemuan Nelayan',
+                'Shelter perbaikan jaring',
+                'Shelter Cool Box',
+                'Bangunan Tapak Cold Storage',
+                'Miniplan pengolahan ikan',
+                'Kios perbekalan',
+                'Tempat pembuangan sampah dan IPAL',
+                'Musholla',
+                'Sarana toilet umum',
+                'Jalan di kawasan lahan pembangunan',
+                'Penerangan umum',
+                'Pagar, gapura, dan/atau landmark',
+                'Parkir',
+                'Talud / Revetment Sungai dan Laut',
+                ],
+                ],
+                'B' => [
+                'title' => 'Bantuan Kapal, Mesin dan API',
+                'items' => ['Kapal penangkap ikan', 'Mesin kapal perikanan', 'Alat Penangkap Ikan'],
+                ],
+                'C' => [
+                'title' => 'Bantuan Sarana Rantai Dingin',
+                'items' => [
+                'Cold Storage',
+                'Pabrik Es Balok',
+                'Pabrik Es Slurry',
+                'Kendaraan Berpendingin',
+                'Cool Box',
+                ],
+                ],
+                'D' => [
+                'title' => 'SPBU Nelayan',
+                'items' => ['SPBU Nelayan'],
+                ],
+                ];
+                @endphp
 
-        <div class="card-body">
+                @foreach ($components as $code => $section)
 
-            <div class="table-responsive">
-                <table class="table table-bordered align-middle">
-                    <thead class="table-light text-center">
-                        <tr>
-                            <th style="width: 50px">No</th>
-                            <th>Jenis Komponen</th>
-                            <th style="width: 130px">Target (unit)</th>
-                            <th style="width: 130px">Progres (%)</th>
-                            <th>Keterangan (Estimasi penyelesaian s.d 31 Des)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <tr class="table-secondary fw-bold">
+                    <td colspan="5">{{ $code }}. {{ $section['title'] }}</td>
+                </tr>
 
-                        {{-- ===== A. KONSTRUKSI ===== --}}
-                        <tr class="table-secondary fw-bold">
-                            <td colspan="5">A. Konstruksi</td>
-                        </tr>
+                @foreach ($section['items'] as $index => $item)
+                @php
+                    // Find existing data for this komponen from $progresKnmp->details
+                    $existingDetail = null;
+                    if (isset($progresKnmp) && $progresKnmp && $progresKnmp->details) {
+                        $existingDetail = $progresKnmp->details->where('kode', $code)->where('komponen', $item)->first();
+                    }
+                @endphp
+                <tr>
+                    <td class="text-center">{{ $index + 1 }}
+                        <input type="hidden"
+                            name="progress[{{ $code }}][{{ $index }}][kode]"
+                            value="{{ $code }}">
+                    </td>
 
-                        @php
-                        $konstruksi = [
-                        'Tambatan Perahu / Dermaga — (Tuliskan dimensi bangunan)',
-                        'Shelter pendaratan ikan',
-                        'Bengkel / Docking kapal nelayan',
-                        'Kantor pengelola',
-                        'Sentra kuliner produk perikanan',
-                        'Balai Pertemuan Nelayan',
-                        'Shelter perbaikan jaring',
-                        'Shelter Cool Box',
-                        'Bangunan Tapak Cold Storage',
-                        'Miniplan pengolahan ikan',
-                        'Kios perbekalan',
-                        'Tempat pembuangan sampah dan IPAL',
-                        'Musholla',
-                        'Sarana toilet umum',
-                        'Jalan di kawasan lahan pembangunan',
-                        'Penerangan umum',
-                        'Pagar, gapura, dan/atau landmark',
-                        'Parkir',
-                        'Talud / Revetment Sungai dan Laut',
-                        ];
-                        @endphp
+                    <td>{{ $item }}
+                        <input type="hidden"
+                            name="progress[{{ $code }}][{{ $index }}][komponen]"
+                            value="{{ $item }}">
+                    </td>
 
-                        @foreach ($konstruksi as $i => $item)
-                        <tr>
-                            <td class="text-center">{{ $i + 1 }}</td>
-                            <td>
-                                {{ $item }}
-                                <input type="hidden" name="konstruksi[{{ $i }}][komponen]" value="{{ $item }}">
-                            </td>
-                            <td><input type="number" name="konstruksi[{{ $i }}][target]" class="form-control"></td>
-                            <td><input type="number" name="konstruksi[{{ $i }}][progress]" class="form-control"></td>
-                            <td><textarea name="konstruksi[{{ $i }}][keterangan]" rows="2" class="form-control"></textarea></td>
-                        </tr>
-                        @endforeach
+                    <td>
+                        <input type="number"
+                            name="progress[{{ $code }}][{{ $index }}][target]"
+                            class="form-control form-control-sm"
+                            value="{{ old('progress.' . $code . '.' . $index . '.target', $existingDetail->target ?? '') }}">
+                    </td>
 
+                    <td>
+                        <div class="input-group input-group-sm">
+                            <input type="number"
+                                name="progress[{{ $code }}][{{ $index }}][persen]"
+                                class="form-control"
+                                value="{{ old('progress.' . $code . '.' . $index . '.persen', $existingDetail->persen ?? '') }}"
+                                max="100">
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </td>
 
+                    <td>
+                        <input type="text"
+                            name="progress[{{ $code }}][{{ $index }}][keterangan]"
+                            class="form-control form-control-sm"
+                            value="{{ old('progress.' . $code . '.' . $index . '.keterangan', $existingDetail->keterangan ?? '') }}"
+                            placeholder="Contoh: Dimensi bangunan...">
+                    </td>
+                </tr>
+                @endforeach
 
-                        {{-- ===== B. Bantuan Kapal, Mesin, API ===== --}}
-                        <tr class="table-secondary fw-bold">
-                            <td colspan="5">B. Bantuan Kapal, Mesin dan API</td>
-                        </tr>
-
-                        @php
-                        $bantuan_b = [
-                        'Kapal penangkap ikan',
-                        'Mesin kapal perikanan',
-                        'Alat Penangkap Ikan',
-                        ];
-                        @endphp
-
-                        @foreach ($bantuan_b as $i => $item)
-                        <tr>
-                            <td class="text-center">{{ $i + 1 }}</td>
-                            <td>
-                                {{ $item }}
-                                <input type="hidden" name="bantuan_b[{{ $i }}][komponen]" value="{{ $item }}">
-                            </td>
-
-                            <td><input type="number" name="bantuan_b[{{ $i }}][target]" class="form-control"></td>
-                            <td><input type="number" name="bantuan_b[{{ $i }}][progress]" class="form-control"></td>
-                            <td><textarea name="bantuan_b[{{ $i }}][keterangan]" rows="2" class="form-control"></textarea></td>
-                        </tr>
-                        @endforeach
-
-
-
-                        {{-- ===== C. Bantuan Sarana Rantai Dingin ===== --}}
-                        <tr class="table-secondary fw-bold">
-                            <td colspan="5">C. Bantuan Sarana Rantai Dingin</td>
-                        </tr>
-
-                        @php
-                        $bantuan_c = [
-                        'Cold Storage',
-                        'Pabrik Es Balok',
-                        'Pabrik Es Slurry',
-                        'Kendaraan Berpendingin',
-                        'Cool Box',
-                        ];
-                        @endphp
-
-                        @foreach ($bantuan_c as $i => $item)
-                        <tr>
-                            <td class="text-center">{{ $i + 1 }}</td>
-                            <td>
-                                {{ $item }}
-                                <input type="hidden" name="bantuan_c[{{ $i }}][komponen]" value="{{ $item }}">
-                            </td>
-
-                            <td><input type="number" name="bantuan_c[{{ $i }}][target]" class="form-control"></td>
-                            <td><input type="number" name="bantuan_c[{{ $i }}][progress]" class="form-control"></td>
-                            <td><textarea name="bantuan_c[{{ $i }}][keterangan]" rows="2" class="form-control"></textarea></td>
-                        </tr>
-                        @endforeach
-
-
-
-                        {{-- ===== D. SPBU Nelayan ===== --}}
-                        <tr class="table-secondary fw-bold">
-                            <td colspan="5">D. SPBU Nelayan</td>
-                        </tr>
-
-                        <tr>
-                            <td class="text-center">1</td>
-                            <td>
-                                SPBU Nelayan
-                                <input type="hidden" name="spbu[komponen]" value="SPBU Nelayan">
-                            </td>
-
-                            <td><input type="number" name="spbu[target]" class="form-control"></td>
-                            <td><input type="number" name="spbu[progress]" class="form-control"></td>
-                            <td><textarea name="spbu[keterangan]" rows="2" class="form-control"></textarea></td>
-                        </tr>
-
-
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 
+    {{-- BAGIAN 3: TENAGA KERJA --}}
+    <h5 class="mb-1">3. Tenaga Kerja</h5>
 
+    <table class="table table-bordered mb-3 align-middle">
+        <thead class="table-primary text-center">
+            <tr>
+                <th>No</th>
+                <th>Rincian</th>
+                <th>Jawaban</th>
+            </tr>
+        </thead>
 
-    {{-- ================================
-    3. TENAGA KERJA
-================================ --}}
-    <div class="card mb-3">
-        <div class="card-header fw-bold">3. Tenaga Kerja yang Terlibat</div>
+        <tbody>
 
-        <div class="card-body">
+            {{-- HAPUS FIELD TOTAL TENAGA KERJA (sesuai permintaan) --}}
+            {{-- DIGANTIKAN LANGSUNG DENGAN RINCIAN LAKI-LAKI & PEREMPUAN --}}
 
-            <div class="mb-2 fw-bold">1. Tenaga kerja terlibat dalam konstruksi KNMP:</div>
+            <tr>
+                <td class="text-center">1.</td>
+                <td>Tenaga Kerja yang terlibat dalam konstruksi KNMP</td>
+            </tr>
 
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label>a. Laki-laki</label>
-                    <input type="number" name="tk_konstruksi_l" class="form-control">
-                </div>
-                <div class="col-md-6">
-                    <label>b. Perempuan</label>
-                    <input type="number" name="tk_konstruksi_p" class="form-control">
-                </div>
-            </div>
+            <tr>
+                <td></td>
+                <td class="ps-4">a. Laki-Laki</td>
+                <td><input type="number" name="tk_laki" class="form-control" value="{{ old('tk_laki', $progresKnmp->tk_laki ?? '') }}"></td>
+            </tr>
 
-            <div class="mb-3">
-                <label>2. Upah tenaga kerja / hari (Rp)</label>
-                <input type="number" name="upah_per_hari" class="form-control">
-            </div>
+            <tr>
+                <td></td>
+                <td class="ps-4">b. Perempuan</td>
+                <td><input type="number" name="tk_perempuan" class="form-control" value="{{ old('tk_perempuan', $progresKnmp->tk_perempuan ?? '') }}"></td>
+            </tr>
 
-            <div class="mb-3">
-                <label>3. Lama bekerja di proyek (jumlah hari)</label>
-                <input type="number" name="lama_bekerja" class="form-control">
-            </div>
+            <tr>
+                <td class="text-center">2.</td>
+                <td>Upah tenaga kerja/hari (Rp)</td>
+                <td><input type="number" name="tk_upah" class="form-control" value="{{ old('tk_upah', $progresKnmp->tk_upah ?? '') }}"></td>
+            </tr>
 
-            <div class="mb-2 fw-bold">4. Tenaga kerja yang terlibat dalam konstruksi KNMP:</div>
+            <tr>
+                <td class="text-center">3.</td>
+                <td>Lama bekerja di proyek (jumlah hari)</td>
+                <td><input type="number" name="tk_durasi" class="form-control" value="{{ old('tk_durasi', $progresKnmp->tk_durasi ?? '') }}"></td>
+            </tr>
 
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label>a. Tenaga kerja lokal (orang)</label>
-                    <input type="number" name="tk_lokal" class="form-control">
-                </div>
-                <div class="col-md-6">
-                    <label>b. Tenaga kerja dari luar (orang)</label>
-                    <input type="number" name="tk_luar" class="form-control">
-                </div>
-            </div>
+            <tr>
+                <td class="text-center">4.</td>
+                <td>Asal Tenaga Kerja:</td>
+                <td></td>
+            </tr>
 
-            <div class="mb-3">
-                <label>5. Tenaga kerja non-konstruksi (jika ada, sebutkan)</label>
-                <textarea name="tk_non_konstruksi" rows="3" class="form-control"></textarea>
-            </div>
+            <tr>
+                <td></td>
+                <td class="ps-4">a. Lokal</td>
+                <td><input type="number" name="tk_lokal" class="form-control" value="{{ old('tk_lokal', $progresKnmp->tk_lokal ?? '') }}"></td>
+            </tr>
 
-        </div>
-    </div>
+            <tr>
+                <td></td>
+                <td class="ps-4">b. Dari luar</td>
+                <td><input type="number" name="tk_luar" class="form-control" value="{{ old('tk_luar', $progresKnmp->tk_luar ?? '') }}"></td>
+            </tr>
 
+            <tr>
+                <td class="text-center">5.</td>
+                <td>Tenaga kerja non konstruksi</td>
+                <td>
+                    <div class="input-group">
+                        <input type="number" name="tk_non_konstruksi_jumlah" class="form-control"
+                            value="{{ old('tk_non_konstruksi_jumlah', $progresKnmp->tk_non_konstruksi_jumlah ?? '') }}">
+                        <input type="text" name="tk_non_konstruksi_ket" class="form-control w-50"
+                            value="{{ old('tk_non_konstruksi_ket', $progresKnmp->tk_non_konstruksi_ket ?? '') }}" placeholder="Jenis pekerjaan">
+                    </div>
+                </td>
+            </tr>
 
+        </tbody>
+    </table>
 
-    {{-- ================================
-    4. KENDALA PEMBANGUNAN
-================================ --}}
-    <div class="card mb-3">
-        <div class="card-header fw-bold">4. Kendala dalam proses pembangunan KNMP</div>
-
-        <div class="card-body">
+    {{-- BAGIAN 4: KENDALA --}}
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <h5 class="mb-1">4. Kendala</h5>
 
             @php
-            $kendala = [
+            $kendalas = [
             'Faktor cuaca',
             'Ketersediaan tenaga kerja',
             'Ketersediaan material bahan bangunan',
             'Akses ke lokasi (jalan kurang memadai)',
-            'Ketersediaan listrik',
+            'Ketersediaan Listrik',
             'Ketersediaan BBM',
             'Ketersediaan air bersih',
-            'Jaringan internet',
+            'Jaringan Internet',
             ];
+            // Parse existing kendala from $progresKnmp
+            $existingKendala = [];
+            if (isset($progresKnmp) && $progresKnmp && $progresKnmp->kendala) {
+                $existingKendala = is_array($progresKnmp->kendala) ? $progresKnmp->kendala : json_decode($progresKnmp->kendala, true) ?? [];
+            }
+            $kendalaChecked = is_array(old('kendala')) ? old('kendala') : $existingKendala;
             @endphp
 
-            @foreach ($kendala as $i => $item)
-            <div class="form-check mb-1">
-                <input class="form-check-input" type="checkbox" name="kendala[]" value="{{ $item }}" id="kendala{{ $i }}">
-                <label class="form-check-label" for="kendala{{ $i }}">
-                    {{ $item }}
-                </label>
+            @foreach ($kendalas as $k)
+            <div class="form-check">
+                <input class="form-check-input"
+                    type="checkbox"
+                    name="kendala[]"
+                    value="{{ $k }}"
+                    id="k_{{ Str::slug($k) }}"
+                    {{ in_array($k, $kendalaChecked) ? 'checked' : '' }}>
+                <label class="form-check-label" for="k_{{ Str::slug($k) }}">{{ $k }}</label>
             </div>
             @endforeach
+        </div>
+
+        {{-- BAGIAN 5: CCTV --}}
+        <div class="col-md-6 mb-4">
+            <h5 class="mb-1">5. CCTV</h5>
+
+            <p>Apakah CCTV sudah terpasang?</p>
+
+            @php
+            $cctvValue = old('cctv', $progresKnmp->cctv ?? null);
+            @endphp
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="cctv" id="cctv_ya" value="Ya"
+                    {{ $cctvValue == 'Ya' ? 'checked' : '' }}>
+                <label class="form-check-label" for="cctv_ya">Ya</label>
+            </div>
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="cctv" id="cctv_tidak" value="Tidak"
+                    {{ $cctvValue == 'Tidak' ? 'checked' : '' }}>
+                <label class="form-check-label" for="cctv_tidak">Tidak</label>
+            </div>
 
         </div>
     </div>
 
-
-
-    {{-- ================================
-    5. CCTV TERPASANG ?
-================================ --}}
-    <div class="card mb-3">
-        <div class="card-header fw-bold">5. Apakah CCTV telah terpasang?</div>
-
-        <div class="card-body">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="cctv" value="Ya" id="cctvYes">
-                <label class="form-check-label" for="cctvYes">Ya</label>
-            </div>
-
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="cctv" value="Tidak" id="cctvNo">
-                <label class="form-check-label" for="cctvNo">Tidak</label>
-            </div>
-        </div>
+    <div class="d-flex justify-content-end mt-3">
+        <button type="submit" class="btn btn-primary">Simpan</button>
     </div>
-
-
-
-    {{-- ================================
-     BUTTON SIMPAN
-================================ --}}
-    <div class="text-end mt-3 mb-5">
-        <button class="btn btn-primary px-4" type="submit">
-            Simpan
-        </button>
-    </div>
-
 
 </form>

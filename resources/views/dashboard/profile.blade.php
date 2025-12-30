@@ -14,20 +14,26 @@
                     </div>
 
                     @if(session('success'))
-                        <div id="flash-card" style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2000;">
-                            <div style="background:#fff; border-radius:10px; padding:28px 36px; min-width:360px; box-shadow:0 12px 30px rgba(0,0,0,0.12); text-align:center;">
-                                <div style="width:96px; height:96px; margin:0 auto 14px; border-radius:50%; background:#eafaf0; display:flex; align-items:center; justify-content:center;">
-                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <div id="flash-card"
+                            style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2000;">
+                            <div
+                                style="background:#fff; border-radius:10px; padding:28px 36px; min-width:360px; box-shadow:0 12px 30px rgba(0,0,0,0.12); text-align:center;">
+                                <div
+                                    style="width:96px; height:96px; margin:0 auto 14px; border-radius:50%; background:#eafaf0; display:flex; align-items:center; justify-content:center;">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
                                         <circle cx="12" cy="12" r="12" fill="#eafaf0" />
-                                        <path d="M7 12.5l2.5 2.5L17 8.5" stroke="#28a745" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M7 12.5l2.5 2.5L17 8.5" stroke="#28a745" stroke-width="1.8"
+                                            stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                 </div>
-                                <h4 style="margin:0 0 8px; font-weight:700; color:#343a40;">{{ session('success_title', 'Berhasil') }}</h4>
+                                <h4 style="margin:0 0 8px; font-weight:700; color:#343a40;">
+                                    {{ session('success_title', 'Berhasil') }}</h4>
                                 <p style="margin:0; color:#6c757d;">{{ session('success') }}</p>
                             </div>
                         </div>
                         <script>
-                            (function(){
+                            (function () {
                                 const el = document.getElementById('flash-card');
                                 if (!el) return;
                                 // Auto-hide after 3 seconds (3000ms)
@@ -135,7 +141,8 @@
                         </div>
                     @else
                         <div class="alert alert-info">
-                            Belum ada data profile. <a href="{{ route('profile.edit') }}" class="alert-link">Buat profile sekarang</a>
+                            Belum ada data profile. <a href="{{ route('profile.edit') }}" class="alert-link">Buat profile
+                                sekarang</a>
                         </div>
                     @endif
 

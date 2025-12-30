@@ -189,29 +189,31 @@
                             @foreach ($knmps as $knmp)
                                 <tr>
                                     <td>{{ $knmp->nama ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->desa ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->kecamatan ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->kabupaten ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->provinsi ?? 'N/A' }}</td>
+                                    <td>{{ $knmp->village->name ?? 'N/A' }}</td>
+                                    <td>{{ $knmp->district->name ?? 'N/A' }}</td>
+                                    <td>{{ $knmp->regency->name ?? 'N/A' }}</td>
+                                    <td>{{ $knmp->province->name ?? 'N/A' }}</td>
                                     <td>
-                                        <a type="button" href="{{ route('forms.index', $knmp->id) }}"
-                                            class="btn btn-primary" data-bs-container="#tooltip-container2"
+                                        <a type="button" href="{{ route('forms.index', $knmp->id) }}" class="btn btn-primary"
                                             data-bs-toggle="tooltip" data-bs-placement="left" title="Input Survey"><i
                                                 class="mdi mdi-pencil-box"></i>
                                         </a>
-                                        <a type="button" href="" class="btn btn-success"
-                                            data-bs-container="#tooltip-container2" data-bs-toggle="tooltip"
+                                        <a type="button" href="{{ route('forms.edit-responden', $knmp->id) }}"
+                                            class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Edit Responden"><i class="mdi mdi-account-edit"></i>
+                                        </a>
+                                        {{-- <a type="button" href="" class="btn btn-success" data-bs-toggle="tooltip"
                                             data-bs-placement="top" title="Lihat Detail"><i class="mdi mdi-eye"></i>
+                                        </a> --}}
+                                        <a type="button" href="{{ route('survey.questionnaires-pdf', $knmp->id) }}"
+                                            class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Lihat PDF"><i class="mdi mdi-file-pdf-box"></i>
                                         </a>
-                                        <a type="button" href="" class="btn btn-danger"
-                                            data-bs-container="#tooltip-container2" data-bs-toggle="tooltip"
-                                            data-bs-placement="top" title="Lihat PDF"><i class="mdi mdi-file-pdf-box"></i>
+                                        <a href="{{ route('survey.evidence', $knmp->id) }}" class="btn btn-info"
+                                            data-bs-toggle="tooltip" title="Evidence">
+                                            <i class="mdi mdi-file-image-marker"></i>
                                         </a>
-                                        <a type="button" href="" class="btn btn-info"
-                                            data-bs-container="#tooltip-container2" data-bs-toggle="tooltip"
-                                            data-bs-placement="right" title="Evidence"><i
-                                                class="mdi mdi-file-image-marker"></i>
-                                        </a>
+
                                     </td>
                                 </tr>
                             @endforeach
@@ -223,3 +225,25 @@
         </div><!-- end col-->
     </div> <!-- end row-->
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function () {
+            "use strict";
+            $("#scroll-horizontal-datatable").DataTable({
+                scrollX: true,
+                language: {
+                    paginate: {
+                        previous: "<i class='mdi mdi-chevron-left'>",
+                        next: "<i class='mdi mdi-chevron-right'>"
+                    }
+                },
+                drawCallback: function () {
+                    $(".dataTables_paginate > .pagination").addClass("pagination-rounded")
+                }
+            });
+            $(".dataTables_length select").addClass("form-select form-select-sm");
+            $(".dataTables_length label").addClass("form-label");
+        });
+    </script>
+@endpush

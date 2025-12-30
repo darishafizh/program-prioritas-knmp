@@ -8,7 +8,17 @@ class SurveyController extends Controller
 {
     function index()
     {
-        $knmps = ModelsKnmp::orderBy('id', 'asc')->get();
+        $knmps = ModelsKnmp::with([
+            'province',
+            'regency',
+            'district',
+            'village'
+        ])->orderBy('id', 'asc')->get();
         return view('survey.index', compact('knmps'));
+    }
+
+    public function store()
+    {
+        //
     }
 }

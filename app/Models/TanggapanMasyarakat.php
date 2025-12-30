@@ -10,10 +10,10 @@ class TanggapanMasyarakat extends Model
     use HasFactory;
 
     protected $table = 'tanggapan_masyarakat';
-    protected $primaryKey = 'id';
 
     protected $fillable = [
         'knmp_id',
+        'responden_id', // ✅ WAJIB
         'kesesuaian_kebutuhan',
         'item_tidak_sesuai',
         'tingkat_kesenangan',
@@ -23,12 +23,20 @@ class TanggapanMasyarakat extends Model
     ];
 
     protected $casts = [
-        'kesesuaian_kebutuhan' => 'boolean', // Memastikan kolom ini diperlakukan sebagai boolean
+        'kesesuaian_kebutuhan' => 'boolean',
     ];
+
+    // ===============================
+    // RELASI
+    // ===============================
 
     public function knmp()
     {
-        // Asumsi tabel utama yang dirujuk adalah ProfilKNMP atau knmp
-        return $this->belongsTo(ProfilKnmp::class, 'knmp_id');
+        return $this->belongsTo(Knmp::class, 'knmp_id');
+    }
+
+    public function responden()
+    {
+        return $this->belongsTo(InformasiResponden::class, 'responden_id');
     }
 }

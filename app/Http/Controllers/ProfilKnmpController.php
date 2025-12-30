@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProfileKnmp;
 use Illuminate\Http\Request;
 use App\Models\ProfilKnmp;
 
@@ -9,7 +10,7 @@ class ProfilKnmpController extends Controller
 {
     public function index()
     {
-        $profilKnmp = ProfilKnmp::all();
+        $profilKnmp = ProfileKnmp::all();
         return view('forms.profil-knmp.index', compact('profilKnmp'));
     }
 
@@ -41,17 +42,17 @@ class ProfilKnmpController extends Controller
             'koordinat_lokasi' => 'nullable|string',
         ]);
 
-        ProfilKnmp::create($request->all());
+        ProfileKnmp::create($request->all());
 
         return redirect()->route('forms.profil-knmp.index')->with('success', 'Data berhasil disimpan.');
     }
 
-    public function edit(ProfilKnmp $profilKnmp)
+    public function edit(ProfileKnmp $profilKnmp)
     {
         return view('forms.profil-knmp.edit', compact('profilKnmp'));
     }
 
-    public function update(Request $request, ProfilKnmp $profilKnmp)
+    public function update(Request $request, ProfileKnmp $profilKnmp)
     {
         $request->validate([
             'jumlah_penduduk' => 'nullable|integer',
@@ -79,7 +80,7 @@ class ProfilKnmpController extends Controller
         return redirect()->route('forms.profil-knmp.index')->with('success', 'Data berhasil diupdate.');
     }
 
-    public function destroy(ProfilKnmp $profilKnmp)
+    public function destroy(ProfileKnmp $profilKnmp)
     {
         $profilKnmp->delete();
         return redirect()->route('forms.profil-knmp.index')->with('success', 'Data berhasil dihapus.');
