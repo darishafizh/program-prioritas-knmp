@@ -336,7 +336,7 @@
             <div class="card login-card">
                 <div class="card-body">
                     <h4 class="login-title text-center">Selamat Datang</h4>
-                    <p class="login-subtitle text-center">Masukan email dan password Anda untuk mengakses sistem.</p>
+                    <p class="login-subtitle text-center">Masukan username dan password Anda untuk mengakses sistem.</p>
 
                     @if (session('error'))
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -366,9 +366,9 @@
                         @csrf
 
                         <div class="mb-3">
-                            <label for="emailaddress" class="form-label">Email</label>
-                            <input class="form-control" type="email" id="emailaddress" name="email"
-                                value="{{ old('email') }}" required autofocus placeholder="Masukan email anda">
+                            <label for="username" class="form-label">Username</label>
+                            <input class="form-control" type="text" id="username" name="username"
+                                value="{{ old('username') }}" required autofocus placeholder="Masukan username anda">
                         </div>
 
                         <div class="mb-3">

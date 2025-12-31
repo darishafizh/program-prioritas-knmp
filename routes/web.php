@@ -12,6 +12,7 @@ use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\RespondenController;
 use App\Http\Controllers\EvidenceController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\UserManagementController;
 
 
 Route::get('/', function () {
@@ -122,10 +123,13 @@ Route::middleware('auth')->group(function () {
 
 
     // ==============================
-    // USER MANAGEMENT ROUTES
+    // USER MANAGEMENT ROUTES (Admin Only)
     // ==============================
-    Route::group(['prefix' => 'user_management'], function () {
-        Route::get('/', [FormsController::class, 'index'])->name('user_management.index');
+    Route::group(['prefix' => 'user_management', 'middleware' => 'role:admin'], function () {
+        Route::get('/', [UserManagementController::class, 'index'])->name('user_management.index');
+        Route::post('/', [UserManagementController::class, 'store'])->name('user_management.store');
+        Route::put('/{id}', [UserManagementController::class, 'update'])->name('user_management.update');
+        Route::delete('/{id}', [UserManagementController::class, 'destroy'])->name('user_management.destroy');
     });
 
 

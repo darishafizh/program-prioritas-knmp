@@ -49,17 +49,33 @@
                 <!-- User Menu -->
                 <div class="header-user header-dropdown">
                     <a class="header-user-btn" href="#" id="userDropdown">
-                        <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="User" class="header-user-avatar">
+                        <div class="header-user-avatar-text">
+                            {{ strtoupper(substr(Auth::user()->username ?? Auth::user()->name ?? 'U', 0, 1)) }}
+                        </div>
                         <div class="header-user-info">
-                            <span class="header-user-name">{{ Auth::user()->name ?? 'User' }}</span>
-                            <span class="header-user-role">{{ Auth::user()->role ?? 'Member' }}</span>
+                            <span class="header-user-name">{{ Auth::user()->username ?? Auth::user()->name ?? 'User' }}</span>
+                            <span class="header-user-role">
+                                @if(Auth::user()->hasRole('admin'))
+                                    Admin
+                                @elseif(Auth::user()->hasRole('enumerator'))
+                                    Enumerator
+                                @else
+                                    Member
+                                @endif
+                            </span>
                         </div>
                         <i class="mdi mdi-chevron-down"></i>
                     </a>
                     <ul class="header-dropdown-menu header-dropdown-end">
                         <li class="dropdown-user-header">
-                            <strong>{{ Auth::user()->name ?? 'User' }}</strong>
-                            <small>{{ Auth::user()->email ?? '' }}</small>
+                            <strong>{{ Auth::user()->username ?? Auth::user()->name ?? 'User' }}</strong>
+                            <small>
+                                @if(Auth::user()->hasRole('admin'))
+                                    <span class="badge bg-danger">Admin</span>
+                                @elseif(Auth::user()->hasRole('enumerator'))
+                                    <span class="badge bg-success">Enumerator</span>
+                                @endif
+                            </small>
                         </li>
                         <li class="dropdown-divider"></li>
                         <li>
@@ -287,6 +303,20 @@
     height: 36px;
     border-radius: 50%;
     object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.3);
+}
+
+.header-user-avatar-text {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
     border: 2px solid rgba(255,255,255,0.3);
 }
 
