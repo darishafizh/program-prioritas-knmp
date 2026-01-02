@@ -88,7 +88,7 @@
 </div>
 
 {{-- FORM UNTUK BULK DELETE --}}
-<form id="bulkDeleteForm" action="{{ route('forms.delete_bukti_upload') }}" method="POST" class="d-none">
+<form id="bulkDeleteForm" action="{{ route('survey.forms.delete_bukti_upload') }}" method="POST" class="d-none">
     @csrf
     @method('DELETE')
 </form>

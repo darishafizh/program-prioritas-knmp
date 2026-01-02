@@ -10,7 +10,7 @@
 </div>
 @endif
 
-<form action="{{ route('forms.store_progres_knmp', ['knmp' => $knmp->id]) }}" method="POST">
+<form action="{{ route('survey.forms.store_progres_knmp', ['knmp' => $knmp->id]) }}" method="POST">
     @csrf
 
     {{-- BAGIAN 1: PROFIL PROYEK --}}

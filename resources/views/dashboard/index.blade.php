@@ -29,7 +29,7 @@
     <!-- Greeting Banner -->
     <div class="row mb-3">
         <div class="col-12">
-            <div class="card bg-primary text-white">
+            <div class="card greeting-banner text-white">
                 <div class="card-body py-3">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
@@ -259,23 +259,23 @@
 
                 var detailUrl = detailUrlPattern.replace(':id', item.id);
                 var popupContent = `
-                                                        <div class="p-1">
-                                                            <h6 class="mb-2 text-primary fw-bold" style="font-size: 14px;">${item.nama ?? "Lokasi KNMP " + item.id}</h6>
+                                                                <div class="p-1">
+                                                                    <h6 class="mb-2 text-primary fw-bold" style="font-size: 14px;">${item.nama ?? "Lokasi KNMP " + item.id}</h6>
 
-                                                            <div class="mb-2 small text-muted">
-                                                                <div class="mb-1"><i class="mdi mdi-map-marker-radius me-1 text-danger"></i> 
-                                                                    ${item.village ? item.village.name : '-'}, ${item.district ? item.district.name : '-'}
-                                                                </div>
-                                                                <div><i class="mdi mdi-city me-1 text-secondary"></i>
-                                                                    ${item.regency ? item.regency.name : '-'}, ${item.province ? item.province.name : '-'}
-                                                                </div>
-                                                            </div>
+                                                                    <div class="mb-2 small text-muted">
+                                                                        <div class="mb-1"><i class="mdi mdi-map-marker-radius me-1 text-danger"></i> 
+                                                                            ${item.village ? item.village.name : '-'}, ${item.district ? item.district.name : '-'}
+                                                                        </div>
+                                                                        <div><i class="mdi mdi-city me-1 text-secondary"></i>
+                                                                            ${item.regency ? item.regency.name : '-'}, ${item.province ? item.province.name : '-'}
+                                                                        </div>
+                                                                    </div>
 
-                                                            <a href="${detailUrl}" class="btn btn-xs btn-primary w-100 rounded-pill">
-                                                                <i class="mdi mdi-eye me-1"></i> Lihat Data Survey
-                                                            </a>
-                                                        </div>
-                                                    `;
+                                                                    <a href="${detailUrl}" class="btn btn-xs btn-primary w-100 rounded-pill">
+                                                                        <i class="mdi mdi-eye me-1"></i> Lihat Data Survey
+                                                                    </a>
+                                                                </div>
+                                                            `;
 
                 L.marker([item.latitude, item.longitude], {
                     icon: redIcon

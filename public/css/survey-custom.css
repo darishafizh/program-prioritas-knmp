@@ -1,9 +1,9 @@
 .page-title-box {
     background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
     color: white;
-    padding: 30px 30px;
-    border-radius: 12px;
-    margin-bottom: 30px;
+    padding: 20px 25px;
+    border-radius: 10px;
+    margin-bottom: 20px;
     box-shadow: 0 4px 15px hsla(217, 91%, 60%, 0.3);
 }
 
@@ -16,7 +16,7 @@
 .page-title-box p {
     color: rgba(255, 255, 255, 0.9);
     margin: 0;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .breadcrumb-nav {
@@ -39,15 +39,15 @@
 }
 
 .breadcrumb-nav span {
-    color: #999;
+    color: #64748b;
 }
 
 /* Header Info */
 .info-card {
     background: white;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 30px;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     border-left: 4px solid #3b82f6;
 }
@@ -55,13 +55,13 @@
 .info-card h6 {
     font-size: 12px;
     font-weight: 600;
-    color: #999;
+    color: #64748b;
     text-transform: uppercase;
     margin-bottom: 5px;
 }
 
 .info-card p {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: #333;
     margin: 0;
@@ -93,21 +93,21 @@
 .responden-header {
     background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
     color: white;
-    padding: 20px;
+    padding: 15px;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
 }
 
 .avatar {
-    width: 50px;
-    height: 50px;
+    width: 42px;
+    height: 42px;
     background: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .responden-header .info {
@@ -115,29 +115,29 @@
 }
 
 .responden-header h5 {
-    margin: 0 0 5px 0;
+    margin: 0 0 4px 0;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .responden-header p {
     margin: 0;
-    font-size: 13px;
+    font-size: 11px;
     opacity: 0.9;
 }
 
 /* Responden Body */
 .responden-body {
-    padding: 20px;
+    padding: 15px;
 }
 
 .detail-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
+    padding: 6px 0;
     border-bottom: 1px solid #f5f5f5;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .detail-row:last-child {
@@ -145,7 +145,7 @@
 }
 
 .responden-body .detail-label {
-    color: #999;
+    color: #64748b;
     font-weight: 500;
 }
 
@@ -176,27 +176,27 @@
 }
 
 .responden-footer {
-    padding: 20px;
+    padding: 15px;
     border-top: 1px solid #f0f0f0;
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .btn-edit {
     flex: 1;
-    padding: 10px 15px;
+    padding: 8px 12px;
     background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 13px;
+    font-size: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
     text-decoration: none;
 }
 
@@ -223,12 +223,12 @@
 }
 
 .empty-state h5 {
-    color: #999;
+    color: #64748b;
     margin-bottom: 10px;
 }
 
 .empty-state p {
-    color: #ccc;
+    color: #94a3b8;
     margin: 0;
 }
 
@@ -590,7 +590,7 @@
 }
 
 .questionnaire-body .detail-label {
-    color: #999;
+    color: #64748b;
     font-weight: 500;
 }
 

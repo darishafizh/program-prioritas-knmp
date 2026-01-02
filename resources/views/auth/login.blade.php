@@ -17,6 +17,12 @@
     <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
     <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
 
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
 </head>
 
 <body class="loading" data-layout-config='{"darkMode":false}'
@@ -26,6 +32,7 @@
         *::before,
         *::after {
             box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
 
         html,
@@ -62,7 +69,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 60px;
+            padding: 40px;
             color: white;
             position: relative;
             overflow: hidden;
@@ -97,14 +104,14 @@
         }
 
         .login-left-panel .logo-container img {
-            width: 180px;
+            width: 130px;
             height: auto;
-            margin-bottom: 40px;
-            filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.3));
+            margin-bottom: 25px;
+            filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.3));
         }
 
         .login-left-panel .ministry-name {
-            font-size: 2rem;
+            font-size: 1.6rem;
             font-weight: 700;
             text-align: center;
             text-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
@@ -114,9 +121,9 @@
         }
 
         .login-left-panel .ministry-subtitle {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             opacity: 0.9;
-            margin-top: 20px;
+            margin-top: 15px;
             text-align: center;
             font-weight: 400;
             letter-spacing: 0.3px;
@@ -138,51 +145,51 @@
             justify-content: center;
             height: 100vh;
             width: 50%;
-            padding: 40px;
+            padding: 30px;
             background-color: #f5f7fa;
             position: relative;
         }
 
         .login-card {
             width: 100%;
-            max-width: 400px;
+            max-width: 360px;
             border: none;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.08);
             background: #ffffff;
         }
 
         .login-card .card-body {
-            padding: 50px 40px;
+            padding: 35px 30px;
         }
 
         .login-card .login-title {
-            font-size: 1.6rem;
+            font-size: 1.35rem;
             font-weight: 700;
             color: #1a1a2e;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .login-card .login-subtitle {
-            color: #6c757d;
-            margin-bottom: 35px;
-            font-size: 0.95rem;
+            color: #64748b;
+            margin-bottom: 25px;
+            font-size: 0.85rem;
             line-height: 1.5;
         }
 
         .login-card .form-label {
             font-weight: 600;
             color: #333;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
+            font-size: 0.8rem;
+            margin-bottom: 6px;
         }
 
         .login-card .form-control {
-            border-radius: 12px;
-            padding: 14px 18px;
+            border-radius: 10px;
+            padding: 10px 14px;
             border: 1.5px solid #e0e5ec;
             transition: all 0.3s ease;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             background: #f8f9fc;
         }
 
@@ -204,10 +211,10 @@
 
         .login-card .btn-primary {
             width: 100%;
-            padding: 14px;
-            border-radius: 12px;
+            padding: 11px;
+            border-radius: 10px;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.9rem;
             background: linear-gradient(135deg, #0066cc 0%, #004d99 100%);
             border: none;
             transition: all 0.3s ease;

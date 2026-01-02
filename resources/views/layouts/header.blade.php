@@ -1,66 +1,66 @@
-<div class="navbar-custom topnav-navbar">
+<div class="navbar-custom topnav-navbar modern-header">
     <div class="container-fluid d-flex justify-content-between align-items-center">
 
-        <!-- LOGO -->
-        <a href="{{ route('dashboard.index') }}" class="topnav-logo">
-            <span class="topnav-logo-lg d-flex align-items-center">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="" height="48">
-
-                <span class="ms-2 fw-bold font-size-16 text-secondary d-none d-sm-block">
-                    KEMENTERIAN KELAUTAN DAN PERIKANAN
-                </span>
-                <span class="ms-2 fw-bold font-size-12 text-secondary d-block d-sm-none">
-                    KKP
-                </span>
-            </span>
-            {{-- Hiding the small logo logic as we want the text likely --}}
-            {{-- <span class="topnav-logo-sm d-none">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="" height="32">
-            </span> --}}
+        <!-- LOGO & BRAND -->
+        <a href="{{ route('dashboard.index') }}" class="topnav-logo d-flex align-items-center text-decoration-none">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo KKP" height="48" class="header-logo">
+            <span class="brand-title ms-3 d-none d-md-block">KEMENTERIAN KELAUTAN DAN PERIKANAN</span>
+            <span class="brand-title-sm ms-2 d-block d-md-none">KKP</span>
         </a>
 
-        <ul class="list-unstyled topbar-menu mb-0">
+        <!-- RIGHT SIDE MENU -->
+        <ul class="list-unstyled topbar-menu mb-0 d-flex align-items-center">
+            <!-- Settings Button -->
             <li class="notification-list">
-                <a class="nav-link end-bar-toggle" href="javascript: void(0);">
-                    <i class="dripicons-gear noti-icon"></i>
+                <a class="nav-link end-bar-toggle header-icon-btn" href="javascript: void(0);" title="Pengaturan">
+                    <i class="dripicons-gear"></i>
                 </a>
             </li>
 
-            <li class="dropdown notification-list">
-                <a class="nav-link dropdown-toggle nav-user arrow-none me-0" data-bs-toggle="dropdown"
-                    id="topbar-userdrop" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    <span class="account-user-avatar">
-                        <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="user-image"
-                            class="rounded-circle">
-                    </span>
-                    <span>
-                        <span class="account-user-name">Dominic Keller</span>
-                        <span class="account-position">Founder</span>
-                    </span>
+            <!-- User Dropdown -->
+            <li class="dropdown notification-list ms-2">
+                <a class="nav-link dropdown-toggle nav-user arrow-none me-0 user-dropdown-toggle"
+                    data-bs-toggle="dropdown" id="topbar-userdrop" href="#" role="button" aria-haspopup="true"
+                    aria-expanded="false">
+                    <div class="user-avatar-wrapper">
+                        <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="user-image" class="user-avatar">
+                        <span class="user-status-indicator"></span>
+                    </div>
+                    <div class="user-info d-none d-lg-block">
+                        <span class="user-name">{{ Auth::user()->name ?? 'User' }}</span>
+                        <span class="user-role">{{ Auth::user()->role ?? 'Administrator' }}</span>
+                    </div>
+                    <i class="mdi mdi-chevron-down user-dropdown-arrow d-none d-lg-inline-block"></i>
                 </a>
-                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown"
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown modern-dropdown"
                     aria-labelledby="topbar-userdrop">
-                    <!-- item-->
-                    <div class=" dropdown-header noti-title">
-                        <h6 class="text-overflow m-0">Welcome !</h6>
+                    <!-- Header -->
+                    <div class="dropdown-header-custom">
+                        <div class="dropdown-user-avatar">
+                            <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="user-image">
+                        </div>
+                        <div class="dropdown-user-info">
+                            <h6 class="dropdown-user-name">{{ Auth::user()->name ?? 'User' }}</h6>
+                            <span class="dropdown-user-role">{{ Auth::user()->role ?? 'Administrator' }}</span>
+                        </div>
                     </div>
 
-                    <!-- item-->
-                    <a href="{{ route('password.change') }}" class="dropdown-item notify-item">
-                        <i class="mdi mdi-account-key me-1"></i>
+                    <div class="dropdown-divider"></div>
+
+                    <!-- Menu Items -->
+                    <a href="{{ route('password.change') }}" class="dropdown-item notify-item modern-dropdown-item">
+                        <i class="mdi mdi-account-key"></i>
                         <span>Ganti Password</span>
                     </a>
 
-                    <!-- item-->
+                    <!-- Logout -->
                     <form action="{{ route('logout') }}" method="POST" style="display: inline;">
                         @csrf
-                        <button type="submit" class="dropdown-item notify-item"
-                            style="border: none; background: none; width: 100%; text-align: left;">
-                            <i class="mdi mdi-logout me-1"></i>
+                        <button type="submit" class="dropdown-item notify-item modern-dropdown-item logout-btn">
+                            <i class="mdi mdi-logout"></i>
                             <span>Logout</span>
                         </button>
                     </form>
-
                 </div>
             </li>
         </ul>

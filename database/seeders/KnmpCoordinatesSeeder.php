@@ -85,7 +85,7 @@ class KnmpCoordinatesSeeder extends Seeder
         foreach ($locations as $loc) {
 
             // Ambil key sesuai yg tersedia (lat/long atau latitude/longitude)
-            $latitude  = $loc['latitude']  ?? $loc['lat']  ?? null;
+            $latitude = $loc['latitude'] ?? $loc['lat'] ?? null;
             $longitude = $loc['longitude'] ?? $loc['long'] ?? null;
 
             if ($latitude === null || $longitude === null) {

@@ -1,5 +1,5 @@
 <form method="POST"
-    action="{{ route('forms.store_tanggapan_masyarakat', [
+    action="{{ route('survey.forms.store_tanggapan_masyarakat', [
         'knmp' => $knmp->id,
     ]) }}">
     @csrf

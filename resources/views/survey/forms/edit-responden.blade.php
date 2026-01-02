@@ -156,7 +156,7 @@
 
                     <!-- Footer -->
                     <div class="responden-footer">
-                        <a href="{{ route('forms.index', $knmp->id) }}?responden={{ $item['id'] }}" class="btn-edit">
+                        <a href="{{ route('survey.forms.index', $knmp->id) }}?responden={{ $item['id'] }}" class="btn-edit">
                             <i class="mdi mdi-pencil"></i>
                             Edit Data
                         </a>
@@ -167,7 +167,7 @@
     @endif
 
     <!-- Form untuk Bulk Delete -->
-    <form id="bulkDeleteForm" action="{{ route('forms.delete_responden') }}" method="POST" class="d-none">
+    <form id="bulkDeleteForm" action="{{ route('survey.forms.delete_responden') }}" method="POST" class="d-none">
         @csrf
         @method('DELETE')
     </form>

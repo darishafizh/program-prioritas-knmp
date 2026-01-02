@@ -8,6 +8,12 @@
     <link rel="shortcut icon" href="{{ asset('assets/images/logo.png') }}">
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
+
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
 
 <body class="loading" data-layout-config='{"darkMode":false}'
@@ -17,6 +23,7 @@
         *::before,
         *::after {
             box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
 
         html,
@@ -150,7 +157,7 @@
         }
 
         .login-card .login-subtitle {
-            color: #6c757d;
+            color: #64748b;
             margin-bottom: 35px;
             font-size: 0.95rem;
             line-height: 1.5;

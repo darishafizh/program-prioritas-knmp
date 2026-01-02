@@ -14,46 +14,46 @@
 {{-- ===================================================== --}}
 {{-- ðŸ”” GLOBAL ALERT --}}
 @if(session('success') || session('error'))
-<div id="customAlert" class="alert-overlay">
-    <div class="alert-card {{ session('success') ? 'success' : 'error' }}">
+    <div id="customAlert" class="alert-overlay">
+        <div class="alert-card {{ session('success') ? 'success' : 'error' }}">
 
-        {{-- Icon --}}
-        <div class="alert-icon-circle">
-            @if(session('success'))
-            <span class="alert-icon">âœ“</span>
-            @else
-            <span class="alert-icon">âœ•</span>
-            @endif
+            {{-- Icon --}}
+            <div class="alert-icon-circle">
+                @if(session('success'))
+                    <span class="alert-icon">âœ“</span>
+                @else
+                    <span class="alert-icon">âœ•</span>
+                @endif
+            </div>
+
+            {{-- Title --}}
+            <h3 class="alert-title">
+                {{ session('success') ? 'Success!' : 'Failed!' }}
+            </h3>
+
+            {{-- Message --}}
+            <p class="alert-subtitle">
+                {{ session('success') ? session('success') : session('error') }}
+            </p>
+
+            {{-- Progress Bar --}}
+            <div class="alert-progress">
+                <div class="alert-progress-bar"></div>
+            </div>
+
+            {{-- Button --}}
+            <button class="alert-btn" id="alertCloseBtn">
+                {{ session('success') ? 'DONE' : 'TRY AGAIN' }}
+            </button>
+
         </div>
-
-        {{-- Title --}}
-        <h3 class="alert-title">
-            {{ session('success') ? 'Success!' : 'Failed!' }}
-        </h3>
-
-        {{-- Message --}}
-        <p class="alert-subtitle">
-            {{ session('success') ? session('success') : session('error') }}
-        </p>
-
-        {{-- Progress Bar --}}
-        <div class="alert-progress">
-            <div class="alert-progress-bar"></div>
-        </div>
-
-        {{-- Button --}}
-        <button class="alert-btn" id="alertCloseBtn">
-            {{ session('success') ? 'DONE' : 'TRY AGAIN' }}
-        </button>
-
     </div>
-</div>
 @endif
 
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
 
         const overlay = document.getElementById("customAlert");
         if (!overlay) return;
@@ -457,7 +457,7 @@
                     <div id="collapseJ" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body survey-accordion-body">
                             {{-- UPLOAD ZONE --}}
-                            <form action="{{ route('forms.store_bukti_upload') }}" method="POST"
+                            <form action="{{ route('survey.forms.store_bukti_upload') }}" method="POST"
                                 enctype="multipart/form-data" id="uploadForm">
                                 @csrf
                                 <input type="hidden" name="knmp_id" value="{{ $knmp->id }}">
@@ -506,17 +506,17 @@
     </div>
 
     @if ($errors->any())
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let errorSection = "{{ old('active_section') ?? 'collapseOne' }}";
-            let el = document.getElementById(errorSection);
-            if (el) {
-                new bootstrap.Collapse(el, {
-                    show: true
-                });
-            }
-        });
-    </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let errorSection = "{{ old('active_section') ?? 'collapseOne' }}";
+                let el = document.getElementById(errorSection);
+                if (el) {
+                    new bootstrap.Collapse(el, {
+                        show: true
+                    });
+                }
+            });
+        </script>
     @endif
 
     <style>
@@ -958,7 +958,7 @@
                 }
             });
 
-            fileInput.addEventListener('change', function() {
+            fileInput.addEventListener('change', function () {
                 previewFile(this);
             });
         }
@@ -988,7 +988,7 @@
 
             if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     previewItem.innerHTML = `
                     <div class="preview-thumb">
                         <img src="${e.target.result}" alt="${file.name}">

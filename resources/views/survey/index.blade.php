@@ -194,24 +194,25 @@
                                     <td>{{ $knmp->regency->name ?? 'N/A' }}</td>
                                     <td>{{ $knmp->province->name ?? 'N/A' }}</td>
                                     <td>
-                                        <a type="button" href="{{ route('forms.index', $knmp->id) }}" class="btn btn-primary"
-                                            data-bs-toggle="tooltip" data-bs-placement="left" title="Input Survey"><i
-                                                class="mdi mdi-pencil-box"></i>
+                                        <a type="button" href="{{ route('survey.forms.index', $knmp->id) }}"
+                                            class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left"
+                                            title="Input Survey"><i class="mdi mdi-clipboard-edit-outline font-16"></i>
                                         </a>
-                                        <a type="button" href="{{ route('forms.edit-responden', $knmp->id) }}"
-                                            class="btn btn-warning" data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="Edit Responden"><i class="mdi mdi-account-edit"></i>
+                                        <a type="button" href="{{ route('survey.forms.edit-responden', $knmp->id) }}"
+                                            class="btn btn-sm btn-warning" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Edit Responden"><i class="mdi mdi-account-group-outline font-16"></i>
                                         </a>
-                                        {{-- <a type="button" href="" class="btn btn-success" data-bs-toggle="tooltip"
-                                            data-bs-placement="top" title="Lihat Detail"><i class="mdi mdi-eye"></i>
+                                        {{-- <a type="button" href="" class="btn btn-sm btn-success" data-bs-toggle="tooltip"
+                                            data-bs-placement="top" title="Lihat Detail"><i
+                                                class="mdi mdi-eye-outline font-16"></i>
                                         </a> --}}
                                         <a type="button" href="{{ route('survey.questionnaires-pdf', $knmp->id) }}"
-                                            class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="Lihat PDF"><i class="mdi mdi-file-pdf-box"></i>
+                                            class="btn btn-sm btn-danger" data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Lihat PDF"><i class="mdi mdi-file-pdf-box font-16"></i>
                                         </a>
-                                        <a href="{{ route('survey.evidence', $knmp->id) }}" class="btn btn-info"
-                                            data-bs-toggle="tooltip" title="Evidence">
-                                            <i class="mdi mdi-file-image-marker"></i>
+                                        <a href="{{ route('survey.evidence', $knmp->id) }}" class="btn btn-sm btn-info"
+                                            data-bs-toggle="tooltip" title="Evidence (Galeri)">
+                                            <i class="mdi mdi-image-multiple-outline font-16"></i>
                                         </a>
 
                                     </td>

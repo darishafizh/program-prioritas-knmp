@@ -57,36 +57,36 @@ Route::middleware('auth')->group(function () {
         // FORMS ROUTES
         // ==============================
         Route::group(['prefix' => 'forms'], function () {
-            Route::get('/{knmp}', [FormsController::class, 'index'])->name('forms.index');
-            Route::get('/{knmp}/edit-responden', [RespondenController::class, 'editRespondenList'])->name('forms.edit-responden');
-            Route::delete('/delete-responden', [RespondenController::class, 'delete_responden'])->name('forms.delete_responden');
+            Route::get('/{knmp}', [FormsController::class, 'index'])->name('survey.forms.index');
+            Route::get('/{knmp}/edit-responden', [RespondenController::class, 'editRespondenList'])->name('survey.forms.edit-responden');
+            Route::delete('/delete-responden', [RespondenController::class, 'delete_responden'])->name('survey.forms.delete_responden');
 
             // Store routes
-            Route::post('/store_profile_knmp/{knmp}', [FormsController::class, 'store_profile_knmp'])->name('forms.store_profile_knmp');
-            Route::post('/store_progres_knmp/{knmp}', [FormsController::class, 'store_progres_knmp'])->name('forms.store_progres_knmp');
+            Route::post('/store_profile_knmp/{knmp}', [FormsController::class, 'store_profile_knmp'])->name('survey.forms.store_profile_knmp');
+            Route::post('/store_progres_knmp/{knmp}', [FormsController::class, 'store_progres_knmp'])->name('survey.forms.store_progres_knmp');
             Route::post(
                 '/store_tanggapan_masyarakat/{knmp}',
                 [FormsController::class, 'store_tanggapan_masyarakat']
-            )->name('forms.store_tanggapan_masyarakat');
-            Route::post('/store_tingkat_kebahagiaan/{knmp}', [FormsController::class, 'store_tingkat_kebahagiaan'])->name('forms.store_tingkat_kebahagiaan');
-            Route::post('/store_informasi_responden/{knmp}', [RespondenController::class, 'store_informasi_responden'])->name('forms.store_informasi_responden');
-            Route::post('/store_informasi_usaha/{knmp}', [FormsController::class, 'store_informasi_usaha'])->name('forms.store_informasi_usaha');
-            Route::post('/store_pemasaran_perikanan/{knmp}', [FormsController::class, 'store_pemasaran_perikanan'])->name('forms.store_pemasaran_perikanan');
-            Route::post('/store_pendapatan_rt/{knmp}', [FormsController::class, 'store_pendapatan_rt'])->name('forms.store_pendapatan_rt');
-            Route::post('/store_sosial_kelembagaan/{knmp}', [FormsController::class, 'store_sosial_kelembagaan'])->name('forms.store_sosial_kelembagaan');
+            )->name('survey.forms.store_tanggapan_masyarakat');
+            Route::post('/store_tingkat_kebahagiaan/{knmp}', [FormsController::class, 'store_tingkat_kebahagiaan'])->name('survey.forms.store_tingkat_kebahagiaan');
+            Route::post('/store_informasi_responden/{knmp}', [RespondenController::class, 'store_informasi_responden'])->name('survey.forms.store_informasi_responden');
+            Route::post('/store_informasi_usaha/{knmp}', [FormsController::class, 'store_informasi_usaha'])->name('survey.forms.store_informasi_usaha');
+            Route::post('/store_pemasaran_perikanan/{knmp}', [FormsController::class, 'store_pemasaran_perikanan'])->name('survey.forms.store_pemasaran_perikanan');
+            Route::post('/store_pendapatan_rt/{knmp}', [FormsController::class, 'store_pendapatan_rt'])->name('survey.forms.store_pendapatan_rt');
+            Route::post('/store_sosial_kelembagaan/{knmp}', [FormsController::class, 'store_sosial_kelembagaan'])->name('survey.forms.store_sosial_kelembagaan');
 
             // Edit/Update routes
-            Route::post('/update_profile_knmp/{knmp}', [FormsController::class, 'update_profile_knmp'])->name('forms.update_profile_knmp');
-            Route::post('/update_progres_knmp/{knmp}', [FormsController::class, 'update_progres_knmp'])->name('forms.update_progres_knmp');
-            Route::post('/update_tanggapan_masyarakat/{knmp}', [FormsController::class, 'update_tanggapan_masyarakat'])->name('forms.update_tanggapan_masyarakat');
+            Route::post('/update_profile_knmp/{knmp}', [FormsController::class, 'update_profile_knmp'])->name('survey.forms.update_profile_knmp');
+            Route::post('/update_progres_knmp/{knmp}', [FormsController::class, 'update_progres_knmp'])->name('survey.forms.update_progres_knmp');
+            Route::post('/update_tanggapan_masyarakat/{knmp}', [FormsController::class, 'update_tanggapan_masyarakat'])->name('survey.forms.update_tanggapan_masyarakat');
 
             // File upload routes
             Route::post('/bukti-upload', [EvidenceController::class, 'store_bukti_upload'])
-                ->name('forms.store_bukti_upload');
+                ->name('survey.forms.store_bukti_upload');
             Route::delete('/bukti-upload', [EvidenceController::class, 'delete_bukti_upload'])
-                ->name('forms.delete_bukti_upload');
+                ->name('survey.forms.delete_bukti_upload');
             Route::delete('/bukti-upload/{id}', [EvidenceController::class, 'delete_bukti_single'])
-                ->name('forms.delete_bukti_single');
+                ->name('survey.forms.delete_bukti_single');
 
             // Evidence & PDF routes
             Route::get('/evidence/{knmp}', [EvidenceController::class, 'evidence'])
@@ -98,7 +98,7 @@ Route::middleware('auth')->group(function () {
 
             // Export Excel route
             Route::get('/export-excel/{knmp?}', [RespondenController::class, 'exportExcel'])
-                ->name('forms.export-excel');
+                ->name('survey.forms.export-excel');
         });
     });
 
