@@ -29,9 +29,17 @@ class LaporanController extends Controller
             'totalNelayan' => 0,
             'jumlahKapal' => 0,
             'serapanTenagaKerja' => 0,
-            'komoditasUtama' => '-',
-            'pendapatanPerTahun' => 0,
-            'volumeProduksiPerTahun' => 0,
+            // Komoditas 1
+            'komoditas1' => '-',
+            'volumeKomoditas1' => 0,
+            'nilaiKomoditas1' => 0,
+            'hargaKomoditas1' => 0,
+            // Komoditas 2
+            'komoditas2' => '-',
+            'volumeKomoditas2' => 0,
+            'nilaiKomoditas2' => 0,
+            'hargaKomoditas2' => 0,
+            // Other stats
             'pendapatanNelayan' => 0,
             'koperasiDesaMerahPutih' => null,
             'latitude' => null,
@@ -50,14 +58,17 @@ class LaporanController extends Controller
                 $stats['jmlKepalaKeluarga'] = $stats['profile']->jml_penduduk_des ?? 0;
                 $stats['totalNelayan'] = $stats['profile']->jml_nelayan ?? 0;
                 $stats['pendapatanNelayan'] = $stats['profile']->pendapatan_rata_rata_nelayan ?? 0;
-                $stats['volumeProduksiPerTahun'] = $stats['profile']->volume_produksi_ton ?? 0;
-                $stats['pendapatanPerTahun'] = $stats['profile']->nilai_produksi ?? 0;
                 
-                // Komoditas utama
-                $komoditas = [];
-                if ($stats['profile']->komoditas_utama_1) $komoditas[] = $stats['profile']->komoditas_utama_1;
-                if ($stats['profile']->komoditas_utama_2) $komoditas[] = $stats['profile']->komoditas_utama_2;
-                $stats['komoditasUtama'] = count($komoditas) > 0 ? implode(', ', $komoditas) : '-';
+                // Komoditas Utama 1
+                $stats['komoditas1'] = $stats['profile']->komoditas_utama_1 ?? '-';
+                $stats['hargaKomoditas1'] = $stats['profile']->harga_rata_komoditas_1 ?? 0;
+                // Calculate volume and value for komoditas 1
+                $stats['volumeKomoditas1'] = $stats['profile']->volume_produksi_ton ?? 0;
+                $stats['nilaiKomoditas1'] = $stats['profile']->nilai_produksi ?? 0;
+                
+                // Komoditas Utama 2
+                $stats['komoditas2'] = $stats['profile']->komoditas_utama_2 ?? '-';
+                $stats['hargaKomoditas2'] = $stats['profile']->harga_rata_komoditas_2 ?? 0;
                 
                 // Koperasi info
                 $stats['koperasiDesaMerahPutih'] = [
