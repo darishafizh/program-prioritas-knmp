@@ -196,24 +196,24 @@
                                     <td>{{ $knmp->regency->name ?? 'N/A' }}</td>
                                     <td>{{ $knmp->province->name ?? 'N/A' }}</td>
                                     <td class="action-buttons">
-                                        <a href="{{ route('forms.index', $knmp->id) }}" class="btn btn-action btn-action-primary"
-                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Input Survey">
+                                        <a href="{{ route('forms.index', $knmp->id) }}"
+                                            class="btn btn-action btn-action-primary" data-bs-toggle="tooltip"
+                                            data-bs-placement="top" title="Input Survey">
                                             <i class="mdi mdi-pencil-box"></i>
                                         </a>
                                         <a href="{{ route('forms.edit-responden', $knmp->id) }}"
-                                            class="btn btn-action btn-action-outline-success" data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="Edit Responden">
+                                            class="btn btn-action btn-action-outline-success" data-bs-toggle="tooltip"
+                                            data-bs-placement="top" title="Edit Responden">
                                             <i class="mdi mdi-account-edit"></i>
                                         </a>
                                         <a href="{{ route('survey.questionnaires-pdf', $knmp->id) }}"
-                                            class="btn btn-action btn-action-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="Lihat PDF">
+                                            class="btn btn-action btn-action-outline-danger" data-bs-toggle="tooltip"
+                                            data-bs-placement="top" title="Lihat PDF">
                                             <i class="mdi mdi-file-pdf-box"></i>
                                         </a>
                                         <button type="button" class="btn btn-action btn-action-outline-info"
-                                            data-bs-toggle="modal" data-bs-target="#evidenceModal{{ $knmp->id }}"
-                                            title="Evidence">
-                                            <i class="mdi mdi-file-image-marker"></i>
+                                            data-bs-toggle="modal" data-bs-target="#evidenceModal{{ $knmp->id }}" title="Image">
+                                            <i class="mdi mdi-image"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -228,68 +228,80 @@
 
     <!-- Evidence Modals for each KNMP -->
     @foreach ($knmps as $knmp)
-    <div class="modal fade evidence-modal" id="evidenceModal{{ $knmp->id }}" tabindex="-1" aria-labelledby="evidenceModalLabel{{ $knmp->id }}" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content evidence-modal-content">
-                <div class="modal-header evidence-modal-header">
-                    <div class="d-flex align-items-center">
-                        <div class="evidence-header-icon">
-                            <i class="mdi mdi-image-multiple"></i>
+        <div class="modal fade evidence-modal" id="evidenceModal{{ $knmp->id }}" tabindex="-1"
+            aria-labelledby="evidenceModalLabel{{ $knmp->id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content evidence-modal-content">
+                    <div class="modal-header evidence-modal-header">
+                        <div class="d-flex align-items-center">
+                            <div class="evidence-header-icon">
+                                <i class="mdi mdi-image-multiple"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="modal-title mb-0" id="evidenceModalLabel{{ $knmp->id }}">Evidence</h5>
+                                <small class="text-white-50">{{ $knmp->nama }}</small>
+                            </div>
                         </div>
-                        <div class="ms-3">
-                            <h5 class="modal-title mb-0" id="evidenceModalLabel{{ $knmp->id }}">Evidence</h5>
-                            <small class="text-white-50">{{ $knmp->nama }}</small>
-                        </div>
+                        <button type="button" class="evidence-close-btn" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="mdi mdi-close"></i>
+                        </button>
                     </div>
-                    <button type="button" class="evidence-close-btn" data-bs-dismiss="modal" aria-label="Close">
-                        <i class="mdi mdi-close"></i>
-                    </button>
-                </div>
-                <div class="modal-body evidence-modal-body">
-                    @if($knmp->buktiUploads && $knmp->buktiUploads->count() > 0)
-                        <div class="row g-3">
-                            @foreach($knmp->buktiUploads as $bukti)
-                                <div class="col-6 col-md-4">
-                                    <div class="evidence-card" onclick="openImagePreview('{{ asset('storage/' . $bukti->path_file) }}', '{{ $bukti->nama_file ?? 'Evidence' }}')">
+                    <div class="modal-body evidence-modal-body">
+                        @if($knmp->buktiUploads && $knmp->buktiUploads->count() > 0)
+                            <div class="row g-3">
+                                @foreach($knmp->buktiUploads as $bukti)
+                                    <div class="col-6 col-md-4">
                                         @php
                                             $isImage = $bukti->tipe_file && str_starts_with($bukti->tipe_file, 'image/');
+                                            $fileExists = \Illuminate\Support\Facades\Storage::disk('public')->exists($bukti->path_file);
+                                            $imageUrl = $fileExists ? asset('storage/' . $bukti->path_file) : '';
                                         @endphp
-                                        @if($isImage)
-                                            <img src="{{ asset('storage/' . $bukti->path_file) }}" alt="Evidence">
-                                        @else
-                                            <div class="evidence-pdf">
-                                                <i class="mdi mdi-file-pdf-box"></i>
-                                            </div>
-                                        @endif
-                                        <div class="evidence-card-overlay">
-                                            <i class="mdi mdi-magnify-plus-outline"></i>
+                                        <div class="evidence-card" @if($fileExists)
+                                            onclick="openImagePreview('{{ $imageUrl }}', '{{ $bukti->nama_file ?? 'Evidence' }}')"
+                                        @endif>
+                                            @if($isImage && $fileExists)
+                                                <img src="{{ $imageUrl }}" alt="Evidence"
+                                                    onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'evidence-placeholder\'><i class=\'mdi mdi-image-off-outline\'></i></div>';">
+                                            @elseif($isImage && !$fileExists)
+                                                <div class="evidence-placeholder">
+                                                    <i class="mdi mdi-image-off-outline"></i>
+                                                </div>
+                                            @else
+                                                <div class="evidence-pdf">
+                                                    <i class="mdi mdi-file-pdf-box"></i>
+                                                </div>
+                                            @endif
+                                            @if($fileExists)
+                                                <div class="evidence-card-overlay">
+                                                    <i class="mdi mdi-magnify-plus-outline"></i>
+                                                </div>
+                                            @endif
                                         </div>
+                                        @if($bukti->nama_file)
+                                            <p class="evidence-caption">{{ $bukti->nama_file }}</p>
+                                        @endif
                                     </div>
-                                    @if($bukti->nama_file)
-                                        <p class="evidence-caption">{{ $bukti->nama_file }}</p>
-                                    @endif
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="evidence-empty">
-                            <div class="evidence-empty-icon">
-                                <i class="mdi mdi-image-off-outline"></i>
+                                @endforeach
                             </div>
-                            <h6>Belum Ada Evidence</h6>
-                            <p>Silakan upload evidence terlebih dahulu</p>
-                        </div>
-                    @endif
-                </div>
-                <div class="modal-footer evidence-modal-footer">
-                    <a href="{{ route('survey.evidence', $knmp->id) }}" class="btn btn-evidence-primary">
-                        <i class="mdi mdi-open-in-new me-1"></i>Kelola Evidence
-                    </a>
-                    <button type="button" class="btn btn-evidence-secondary" data-bs-dismiss="modal">Tutup</button>
+                        @else
+                            <div class="evidence-empty">
+                                <div class="evidence-empty-icon">
+                                    <i class="mdi mdi-image-off-outline"></i>
+                                </div>
+                                <h6>Belum Ada Evidence</h6>
+                                <p>Silakan upload evidence terlebih dahulu</p>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="modal-footer evidence-modal-footer">
+                        <a href="{{ route('survey.evidence', $knmp->id) }}" class="btn btn-evidence-primary">
+                            <i class="mdi mdi-open-in-new me-1"></i>Kelola Evidence
+                        </a>
+                        <button type="button" class="btn btn-evidence-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     @endforeach
 
     <!-- Image Preview Modal -->
@@ -312,21 +324,21 @@
         .evidence-modal {
             z-index: 1060 !important;
         }
-        
+
         .evidence-modal .modal-dialog {
             max-width: 600px;
             margin: 1.75rem auto;
             z-index: 1061;
         }
-        
+
         .evidence-modal-content {
             border: none;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 25px 80px rgba(0,0,0,0.25);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
             z-index: 1062;
         }
-        
+
         .evidence-modal-header {
             background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
             padding: 1.25rem 1.5rem;
@@ -335,27 +347,27 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .evidence-header-icon {
             width: 48px;
             height: 48px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        
+
         .evidence-header-icon i {
             font-size: 1.5rem;
             color: #fff;
         }
-        
+
         .evidence-close-btn {
             width: 36px;
             height: 36px;
             border-radius: 10px;
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
             border: none;
             color: #fff;
             display: flex;
@@ -364,58 +376,71 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .evidence-close-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
             transform: scale(1.05);
         }
-        
+
         .evidence-close-btn i {
             font-size: 1.25rem;
         }
-        
+
         .evidence-modal-body {
             padding: 1.5rem;
             max-height: 400px;
             overflow-y: auto;
             background: #f8fafc;
         }
-        
+
         .evidence-card {
             position: relative;
             border-radius: 12px;
             overflow: hidden;
             cursor: pointer;
             background: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
         }
-        
+
         .evidence-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
-        
+
         .evidence-card img {
             width: 100%;
-            height: 120px;
+            height: 250px;
             object-fit: cover;
             display: block;
         }
-        
+
         .evidence-pdf {
-            height: 120px;
+            height: 180px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
         }
-        
+
         .evidence-pdf i {
             font-size: 3rem;
             color: #dc2626;
         }
-        
+
+        .evidence-placeholder {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+        }
+
+        .evidence-placeholder i {
+            font-size: 3rem;
+            color: #94a3b8;
+        }
+
         .evidence-card-overlay {
             position: absolute;
             top: 0;
@@ -429,16 +454,16 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        
+
         .evidence-card-overlay i {
             color: #fff;
             font-size: 2rem;
         }
-        
+
         .evidence-card:hover .evidence-card-overlay {
             opacity: 1;
         }
-        
+
         .evidence-caption {
             font-size: 0.75rem;
             color: #64748b;
@@ -447,12 +472,12 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        
+
         .evidence-empty {
             text-align: center;
             padding: 3rem 1rem;
         }
-        
+
         .evidence-empty-icon {
             width: 80px;
             height: 80px;
@@ -463,23 +488,23 @@
             justify-content: center;
             margin: 0 auto 1rem;
         }
-        
+
         .evidence-empty-icon i {
             font-size: 2.5rem;
             color: #94a3b8;
         }
-        
+
         .evidence-empty h6 {
             color: #475569;
             margin-bottom: 0.5rem;
         }
-        
+
         .evidence-empty p {
             color: #94a3b8;
             font-size: 0.875rem;
             margin: 0;
         }
-        
+
         .evidence-modal-footer {
             padding: 1rem 1.5rem;
             border-top: 1px solid #e2e8f0;
@@ -488,7 +513,7 @@
             gap: 0.75rem;
             justify-content: flex-end;
         }
-        
+
         .btn-evidence-primary {
             background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
             color: #fff;
@@ -499,13 +524,13 @@
             font-weight: 500;
             transition: all 0.2s;
         }
-        
+
         .btn-evidence-primary:hover {
             color: #fff;
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
         }
-        
+
         .btn-evidence-secondary {
             background: #e2e8f0;
             color: #475569;
@@ -516,17 +541,17 @@
             font-weight: 500;
             transition: all 0.2s;
         }
-        
+
         .btn-evidence-secondary:hover {
             background: #cbd5e1;
         }
-        
+
         /* Preview Modal Styles */
         .preview-modal-content {
             background: transparent !important;
             border: none;
         }
-        
+
         .preview-close-btn {
             position: absolute;
             top: 15px;
@@ -534,7 +559,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.6);
             border: none;
             color: #fff;
             display: flex;
@@ -544,42 +569,42 @@
             z-index: 10;
             transition: all 0.2s;
         }
-        
+
         .preview-close-btn:hover {
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.8);
             transform: scale(1.1);
         }
-        
+
         .preview-close-btn i {
             font-size: 1.5rem;
         }
-        
+
         .preview-image {
             max-width: 100%;
             max-height: 85vh;
             display: block;
             margin: 0 auto;
             border-radius: 12px;
-            box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
         }
-        
+
         .preview-caption {
             color: #fff;
             text-align: center;
             margin-top: 1rem;
             font-size: 0.9rem;
         }
-        
+
         #imagePreviewModal .modal-dialog {
             max-width: 90vw;
         }
-        
+
         #imagePreviewModal {
             z-index: 1070 !important;
         }
-        
+
         #imagePreviewModal .modal-backdrop {
-            background: rgba(0,0,0,0.9);
+            background: rgba(0, 0, 0, 0.9);
         }
     </style>
 
@@ -587,17 +612,17 @@
         function openImagePreview(src, caption) {
             // Close the evidence modal first
             var evidenceModals = document.querySelectorAll('.evidence-modal.show');
-            evidenceModals.forEach(function(modal) {
+            evidenceModals.forEach(function (modal) {
                 var bsModal = bootstrap.Modal.getInstance(modal);
                 if (bsModal) bsModal.hide();
             });
-            
+
             // Set image source and caption
             document.getElementById('previewImage').src = src;
             document.getElementById('previewCaption').textContent = caption;
-            
+
             // Show preview modal after a short delay to allow evidence modal to close
-            setTimeout(function() {
+            setTimeout(function () {
                 var previewModal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
                 previewModal.show();
             }, 300);

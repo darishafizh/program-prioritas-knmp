@@ -14,7 +14,8 @@
     <!-- Google Fonts - Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -30,11 +31,14 @@
             --kkp-accent: #00A9CE;
         }
 
-        *, *::before, *::after {
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             margin: 0;
             padding: 0;
             height: 100%;
@@ -101,8 +105,15 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
         .ministry-name {
@@ -156,8 +167,15 @@
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .login-card .card-body {
@@ -327,7 +345,9 @@
                 <p class="ministry-subtitle">Sistem Monitoring dan Evaluasi KNMP</p>
             </div>
             <div class="footer-text">
-                © <script>document.write(new Date().getFullYear())</script> Monev KNMP - Kementerian Kelautan dan Perikanan
+                ©
+                <script>document.write(new Date().getFullYear())</script> Monev KNMP - Kementerian Kelautan dan
+                Perikanan
             </div>
         </div>
 
@@ -372,7 +392,8 @@
                         </div>
 
                         <div class="mb-3">
-                            <a href="{{ route('password.request') }}" class="text-muted float-end"><small>Lupa password?</small></a>
+                            <a href="{{ route('password.request') }}" class="text-muted float-end"><small>Lupa
+                                    password?</small></a>
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group">
                                 <input type="password" id="password" class="form-control" name="password" required
@@ -403,12 +424,12 @@
 
     <!-- Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         function togglePassword() {
             var passwordInput = document.getElementById('password');
             var toggleIcon = document.getElementById('toggleIcon');
-            
+
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 toggleIcon.classList.remove('mdi-eye');

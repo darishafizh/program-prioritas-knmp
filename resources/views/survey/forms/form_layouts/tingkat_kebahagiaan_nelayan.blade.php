@@ -109,13 +109,13 @@
                             $value .
                             '" ' .
                             $checked .
-                            '>';
+                            ' required>';
 
                         echo '<label class="form-check-label" for="' . $id . '">' . $value . '</label>';
                         echo '</div>';
                     }
                     echo '</div>
-                </div>';
+                                        </div>';
                 }
             }
         @endphp <!-- Kepuasan Hidup Personal -->

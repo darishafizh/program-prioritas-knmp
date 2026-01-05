@@ -740,10 +740,38 @@ class FormsController extends Controller
     // ----------------------------
     public function store_tingkat_kebahagiaan(Request $request)
     {
-        $request->validate([
+        // 1. Definisikan Rule Validasi Dasar
+        $rules = [
             'knmp_id' => 'required|exists:knmp,id',
             'responden_id' => 'required|exists:informasi_responden,id',
-        ]);
+        ];
+
+        // 2. Definisikan Kategori dan Nomor Soal
+        $categories = [
+            'kepuasan_hidup_personal' => range(1, 8),   // Soal 1-8
+            'kepuasan_hidup_sosial' => range(9, 18),  // Soal 9-18
+            'perasaan' => range(19, 24), // Soal 19-24
+            'makna_hidup' => range(25, 36), // Soal 25-36
+        ];
+
+        // 3. Tambahkan Rule Validasi untuk Setiap Soal
+        foreach ($categories as $prefix => $numbers) {
+            foreach ($numbers as $num) {
+                // Pastikan setiap soal wajib diisi
+                $rules["{$prefix}_{$num}"] = 'required|string';
+            }
+        }
+
+        // 4. Jalankan Validasi
+        // Gunakan custom attributes agar pesan error lebih mudah dibaca
+        $customAttributes = [];
+        foreach ($categories as $prefix => $numbers) {
+            foreach ($numbers as $num) {
+                $customAttributes["{$prefix}_{$num}"] = "Soal No. {$num}";
+            }
+        }
+
+        $request->validate($rules, [], $customAttributes);
 
         $knmp_id = (int) $request->knmp_id;
         $responden_id = (int) $request->responden_id;
@@ -986,28 +1014,42 @@ class FormsController extends Controller
 
     public function store_sosial_kelembagaan(Request $request, $knmp)
     {
-        // VALIDASI RINGAN (TIDAK MENIMPA, TIDAK MEMAKSA)
-        if (!$request->responden_id) {
-            return back()->with('error', 'Responden wajib dipilih');
-        }
+        // Validator
+        $validated = $request->validate([
+            'responden_id' => 'required|exists:informasi_responden,id',
+            'anggota_kelompok' => 'required|string',
+            'manfaat_kelompok' => 'required|string',
+            'anggota_koperasi' => 'required|string',
+            'tertarik_koperasi' => 'required|string',
+            'manfaat_koperasi' => 'required|string',
+            'koperasi_rapat_tahunan' => 'required|string',
+            'koperasi_partisipasi_aktif' => 'required|string',
+            'koperasi_pengurus_kompeten' => 'required|string',
+            'koperasi_transparan' => 'required|string',
+            'koperasi_keuangan_sehat' => 'required|string',
+            'koperasi_jaringan_pasar' => 'required|string',
+            'koperasi_kepercayaan_usaha' => 'required|string',
+        ], [
+            'required' => 'Wajib diisi',
+        ]);
 
         SosialKelembagaan::create([
             'knmp_id' => $knmp,
-            'responden_id' => $request->responden_id,
+            'responden_id' => $validated['responden_id'],
 
-            'anggota_kelompok' => $request->anggota_kelompok ?? null,
-            'manfaat_kelompok' => $request->manfaat_kelompok ?? null,
-            'anggota_koperasi' => $request->anggota_koperasi ?? null,
-            'tertarik_koperasi' => $request->tertarik_koperasi ?? null,
-            'manfaat_koperasi' => $request->manfaat_koperasi ?? null,
+            'anggota_kelompok' => $validated['anggota_kelompok'],
+            'manfaat_kelompok' => $validated['manfaat_kelompok'],
+            'anggota_koperasi' => $validated['anggota_koperasi'],
+            'tertarik_koperasi' => $validated['tertarik_koperasi'],
+            'manfaat_koperasi' => $validated['manfaat_koperasi'],
 
-            'koperasi_rapat_tahunan' => $request->koperasi_rapat_tahunan ?? null,
-            'koperasi_partisipasi_aktif' => $request->koperasi_partisipasi_aktif ?? null,
-            'koperasi_pengurus_kompeten' => $request->koperasi_pengurus_kompeten ?? null,
-            'koperasi_transparan' => $request->koperasi_transparan ?? null,
-            'koperasi_keuangan_sehat' => $request->koperasi_keuangan_sehat ?? null,
-            'koperasi_jaringan_pasar' => $request->koperasi_jaringan_pasar ?? null,
-            'koperasi_kepercayaan_usaha' => $request->koperasi_kepercayaan_usaha ?? null,
+            'koperasi_rapat_tahunan' => $validated['koperasi_rapat_tahunan'],
+            'koperasi_partisipasi_aktif' => $validated['koperasi_partisipasi_aktif'],
+            'koperasi_pengurus_kompeten' => $validated['koperasi_pengurus_kompeten'],
+            'koperasi_transparan' => $validated['koperasi_transparan'],
+            'koperasi_keuangan_sehat' => $validated['koperasi_keuangan_sehat'],
+            'koperasi_jaringan_pasar' => $validated['koperasi_jaringan_pasar'],
+            'koperasi_kepercayaan_usaha' => $validated['koperasi_kepercayaan_usaha'],
         ]);
 
         return back()->with('success', 'Data Sosial & Kelembagaan berhasil disimpan');

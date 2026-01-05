@@ -5,15 +5,20 @@
     function updateSelection() {
         const checkboxes = document.querySelectorAll('.file-checkbox:checked');
         const count = checkboxes.length;
-        const bulkActions = document.getElementById('bulkActions');
         const selectedCount = document.getElementById('selectedCount');
+        const btnDeselect = document.getElementById('btnDeselect');
+        const btnDeleteSelected = document.getElementById('btnDeleteSelected');
 
-        selectedCount.textContent = count;
+        if (selectedCount) {
+             selectedCount.textContent = count;
+        }
 
         if (count > 0) {
-            bulkActions.classList.add('show');
+            if (btnDeselect) btnDeselect.style.display = 'inline-flex';
+            if (btnDeleteSelected) btnDeleteSelected.style.display = 'inline-flex';
         } else {
-            bulkActions.classList.remove('show');
+            if (btnDeselect) btnDeselect.style.display = 'none';
+            if (btnDeleteSelected) btnDeleteSelected.style.display = 'none';
         }
 
         // Update card selection style
@@ -28,7 +33,10 @@
 
         // Update select all checkbox
         const allCheckboxes = document.querySelectorAll('.file-checkbox');
-        document.getElementById('selectAll').checked = count === allCheckboxes.length && count > 0;
+        const selectAll = document.getElementById('selectAll');
+        if (selectAll && allCheckboxes.length > 0) {
+             selectAll.checked = count === allCheckboxes.length;
+        }
     }
 
     document.getElementById('selectAll').addEventListener('change', function () {
@@ -62,6 +70,11 @@
     }
 
     function deleteAllFiles() {
+        // Visual: Select all checkboxes
+        document.querySelectorAll('.file-checkbox').forEach(cb => cb.checked = true);
+        document.getElementById('selectAll').checked = true;
+        updateSelection();
+
         const ids = Array.from(document.querySelectorAll('.file-checkbox'))
             .map(cb => parseInt(cb.value));
 

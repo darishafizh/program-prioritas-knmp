@@ -39,7 +39,7 @@
         <div class="row">
             <div class="col-md-4">
                 <h6>Kampung Nelayan</h6>
-                <p>{{ $knmp->nama_knmp ?? 'N/A' }}</p>
+                <p>{{ $knmp->nama ?? 'N/A' }}</p>
             </div>
             <div class="col-md-4">
                 <h6>Total Responden</h6>

@@ -19,35 +19,49 @@
     </div>
 </div>
 
-{{-- Delete All Section --}}
+
+
+{{-- BULK ACTIONS BAR (Matches edit-responden style) --}}
 @if(count($buktiUploads ?? []) > 0)
-    <div class="delete-all-section">
-        <button type="button" class="btn-delete-all" onclick="deleteAllFiles()">
-            <i class="mdi mdi-trash-can"></i>
-            Hapus Semua File
-        </button>
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body py-3">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center">
+                    <div class="form-check me-3">
+                        <input type="checkbox" id="selectAll" class="form-check-input"
+                            style="width: 20px; height: 20px; cursor: pointer;">
+                        <label class="form-check-label ms-1" for="selectAll">Pilih Semua</label>
+                    </div>
+                    <span class="text-muted small" id="selectedInfo">
+                        <span id="selectedCount">0</span> file dipilih
+                    </span>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="deselectAll()" id="btnDeselect"
+                        style="display: none;">
+                        <i class="mdi mdi-close me-1"></i>Batal Pilih
+                    </button>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteSelected()"
+                        id="btnDeleteSelected" style="display: none;">
+                        <i class="mdi mdi-trash-can-outline me-1"></i>Hapus Terpilih
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteAllFiles()">
+                        <i class="mdi mdi-trash-can-outline me-1"></i>Hapus Semua
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 @endif
-
-{{-- BULK ACTIONS BAR --}}
-<div class="bulk-actions" id="bulkActions">
-    <div class="d-flex align-items-center">
-        <input type="checkbox" id="selectAll" class="me-3" style="width: 20px; height: 20px; cursor: pointer;">
-        <span class="selected-count"><span id="selectedCount">0</span> file dipilih</span>
-    </div>
-    <div>
-        <button type="button" class="btn btn-light btn-sm me-2" onclick="deselectAll()">
-            <i class="mdi mdi-close me-1"></i>Batal
-        </button>
-        <button type="button" class="btn btn-warning btn-sm" onclick="deleteSelected()">
-            <i class="mdi mdi-trash-can me-1"></i>Hapus Terpilih
-        </button>
-    </div>
-</div>
 
 <div class="file-canvas">
     <div class="file-list-wrapper">
         @forelse ($buktiUploads ?? [] as $file)
+            @php
+                $isImage = Str::startsWith($file->tipe_file, 'image');
+                $fileExists = \Illuminate\Support\Facades\Storage::disk('public')->exists($file->path_file);
+                $imageUrl = $fileExists ? asset('storage/' . $file->path_file) : '';
+            @endphp
             <div class="file-item" id="file-{{ $file->id }}">
                 <div class="evidence-card" data-file-id="{{ $file->id }}">
                     <div class="evidence-thumbnail">
@@ -56,8 +70,16 @@
                                 onchange="updateSelection()">
                         </label>
 
-                        @if(Str::startsWith($file->tipe_file, 'image'))
-                            <img src="{{ asset('storage/' . $file->path_file) }}" alt="{{ $file->nama_file }}">
+                        @if($isImage && $fileExists)
+                            <img src="{{ $imageUrl }}" alt="{{ $file->nama_file }}"
+                                onerror="this.onerror=null; this.src=''; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="evidence-placeholder-icon" style="display: none;">
+                                <i class="mdi mdi-image-off-outline"></i>
+                            </div>
+                        @elseif($isImage && !$fileExists)
+                            <div class="evidence-placeholder-icon">
+                                <i class="mdi mdi-image-off-outline"></i>
+                            </div>
                         @else
                             <i class="mdi mdi-file-pdf-box pdf-icon"></i>
                         @endif
@@ -69,10 +91,26 @@
                             <i
                                 class="mdi mdi-file-document-outline me-1"></i>{{ number_format($file->ukuran_file / 1024, 1) }}
                             KB
+                            @if(!$fileExists)
+                                <span class="badge bg-danger ms-1">File tidak ditemukan</span>
+                            @endif
                         </p>
-                        <a href="{{ asset('storage/' . $file->path_file) }}" download class="text-primary small fw-500">
-                            <i class="mdi mdi-download me-1"></i>Download
-                        </a>
+                        <div class="d-flex gap-2 mt-2">
+                            @if($fileExists)
+                                <a href="{{ $imageUrl }}" download class="btn btn-sm btn-outline-primary flex-fill">
+                                    <i class="mdi mdi-download me-1"></i>Download
+                                </a>
+                            @else
+                                <button class="btn btn-sm btn-outline-secondary flex-fill" disabled>
+                                    <i class="mdi mdi-alert-circle-outline me-1"></i>Hilang
+                                </button>
+                            @endif
+
+                            <button type="button" class="btn btn-sm btn-outline-danger flex-fill"
+                                onclick="confirmDeleteSingle({{ $file->id }})">
+                                <i class="mdi mdi-trash-can-outline me-1"></i>Hapus
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -115,6 +153,45 @@
     </div>
 </div>
 
+{{-- FORM UNTUK SINGLE DELETE --}}
+<form id="singleDeleteForm" method="POST" class="d-none">
+    @csrf
+    @method('DELETE')
+</form>
+
 {{-- ===================== --}}
 {{-- SCRIPTS --}}
 {{-- ===================== --}}
+<script>
+    function confirmDeleteSingle(fileId) {
+        // Set action form ke route delete single
+        const form = document.getElementById('singleDeleteForm');
+        form.action = "{{ route('forms.delete_bukti_single', ':id') }}".replace(':id', fileId);
+
+        // Tampilkan dialog konfirmasi (menggunakan custom dialog yang sudah ada)
+        const dialogTitle = document.getElementById('dialogTitle');
+        const dialogMessage = document.getElementById('dialogMessage');
+        const confirmBtn = document.getElementById('confirmDialogBtn');
+        const dialogIcon = document.getElementById('dialogIcon');
+        const customDialog = document.getElementById('customDialog');
+
+        // Reset state
+        customDialog.className = 'custom-dialog warning';
+        dialogIcon.innerText = '⚠';
+        dialogTitle.innerText = 'Hapus File?';
+        dialogMessage.innerText = 'Apakah Anda yakin ingin menghapus file ini secara permanen?';
+
+        // Show overlay
+        const overlay = document.getElementById('customDialogOverlay');
+        overlay.classList.add('show');
+
+        // Handle confirm button
+        confirmBtn.onclick = function () {
+            // Show loading state
+            document.getElementById('dialogProgress').style.display = 'block';
+
+            // Submit form
+            form.submit();
+        };
+    }
+</script>
