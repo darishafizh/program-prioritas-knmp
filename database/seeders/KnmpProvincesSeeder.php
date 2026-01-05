@@ -21,6 +21,7 @@ class KnmpProvincesSeeder extends Seeder
             ['name' => 'Kep. Riau', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Sumatera Barat', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Jawa Barat', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Banten', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'DI Yogyakarta', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Jawa Tengah', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Jawa Timur', 'created_at' => now(), 'updated_at' => now()],
