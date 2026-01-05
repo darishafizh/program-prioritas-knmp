@@ -123,7 +123,7 @@ class ReportController extends Controller
 
         $filename = 'Kuesioner_' . str_replace(' ', '_', $responden->nama_responden) . '_' . date('d-m-Y_His') . '.pdf';
 
-        return $pdf->download($filename);
+        return $pdf->stream($filename);
     }
 
     public function questionnairesListPdf(Knmp $knmp)

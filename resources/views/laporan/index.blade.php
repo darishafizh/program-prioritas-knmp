@@ -33,14 +33,38 @@
                         </div>
                         <div class="flex-grow-1">
                             <label class="form-label mb-1 fw-semibold text-dark">Pilih Kampung Nelayan</label>
-                            <select name="knmp_id" id="knmpSelect" class="form-select form-select-lg">
-                                <option value="">-- Cari dan Pilih KNMP --</option>
-                                @foreach ($knmpList as $item)
-                                    <option value="{{ $item->id }}" {{ $selectedKnmpId == $item->id ? 'selected' : '' }}>
-                                        {{ $item->nama }} — {{ $item->regency->name ?? '' }}, {{ $item->province->name ?? '' }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="custom-searchable-dropdown">
+                                <div class="dropdown-toggle-btn" id="knmpDropdownBtn">
+                                    <span class="selected-text">
+                                        @if($selectedKnmp)
+                                            {{ $selectedKnmp->nama }} — {{ $selectedKnmp->regency->name ?? '' }}, {{ $selectedKnmp->province->name ?? '' }}
+                                        @else
+                                            -- Pilih KNMP --
+                                        @endif
+                                    </span>
+                                    <i class="mdi mdi-chevron-down"></i>
+                                </div>
+                                <div class="dropdown-menu-custom" id="knmpDropdownMenu">
+                                    <div class="dropdown-search">
+                                        <i class="mdi mdi-magnify"></i>
+                                        <input type="text" id="knmpSearch" placeholder="Ketik untuk mencari KNMP..." autocomplete="off">
+                                    </div>
+                                    <div class="dropdown-options" id="knmpOptions">
+                                        @foreach ($knmpList as $item)
+                                            <div class="dropdown-option {{ $selectedKnmpId == $item->id ? 'selected' : '' }}" 
+                                                 data-value="{{ $item->id }}"
+                                                 data-text="{{ $item->nama }} — {{ $item->regency->name ?? '' }}, {{ $item->province->name ?? '' }}">
+                                                <span class="option-name">{{ $item->nama }}</span>
+                                                <span class="option-location">{{ $item->regency->name ?? '' }}, {{ $item->province->name ?? '' }}</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <div class="dropdown-no-results" style="display:none;">
+                                        <i class="mdi mdi-alert-circle-outline"></i> KNMP tidak ditemukan
+                                    </div>
+                                </div>
+                                <input type="hidden" name="knmp_id" id="knmpInput" value="{{ $selectedKnmpId }}">
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -481,10 +505,6 @@
     </div>
     @endif
 
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
-
     <style>
         .selector-card {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -502,45 +522,153 @@
             font-size: 1.75rem;
         }
         
-        /* Select2 Custom Styling */
-        .select2-container--bootstrap-5 .select2-selection {
+        /* Custom Searchable Dropdown */
+        .custom-searchable-dropdown {
+            position: relative;
+            width: 100%;
+        }
+        
+        .dropdown-toggle-btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: #fff;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
-            padding: 0.5rem 0.75rem;
-            min-height: 48px;
-            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 50px;
         }
         
-        .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
-            padding-left: 0;
-            line-height: 28px;
+        .dropdown-toggle-btn:hover {
+            border-color: #3b82f6;
         }
         
-        .select2-container--bootstrap-5.select2-container--focus .select2-selection,
-        .select2-container--bootstrap-5.select2-container--open .select2-selection {
+        .dropdown-toggle-btn.open {
             border-color: #3b82f6;
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            border-radius: 12px 12px 0 0;
         }
         
-        .select2-container--bootstrap-5 .select2-dropdown {
-            border-radius: 12px;
-            border: 2px solid #e2e8f0;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        .dropdown-toggle-btn .selected-text {
+            font-size: 0.95rem;
+            color: #374151;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         
-        .select2-container--bootstrap-5 .select2-results__option--highlighted {
-            background-color: #3b82f6;
+        .dropdown-toggle-btn i {
+            color: #64748b;
+            font-size: 1.25rem;
+            transition: transform 0.2s;
         }
         
-        .select2-container--bootstrap-5 .select2-search--dropdown .select2-search__field {
-            border-radius: 8px;
-            border: 2px solid #e2e8f0;
-            padding: 0.5rem 0.75rem;
+        .dropdown-toggle-btn.open i {
+            transform: rotate(180deg);
         }
         
-        .select2-container--bootstrap-5 .select2-search--dropdown .select2-search__field:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        .dropdown-menu-custom {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border: 2px solid #3b82f6;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: none;
+            z-index: 1000;
+            max-height: 350px;
+            overflow: hidden;
+        }
+        
+        .dropdown-menu-custom.show {
+            display: block;
+        }
+        
+        .dropdown-search {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f8fafc;
+        }
+        
+        .dropdown-search i {
+            color: #64748b;
+            font-size: 1.25rem;
+        }
+        
+        .dropdown-search input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+        
+        .dropdown-search input::placeholder {
+            color: #94a3b8;
+        }
+        
+        .dropdown-options {
+            max-height: 280px;
+            overflow-y: auto;
+        }
+        
+        .dropdown-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .dropdown-option:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-option:hover {
+            background: #eff6ff;
+        }
+        
+        .dropdown-option.selected {
+            background: #3b82f6;
+        }
+        
+        .dropdown-option.selected .option-name,
+        .dropdown-option.selected .option-location {
+            color: #fff;
+        }
+        
+        .dropdown-option .option-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.9rem;
+        }
+        
+        .dropdown-option .option-location {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+        
+        .dropdown-no-results {
+            padding: 1.5rem;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .dropdown-no-results i {
+            margin-right: 0.5rem;
         }
         
         /* KPI Card Styles */
@@ -834,74 +962,182 @@
     </style>
 @endsection
 
-@push('scripts')
-<!-- Leaflet -->
+@push('styles')
+<!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+@endpush
 
-<!-- Select2 -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+@push('scripts')
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Select2 for searchable dropdown
-    $('#knmpSelect').select2({
-        theme: 'bootstrap-5',
-        placeholder: '-- Cari dan Pilih KNMP --',
-        allowClear: true,
-        width: '100%'
-    });
+    console.log('Script loaded');
     
-    // Submit form when selection changes
-    $('#knmpSelect').on('change', function() {
-        if (this.value) {
-            document.getElementById('knmpForm').submit();
+    // Custom Searchable Dropdown
+    var dropdownBtn = document.getElementById('knmpDropdownBtn');
+    var dropdownMenu = document.getElementById('knmpDropdownMenu');
+    var searchInput = document.getElementById('knmpSearch');
+    var optionsContainer = document.getElementById('knmpOptions');
+    var noResults = document.querySelector('.dropdown-no-results');
+    var hiddenInput = document.getElementById('knmpInput');
+    var form = document.getElementById('knmpForm');
+    
+    console.log('Dropdown elements:', dropdownBtn, dropdownMenu);
+    
+    if (dropdownBtn && dropdownMenu) {
+        console.log('Dropdown elements found, attaching event listeners');
+        
+        // Toggle dropdown
+        dropdownBtn.onclick = function(e) {
+            console.log('Dropdown button clicked');
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (dropdownMenu.classList.contains('show')) {
+                dropdownMenu.classList.remove('show');
+                dropdownBtn.classList.remove('open');
+            } else {
+                dropdownMenu.classList.add('show');
+                dropdownBtn.classList.add('open');
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.value = '';
+                }
+                filterOptions('');
+            }
+        };
+        
+        // Close on click outside
+        document.addEventListener('click', function(e) {
+            if (dropdownMenu && !dropdownMenu.contains(e.target) && !dropdownBtn.contains(e.target)) {
+                dropdownMenu.classList.remove('show');
+                dropdownBtn.classList.remove('open');
+            }
+        });
+        
+        // Search functionality
+        if (searchInput) {
+            searchInput.oninput = function() {
+                filterOptions(this.value.toLowerCase());
+            };
+            
+            searchInput.onclick = function(e) {
+                e.stopPropagation();
+            };
         }
-    });
+        
+        function filterOptions(searchTerm) {
+            if (!optionsContainer) return;
+            var options = optionsContainer.querySelectorAll('.dropdown-option');
+            var visibleCount = 0;
+            
+            options.forEach(function(option) {
+                var text = option.getAttribute('data-text');
+                if (text && text.toLowerCase().includes(searchTerm)) {
+                    option.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+            
+            if (noResults) {
+                noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+        }
+        
+        // Select option
+        if (optionsContainer) {
+            optionsContainer.onclick = function(e) {
+                var option = e.target.closest('.dropdown-option');
+                if (option) {
+                    var value = option.getAttribute('data-value');
+                    var text = option.getAttribute('data-text');
+                    
+                    // Update selected
+                    optionsContainer.querySelectorAll('.dropdown-option').forEach(function(o) {
+                        o.classList.remove('selected');
+                    });
+                    option.classList.add('selected');
+                    
+                    // Update display
+                    var selectedText = dropdownBtn.querySelector('.selected-text');
+                    if (selectedText) {
+                        selectedText.textContent = text;
+                    }
+                    if (hiddenInput) {
+                        hiddenInput.value = value;
+                    }
+                    
+                    // Close dropdown
+                    dropdownMenu.classList.remove('show');
+                    dropdownBtn.classList.remove('open');
+                    
+                    // Submit form
+                    if (form) {
+                        form.submit();
+                    }
+                }
+            };
+        }
+    }
     
     // Initialize Map
-    @if($selectedKnmp)
+    @if(isset($selectedKnmp) && $selectedKnmp)
+    setTimeout(function() {
         var mapElement = document.getElementById('knmpMap');
-        if (mapElement) {
+        if (mapElement && typeof L !== 'undefined') {
             @php
-                $lat = $stats['latitude'] ?? -2.5;
-                $lng = $stats['longitude'] ?? 118;
-                $hasCoords = $stats['latitude'] && $stats['longitude'];
+                $lat = $stats['latitude'] ?? null;
+                $lng = $stats['longitude'] ?? null;
+                $hasCoords = !empty($lat) && !empty($lng);
+                $defaultLat = -2.5;
+                $defaultLng = 118;
             @endphp
             
-            var lat = {{ $lat }};
-            var lng = {{ $lng }};
-            var hasCoords = {{ $hasCoords ? 'true' : 'false' }};
+            @if($hasCoords)
+                var lat = {{ $lat }};
+                var lng = {{ $lng }};
+                var zoom = 12;
+            @else
+                var lat = {{ $defaultLat }};
+                var lng = {{ $defaultLng }};
+                var zoom = 5;
+            @endif
             
-            var map = L.map('knmpMap').setView([lat, lng], hasCoords ? 12 : 5);
+            var map = L.map('knmpMap', {
+                scrollWheelZoom: false
+            }).setView([lat, lng], zoom);
             
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
+                attribution: '&copy; OpenStreetMap',
+                maxZoom: 19
             }).addTo(map);
             
-            var customIcon = L.divIcon({
-                className: 'custom-marker',
-                html: '<div style="background: linear-gradient(135deg, #ef4444, #dc2626); width: 30px; height: 30px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 3px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.3);"></div>',
-                iconSize: [30, 30],
-                iconAnchor: [15, 30],
-                popupAnchor: [0, -30]
+            var customIcon = L.icon({
+                iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
             });
             
             var marker = L.marker([lat, lng], {icon: customIcon}).addTo(map);
             
             @if($hasCoords)
-                marker.bindPopup("<b>{{ $selectedKnmp->nama }}</b><br>{{ $selectedKnmp->village->name ?? '' }}, {{ $selectedKnmp->district->name ?? '' }}").openPopup();
+                marker.bindPopup("<div style='text-align:center'><b>{{ addslashes($selectedKnmp->nama) }}</b><br><span style='color:#666'>{{ addslashes($selectedKnmp->village->name ?? '') }}, {{ addslashes($selectedKnmp->district->name ?? '') }}</span></div>").openPopup();
             @else
-                marker.bindPopup("<b>{{ $selectedKnmp->nama }}</b><br><span style='color:#999'>Koordinat belum tersedia</span>");
-                // Show all of Indonesia if no coords
-                map.setView([-2.5, 118], 5);
+                marker.bindPopup("<div style='text-align:center'><b>{{ addslashes($selectedKnmp->nama) }}</b><br><span style='color:#999'>Koordinat belum tersedia</span></div>");
             @endif
             
-            // Fix map display issue
             setTimeout(function() {
                 map.invalidateSize();
-            }, 100);
+            }, 200);
         }
+    }, 100);
     @endif
 });
 </script>

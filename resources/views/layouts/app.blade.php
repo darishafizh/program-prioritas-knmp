@@ -151,6 +151,14 @@
         .navbar-toggler-icon {
             background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255,255,255,1%29)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/ %3E%3C/svg%3E");
         }
+
+        /* Fix DataTables Show Entries Select Overlap */
+        .dataTables_length select.form-select {
+            padding-right: 2.5rem !important;
+            background-position: right 0.75rem center;
+            width: auto;
+            display: inline-block;
+        }
     </style>
 
 </head>
@@ -160,27 +168,27 @@
 
     {{-- 🔔 GLOBAL ALERT --}}
     @if(session('success') || session('error'))
-    <div id="customAlert" class="alert-overlay">
-        <div class="alert-card {{ session('success') ? 'success' : 'error' }}">
-            <div class="alert-icon-circle">
-                @if(session('success'))
-                <span class="alert-icon">✓</span>
-                @else
-                <span class="alert-icon">✕</span>
-                @endif
+        <div id="customAlert" class="alert-overlay">
+            <div class="alert-card {{ session('success') ? 'success' : 'error' }}">
+                <div class="alert-icon-circle">
+                    @if(session('success'))
+                        <span class="alert-icon">✓</span>
+                    @else
+                        <span class="alert-icon">✕</span>
+                    @endif
+                </div>
+                <h3 class="alert-title">{{ session('success') ? 'Success!' : 'Failed!' }}</h3>
+                <p class="alert-subtitle">{{ session('success') ? session('success') : session('error') }}</p>
+                <div class="alert-progress">
+                    <div class="alert-progress-bar"></div>
+                </div>
+                <button class="alert-btn" id="alertCloseBtn">{{ session('success') ? 'DONE' : 'TRY AGAIN' }}</button>
             </div>
-            <h3 class="alert-title">{{ session('success') ? 'Success!' : 'Failed!' }}</h3>
-            <p class="alert-subtitle">{{ session('success') ? session('success') : session('error') }}</p>
-            <div class="alert-progress">
-                <div class="alert-progress-bar"></div>
-            </div>
-            <button class="alert-btn" id="alertCloseBtn">{{ session('success') ? 'DONE' : 'TRY AGAIN' }}</button>
         </div>
-    </div>
     @endif
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const overlay = document.getElementById("customAlert");
             if (!overlay) return;
 

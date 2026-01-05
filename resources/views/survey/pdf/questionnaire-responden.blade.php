@@ -326,9 +326,8 @@
         </table>
 
         <div class="knmp-info" style="text-align: center;">
-            <strong>{{ $knmp->nama_knmp ?? 'N/A' }}</strong><br>
-            {{ $knmp->village->name ?? 'N/A' }}, {{ $knmp->district->name ?? 'N/A' }},
-            {{ $knmp->regency->name ?? 'N/A' }}, {{ $knmp->province->name ?? 'N/A' }}
+            <strong>{{ $knmp->nama ?? 'Kampung Nelayan' }}</strong><br>
+            Desa {{ $knmp->village->name ?? 'N/A' }}, Kec. {{ $knmp->district->name ?? 'N/A' }}, Kab. {{ $knmp->regency->name ?? 'N/A' }}, Prov. {{ $knmp->province->name ?? 'N/A' }}
         </div>
 
         <hr class="divider">
