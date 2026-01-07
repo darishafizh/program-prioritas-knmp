@@ -161,6 +161,42 @@ class DashboardController extends Controller
             round(($kesejahteraanStats->kurang_sejahtera / $totalKesejahteraan) * 100, 0),
         ];
 
+        // ===================================
+        // DATA UNTUK STATISTIK NASIONAL
+        // ===================================
+
+        // Progress Nasional
+        $totalKnmpNasional = count($desa_knmp);
+        $targetKnmp = 100; // Target KNMP Nasional (dapat disesuaikan)
+        $progressNasional = $targetKnmp > 0 ? min(round(($totalKnmpNasional / $targetKnmp) * 100, 1), 100) : 0;
+
+        // Total Tenaga Kerja Terserap
+        $totalTenagaKerja = DB::table('progres_knmp')->sum('tk_total') ?? 0;
+
+        // Statistik per Provinsi
+        $statistikProvinsi = DB::table('knmp')
+            ->join('knmp_provinces', 'knmp.province_id', '=', 'knmp_provinces.id')
+            ->leftJoin('progres_knmp', 'knmp.id', '=', 'progres_knmp.knmp_id')
+            ->leftJoin('progres_knmp_details', 'progres_knmp.id', '=', 'progres_knmp_details.progres_id')
+            ->select(
+                'knmp_provinces.id as province_id',
+                'knmp_provinces.name as province_name',
+                DB::raw('COUNT(DISTINCT knmp.id) as total_knmp'),
+                DB::raw('COALESCE(AVG(progres_knmp_details.persen), 0) as avg_capaian')
+            )
+            ->groupBy('knmp_provinces.id', 'knmp_provinces.name')
+            ->orderByDesc('avg_capaian')
+            ->get();
+
+        // Top 5 Provinsi (capaian tertinggi)
+        $topProvinsi = $statistikProvinsi->take(5);
+
+        // Bottom 5 Provinsi (perlu perhatian)
+        $bottomProvinsi = $statistikProvinsi->sortBy('avg_capaian')->take(5)->values();
+
+        // Jumlah provinsi yang sudah ter-cover
+        $totalProvinsiCovered = $statistikProvinsi->count();
+
         return view('dashboard.index', compact(
             'greeting',
             'greetingIcon',
@@ -180,7 +216,16 @@ class DashboardController extends Controller
             'penyerapanTenagaKerja',
             'penyerapanLabels',
             'tingkatKesejahteraanData',
-            'tingkatKesejahteraanLabels'
+            'tingkatKesejahteraanLabels',
+            // Data statistik nasional
+            'progressNasional',
+            'totalTenagaKerja',
+            'statistikProvinsi',
+            'topProvinsi',
+            'bottomProvinsi',
+            'totalProvinsiCovered',
+            'totalKnmpNasional',
+            'targetKnmp'
         ));
     }
 }
