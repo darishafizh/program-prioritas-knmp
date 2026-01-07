@@ -100,6 +100,30 @@ Route::middleware('auth')->group(function () {
             // Export Excel route
             Route::get('/export-excel/{knmp?}', [RespondenController::class, 'exportExcel'])
                 ->name('forms.export-excel');
+
+            // ==============================
+            // IMPORT EXCEL ROUTES
+            // ==============================
+            Route::post('/import-responden/{knmp}', [\App\Http\Controllers\ImportController::class, 'importResponden'])
+                ->name('forms.import_responden');
+            Route::post('/import-profile-knmp/{knmp}', [\App\Http\Controllers\ImportController::class, 'importProfileKnmp'])
+                ->name('forms.import_profile_knmp');
+            Route::post('/import-progres-knmp/{knmp}', [\App\Http\Controllers\ImportController::class, 'importProgresKnmp'])
+                ->name('forms.import_progres_knmp');
+            Route::post('/import-tanggapan-masyarakat/{knmp}', [\App\Http\Controllers\ImportController::class, 'importTanggapanMasyarakat'])
+                ->name('forms.import_tanggapan_masyarakat');
+            Route::post('/import-tingkat-kebahagiaan/{knmp}', [\App\Http\Controllers\ImportController::class, 'importTingkatKebahagiaan'])
+                ->name('forms.import_tingkat_kebahagiaan');
+            Route::post('/import-informasi-usaha/{knmp}', [\App\Http\Controllers\ImportController::class, 'importInformasiUsaha'])
+                ->name('forms.import_informasi_usaha');
+            Route::post('/import-informasi-pemasaran/{knmp}', [\App\Http\Controllers\ImportController::class, 'importInformasiPemasaran'])
+                ->name('forms.import_informasi_pemasaran');
+            Route::post('/import-pendapatan-rt/{knmp}', [\App\Http\Controllers\ImportController::class, 'importPendapatanRt'])
+                ->name('forms.import_pendapatan_rt');
+            Route::post('/import-sosial-kelembagaan/{knmp}', [\App\Http\Controllers\ImportController::class, 'importSosialKelembagaan'])
+                ->name('forms.import_sosial_kelembagaan');
+            Route::get('/download-template/{section}', [\App\Http\Controllers\ImportController::class, 'downloadTemplate'])
+                ->name('forms.download_template');
         });
     });
 

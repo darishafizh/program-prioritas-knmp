@@ -14,46 +14,46 @@
 {{-- ===================================================== --}}
 {{-- ðŸ”” GLOBAL ALERT --}}
 @if(session('success') || session('error'))
-<div id="customAlert" class="alert-overlay">
-    <div class="alert-card {{ session('success') ? 'success' : 'error' }}">
+    <div id="customAlert" class="alert-overlay">
+        <div class="alert-card {{ session('success') ? 'success' : 'error' }}">
 
-        {{-- Icon --}}
-        <div class="alert-icon-circle">
-            @if(session('success'))
-            <span class="alert-icon">âœ“</span>
-            @else
-            <span class="alert-icon">âœ•</span>
-            @endif
+            {{-- Icon --}}
+            <div class="alert-icon-circle">
+                @if(session('success'))
+                    <span class="alert-icon">âœ“</span>
+                @else
+                    <span class="alert-icon">âœ•</span>
+                @endif
+            </div>
+
+            {{-- Title --}}
+            <h3 class="alert-title">
+                {{ session('success') ? 'Success!' : 'Failed!' }}
+            </h3>
+
+            {{-- Message --}}
+            <p class="alert-subtitle">
+                {{ session('success') ? session('success') : session('error') }}
+            </p>
+
+            {{-- Progress Bar --}}
+            <div class="alert-progress">
+                <div class="alert-progress-bar"></div>
+            </div>
+
+            {{-- Button --}}
+            <button class="alert-btn" id="alertCloseBtn">
+                {{ session('success') ? 'DONE' : 'TRY AGAIN' }}
+            </button>
+
         </div>
-
-        {{-- Title --}}
-        <h3 class="alert-title">
-            {{ session('success') ? 'Success!' : 'Failed!' }}
-        </h3>
-
-        {{-- Message --}}
-        <p class="alert-subtitle">
-            {{ session('success') ? session('success') : session('error') }}
-        </p>
-
-        {{-- Progress Bar --}}
-        <div class="alert-progress">
-            <div class="alert-progress-bar"></div>
-        </div>
-
-        {{-- Button --}}
-        <button class="alert-btn" id="alertCloseBtn">
-            {{ session('success') ? 'DONE' : 'TRY AGAIN' }}
-        </button>
-
     </div>
-</div>
 @endif
 
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
 
         const overlay = document.getElementById("customAlert");
         if (!overlay) return;
@@ -113,7 +113,8 @@
                     </div>
                     <div class="ms-3">
                         <h4 class="mb-1 text-white fw-bold">{{ $knmp->nama ?? 'Nama KNMP Tidak Ditemukan' }}</h4>
-                        <p class="mb-0 text-white-50 small"><i class="mdi mdi-map-marker me-1"></i>Kampung Nelayan Merah Putih</p>
+                        <p class="mb-0 text-white-50 small"><i class="mdi mdi-map-marker me-1"></i>Kampung Nelayan Merah
+                            Putih</p>
                     </div>
                 </div>
             </div>
@@ -253,6 +254,18 @@
                     </h2>
                     <div id="collapseA" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body survey-accordion-body">
+                            {{-- Import Action Bar --}}
+                            <div class="import-action-bar mb-3">
+                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#importModal" data-section="profile-knmp"
+                                    data-route="{{ route('forms.import_profile_knmp', $knmp->id) }}">
+                                    <i class="mdi mdi-file-excel me-1"></i>Import Excel
+                                </button>
+                                <a href="{{ route('forms.download_template', 'profile-knmp') }}"
+                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    <i class="mdi mdi-download me-1"></i>Download Template
+                                </a>
+                            </div>
                             @include('survey.forms.form_layouts.profile_knmp')
                         </div>
                     </div>
@@ -281,6 +294,18 @@
                     </h2>
                     <div id="collapseB" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body survey-accordion-body">
+                            {{-- Import Action Bar --}}
+                            <div class="import-action-bar mb-3">
+                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#importModal" data-section="progres-knmp"
+                                    data-route="{{ route('forms.import_progres_knmp', $knmp->id) }}">
+                                    <i class="mdi mdi-file-excel me-1"></i>Import Excel
+                                </button>
+                                <a href="{{ route('forms.download_template', 'progres-knmp') }}"
+                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    <i class="mdi mdi-download me-1"></i>Download Template
+                                </a>
+                            </div>
                             @include('survey.forms.form_layouts.progres_pembangunan_knmp')
                         </div>
                     </div>
@@ -309,6 +334,18 @@
                     </h2>
                     <div id="collapseC" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body survey-accordion-body">
+                            {{-- Import Action Bar --}}
+                            <div class="import-action-bar mb-3">
+                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#importModal" data-section="responden"
+                                    data-route="{{ route('forms.import_responden', $knmp->id) }}">
+                                    <i class="mdi mdi-file-excel me-1"></i>Import Excel
+                                </button>
+                                <a href="{{ route('forms.download_template', 'responden') }}"
+                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    <i class="mdi mdi-download me-1"></i>Download Template
+                                </a>
+                            </div>
                             @include('survey.forms.form_layouts.informasi_responden')
                         </div>
                     </div>
@@ -337,6 +374,18 @@
                     </h2>
                     <div id="collapseD" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body survey-accordion-body">
+                            {{-- Import Action Bar --}}
+                            <div class="import-action-bar mb-3">
+                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#importModal" data-section="tanggapan-masyarakat"
+                                    data-route="{{ route('forms.import_tanggapan_masyarakat', $knmp->id) }}">
+                                    <i class="mdi mdi-file-excel me-1"></i>Import Excel
+                                </button>
+                                <a href="{{ route('forms.download_template', 'tanggapan-masyarakat') }}"
+                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    <i class="mdi mdi-download me-1"></i>Download Template
+                                </a>
+                            </div>
                             @include('survey.forms.form_layouts.tanggapan_masyarakat')
                         </div>
                     </div>
@@ -365,6 +414,18 @@
                     </h2>
                     <div id="collapseE" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body survey-accordion-body">
+                            {{-- Import Action Bar --}}
+                            <div class="import-action-bar mb-3">
+                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#importModal" data-section="tingkat-kebahagiaan"
+                                    data-route="{{ route('forms.import_tingkat_kebahagiaan', $knmp->id) }}">
+                                    <i class="mdi mdi-file-excel me-1"></i>Import Excel
+                                </button>
+                                <a href="{{ route('forms.download_template', 'tingkat-kebahagiaan') }}"
+                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    <i class="mdi mdi-download me-1"></i>Download Template
+                                </a>
+                            </div>
                             @include('survey.forms.form_layouts.tingkat_kebahagiaan_nelayan')
                         </div>
                     </div>
@@ -393,6 +454,18 @@
                     </h2>
                     <div id="collapseF" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body survey-accordion-body">
+                            {{-- Import Action Bar --}}
+                            <div class="import-action-bar mb-3">
+                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#importModal" data-section="informasi-usaha"
+                                    data-route="{{ route('forms.import_informasi_usaha', $knmp->id) }}">
+                                    <i class="mdi mdi-file-excel me-1"></i>Import Excel
+                                </button>
+                                <a href="{{ route('forms.download_template', 'informasi-usaha') }}"
+                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    <i class="mdi mdi-download me-1"></i>Download Template
+                                </a>
+                            </div>
                             @include('survey.forms.form_layouts.informasi_usaha')
                         </div>
                     </div>
@@ -421,6 +494,18 @@
                     </h2>
                     <div id="collapseG" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body survey-accordion-body">
+                            {{-- Import Action Bar --}}
+                            <div class="import-action-bar mb-3">
+                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#importModal" data-section="informasi-pemasaran"
+                                    data-route="{{ route('forms.import_informasi_pemasaran', $knmp->id) }}">
+                                    <i class="mdi mdi-file-excel me-1"></i>Import Excel
+                                </button>
+                                <a href="{{ route('forms.download_template', 'informasi-pemasaran') }}"
+                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    <i class="mdi mdi-download me-1"></i>Download Template
+                                </a>
+                            </div>
                             @include('survey.forms.form_layouts.informasi_pemasaran_hasil_perikanan')
                         </div>
                     </div>
@@ -449,6 +534,18 @@
                     </h2>
                     <div id="collapseH" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body survey-accordion-body">
+                            {{-- Import Action Bar --}}
+                            <div class="import-action-bar mb-3">
+                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#importModal" data-section="pendapatan-rt"
+                                    data-route="{{ route('forms.import_pendapatan_rt', $knmp->id) }}">
+                                    <i class="mdi mdi-file-excel me-1"></i>Import Excel
+                                </button>
+                                <a href="{{ route('forms.download_template', 'pendapatan-rt') }}"
+                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    <i class="mdi mdi-download me-1"></i>Download Template
+                                </a>
+                            </div>
                             @include('survey.forms.form_layouts.informasi_pendapatan_rumah_tangga')
                         </div>
                     </div>
@@ -477,6 +574,18 @@
                     </h2>
                     <div id="collapseI" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body survey-accordion-body">
+                            {{-- Import Action Bar --}}
+                            <div class="import-action-bar mb-3">
+                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#importModal" data-section="sosial-kelembagaan"
+                                    data-route="{{ route('forms.import_sosial_kelembagaan', $knmp->id) }}">
+                                    <i class="mdi mdi-file-excel me-1"></i>Import Excel
+                                </button>
+                                <a href="{{ route('forms.download_template', 'sosial-kelembagaan') }}"
+                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    <i class="mdi mdi-download me-1"></i>Download Template
+                                </a>
+                            </div>
                             @include('survey.forms.form_layouts.sosial_dan_kelembagaan')
                         </div>
                     </div>
@@ -555,17 +664,17 @@
     </div>
 
     @if ($errors->any())
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let errorSection = "{{ old('active_section') ?? 'collapseOne' }}";
-            let el = document.getElementById(errorSection);
-            if (el) {
-                new bootstrap.Collapse(el, {
-                    show: true
-                });
-            }
-        });
-    </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let errorSection = "{{ old('active_section') ?? 'collapseOne' }}";
+                let el = document.getElementById(errorSection);
+                if (el) {
+                    new bootstrap.Collapse(el, {
+                        show: true
+                    });
+                }
+            });
+        </script>
     @endif
 
     <style>
@@ -1078,7 +1187,7 @@
                 }
             });
 
-            fileInput.addEventListener('change', function() {
+            fileInput.addEventListener('change', function () {
                 previewFile(this);
             });
         }
@@ -1108,7 +1217,7 @@
 
             if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     previewItem.innerHTML = `
                     <div class="preview-thumb">
                         <img src="${e.target.result}" alt="${file.name}">
@@ -1144,4 +1253,51 @@
         }
     </script>
 
+    {{-- Import Modal --}}
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="importForm" action="" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="importModalLabel">Import Data Excel</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info py-2 mb-3">
+                            <small><i class="mdi mdi-information me-1"></i> Pastikan format file sesuai template yang telah didownload.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="importFile" class="form-label">Pilih File Excel (.xlsx, .xls, .csv)</label>
+                            <input class="form-control" type="file" id="importFile" name="file" accept=".xlsx, .xls, .csv" required>
+                        </div>
+                        <input type="hidden" name="knmp_id" value="{{ $knmp->id }}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="mdi mdi-upload me-1"></i>Import Data
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var importModal = document.getElementById('importModal');
+            if (importModal) {
+                importModal.addEventListener('show.bs.modal', function(event) {
+                    var button = event.relatedTarget;
+                    var route = button.getAttribute('data-route');
+                    var section = button.getAttribute('data-section');
+                    var modalForm = importModal.querySelector('#importForm');
+                    
+                    // Update form action
+                    modalForm.action = route;
+                });
+            }
+        });
+    </script>
     @endsection
