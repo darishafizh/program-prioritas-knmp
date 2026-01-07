@@ -26,352 +26,126 @@
     </div>
     <!-- end page title -->
 
-    <!-- Greeting Banner - Modern Design -->
+    <!-- Greeting Banner - Clean Modern Design -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="greeting-card position-relative overflow-hidden">
-                <!-- Background Layer with Gradient -->
-                <div class="greeting-bg"></div>
-                
-                <!-- Animated Wave Decoration -->
-                <div class="greeting-wave">
-                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-                        <path d="M0,64 C288,96 576,32 720,32 C864,32 1008,80 1152,80 C1296,80 1368,48 1440,48 L1440,120 L0,120 Z" 
-                              fill="rgba(255,255,255,0.08)"></path>
-                        <path d="M0,96 C288,64 360,96 540,96 C720,96 900,48 1080,48 C1260,48 1380,80 1440,96 L1440,120 L0,120 Z" 
-                              fill="rgba(255,255,255,0.05)"></path>
-                    </svg>
-                </div>
-                
-                <!-- Decorative Circles -->
-                <div class="greeting-circle circle-1"></div>
-                <div class="greeting-circle circle-2"></div>
-                <div class="greeting-circle circle-3"></div>
-                
-                <!-- Content -->
-                <div class="greeting-content">
-                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
-                        <!-- Left Section: Greeting & User Info -->
-                        <div class="d-flex align-items-center">
-                            <!-- Animated Icon Container -->
-                            <div class="greeting-icon-wrapper me-4">
-                                <div class="greeting-icon-bg">
-                                    <i class="mdi {{ $greetingIcon ?? 'mdi-weather-sunny' }}"></i>
-                                </div>
-                                <div class="greeting-icon-pulse"></div>
-                            </div>
-                            
-                            <!-- Text Content -->
-                            <div>
-                                <p class="greeting-label mb-1">
-                                    <i class="mdi mdi-hand-wave me-1"></i>
-                                    {{ $greeting ?? 'Selamat Datang' }}
-                                </p>
-                                <h3 class="greeting-name mb-2">{{ Auth::user()->name ?? 'Pengguna' }}</h3>
-                                <p class="greeting-subtitle mb-0">
-                                    <i class="mdi mdi-chart-timeline-variant-shimmer me-1"></i>
-                                    Semoga harimu produktif! Berikut ringkasan data terkini.
-                                </p>
-                            </div>
+            <div class="greeting-card-clean">
+                <div class="d-flex align-items-center justify-content-between">
+                    <!-- Left: Icon + Text -->
+                    <div class="d-flex align-items-center">
+                        <div class="greeting-icon-clean me-3">
+                            <i class="mdi mdi-weather-sunny"></i>
                         </div>
-                        
-                        <!-- Right Section: Date & Time -->
-                        <div class="greeting-datetime text-end">
-                            <div class="datetime-container">
-                                <div class="datetime-date">
-                                    <i class="mdi mdi-calendar-month me-1"></i>
-                                    <span id="current-date"></span>
-                                </div>
-                                <div class="datetime-time">
-                                    <i class="mdi mdi-clock-outline me-1"></i>
-                                    <span id="current-time"></span>
-                                </div>
-                            </div>
+                        <div>
+                            <h4 class="greeting-title-clean mb-0">Selamat Pagi, <span class="greeting-name-clean">{{ Auth::user()->name ?? 'Pengguna' }}</span></h4>
+                            <p class="greeting-motivation-clean mb-0">Setiap langkah kecil membawa kita lebih dekat ke tujuan besar. <span class="greeting-tagline">#2026KKPGrowStronger</span></p>
                         </div>
+                    </div>
+                    
+                    <!-- Right: Date -->
+                    <div class="greeting-date-clean">
+                        <i class="mdi mdi-calendar-today me-1"></i>
+                        <span id="current-date-display"></span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
+    <script>
+    (function() {
+        const now = new Date();
+        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        document.getElementById('current-date-display').textContent = now.toLocaleDateString('id-ID', options);
+    })();
+    </script>
+    
     <style>
     /* ===================================
-       MODERN GREETING CARD STYLES
+       CLEAN GREETING CARD STYLES
     =================================== */
-    .greeting-card {
-        border-radius: 20px;
-        padding: 2rem 2.5rem;
-        position: relative;
-        min-height: 140px;
-        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.25),
-                    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-    }
-    
-    .greeting-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, #0891b2 0%, #0e7490 50%, #155e75 100%);
-        border-radius: 20px;
-        z-index: 0;
-    }
-    
-    /* Alternative gradient based on time of day */
-    @if(isset($greetingIcon) && str_contains($greetingIcon, 'night'))
-    .greeting-bg {
-        background: linear-gradient(135deg, #134e5e 0%, #1a3a5c 50%, #0f2027 100%) !important;
-    }
-    @elseif(isset($greetingIcon) && str_contains($greetingIcon, 'sunset'))
-    .greeting-bg {
-        background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%) !important;
-    }
-    @elseif(isset($greetingIcon) && str_contains($greetingIcon, 'sunny'))
-    .greeting-bg {
-        background: linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%) !important;
-    }
-    @endif
-    
-    .greeting-wave {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 80px;
-        z-index: 1;
-        pointer-events: none;
-    }
-    
-    .greeting-wave svg {
-        width: 100%;
-        height: 100%;
-    }
-    
-    /* Decorative Circles */
-    .greeting-circle {
-        position: absolute;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.1);
-        z-index: 1;
-        pointer-events: none;
-    }
-    
-    .circle-1 {
-        width: 150px;
-        height: 150px;
-        top: -40px;
-        right: 10%;
-        animation: float-circle 8s ease-in-out infinite;
-    }
-    
-    .circle-2 {
-        width: 80px;
-        height: 80px;
-        bottom: 20px;
-        right: 25%;
-        animation: float-circle 6s ease-in-out infinite 1s;
-    }
-    
-    .circle-3 {
-        width: 50px;
-        height: 50px;
-        top: 30%;
-        right: 5%;
-        animation: float-circle 5s ease-in-out infinite 0.5s;
-    }
-    
-    @keyframes float-circle {
-        0%, 100% { transform: translateY(0) scale(1); opacity: 0.1; }
-        50% { transform: translateY(-10px) scale(1.05); opacity: 0.15; }
-    }
-    
-    .greeting-content {
-        position: relative;
-        z-index: 2;
-    }
-    
-    /* Icon Wrapper */
-    .greeting-icon-wrapper {
-        position: relative;
-        width: 80px;
-        height: 80px;
-        flex-shrink: 0;
-    }
-    
-    .greeting-icon-bg {
-        width: 80px;
-        height: 80px;
-        background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    .greeting-icon-bg i {
-        font-size: 2.5rem;
-        color: #fff;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    
-    .greeting-icon-pulse {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.3);
-        animation: pulse-ring 2s infinite;
-        pointer-events: none;
-    }
-    
-    @keyframes pulse-ring {
-        0% { transform: scale(1); opacity: 0.3; }
-        100% { transform: scale(1.3); opacity: 0; }
-    }
-    
-    /* Text Styles */
-    .greeting-label {
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.85);
-        font-weight: 500;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-    }
-    
-    .greeting-name {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #fff;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        margin: 0;
-    }
-    
-    .greeting-subtitle {
-        font-size: 0.95rem;
-        color: rgba(255, 255, 255, 0.8);
-    }
-    
-    /* DateTime Section */
-    .greeting-datetime {
-        flex-shrink: 0;
-    }
-    
-    .datetime-container {
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px);
-        padding: 1rem 1.5rem;
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    .datetime-date {
-        font-size: 1rem;
-        color: #fff;
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-    }
-    
-    .datetime-time {
-        font-size: 1.5rem;
-        color: #fff;
-        font-weight: 700;
-        font-variant-numeric: tabular-nums;
-    }
-    
-    /* Quick Stats */
-    .greeting-stats {
-        border-top: 1px solid rgba(255, 255, 255, 0.15);
-        padding-top: 1.25rem;
-    }
-    
-    .quick-stat {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        background: rgba(255, 255, 255, 0.12);
-        backdrop-filter: blur(10px);
-        padding: 0.75rem 1.25rem;
+    .greeting-card-clean {
+        background: #ffffff;
         border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        transition: all 0.3s ease;
+        padding: 1.25rem 1.5rem;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     }
     
-    .quick-stat:hover {
-        background: rgba(255, 255, 255, 0.2);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    }
-    
-    .quick-stat-icon {
-        width: 40px;
-        height: 40px;
+    .greeting-icon-clean {
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
         border-radius: 10px;
-        background: rgba(255, 255, 255, 0.2);
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-shrink: 0;
     }
     
-    .quick-stat-icon i {
-        font-size: 1.25rem;
+    .greeting-icon-clean i {
+        font-size: 1.4rem;
         color: #fff;
     }
     
-    .quick-stat-content {
+    .greeting-title-clean {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #374151;
+        line-height: 1.4;
+    }
+    
+    .greeting-name-clean {
+        font-weight: 600;
+        color: #1f2937;
+    }
+    
+    .greeting-motivation-clean {
+        font-size: 0.85rem;
+        color: #9ca3af;
+        margin-top: 0.125rem;
+    }
+    
+    .greeting-tagline {
+        color: #0891b2;
+        font-weight: 600;
+    }
+    
+    .greeting-date-clean {
+        font-size: 0.85rem;
+        color: #6b7280;
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        background: #f9fafb;
+        padding: 0.5rem 0.875rem;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
     }
     
-    .quick-stat-value {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #fff;
-        line-height: 1.2;
+    .greeting-date-clean i {
+        color: #9ca3af;
+        font-size: 1rem;
     }
     
-    .quick-stat-label {
-        font-size: 0.75rem;
-        color: rgba(255, 255, 255, 0.75);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    /* Responsive Adjustments */
-    @media (max-width: 768px) {
-        .greeting-card {
-            padding: 1.5rem;
+    @media (max-width: 576px) {
+        .greeting-card-clean {
+            padding: 1rem 1.25rem;
         }
         
-        .greeting-icon-wrapper {
-            width: 60px;
-            height: 60px;
+        .greeting-icon-clean {
+            width: 40px;
+            height: 40px;
         }
         
-        .greeting-icon-bg {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
+        .greeting-icon-clean i {
+            font-size: 1.2rem;
         }
         
-        .greeting-icon-bg i {
-            font-size: 1.75rem;
+        .greeting-name-clean {
+            font-size: 1rem;
         }
         
-        .greeting-name {
-            font-size: 1.35rem;
-        }
-        
-        .greeting-datetime {
-            display: none;
-        }
-        
-        .circle-1, .circle-2, .circle-3 {
+        .greeting-date-clean {
             display: none;
         }
     }
@@ -519,77 +293,7 @@
         }
     }
     </style>
-    
-    <script>
-    // Real-time Date & Time Update
-    function updateDateTime() {
-        const now = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const dateStr = now.toLocaleDateString('id-ID', options);
-        const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        
-        document.getElementById('current-date').textContent = dateStr;
-        document.getElementById('current-time').textContent = timeStr;
-    }
-    
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
-    </script>
     <!-- End Greeting Banner -->
-
-    {{-- ===================================
-        EXECUTIVE SUMMARY - NATIONAL OVERVIEW
-    =================================== --}}
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card executive-summary-card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            <h4 class="header-title mb-1">
-                                <i class="mdi mdi-chart-arc me-2 text-primary"></i>
-                                Ringkasan Eksekutif Program KNMP Nasional
-                            </h4>
-                            <p class="text-muted mb-0">Monitoring perkembangan program KNMP di seluruh Indonesia</p>
-                        </div>
-                        <span class="badge bg-soft-primary text-primary px-3 py-2">
-                            <i class="mdi mdi-update me-1"></i>
-                            {{ $periodLabel ?? 'Semua Waktu' }}
-                        </span>
-                    </div>
-                    
-                    {{-- Progress Bar Nasional --}}
-                    <div class="national-progress-section">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="fw-semibold">Progress Target Nasional</span>
-                            <span class="progress-percentage fw-bold">{{ $progressNasional ?? 0 }}%</span>
-                        </div>
-                        <div class="progress progress-lg" style="height: 24px; border-radius: 12px;">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated 
-                                @if(($progressNasional ?? 0) >= 80) bg-success 
-                                @elseif(($progressNasional ?? 0) >= 50) bg-primary 
-                                @elseif(($progressNasional ?? 0) >= 30) bg-warning 
-                                @else bg-danger @endif" 
-                                role="progressbar" 
-                                style="width: {{ $progressNasional ?? 0 }}%">
-                                <span class="progress-label">{{ $totalKnmpNasional ?? 0 }} / {{ $targetKnmp ?? 100 }} KNMP</span>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between mt-2">
-                            <small class="text-muted">
-                                <i class="mdi mdi-map-marker-multiple me-1"></i>
-                                {{ $totalProvinsiCovered ?? 0 }} Provinsi ter-cover
-                            </small>
-                            <small class="text-muted">
-                                <i class="mdi mdi-target me-1"></i>
-                                Target: {{ $targetKnmp ?? 100 }} Lokasi KNMP
-                            </small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     {{-- Statistic Cards - Baris 1 (Original KPI Cards) --}}
     <div class="row">
