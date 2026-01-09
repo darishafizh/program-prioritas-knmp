@@ -13,6 +13,14 @@ use App\Http\Controllers\RespondenController;
 use App\Http\Controllers\EvidenceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\ProfileKnmpController;
+use App\Http\Controllers\ProgresController;
+use App\Http\Controllers\TanggapanController;
+use App\Http\Controllers\KebahagiaanController;
+use App\Http\Controllers\UsahaController;
+use App\Http\Controllers\PemasaranController;
+use App\Http\Controllers\PendapatanRtController;
+use App\Http\Controllers\SosialController;
 
 
 Route::get('/', function () {
@@ -45,6 +53,12 @@ Route::middleware('auth')->group(function () {
     // DASHBOARD ROUTES
     // ==============================
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/dashboard/export-pdf', [DashboardController::class, 'exportPdf'])->name('dashboard.export-pdf');
+
+    // ==============================
+    // ANALYTICS ROUTES
+    // ==============================
+    Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
 
 
 
@@ -62,24 +76,21 @@ Route::middleware('auth')->group(function () {
             Route::get('/{knmp}/edit-responden', [RespondenController::class, 'editRespondenList'])->name('forms.edit-responden');
             Route::delete('/delete-responden', [RespondenController::class, 'delete_responden'])->name('forms.delete_responden');
 
-            // Store routes
-            Route::post('/store_profile_knmp/{knmp}', [FormsController::class, 'store_profile_knmp'])->name('forms.store_profile_knmp');
-            Route::post('/store_progres_knmp/{knmp}', [FormsController::class, 'store_progres_knmp'])->name('forms.store_progres_knmp');
-            Route::post(
-                '/store_tanggapan_masyarakat/{knmp}',
-                [FormsController::class, 'store_tanggapan_masyarakat']
-            )->name('forms.store_tanggapan_masyarakat');
-            Route::post('/store_tingkat_kebahagiaan/{knmp}', [FormsController::class, 'store_tingkat_kebahagiaan'])->name('forms.store_tingkat_kebahagiaan');
+            // Store routes (using new specialized controllers)
+            Route::post('/store_profile_knmp/{knmp}', [ProfileKnmpController::class, 'store'])->name('forms.store_profile_knmp');
+            Route::post('/store_progres_knmp/{knmp}', [ProgresController::class, 'store'])->name('forms.store_progres_knmp');
+            Route::post('/store_tanggapan_masyarakat/{knmp}', [TanggapanController::class, 'store'])->name('forms.store_tanggapan_masyarakat');
+            Route::post('/store_tingkat_kebahagiaan/{knmp}', [KebahagiaanController::class, 'store'])->name('forms.store_tingkat_kebahagiaan');
             Route::post('/store_informasi_responden/{knmp}', [RespondenController::class, 'store_informasi_responden'])->name('forms.store_informasi_responden');
-            Route::post('/store_informasi_usaha/{knmp}', [FormsController::class, 'store_informasi_usaha'])->name('forms.store_informasi_usaha');
-            Route::post('/store_pemasaran_perikanan/{knmp}', [FormsController::class, 'store_pemasaran_perikanan'])->name('forms.store_pemasaran_perikanan');
-            Route::post('/store_pendapatan_rt/{knmp}', [FormsController::class, 'store_pendapatan_rt'])->name('forms.store_pendapatan_rt');
-            Route::post('/store_sosial_kelembagaan/{knmp}', [FormsController::class, 'store_sosial_kelembagaan'])->name('forms.store_sosial_kelembagaan');
+            Route::post('/store_informasi_usaha/{knmp}', [UsahaController::class, 'store'])->name('forms.store_informasi_usaha');
+            Route::post('/store_pemasaran_perikanan/{knmp}', [PemasaranController::class, 'store'])->name('forms.store_pemasaran_perikanan');
+            Route::post('/store_pendapatan_rt/{knmp}', [PendapatanRtController::class, 'store'])->name('forms.store_pendapatan_rt');
+            Route::post('/store_sosial_kelembagaan/{knmp}', [SosialController::class, 'store'])->name('forms.store_sosial_kelembagaan');
 
-            // Edit/Update routes
-            Route::post('/update_profile_knmp/{knmp}', [FormsController::class, 'update_profile_knmp'])->name('forms.update_profile_knmp');
-            Route::post('/update_progres_knmp/{knmp}', [FormsController::class, 'update_progres_knmp'])->name('forms.update_progres_knmp');
-            Route::post('/update_tanggapan_masyarakat/{knmp}', [FormsController::class, 'update_tanggapan_masyarakat'])->name('forms.update_tanggapan_masyarakat');
+            // Edit/Update routes (using new specialized controllers)
+            Route::post('/update_profile_knmp/{knmp}', [ProfileKnmpController::class, 'update'])->name('forms.update_profile_knmp');
+            Route::post('/update_progres_knmp/{knmp}', [ProgresController::class, 'update'])->name('forms.update_progres_knmp');
+            Route::post('/update_tanggapan_masyarakat/{knmp}', [TanggapanController::class, 'update'])->name('forms.update_tanggapan_masyarakat');
 
             // File upload routes
             Route::post('/bukti-upload', [EvidenceController::class, 'store_bukti_upload'])

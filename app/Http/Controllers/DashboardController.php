@@ -228,4 +228,129 @@ class DashboardController extends Controller
             'targetKnmp'
         ));
     }
+
+    /**
+     * Export Dashboard to PDF
+     */
+    public function exportPdf(Request $request)
+    {
+        // Reuse same data calculation from index()
+        $period = $request->get('period', 'all');
+        $periodLabel = match ($period) {
+            'week' => 'Minggu Ini',
+            'month' => 'Bulan Ini',
+            'year' => 'Tahun Ini',
+            default => 'Semua Waktu',
+        };
+
+        $startDate = match ($period) {
+            'week' => Carbon::now('Asia/Jakarta')->startOfWeek(),
+            'month' => Carbon::now('Asia/Jakarta')->startOfMonth(),
+            'year' => Carbon::now('Asia/Jakarta')->startOfYear(),
+            default => null,
+        };
+
+        $desa_knmp = Knmp::with(['province', 'regency', 'district', 'village'])->get();
+
+        // Survey stats
+        $surveyQuery = InformasiResponden::query()
+            ->whereExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('tingkat_kebahagiaan_nelayan')
+                    ->whereColumn('tingkat_kebahagiaan_nelayan.responden_id', 'informasi_responden.id');
+            });
+        if ($startDate) {
+            $surveyQuery->where('created_at', '>=', $startDate);
+        }
+        $totalSurveyTerisi = $surveyQuery->distinct('id')->count();
+
+        // Tingkat Kelengkapan Data
+        $totalResponden = InformasiResponden::count();
+        $responden_dengan_data = InformasiResponden::where(function ($query) {
+            $query->whereHas('tingkatKebahagiaan')
+                ->orWhereHas('tanggapanMasyarakat')
+                ->orWhereHas('informasiUsaha')
+                ->orWhereHas('informasiPemasaran')
+                ->orWhereHas('pendapatanRt')
+                ->orWhereHas('sosialKelembagaan');
+        })->count();
+
+        $tingkatKelengkapanData = $totalResponden > 0
+            ? round(($responden_dengan_data / $totalResponden) * 100, 2)
+            : 0;
+
+        // Capaian Indikator
+        $capaianIndikator = DB::table('progres_knmp_details')->avg('persen') ?? 0;
+
+        // Kebahagiaan
+        $rataRataKebahagiaan = TingkatKebahagiaanNelayan::avg('skor_nilai') ?? 0;
+
+        // Desa Aset Bertambah
+        $desaAsetBertambah = DB::table('progres_knmp')
+            ->distinct('knmp_id')
+            ->count('knmp_id');
+
+        // Capaian per KNMP
+        $capaianPerKnmpData = DB::table('progres_knmp_details')
+            ->join('progres_knmp', 'progres_knmp_details.progres_id', '=', 'progres_knmp.id')
+            ->join('knmp', 'progres_knmp.knmp_id', '=', 'knmp.id')
+            ->select('knmp.nama', DB::raw('COALESCE(AVG(progres_knmp_details.persen), 0) as avg_persen'))
+            ->groupBy('knmp.id', 'knmp.nama')
+            ->orderBy('knmp.id')
+            ->limit(10)
+            ->get();
+
+        // Statistik per Provinsi
+        $statistikProvinsi = DB::table('knmp')
+            ->join('knmp_provinces', 'knmp.province_id', '=', 'knmp_provinces.id')
+            ->leftJoin('progres_knmp', 'knmp.id', '=', 'progres_knmp.knmp_id')
+            ->leftJoin('progres_knmp_details', 'progres_knmp.id', '=', 'progres_knmp_details.progres_id')
+            ->select(
+                'knmp_provinces.id as province_id',
+                'knmp_provinces.name as province_name',
+                DB::raw('COUNT(DISTINCT knmp.id) as total_knmp'),
+                DB::raw('COALESCE(AVG(progres_knmp_details.persen), 0) as avg_capaian')
+            )
+            ->groupBy('knmp_provinces.id', 'knmp_provinces.name')
+            ->orderByDesc('avg_capaian')
+            ->get();
+
+        $topProvinsi = $statistikProvinsi->take(5);
+        $bottomProvinsi = $statistikProvinsi->sortBy('avg_capaian')->take(5)->values();
+
+        // Tenaga Kerja
+        $totalTenagaKerja = DB::table('progres_knmp')->sum('tk_total') ?? 0;
+
+        // Progress Nasional
+        $totalKnmpNasional = count($desa_knmp);
+        $targetKnmp = 100;
+        $progressNasional = $targetKnmp > 0 ? min(round(($totalKnmpNasional / $targetKnmp) * 100, 1), 100) : 0;
+
+        $exportDate = Carbon::now('Asia/Jakarta')->format('d F Y H:i');
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('dashboard.pdf', compact(
+            'periodLabel',
+            'exportDate',
+            'desa_knmp',
+            'totalSurveyTerisi',
+            'tingkatKelengkapanData',
+            'capaianIndikator',
+            'rataRataKebahagiaan',
+            'desaAsetBertambah',
+            'capaianPerKnmpData',
+            'topProvinsi',
+            'bottomProvinsi',
+            'totalTenagaKerja',
+            'progressNasional',
+            'totalKnmpNasional',
+            'targetKnmp'
+        ))
+            ->setPaper('a4', 'portrait')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', true);
+
+        $filename = 'Dashboard_KNMP_' . date('Y-m-d_His') . '.pdf';
+
+        return $pdf->stream($filename);
+    }
 }
