@@ -174,52 +174,64 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="header-title mb-3">Daftar knmp</h4>
+                    <div class="row align-items-center mb-3">
+                        <div class="col-sm-6">
+                            <h4 class="header-title">Daftar Kuesioner KNMP</h4>
+                            <p class="text-muted font-13 mb-0">
+                                Kelola data detail kuesioner untuk setiap Kampung Nelayan.
+                            </p>
+                        </div>
+                    </div>
 
-                    <table id="scroll-horizontal-datatable" class="table table-striped w-100 nowrap">
-                        <thead>
-                            <tr>
-                                <th>Nama KNMP</th>
-                                <th>Desa</th>
-                                <th>Kecamatan</th>
-                                <th>Kabupaten</th>
-                                <th>Provinsi</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($knmps as $knmp)
+                    <div class="table-responsive">
+                        <table id="scroll-horizontal-datatable" class="table table-striped w-100 nowrap">
+                            <thead>
                                 <tr>
-                                    <td>{{ $knmp->nama ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->village->name ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->district->name ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->regency->name ?? 'N/A' }}</td>
-                                    <td>{{ $knmp->province->name ?? 'N/A' }}</td>
-                                    <td class="action-buttons">
-                                        <a href="{{ route('forms.index', $knmp->id) }}"
-                                            class="btn btn-action btn-action-primary" data-bs-toggle="tooltip"
-                                            data-bs-placement="top" title="Input Survey">
-                                            <i class="mdi mdi-pencil-box"></i>
-                                        </a>
-                                        <a href="{{ route('forms.edit-responden', $knmp->id) }}"
-                                            class="btn btn-action btn-action-outline-success" data-bs-toggle="tooltip"
-                                            data-bs-placement="top" title="Edit Responden">
-                                            <i class="mdi mdi-account-edit"></i>
-                                        </a>
-                                        <a href="{{ route('survey.questionnaires-pdf', $knmp->id) }}"
-                                            class="btn btn-action btn-action-outline-danger" data-bs-toggle="tooltip"
-                                            data-bs-placement="top" title="Lihat PDF">
-                                            <i class="mdi mdi-file-pdf-box"></i>
-                                        </a>
-                                        <button type="button" class="btn btn-action btn-action-outline-info"
-                                            data-bs-toggle="modal" data-bs-target="#evidenceModal{{ $knmp->id }}" title="Image">
-                                            <i class="mdi mdi-image"></i>
-                                        </button>
-                                    </td>
+                                    <th>Nama KNMP</th>
+                                    <th>Desa</th>
+                                    <th>Kecamatan</th>
+                                    <th>Kabupaten</th>
+                                    <th>Provinsi</th>
+                                    <th>Aksi</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach ($knmps as $knmp)
+                                    <tr>
+                                        <td>{{ $knmp->nama ?? 'N/A' }}</td>
+                                        <td>{{ $knmp->village->name ?? 'N/A' }}</td>
+                                        <td>{{ $knmp->district->name ?? 'N/A' }}</td>
+                                        <td>{{ $knmp->regency->name ?? 'N/A' }}</td>
+                                        <td>{{ $knmp->province->name ?? 'N/A' }}</td>
+                                        <td class="action-buttons">
+                                            @if(!Auth::user()->isAdmin())
+                                                <a href="{{ route('forms.index', $knmp->id) }}"
+                                                    class="btn btn-action btn-action-primary" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="Input Survey">
+                                                    <i class="mdi mdi-pencil-box"></i>
+                                                </a>
+                                                <a href="{{ route('forms.edit-responden', $knmp->id) }}"
+                                                    class="btn btn-action btn-action-outline-success" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="Edit Responden">
+                                                    <i class="mdi mdi-account-edit"></i>
+                                                </a>
+                                            @endif
+                                            <a href="{{ route('survey.questionnaires-pdf', $knmp->id) }}"
+                                                class="btn btn-action btn-action-outline-danger" data-bs-toggle="tooltip"
+                                                data-bs-placement="top" title="Lihat PDF">
+                                                <i class="mdi mdi-file-pdf-box"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-action btn-action-outline-info"
+                                                data-bs-toggle="modal" data-bs-target="#evidenceModal{{ $knmp->id }}"
+                                                title="Image">
+                                                <i class="mdi mdi-image"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
 
                 </div> <!-- end card body-->
             </div> <!-- end card -->
@@ -294,9 +306,11 @@
                         @endif
                     </div>
                     <div class="modal-footer evidence-modal-footer">
-                        <a href="{{ route('survey.evidence', $knmp->id) }}" class="btn btn-evidence-primary">
-                            <i class="mdi mdi-open-in-new me-1"></i>Kelola Evidence
-                        </a>
+                        @if(!Auth::user()->isAdmin())
+                            <a href="{{ route('survey.evidence', $knmp->id) }}" class="btn btn-evidence-primary">
+                                <i class="mdi mdi-open-in-new me-1"></i>Kelola Evidence
+                            </a>
+                        @endif
                         <button type="button" class="btn btn-evidence-secondary" data-bs-dismiss="modal">Tutup</button>
                     </div>
                 </div>

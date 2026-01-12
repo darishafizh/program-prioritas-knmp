@@ -20,6 +20,7 @@
             <!-- Navigation Menu -->
             <div class="header-menu" id="headerMenu">
                 <ul class="header-nav-list">
+                    <!-- Dashboard - untuk semua user -->
                     <li class="header-nav-item">
                         <a class="header-nav-link {{ request()->routeIs('dashboard.*') ? 'active' : '' }}"
                             href="{{ route('dashboard.index') }}">
@@ -27,13 +28,19 @@
                             <span>Dashboard</span>
                         </a>
                     </li>
-                    <li class="header-nav-item">
-                        <a class="header-nav-link {{ request()->routeIs('analytics.*') ? 'active' : '' }}"
-                            href="{{ route('analytics.index') }}">
-                            <i class="mdi mdi-chart-timeline-variant"></i>
-                            <span>Analytics</span>
-                        </a>
-                    </li>
+
+                    <!-- Analytics - hanya untuk admin -->
+                    @if(Auth::user()->isAdmin())
+                        <li class="header-nav-item">
+                            <a class="header-nav-link {{ request()->routeIs('analytics.*') ? 'active' : '' }}"
+                                href="{{ route('analytics.index') }}">
+                                <i class="mdi mdi-chart-timeline-variant"></i>
+                                <span>Analytics</span>
+                            </a>
+                        </li>
+                    @endif
+
+                    <!-- Survey - untuk semua user -->
                     <li class="header-nav-item">
                         <a class="header-nav-link {{ request()->routeIs('survey.*') ? 'active' : '' }}"
                             href="{{ route('survey.index') }}">
@@ -41,6 +48,8 @@
                             <span>Survey</span>
                         </a>
                     </li>
+
+                    <!-- Informasi Umum - untuk semua user -->
                     <li class="header-nav-item">
                         <a class="header-nav-link {{ request()->routeIs('laporan.*') ? 'active' : '' }}"
                             href="{{ route('laporan.index') }}">
@@ -48,13 +57,17 @@
                             <span>Informasi Umum</span>
                         </a>
                     </li>
-                    <li class="header-nav-item">
-                        <a class="header-nav-link {{ request()->routeIs('user_management.*') ? 'active' : '' }}"
-                            href="{{ route('user_management.index') }}">
-                            <i class="mdi mdi-account-cog"></i>
-                            <span>Manajemen User</span>
-                        </a>
-                    </li>
+
+                    <!-- Manajemen User - hanya untuk admin -->
+                    @if(Auth::user()->isAdmin())
+                        <li class="header-nav-item">
+                            <a class="header-nav-link {{ request()->routeIs('user_management.*') ? 'active' : '' }}"
+                                href="{{ route('user_management.index') }}">
+                                <i class="mdi mdi-account-cog"></i>
+                                <span>Manajemen User</span>
+                            </a>
+                        </li>
+                    @endif
                 </ul>
 
                 <!-- User Menu -->
@@ -98,7 +111,8 @@
                         <li>
                             <form action="{{ route('logout') }}" method="POST" id="logoutForm">
                                 @csrf
-                                <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;"
+                                <a href="javascript:void(0);"
+                                    onclick="event.preventDefault(); document.getElementById('logoutForm').submit();"
                                     class="text-danger">
                                     <i class="mdi mdi-logout"></i> Logout
                                 </a>

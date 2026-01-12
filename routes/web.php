@@ -56,9 +56,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/export-pdf', [DashboardController::class, 'exportPdf'])->name('dashboard.export-pdf');
 
     // ==============================
-    // ANALYTICS ROUTES
+    // ANALYTICS ROUTES (Admin Only)
     // ==============================
-    Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class, 'index'])
+        ->middleware('role:admin')
+        ->name('analytics.index');
 
 
 
