@@ -22,7 +22,8 @@
     </div>
     <!-- end page title -->
 
-    <!-- KNMP Selector with Search -->
+    <!-- KNMP Selector with Search - Only for Admin -->
+    @if(Auth::user()->isAdmin())
     <div class="row mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm selector-card">
@@ -47,6 +48,7 @@
             </div>
         </div>
     </div>
+    @endif
 
     @if($selectedKnmp)
     <!-- KNMP Title -->

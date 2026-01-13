@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register role middleware alias
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
+            'village_access' => \App\Http\Middleware\CheckVillageAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

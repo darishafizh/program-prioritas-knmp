@@ -14,8 +14,7 @@
                 <div class="page-title-right">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb bg-transparent m-0 p-0">
-                            <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}"><i
-                                        class="mdi mdi-home-outline"></i></a></li>
+                            <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Beranda</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('survey.index') }}">Survey</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Kuesioner PDF</li>
                         </ol>

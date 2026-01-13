@@ -73,7 +73,7 @@ Route::middleware('auth')->group(function () {
         // ==============================
         // FORMS ROUTES
         // ==============================
-        Route::group(['prefix' => 'forms'], function () {
+        Route::group(['prefix' => 'forms', 'middleware' => 'village_access'], function () {
             Route::get('/{knmp}', [FormsController::class, 'index'])->name('forms.index');
             Route::get('/{knmp}/edit-responden', [RespondenController::class, 'editRespondenList'])->name('forms.edit-responden');
             Route::delete('/delete-responden', [RespondenController::class, 'delete_responden'])->name('forms.delete_responden');

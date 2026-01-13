@@ -23,6 +23,7 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'knmp_id',
     ];
 
     /**
@@ -108,5 +109,21 @@ class User extends Authenticatable
         if ($role) {
             $this->roles()->detach($role->id);
         }
+    }
+
+    /**
+     * Get the KNMP (village) that this user belongs to.
+     */
+    public function knmp()
+    {
+        return $this->belongsTo(Knmp::class, 'knmp_id');
+    }
+
+    /**
+     * Check if user is a village user (has knmp_id assigned).
+     */
+    public function isVillageUser(): bool
+    {
+        return !is_null($this->knmp_id);
     }
 }
