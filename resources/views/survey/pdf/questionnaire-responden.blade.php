@@ -386,19 +386,19 @@
             <table class="info-table">
                 <tr>
                     <td class="info-label">Nama Responden</td>
-                    <td class="info-value"><strong>{{ $responden->nama_responden }}</strong></td>
+                    <td class="info-value"><strong style="color: #1a202c; font-size: 11px;">{{ $responden->nama_responden }}</strong></td>
                 </tr>
                 <tr>
                     <td class="info-label">NIK</td>
-                    <td class="info-value">{{ $responden->nik }}</td>
+                    <td class="info-value" style="color: #2d3748;">{{ $responden->nik }}</td>
                 </tr>
                 <tr>
                     <td class="info-label">Tanggal Wawancara</td>
-                    <td class="info-value">{{ \Carbon\Carbon::parse($responden->tanggal_wawancara)->format('d F Y') }}</td>
+                    <td class="info-value" style="color: #2d3748;">{{ \Carbon\Carbon::parse($responden->tanggal_wawancara)->format('d F Y') }}</td>
                 </tr>
                 <tr>
                     <td class="info-label">Enumerator</td>
-                    <td class="info-value">{{ $responden->nama_enumerator }}</td>
+                    <td class="info-value" style="color: #2d3748;">{{ $responden->nama_enumerator }}</td>
                 </tr>
             </table>
         </div>

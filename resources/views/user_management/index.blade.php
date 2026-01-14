@@ -1,5 +1,34 @@
 @extends('layouts.app')
 
+@push('styles')
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+<style>
+    .dataTables_wrapper .dataTables_filter input {
+        border-radius: 8px;
+        padding: 6px 12px;
+        border: 1px solid #e2e8f0;
+    }
+    .dataTables_wrapper .dataTables_length select {
+        border-radius: 8px;
+        padding: 6px 12px;
+        border: 1px solid #e2e8f0;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border-radius: 6px !important;
+        margin: 0 2px;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+        border-color: #3b82f6 !important;
+        color: white !important;
+    }
+    .dataTables_wrapper .dataTables_info {
+        color: #64748b;
+        font-size: 0.875rem;
+    }
+</style>
+@endpush
+
 @section('content')
     <!-- start page title -->
     <div class="row">
@@ -532,7 +561,34 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 <script>
+    $(document).ready(function() {
+        $('#userTable').DataTable({
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data",
+                info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+                infoEmpty: "Tidak ada data",
+                infoFiltered: "(difilter dari _MAX_ total data)",
+                zeroRecords: "Tidak ada data yang cocok",
+                paginate: {
+                    first: "Pertama",
+                    last: "Terakhir",
+                    next: "Selanjutnya",
+                    previous: "Sebelumnya"
+                }
+            },
+            pageLength: 10,
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Semua"]],
+            order: [[0, 'asc']],
+            columnDefs: [
+                { orderable: false, targets: -1 }
+            ]
+        });
+    });
+
     function showDeleteModal(userId, userName) {
         document.getElementById('deleteUserName').textContent = userName;
         document.getElementById('deleteForm').action = '{{ route("user_management.index") }}/' + userId;
