@@ -44,30 +44,66 @@ class AnalyticsController extends Controller
         // ===================================
         // CURRENT PERIOD STATS
         // ===================================
-        $currentSurveys = InformasiResponden::whereBetween('created_at', [$currentStart, $currentEnd])->count();
+
+        // Survey Terisi - konsisten dengan Dashboard (cek whereExists di tingkat_kebahagiaan_nelayan)
+        $currentSurveys = InformasiResponden::whereExists(function ($query) {
+            $query->select(DB::raw(1))
+                ->from('tingkat_kebahagiaan_nelayan')
+                ->whereColumn('tingkat_kebahagiaan_nelayan.responden_id', 'informasi_responden.id');
+        })
+            ->whereBetween('created_at', [$currentStart, $currentEnd])
+            ->distinct('id')
+            ->count();
+
+        // KNMP dengan data progres
         $currentKnmpProgress = DB::table('progres_knmp')
             ->whereBetween('created_at', [$currentStart, $currentEnd])
-            ->count();
+            ->distinct('knmp_id')
+            ->count('knmp_id');
+
+        // Tenaga Kerja Terserap
         $currentTenagaKerja = DB::table('progres_knmp')
             ->whereBetween('created_at', [$currentStart, $currentEnd])
             ->sum('tk_total') ?? 0;
+
+        // Rata-rata Capaian Indikator
         $currentAvgCapaian = DB::table('progres_knmp_details')
             ->whereBetween('created_at', [$currentStart, $currentEnd])
             ->avg('persen') ?? 0;
 
+        // Rata-rata Indeks Kebahagiaan (current period)
+        $currentKebahagiaan = TingkatKebahagiaanNelayan::whereBetween('created_at', [$currentStart, $currentEnd])
+            ->avg('skor_nilai') ?? 0;
+
         // ===================================
         // PREVIOUS PERIOD STATS
         // ===================================
-        $previousSurveys = InformasiResponden::whereBetween('created_at', [$previousStart, $previousEnd])->count();
+
+        // Survey Terisi - konsisten dengan Dashboard
+        $previousSurveys = InformasiResponden::whereExists(function ($query) {
+            $query->select(DB::raw(1))
+                ->from('tingkat_kebahagiaan_nelayan')
+                ->whereColumn('tingkat_kebahagiaan_nelayan.responden_id', 'informasi_responden.id');
+        })
+            ->whereBetween('created_at', [$previousStart, $previousEnd])
+            ->distinct('id')
+            ->count();
+
         $previousKnmpProgress = DB::table('progres_knmp')
             ->whereBetween('created_at', [$previousStart, $previousEnd])
-            ->count();
+            ->distinct('knmp_id')
+            ->count('knmp_id');
+
         $previousTenagaKerja = DB::table('progres_knmp')
             ->whereBetween('created_at', [$previousStart, $previousEnd])
             ->sum('tk_total') ?? 0;
+
         $previousAvgCapaian = DB::table('progres_knmp_details')
             ->whereBetween('created_at', [$previousStart, $previousEnd])
             ->avg('persen') ?? 0;
+
+        $previousKebahagiaan = TingkatKebahagiaanNelayan::whereBetween('created_at', [$previousStart, $previousEnd])
+            ->avg('skor_nilai') ?? 0;
 
         // ===================================
         // CALCULATE GROWTH PERCENTAGES
@@ -84,6 +120,26 @@ class AnalyticsController extends Controller
         $growthCapaian = $previousAvgCapaian > 0
             ? round((($currentAvgCapaian - $previousAvgCapaian) / $previousAvgCapaian) * 100, 1)
             : ($currentAvgCapaian > 0 ? 100 : 0);
+        $growthKebahagiaan = $previousKebahagiaan > 0
+            ? round((($currentKebahagiaan - $previousKebahagiaan) / $previousKebahagiaan) * 100, 1)
+            : ($currentKebahagiaan > 0 ? 100 : 0);
+
+        // ===================================
+        // COMPARISON BAR CHART DATA
+        // ===================================
+        $comparisonLabels = ['Survey Terisi', 'KNMP Aktif', 'Tenaga Kerja', 'Kebahagiaan'];
+        $comparisonCurrent = [
+            $currentSurveys,
+            $currentKnmpProgress,
+            $currentTenagaKerja,
+            round($currentKebahagiaan, 1)
+        ];
+        $comparisonPrevious = [
+            $previousSurveys,
+            $previousKnmpProgress,
+            $previousTenagaKerja,
+            round($previousKebahagiaan, 1)
+        ];
 
         // ===================================
         // TREND DATA (LAST 12 MONTHS)
@@ -97,13 +153,26 @@ class AnalyticsController extends Controller
 
             $trendLabels[] = $monthStart->format('M Y');
 
-            $trendData['surveys'][] = InformasiResponden::whereBetween('created_at', [$monthStart, $monthEnd])->count();
+            // Survey trend - konsisten dengan Dashboard
+            $trendData['surveys'][] = InformasiResponden::whereExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('tingkat_kebahagiaan_nelayan')
+                    ->whereColumn('tingkat_kebahagiaan_nelayan.responden_id', 'informasi_responden.id');
+            })
+                ->whereBetween('created_at', [$monthStart, $monthEnd])
+                ->distinct('id')
+                ->count();
+
             $trendData['tenaga_kerja'][] = (int) (DB::table('progres_knmp')
                 ->whereBetween('created_at', [$monthStart, $monthEnd])
                 ->sum('tk_total') ?? 0);
+
             $trendData['capaian'][] = round(DB::table('progres_knmp_details')
                 ->whereBetween('created_at', [$monthStart, $monthEnd])
                 ->avg('persen') ?? 0, 1);
+
+            $trendData['kebahagiaan'][] = round(TingkatKebahagiaanNelayan::whereBetween('created_at', [$monthStart, $monthEnd])
+                ->avg('skor_nilai') ?? 0, 1);
         }
 
         // ===================================
@@ -113,11 +182,39 @@ class AnalyticsController extends Controller
         $previousYearStart = $currentYearStart->copy()->subYear();
         $previousYearEnd = $previousYearStart->copy()->endOfYear();
 
-        $yoySurveysCurrent = InformasiResponden::where('created_at', '>=', $currentYearStart)->count();
-        $yoySurveysPrevious = InformasiResponden::whereBetween('created_at', [$previousYearStart, $previousYearEnd])->count();
+        $yoySurveysCurrent = InformasiResponden::whereExists(function ($query) {
+            $query->select(DB::raw(1))
+                ->from('tingkat_kebahagiaan_nelayan')
+                ->whereColumn('tingkat_kebahagiaan_nelayan.responden_id', 'informasi_responden.id');
+        })
+            ->where('created_at', '>=', $currentYearStart)
+            ->distinct('id')
+            ->count();
+
+        $yoySurveysPrevious = InformasiResponden::whereExists(function ($query) {
+            $query->select(DB::raw(1))
+                ->from('tingkat_kebahagiaan_nelayan')
+                ->whereColumn('tingkat_kebahagiaan_nelayan.responden_id', 'informasi_responden.id');
+        })
+            ->whereBetween('created_at', [$previousYearStart, $previousYearEnd])
+            ->distinct('id')
+            ->count();
+
         $yoyGrowth = $yoySurveysPrevious > 0
             ? round((($yoySurveysCurrent - $yoySurveysPrevious) / $yoySurveysPrevious) * 100, 1)
             : 0;
+
+        // ===================================
+        // TOTAL STATS (ALL TIME) - untuk konteks
+        // ===================================
+        $totalSurveyAllTime = InformasiResponden::whereExists(function ($query) {
+            $query->select(DB::raw(1))
+                ->from('tingkat_kebahagiaan_nelayan')
+                ->whereColumn('tingkat_kebahagiaan_nelayan.responden_id', 'informasi_responden.id');
+        })->distinct('id')->count();
+
+        $totalKnmpAllTime = Knmp::count();
+        $totalTenagaKerjaAllTime = DB::table('progres_knmp')->sum('tk_total') ?? 0;
 
         return view('analytics.index', compact(
             'period',
@@ -131,23 +228,34 @@ class AnalyticsController extends Controller
             'currentKnmpProgress',
             'currentTenagaKerja',
             'currentAvgCapaian',
+            'currentKebahagiaan',
             // Previous period
             'previousSurveys',
             'previousKnmpProgress',
             'previousTenagaKerja',
             'previousAvgCapaian',
+            'previousKebahagiaan',
             // Growth
             'growthSurveys',
             'growthKnmpProgress',
             'growthTenagaKerja',
             'growthCapaian',
+            'growthKebahagiaan',
+            // Comparison chart data
+            'comparisonLabels',
+            'comparisonCurrent',
+            'comparisonPrevious',
             // Trend
             'trendData',
             'trendLabels',
             // YoY
             'yoySurveysCurrent',
             'yoySurveysPrevious',
-            'yoyGrowth'
+            'yoyGrowth',
+            // All time totals
+            'totalSurveyAllTime',
+            'totalKnmpAllTime',
+            'totalTenagaKerjaAllTime'
         ));
     }
 }
