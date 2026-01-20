@@ -159,6 +159,33 @@
             width: auto;
             display: inline-block;
         }
+
+        /* =============================== */
+        /* FIX BOOTSTRAP MODAL Z-INDEX     */
+        /* =============================== */
+        .modal {
+            z-index: 1050 !important;
+        }
+
+        .modal-backdrop {
+            z-index: 1040 !important;
+        }
+
+        .modal.show .modal-dialog {
+            pointer-events: auto;
+        }
+
+        .modal-dialog-centered {
+            display: flex;
+            align-items: center;
+            min-height: calc(100% - 1rem);
+        }
+
+        @media (min-width: 576px) {
+            .modal-dialog-centered {
+                min-height: calc(100% - 3.5rem);
+            }
+        }
     </style>
 
 </head>

@@ -62,7 +62,21 @@ class ImportController extends Controller
         try {
             Excel::import(new ProfileKnmpImport($knmp->id), $request->file('file'));
             return back()->with('success', 'Data Profile KNMP berhasil diimport!');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
+            }
+            \Log::error('Import Profile KNMP Validation Error', ['errors' => $errorMessages]);
+            return back()->with('error', 'Gagal import: ' . implode('; ', array_slice($errorMessages, 0, 3)));
         } catch (\Exception $e) {
+            \Log::error('Import Profile KNMP Error', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return back()->with('error', 'Gagal import data: ' . $e->getMessage());
         }
     }
@@ -79,7 +93,21 @@ class ImportController extends Controller
         try {
             Excel::import(new ProgresKnmpImport($knmp->id), $request->file('file'));
             return back()->with('success', 'Data Progres KNMP berhasil diimport!');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
+            }
+            \Log::error('Import Progres KNMP Validation Error', ['errors' => $errorMessages]);
+            return back()->with('error', 'Gagal import: ' . implode('; ', array_slice($errorMessages, 0, 3)));
         } catch (\Exception $e) {
+            \Log::error('Import Progres KNMP Error', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return back()->with('error', 'Gagal import data: ' . $e->getMessage());
         }
     }

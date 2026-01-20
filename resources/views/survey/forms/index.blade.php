@@ -1155,6 +1155,70 @@
             margin-top: -6px;
             /* naikkan breadcrumb */
         }
+
+        /* =============================== */
+        /* IMPORT MODAL STYLES */
+        /* =============================== */
+        #importModal {
+            z-index: 1060 !important;
+        }
+
+        #importModal .modal-backdrop {
+            z-index: 1055 !important;
+        }
+
+        #importModal .modal-dialog {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100% - 1rem);
+            margin: 0.5rem auto;
+        }
+
+        #importModal .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 100%;
+            pointer-events: auto;
+        }
+
+        #importModal .modal-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: #fff;
+            border-radius: 12px 12px 0 0;
+            padding: 1rem 1.5rem;
+        }
+
+        #importModal .modal-title {
+            font-weight: 600;
+        }
+
+        #importModal .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+            opacity: 0.8;
+        }
+
+        #importModal .modal-header .btn-close:hover {
+            opacity: 1;
+        }
+
+        #importModal .modal-body {
+            padding: 1.5rem;
+        }
+
+        #importModal .modal-footer {
+            border-top: 1px solid #e9ecef;
+            padding: 1rem 1.5rem;
+        }
+
+        @media (min-width: 576px) {
+            #importModal .modal-dialog {
+                min-height: calc(100% - 3.5rem);
+                margin: 1.75rem auto;
+            }
+        }
     </style>
 
     <script>

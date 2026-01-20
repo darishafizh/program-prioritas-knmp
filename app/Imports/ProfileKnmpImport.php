@@ -17,6 +17,24 @@ class ProfileKnmpImport implements ToModel, WithHeadingRow, WithValidation, Skip
         $this->knmpId = $knmpId;
     }
 
+    /**
+     * Convert text value to boolean (1 or 0)
+     * Handles values like 'Ada', 'Ya', 'Yes', '1', 'true' as true
+     * Others like 'Tidak', 'No', '0', 'false', null as false
+     */
+    private function toBoolean($value): int
+    {
+        if (is_null($value) || $value === '') {
+            return 0;
+        }
+        
+        $value = strtolower(trim((string) $value));
+        
+        $trueValues = ['ada', 'ya', 'yes', '1', 'true', 'iya', 'v', '✓', '✔'];
+        
+        return in_array($value, $trueValues) ? 1 : 0;
+    }
+
     public function model(array $row)
     {
         return new ProfileKnmp([
@@ -30,18 +48,19 @@ class ProfileKnmpImport implements ToModel, WithHeadingRow, WithValidation, Skip
             'komoditas_utama_2' => $row['komoditas_utama_2'] ?? null,
             'harga_rata_komoditas_1' => $row['harga_rata_komoditas_1'] ?? null,
             'harga_rata_komoditas_2' => $row['harga_rata_komoditas_2'] ?? null,
-            'infra_jalan_akses' => $row['infra_jalan_akses'] ?? null,
-            'infra_listrik' => $row['infra_listrik'] ?? null,
-            'infra_air_bersih' => $row['infra_air_bersih'] ?? null,
-            'infra_internet' => $row['infra_internet'] ?? null,
-            'infra_ipal' => $row['infra_ipal'] ?? null,
-            'infra_dermaga_tambat' => $row['infra_dermaga_tambat'] ?? null,
-            'infra_tpi' => $row['infra_tpi'] ?? null,
-            'infra_cold_storage' => $row['infra_cold_storage'] ?? null,
-            'infra_pabrik_es' => $row['infra_pabrik_es'] ?? null,
-            'infra_kantor_koperasi' => $row['infra_kantor_koperasi'] ?? null,
-            'infra_bengkel_nelayan' => $row['infra_bengkel_nelayan'] ?? null,
-            'infra_waserda' => $row['infra_waserda'] ?? null,
+            // Convert infrastructure fields from text to boolean
+            'infra_jalan_akses' => $this->toBoolean($row['infra_jalan_akses'] ?? null),
+            'infra_listrik' => $this->toBoolean($row['infra_listrik'] ?? null),
+            'infra_air_bersih' => $this->toBoolean($row['infra_air_bersih'] ?? null),
+            'infra_internet' => $this->toBoolean($row['infra_internet'] ?? null),
+            'infra_ipal' => $this->toBoolean($row['infra_ipal'] ?? null),
+            'infra_dermaga_tambat' => $this->toBoolean($row['infra_dermaga_tambat'] ?? null),
+            'infra_tpi' => $this->toBoolean($row['infra_tpi'] ?? null),
+            'infra_cold_storage' => $this->toBoolean($row['infra_cold_storage'] ?? null),
+            'infra_pabrik_es' => $this->toBoolean($row['infra_pabrik_es'] ?? null),
+            'infra_kantor_koperasi' => $this->toBoolean($row['infra_kantor_koperasi'] ?? null),
+            'infra_bengkel_nelayan' => $this->toBoolean($row['infra_bengkel_nelayan'] ?? null),
+            'infra_waserda' => $this->toBoolean($row['infra_waserda'] ?? null),
             'calon_koperasi' => $row['calon_koperasi'] ?? null,
             'nama_ketua' => $row['nama_ketua'] ?? null,
             'sk_kopdeskel' => $row['sk_kopdeskel'] ?? null,

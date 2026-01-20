@@ -68,7 +68,7 @@
                         <i class="mdi mdi-account-group"></i>
                     </div>
                     <div class="kpi-text">
-                        <p class="kpi-label mb-0">Kepala Keluarga</p>
+                        <p class="kpi-label mb-0">Jumlah Penduduk Desa</p>
                         <h4 class="kpi-value mb-0">{{ number_format($stats['jmlKepalaKeluarga'], 0, ',', '.') }}</h4>
                         <small class="kpi-unit">KK</small>
                     </div>
@@ -129,7 +129,7 @@
                         <i class="mdi mdi-cash-multiple"></i>
                     </div>
                     <div class="kpi-text">
-                        <p class="kpi-label mb-0">Rata-rata Pendapatan Nelayan</p>
+                        <p class="kpi-label mb-0">Avg Pendapatan Nelayan</p>
                         <h4 class="kpi-value mb-0">Rp {{ number_format($stats['pendapatanNelayan'], 0, ',', '.') }}</h4>
                         <small class="kpi-unit">Per Bulan</small>
                     </div>
