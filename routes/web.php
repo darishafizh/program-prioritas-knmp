@@ -70,6 +70,15 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'survey'], function () {
         Route::get('/', [SurveyController::class, 'index'])->name('survey.index');
 
+        // Admin only: Add and Delete KNMP
+        Route::post('/', [SurveyController::class, 'store'])->middleware('role:admin')->name('survey.store');
+        Route::delete('/{id}', [SurveyController::class, 'destroy'])->middleware('role:admin')->name('survey.destroy');
+
+        // AJAX endpoints for cascade dropdown
+        Route::get('/locations/regencies/{province_id}', [SurveyController::class, 'getRegencies'])->name('survey.regencies');
+        Route::get('/locations/districts/{regency_id}', [SurveyController::class, 'getDistricts'])->name('survey.districts');
+        Route::get('/locations/villages/{district_id}', [SurveyController::class, 'getVillages'])->name('survey.villages');
+
         // ==============================
         // FORMS ROUTES
         // ==============================

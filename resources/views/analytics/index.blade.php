@@ -57,6 +57,32 @@
         .trend-chart-container {
             height: 350px;
         }
+
+        .comparison-chart-container {
+            height: 400px;
+        }
+
+        .total-stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .total-stats-card .stat-item {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .total-stats-card .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .total-stats-card .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
     </style>
 @endpush
 
@@ -79,6 +105,28 @@
                             <li class="breadcrumb-item active" aria-current="page">Analytics</li>
                         </ol>
                     </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Stats (All Time) -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="total-stats-card">
+                <div class="row">
+                    <div class="col-md-4 stat-item border-end">
+                        <div class="stat-value">{{ number_format($totalSurveyAllTime) }}</div>
+                        <div class="stat-label">Total Survey Terisi (Semua Waktu)</div>
+                    </div>
+                    <div class="col-md-4 stat-item border-end">
+                        <div class="stat-value">{{ number_format($totalKnmpAllTime) }}</div>
+                        <div class="stat-label">Total KNMP Terdaftar</div>
+                    </div>
+                    <div class="col-md-4 stat-item">
+                        <div class="stat-value">{{ number_format($totalTenagaKerjaAllTime) }}</div>
+                        <div class="stat-label">Total Tenaga Kerja Terserap</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -142,7 +190,7 @@
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="comparison-card">
                 <div class="d-flex justify-content-between align-items-start mb-2">
-                    <span class="stat-label">KNMP Terupdate</span>
+                    <span class="stat-label">KNMP Aktif</span>
                     <span
                         class="growth-badge {{ $growthKnmpProgress > 0 ? 'growth-positive' : ($growthKnmpProgress < 0 ? 'growth-negative' : 'growth-neutral') }}">
                         <i
@@ -176,22 +224,44 @@
             </div>
         </div>
 
-        <!-- Rata-rata Capaian -->
+        <!-- Rata-rata Kebahagiaan -->
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="comparison-card">
                 <div class="d-flex justify-content-between align-items-start mb-2">
-                    <span class="stat-label">Rata-rata Capaian</span>
+                    <span class="stat-label">Indeks Kebahagiaan</span>
                     <span
-                        class="growth-badge {{ $growthCapaian > 0 ? 'growth-positive' : ($growthCapaian < 0 ? 'growth-negative' : 'growth-neutral') }}">
+                        class="growth-badge {{ $growthKebahagiaan > 0 ? 'growth-positive' : ($growthKebahagiaan < 0 ? 'growth-negative' : 'growth-neutral') }}">
                         <i
-                            class="mdi {{ $growthCapaian > 0 ? 'mdi-trending-up' : ($growthCapaian < 0 ? 'mdi-trending-down' : 'mdi-minus') }}"></i>
-                        {{ $growthCapaian > 0 ? '+' : '' }}{{ $growthCapaian }}%
+                            class="mdi {{ $growthKebahagiaan > 0 ? 'mdi-trending-up' : ($growthKebahagiaan < 0 ? 'mdi-trending-down' : 'mdi-minus') }}"></i>
+                        {{ $growthKebahagiaan > 0 ? '+' : '' }}{{ $growthKebahagiaan }}%
                     </span>
                 </div>
-                <div class="stat-value text-info">{{ number_format($currentAvgCapaian, 1) }}%</div>
+                <div class="stat-value text-info">{{ number_format($currentKebahagiaan, 1) }}</div>
                 <small class="text-muted">
-                    vs {{ number_format($previousAvgCapaian, 1) }}% {{ $periodLabel }} lalu
+                    vs {{ number_format($previousKebahagiaan, 1) }} {{ $periodLabel }} lalu
                 </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visual Comparison Bar Chart -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="header-title mb-3">
+                        <i class="mdi mdi-chart-bar me-2 text-primary"></i>
+                        Perbandingan {{ $periodLabel }} Ini vs {{ $periodLabel }} Lalu
+                    </h5>
+                    <p class="text-muted mb-3">
+                        Periode saat ini: {{ $currentStart->format('d M Y') }} - {{ $currentEnd->format('d M Y') }}
+                        <br>
+                        Periode sebelumnya: {{ $previousStart->format('d M Y') }} - {{ $previousEnd->format('d M Y') }}
+                    </p>
+                    <div class="comparison-chart-container">
+                        <canvas id="comparisonBarChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -266,13 +336,28 @@
             </div>
         </div>
 
+        <!-- Kebahagiaan Trend -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="header-title mb-3">
+                        <i class="mdi mdi-emoticon-happy me-2 text-success"></i>
+                        Trend Indeks Kebahagiaan (12 Bulan Terakhir)
+                    </h5>
+                    <div class="trend-chart-container">
+                        <canvas id="kebahagiaanTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Capaian Trend -->
-        <div class="col-12 mb-4">
-            <div class="card">
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
                 <div class="card-body">
                     <h5 class="header-title mb-3">
                         <i class="mdi mdi-chart-areaspline me-2 text-info"></i>
-                        Trend Rata-rata Capaian Indikator (12 Bulan Terakhir)
+                        Trend Rata-rata Capaian (12 Bulan Terakhir)
                     </h5>
                     <div class="trend-chart-container">
                         <canvas id="capaianTrendChart"></canvas>
@@ -290,25 +375,111 @@
             const surveyData = @json($trendData['surveys'] ?? []);
             const tenagaKerjaData = @json($trendData['tenaga_kerja'] ?? []);
             const capaianData = @json($trendData['capaian'] ?? []);
+            const kebahagiaanData = @json($trendData['kebahagiaan'] ?? []);
+
+            // Comparison bar chart data
+            const comparisonLabels = @json($comparisonLabels);
+            const comparisonCurrent = @json($comparisonCurrent);
+            const comparisonPrevious = @json($comparisonPrevious);
+            const periodLabel = @json($periodLabel);
 
             const chartOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false }
+                    legend: {
+                        display: false
+                    }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        grid: { color: '#f1f3fa' },
-                        ticks: { color: '#6c757d' }
+                        grid: {
+                            color: '#f1f3fa'
+                        },
+                        ticks: {
+                            color: '#6c757d'
+                        }
                     },
                     x: {
-                        grid: { display: false },
-                        ticks: { color: '#6c757d' }
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#6c757d'
+                        }
                     }
                 }
             };
+
+            // Comparison Bar Chart
+            new Chart(document.getElementById('comparisonBarChart'), {
+                type: 'bar',
+                data: {
+                    labels: comparisonLabels,
+                    datasets: [{
+                        label: periodLabel + ' Ini',
+                        data: comparisonCurrent,
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    },
+                    {
+                        label: periodLabel + ' Lalu',
+                        data: comparisonPrevious,
+                        backgroundColor: 'rgba(156, 163, 175, 0.6)',
+                        borderColor: '#9ca3af',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.parsed.y.toLocaleString('id-ID');
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#f1f3fa'
+                            },
+                            ticks: {
+                                color: '#6c757d',
+                                callback: function (value) {
+                                    return value.toLocaleString('id-ID');
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#6c757d'
+                            }
+                        }
+                    }
+                }
+            });
 
             // Survey Trend Chart
             new Chart(document.getElementById('surveyTrendChart'), {
@@ -343,6 +514,33 @@
                     }]
                 },
                 options: chartOptions
+            });
+
+            // Kebahagiaan Trend Chart
+            new Chart(document.getElementById('kebahagiaanTrendChart'), {
+                type: 'line',
+                data: {
+                    labels: trendLabels,
+                    datasets: [{
+                        label: 'Indeks Kebahagiaan',
+                        data: kebahagiaanData,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#10b981'
+                    }]
+                },
+                options: {
+                    ...chartOptions,
+                    scales: {
+                        ...chartOptions.scales,
+                        y: {
+                            ...chartOptions.scales.y,
+                            max: 10
+                        }
+                    }
+                }
             });
 
             // Capaian Trend Chart

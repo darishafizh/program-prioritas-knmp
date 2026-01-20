@@ -24,6 +24,32 @@
     </div>
     <!-- end page title -->
 
+    <!-- Alert Messages -->
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="mdi mdi-check-circle me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="mdi mdi-alert-circle me-2"></i>{{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     {{-- <div class="row">
         <div class="col-12">
             <div class="card p-3">
@@ -181,6 +207,14 @@
                                 Kelola data detail kuesioner untuk setiap Kampung Nelayan.
                             </p>
                         </div>
+                        @if(Auth::user()->isAdmin())
+                            <div class="col-sm-6 text-end">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#addKnmpModal">
+                                    <i class="mdi mdi-plus me-1"></i>Tambah KNMP
+                                </button>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="table-responsive">
@@ -226,6 +260,18 @@
                                                 title="Image">
                                                 <i class="mdi mdi-image"></i>
                                             </button>
+                                            @if(Auth::user()->isAdmin())
+                                                <form action="{{ route('survey.destroy', $knmp->id) }}" method="POST"
+                                                    class="d-inline"
+                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus KNMP ini?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-action btn-action-outline-danger"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus KNMP">
+                                                        <i class="mdi mdi-trash-can"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -237,6 +283,93 @@
             </div> <!-- end card -->
         </div><!-- end col-->
     </div> <!-- end row-->
+
+    <!-- Add KNMP Modal (Admin Only) -->
+    @if(Auth::user()->isAdmin())
+        <div class="modal fade" id="addKnmpModal" tabindex="-1" aria-labelledby="addKnmpModalLabel" aria-hidden="true"
+            style="z-index: 1055;">
+            <div class="modal-dialog modal-dialog-centered" style="display: flex; justify-content: center; margin: auto;">
+                <div class="modal-content"
+                    style="border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.25);">
+                    <form action="{{ route('survey.store') }}" method="POST" id="addKnmpForm" novalidate>
+                        @csrf
+                        <div class="modal-header"
+                            style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 1.25rem 1.5rem; border: none;">
+                            <div class="d-flex align-items-center">
+                                <div
+                                    style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="mdi mdi-map-marker-plus" style="font-size: 1.5rem; color: #fff;"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h5 class="modal-title mb-0 text-white" id="addKnmpModalLabel">Tambah KNMP</h5>
+                                    <small style="color: rgba(255,255,255,0.7);">Tambah desa KNMP baru</small>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Nama KNMP <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="nama" placeholder="Masukkan nama KNMP" required
+                                    autocomplete="off">
+                                <div class="invalid-feedback">
+                                    Nama KNMP wajib diisi.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Provinsi <span class="text-danger">*</span></label>
+                                <select class="form-select" name="province_id" id="addProvinceSelect" required>
+                                    <option value="">Pilih Provinsi</option>
+                                    @foreach($provinces as $province)
+                                        <option value="{{ $province->id }}">{{ $province->name }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback">
+                                    Silakan pilih provinsi.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Kabupaten/Kota <span class="text-danger">*</span></label>
+                                <select class="form-select" name="regency_id" id="addRegencySelect" required>
+                                    <option value="">Pilih Kabupaten/Kota</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Silakan pilih kabupaten/kota.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Kecamatan <span class="text-danger">*</span></label>
+                                <select class="form-select" name="district_id" id="addDistrictSelect" required>
+                                    <option value="">Pilih Kecamatan</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Silakan pilih kecamatan.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Desa <span class="text-danger">*</span></label>
+                                <select class="form-select" name="village_id" id="addVillageSelect" required>
+                                    <option value="">Pilih Desa</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Silakan pilih desa.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-center gap-2"
+                            style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; background: #f8fafc;">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="mdi mdi-plus me-1"></i>Tambah KNMP
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+
 
     <!-- Evidence Modals for each KNMP -->
     @foreach ($knmps as $knmp)
@@ -662,6 +795,88 @@
             });
             $(".dataTables_length select").addClass("form-select form-select-sm");
             $(".dataTables_length label").addClass("form-label");
+
+            // Cascade dropdown logic for Add KNMP Modal
+            $('#addProvinceSelect').on('change', function () {
+                var provinceId = $(this).val();
+                var regencySelect = $('#addRegencySelect');
+                var districtSelect = $('#addDistrictSelect');
+                var villageSelect = $('#addVillageSelect');
+
+                // Reset dependent dropdowns
+                regencySelect.html('<option value="">Pilih Kabupaten/Kota</option>');
+                districtSelect.html('<option value="">Pilih Kecamatan</option>');
+                villageSelect.html('<option value="">Pilih Desa</option>');
+
+                if (provinceId) {
+                    $.get('/survey/locations/regencies/' + provinceId, function (data) {
+                        data.forEach(function (regency) {
+                            regencySelect.append('<option value="' + regency.id + '">' + regency.name + '</option>');
+                        });
+                    });
+                }
+            });
+
+            $('#addRegencySelect').on('change', function () {
+                var regencyId = $(this).val();
+                var districtSelect = $('#addDistrictSelect');
+                var villageSelect = $('#addVillageSelect');
+
+                // Reset dependent dropdowns
+                districtSelect.html('<option value="">Pilih Kecamatan</option>');
+                villageSelect.html('<option value="">Pilih Desa</option>');
+
+                if (regencyId) {
+                    $.get('/survey/locations/districts/' + regencyId, function (data) {
+                        data.forEach(function (district) {
+                            districtSelect.append('<option value="' + district.id + '">' + district.name + '</option>');
+                        });
+                    });
+                }
+            });
+
+            $('#addDistrictSelect').on('change', function () {
+                var districtId = $(this).val();
+                var villageSelect = $('#addVillageSelect');
+
+                // Reset dependent dropdown
+                villageSelect.html('<option value="">Pilih Desa</option>');
+
+                if (districtId) {
+                    $.get('/survey/locations/villages/' + districtId, function (data) {
+                        data.forEach(function (village) {
+                            villageSelect.append('<option value="' + village.id + '">' + village.name + '</option>');
+                        });
+                    });
+                }
+            });
+
+            // Form validation for Add KNMP
+            var form = document.querySelector('#addKnmpForm');
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            }
+
+            // Reset form when modal is closed
+            var addKnmpModal = document.getElementById('addKnmpModal');
+            if (addKnmpModal) {
+                addKnmpModal.addEventListener('hidden.bs.modal', function () {
+                    // Reset text inputs and validation styles
+                    form.reset();
+                    form.classList.remove('was-validated');
+
+                    // Reset dropdowns manually
+                    $('#addRegencySelect').html('<option value="">Pilih Kabupaten/Kota</option>');
+                    $('#addDistrictSelect').html('<option value="">Pilih Kecamatan</option>');
+                    $('#addVillageSelect').html('<option value="">Pilih Desa</option>');
+                });
+            }
         });
     </script>
 @endpush
