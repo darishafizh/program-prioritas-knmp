@@ -22,7 +22,7 @@
                                                 (isset($selectedRespondenData['sosial_kelembagaan']) && $selectedRespondenData['sosial_kelembagaan'] && $selectedRespondenData['sosial_kelembagaan']->responden_id == $r->id && !old('responden_id'));
                                 @endphp
                                 <option value="{{ $r->id }}" {{ $isSelected ? 'selected' : '' }}>
-                                        {{ $r->nama_responden }} ({{ $r->nik }})
+                                        id = {{ $r->id }} - {{ $r->nama_responden }} ({{ $r->nik }})
                                 </option>
                         @endforeach
                 </select>

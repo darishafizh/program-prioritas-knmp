@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\InformasiResponden;
+use App\Models\Knmp;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
@@ -11,10 +12,13 @@ use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 class InformasiRespondenImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows
 {
     protected $knmpId;
+    protected $knmp;
 
     public function __construct($knmpId)
     {
         $this->knmpId = $knmpId;
+        // Fetch KNMP data to get location information
+        $this->knmp = Knmp::find($knmpId);
     }
 
     /**
@@ -43,10 +47,11 @@ class InformasiRespondenImport implements ToModel, WithHeadingRow, WithValidatio
             'jumlah_anggota_perempuan_bekerja' => $row['jumlah_anggota_perempuan_bekerja'] ?? null,
             'jumlah_abk' => $row['jumlah_abk'] ?? null,
             'pengalaman_usaha' => $row['pengalaman_usaha'] ?? null,
-            'province_id' => $row['province_id'] ?? null,
-            'regency_id' => $row['regency_id'] ?? null,
-            'district_id' => $row['district_id'] ?? null,
-            'village_id' => $row['village_id'] ?? null,
+            // Get location IDs from KNMP address instead of Excel
+            'province_id' => $this->knmp->province_id ?? null,
+            'regency_id' => $this->knmp->regency_id ?? null,
+            'district_id' => $this->knmp->district_id ?? null,
+            'village_id' => $this->knmp->village_id ?? null,
             'tanggal_wawancara' => $this->parseDate($row['tanggal_wawancara'] ?? null),
             'nama_enumerator' => $row['nama_enumerator'] ?? null,
             'jenis_kelamin_enumerator' => $row['jenis_kelamin_enumerator'] ?? null,
