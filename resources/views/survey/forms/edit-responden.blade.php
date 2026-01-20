@@ -132,11 +132,11 @@
                                     <input type="checkbox" class="form-check-input responden-check" value="{{ $item['id'] }}" onchange="updateSelection()" style="width: 18px; height: 18px;">
                                 </div>
                                 @if($item['is_complete'])
-                                    <span class="badge bg-success-subtle text-success">
+                                    <span class="badge bg-success text-white">
                                         <i class="mdi mdi-check-circle me-1"></i>Lengkap
                                     </span>
                                 @else
-                                    <span class="badge bg-warning-subtle text-warning">
+                                    <span class="badge bg-warning text-white">
                                         <i class="mdi mdi-alert-circle me-1"></i>Belum Lengkap
                                     </span>
                                 @endif
@@ -175,7 +175,7 @@
                                 <div class="d-flex justify-content-between py-2">
                                     <span class="text-muted small">Form Terisi</span>
                                     <span class="fw-medium small">
-                                        <span class="badge bg-primary-subtle text-primary">{{ $item['filled_forms'] }}/{{ $item['total_forms'] }}</span>
+                                        <span class="badge bg-primary text-white">{{ $item['filled_forms'] }}/{{ $item['total_forms'] }}</span>
                                     </span>
                                 </div>
                             </div>

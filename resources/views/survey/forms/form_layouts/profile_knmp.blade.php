@@ -93,7 +93,7 @@
                 <div class="ms-3">
                     @if(count($viewInfra) > 0)
                         @foreach($viewInfra as $infra)
-                            <span class="badge bg-soft-success text-success me-1 mb-1">{{ $infra }}</span>
+                            <span class="badge bg-success text-white me-1 mb-1">{{ $infra }}</span>
                         @endforeach
                     @else
                         <span class="text-muted">Tidak ada infrastruktur</span>
@@ -151,7 +151,7 @@
 
     <div class="row">
         <div class="d-flex justify-content-end mt-3">
-            <button type="button" class="btn btn-warning" id="btnEditProfileKnmp">
+            <button type="button" class="btn btn-warning text-white" id="btnEditProfileKnmp">
                 <i class="mdi mdi-pencil me-1"></i>Edit
             </button>
         </div>
@@ -348,7 +348,7 @@
                     <button type="button" class="btn btn-secondary" id="btnCancelEditProfileKnmp">
                         <i class="mdi mdi-close me-1"></i>Batal
                     </button>
-                    <button type="submit" class="btn btn-success">
+                    <button type="submit" class="btn btn-success text-white">
                         <i class="mdi mdi-content-save me-1"></i>Update
                     </button>
                 @else

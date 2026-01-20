@@ -125,7 +125,7 @@
                     <div class="col-lg-5 col-md-12">
                         <div class="location-info-card">
                             <div class="location-header mb-3">
-                                <i class="mdi mdi-map-marker-radius text-primary me-2"></i>
+                                <i class="mdi mdi-map-marker-radius text-white bg-primary rounded p-1 me-2"></i>
                                 <span class="fw-semibold text-dark">Informasi Lokasi</span>
                             </div>
                             <div class="location-grid">
@@ -136,7 +136,7 @@
                                     </div>
                                     <div class="location-value">
                                         <span
-                                            class="badge bg-soft-primary text-primary rounded-pill px-3">{{ $knmp->village->name ?? 'N/A' }}</span>
+                                            class="badge bg-primary text-white rounded-pill px-3">{{ $knmp->village->name ?? 'N/A' }}</span>
                                     </div>
                                 </div>
                                 <div class="location-item">
@@ -146,7 +146,7 @@
                                     </div>
                                     <div class="location-value">
                                         <span
-                                            class="badge bg-soft-info text-info rounded-pill px-3">{{ $knmp->district->name ?? 'N/A' }}</span>
+                                            class="badge bg-info text-white rounded-pill px-3">{{ $knmp->district->name ?? 'N/A' }}</span>
                                     </div>
                                 </div>
                                 <div class="location-item">
@@ -156,7 +156,7 @@
                                     </div>
                                     <div class="location-value">
                                         <span
-                                            class="badge bg-soft-success text-success rounded-pill px-3">{{ $knmp->regency->name ?? 'N/A' }}</span>
+                                            class="badge bg-success text-white rounded-pill px-3">{{ $knmp->regency->name ?? 'N/A' }}</span>
                                     </div>
                                 </div>
                                 <div class="location-item">
@@ -166,7 +166,7 @@
                                     </div>
                                     <div class="location-value">
                                         <span
-                                            class="badge bg-soft-warning text-warning rounded-pill px-3">{{ $knmp->province->name ?? 'N/A' }}</span>
+                                            class="badge bg-warning text-white rounded-pill px-3">{{ $knmp->province->name ?? 'N/A' }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -222,10 +222,10 @@
             <div class="section-list-header mb-3">
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center">
-                        <i class="mdi mdi-format-list-bulleted-square text-primary me-2 fs-4"></i>
+                        <span class="mdi mdi-format-list-bulleted-square text-white bg-primary rounded p-1 me-2 fs-4"></span>
                         <h5 class="mb-0 fw-semibold">Bagian Kuesioner</h5>
                     </div>
-                    <span class="badge bg-soft-primary text-primary rounded-pill px-3">10 Bagian</span>
+                    <span class="badge bg-primary text-white rounded-pill px-3">10 Bagian</span>
                 </div>
             </div>
 
@@ -238,7 +238,7 @@
                             data-bs-toggle="collapse" data-bs-target="#collapseA" aria-expanded="false"
                             aria-controls="collapseA">
                             <div class="survey-section-indicator bg-primary">A</div>
-                            <div class="survey-section-icon text-primary">
+                            <div class="survey-section-icon bg-primary text-white">
                                 <i class="mdi mdi-home-city-outline"></i>
                             </div>
                             <div class="survey-section-content">
@@ -246,7 +246,7 @@
                                 <span class="survey-section-desc">Data identitas kampung nelayan</span>
                             </div>
                             @if(($sectionCounts['A'] ?? 0) > 0)
-                                <span class="badge bg-success ms-auto">{{ $sectionCounts['A'] }} Data</span>
+                                <span class="badge bg-success ms-auto">Terisi</span>
                             @else
                                 <span class="badge bg-secondary ms-auto">Belum Diisi</span>
                             @endif
@@ -256,13 +256,13 @@
                         <div class="accordion-body survey-accordion-body">
                             {{-- Import Action Bar --}}
                             <div class="import-action-bar mb-3">
-                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="profile-knmp"
                                     data-route="{{ route('forms.import_profile_knmp', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <a href="{{ route('forms.download_template', 'profile-knmp') }}"
-                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    class="btn btn-secondary text-white btn-sm ms-2">
                                     <i class="mdi mdi-download me-1"></i>Download Template
                                 </a>
                             </div>
@@ -278,15 +278,15 @@
                             data-bs-toggle="collapse" data-bs-target="#collapseB" aria-expanded="false"
                             aria-controls="collapseB">
                             <div class="survey-section-indicator bg-info">B</div>
-                            <div class="survey-section-icon text-info">
+                            <div class="survey-section-icon bg-info text-white">
                                 <i class="mdi mdi-progress-wrench"></i>
                             </div>
                             <div class="survey-section-content">
-                                <span class="survey-section-title">Proses Pembangunan KNMP</span>
+                                <span class="survey-section-title">Progres Pembangunan KNMP</span>
                                 <span class="survey-section-desc">Informasi progres pembangunan</span>
                             </div>
                             @if(($sectionCounts['B'] ?? 0) > 0)
-                                <span class="badge bg-success ms-auto">{{ $sectionCounts['B'] }} Data</span>
+                                <span class="badge bg-success ms-auto">Terisi</span>
                             @else
                                 <span class="badge bg-secondary ms-auto">Belum Diisi</span>
                             @endif
@@ -296,13 +296,13 @@
                         <div class="accordion-body survey-accordion-body">
                             {{-- Import Action Bar --}}
                             <div class="import-action-bar mb-3">
-                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="progres-knmp"
                                     data-route="{{ route('forms.import_progres_knmp', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <a href="{{ route('forms.download_template', 'progres-knmp') }}"
-                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    class="btn btn-secondary text-white btn-sm ms-2">
                                     <i class="mdi mdi-download me-1"></i>Download Template
                                 </a>
                             </div>
@@ -318,7 +318,7 @@
                             data-bs-toggle="collapse" data-bs-target="#collapseC" aria-expanded="false"
                             aria-controls="collapseC">
                             <div class="survey-section-indicator bg-success">C</div>
-                            <div class="survey-section-icon text-success">
+                            <div class="survey-section-icon bg-success text-white">
                                 <i class="mdi mdi-account-outline"></i>
                             </div>
                             <div class="survey-section-content">
@@ -336,13 +336,13 @@
                         <div class="accordion-body survey-accordion-body">
                             {{-- Import Action Bar --}}
                             <div class="import-action-bar mb-3">
-                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="responden"
                                     data-route="{{ route('forms.import_responden', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <a href="{{ route('forms.download_template', 'responden') }}"
-                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    class="btn btn-secondary text-white btn-sm ms-2">
                                     <i class="mdi mdi-download me-1"></i>Download Template
                                 </a>
                             </div>
@@ -358,7 +358,7 @@
                             data-bs-toggle="collapse" data-bs-target="#collapseD" aria-expanded="false"
                             aria-controls="collapseD">
                             <div class="survey-section-indicator bg-warning">D</div>
-                            <div class="survey-section-icon text-warning">
+                            <div class="survey-section-icon bg-warning text-white">
                                 <i class="mdi mdi-account-group-outline"></i>
                             </div>
                             <div class="survey-section-content">
@@ -376,13 +376,13 @@
                         <div class="accordion-body survey-accordion-body">
                             {{-- Import Action Bar --}}
                             <div class="import-action-bar mb-3">
-                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="tanggapan-masyarakat"
                                     data-route="{{ route('forms.import_tanggapan_masyarakat', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <a href="{{ route('forms.download_template', 'tanggapan-masyarakat') }}"
-                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    class="btn btn-secondary text-white btn-sm ms-2">
                                     <i class="mdi mdi-download me-1"></i>Download Template
                                 </a>
                             </div>
@@ -398,7 +398,7 @@
                             data-bs-toggle="collapse" data-bs-target="#collapseE" aria-expanded="false"
                             aria-controls="collapseE">
                             <div class="survey-section-indicator bg-danger">E</div>
-                            <div class="survey-section-icon text-danger">
+                            <div class="survey-section-icon bg-danger text-white">
                                 <i class="mdi mdi-emoticon-happy-outline"></i>
                             </div>
                             <div class="survey-section-content">
@@ -416,13 +416,13 @@
                         <div class="accordion-body survey-accordion-body">
                             {{-- Import Action Bar --}}
                             <div class="import-action-bar mb-3">
-                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="tingkat-kebahagiaan"
                                     data-route="{{ route('forms.import_tingkat_kebahagiaan', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <a href="{{ route('forms.download_template', 'tingkat-kebahagiaan') }}"
-                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    class="btn btn-secondary text-white btn-sm ms-2">
                                     <i class="mdi mdi-download me-1"></i>Download Template
                                 </a>
                             </div>
@@ -438,7 +438,7 @@
                             data-bs-toggle="collapse" data-bs-target="#collapseF" aria-expanded="false"
                             aria-controls="collapseF">
                             <div class="survey-section-indicator bg-secondary">F</div>
-                            <div class="survey-section-icon text-secondary">
+                            <div class="survey-section-icon bg-secondary text-white">
                                 <i class="mdi mdi-store-outline"></i>
                             </div>
                             <div class="survey-section-content">
@@ -456,13 +456,13 @@
                         <div class="accordion-body survey-accordion-body">
                             {{-- Import Action Bar --}}
                             <div class="import-action-bar mb-3">
-                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="informasi-usaha"
                                     data-route="{{ route('forms.import_informasi_usaha', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <a href="{{ route('forms.download_template', 'informasi-usaha') }}"
-                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    class="btn btn-secondary text-white btn-sm ms-2">
                                     <i class="mdi mdi-download me-1"></i>Download Template
                                 </a>
                             </div>
@@ -478,7 +478,7 @@
                             data-bs-toggle="collapse" data-bs-target="#collapseG" aria-expanded="false"
                             aria-controls="collapseG">
                             <div class="survey-section-indicator" style="background-color: #6f42c1;">G</div>
-                            <div class="survey-section-icon" style="color: #6f42c1;">
+                            <div class="survey-section-icon text-white" style="background-color: #6f42c1;">
                                 <i class="mdi mdi-fish"></i>
                             </div>
                             <div class="survey-section-content">
@@ -496,13 +496,13 @@
                         <div class="accordion-body survey-accordion-body">
                             {{-- Import Action Bar --}}
                             <div class="import-action-bar mb-3">
-                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="informasi-pemasaran"
                                     data-route="{{ route('forms.import_informasi_pemasaran', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <a href="{{ route('forms.download_template', 'informasi-pemasaran') }}"
-                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    class="btn btn-secondary text-white btn-sm ms-2">
                                     <i class="mdi mdi-download me-1"></i>Download Template
                                 </a>
                             </div>
@@ -518,7 +518,7 @@
                             data-bs-toggle="collapse" data-bs-target="#collapseH" aria-expanded="false"
                             aria-controls="collapseH">
                             <div class="survey-section-indicator" style="background-color: #20c997;">H</div>
-                            <div class="survey-section-icon" style="color: #20c997;">
+                            <div class="survey-section-icon text-white" style="background-color: #20c997;">
                                 <i class="mdi mdi-cash-multiple"></i>
                             </div>
                             <div class="survey-section-content">
@@ -536,13 +536,13 @@
                         <div class="accordion-body survey-accordion-body">
                             {{-- Import Action Bar --}}
                             <div class="import-action-bar mb-3">
-                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="pendapatan-rt"
                                     data-route="{{ route('forms.import_pendapatan_rt', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <a href="{{ route('forms.download_template', 'pendapatan-rt') }}"
-                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    class="btn btn-secondary text-white btn-sm ms-2">
                                     <i class="mdi mdi-download me-1"></i>Download Template
                                 </a>
                             </div>
@@ -558,7 +558,7 @@
                             data-bs-toggle="collapse" data-bs-target="#collapseI" aria-expanded="false"
                             aria-controls="collapseI">
                             <div class="survey-section-indicator" style="background-color: #e83e8c;">I</div>
-                            <div class="survey-section-icon" style="color: #e83e8c;">
+                            <div class="survey-section-icon text-white" style="background-color: #e83e8c;">
                                 <i class="mdi mdi-account-multiple-outline"></i>
                             </div>
                             <div class="survey-section-content">
@@ -576,13 +576,13 @@
                         <div class="accordion-body survey-accordion-body">
                             {{-- Import Action Bar --}}
                             <div class="import-action-bar mb-3">
-                                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="sosial-kelembagaan"
                                     data-route="{{ route('forms.import_sosial_kelembagaan', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <a href="{{ route('forms.download_template', 'sosial-kelembagaan') }}"
-                                    class="btn btn-outline-secondary btn-sm ms-2">
+                                    class="btn btn-secondary text-white btn-sm ms-2">
                                     <i class="mdi mdi-download me-1"></i>Download Template
                                 </a>
                             </div>
@@ -598,7 +598,7 @@
                             data-bs-toggle="collapse" data-bs-target="#collapseJ" aria-expanded="false"
                             aria-controls="collapseJ">
                             <div class="survey-section-indicator" style="background-color: #fd7e14;">J</div>
-                            <div class="survey-section-icon" style="color: #fd7e14;">
+                            <div class="survey-section-icon text-white" style="background-color: #fd7e14;">
                                 <i class="mdi mdi-file-document-multiple-outline"></i>
                             </div>
                             <div class="survey-section-content">
@@ -641,7 +641,7 @@
                                                     <button type="submit" class="btn btn-primary btn-sm px-3">
                                                         <i class="mdi mdi-upload me-1"></i>Upload
                                                     </button>
-                                                    <button type="button" class="btn btn-outline-secondary btn-sm ms-2"
+                                                    <button type="button" class="btn btn-secondary text-white btn-sm ms-2"
                                                         onclick="clearPreview()">
                                                         <i class="mdi mdi-close me-1"></i>Batal
                                                     </button>

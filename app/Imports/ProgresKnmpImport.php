@@ -22,10 +22,8 @@ class ProgresKnmpImport implements WithMultipleSheets
 
     public function sheets(): array
     {
+        // Use index-based access only to avoid duplicate processing
         return [
-            'Progres Utama' => new ProgresKnmpMainImport($this->knmpId, $this),
-            'Detail Komponen' => new ProgresKnmpDetailImport($this->knmpId, $this),
-            // Also support index-based sheet access
             0 => new ProgresKnmpMainImport($this->knmpId, $this),
             1 => new ProgresKnmpDetailImport($this->knmpId, $this),
         ];

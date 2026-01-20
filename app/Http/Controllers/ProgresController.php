@@ -11,6 +11,69 @@ use Illuminate\Support\Facades\DB;
 class ProgresController extends Controller
 {
     /**
+     * Custom validation messages in Indonesian
+     */
+    private function validationMessages()
+    {
+        return [
+            'anggaran_total.required' => 'Total Anggaran wajib diisi.',
+            'anggaran_total.numeric' => 'Total Anggaran harus berupa angka.',
+            'anggaran_total.min' => 'Total Anggaran tidak boleh negatif.',
+
+            'anggaran_konstruksi.required' => 'Anggaran Konstruksi wajib diisi.',
+            'anggaran_konstruksi.numeric' => 'Anggaran Konstruksi harus berupa angka.',
+            'anggaran_konstruksi.min' => 'Anggaran Konstruksi tidak boleh negatif.',
+
+            'anggaran_sarpras.required' => 'Anggaran Pengadaan Sarpras wajib diisi.',
+            'anggaran_sarpras.numeric' => 'Anggaran Pengadaan Sarpras harus berupa angka.',
+            'anggaran_sarpras.min' => 'Anggaran Pengadaan Sarpras tidak boleh negatif.',
+
+            'tk_laki.required' => 'Jumlah Tenaga Kerja Laki-laki wajib diisi.',
+            'tk_laki.integer' => 'Jumlah Tenaga Kerja Laki-laki harus berupa angka.',
+            'tk_laki.min' => 'Jumlah Tenaga Kerja Laki-laki tidak boleh negatif.',
+
+            'tk_perempuan.required' => 'Jumlah Tenaga Kerja Perempuan wajib diisi.',
+            'tk_perempuan.integer' => 'Jumlah Tenaga Kerja Perempuan harus berupa angka.',
+            'tk_perempuan.min' => 'Jumlah Tenaga Kerja Perempuan tidak boleh negatif.',
+
+            'tk_upah.required' => 'Upah Tenaga Kerja per Hari wajib diisi.',
+            'tk_upah.numeric' => 'Upah Tenaga Kerja per Hari harus berupa angka.',
+            'tk_upah.min' => 'Upah Tenaga Kerja per Hari tidak boleh negatif.',
+
+            'tk_durasi.required' => 'Lama Bekerja di Proyek wajib diisi.',
+            'tk_durasi.numeric' => 'Lama Bekerja di Proyek harus berupa angka.',
+            'tk_durasi.min' => 'Lama Bekerja di Proyek tidak boleh negatif.',
+
+            'tk_lokal.required' => 'Jumlah Tenaga Kerja Lokal wajib diisi.',
+            'tk_lokal.integer' => 'Jumlah Tenaga Kerja Lokal harus berupa angka.',
+            'tk_lokal.min' => 'Jumlah Tenaga Kerja Lokal tidak boleh negatif.',
+
+            'tk_luar.required' => 'Jumlah Tenaga Kerja dari Luar wajib diisi.',
+            'tk_luar.integer' => 'Jumlah Tenaga Kerja dari Luar harus berupa angka.',
+            'tk_luar.min' => 'Jumlah Tenaga Kerja dari Luar tidak boleh negatif.',
+
+            'tk_non_konstruksi_jumlah.integer' => 'Jumlah Tenaga Kerja Non Konstruksi harus berupa angka.',
+            'tk_non_konstruksi_jumlah.min' => 'Jumlah Tenaga Kerja Non Konstruksi tidak boleh negatif.',
+
+            'tk_non_konstruksi_ket.string' => 'Keterangan Tenaga Kerja Non Konstruksi harus berupa teks.',
+            'tk_non_konstruksi_ket.max' => 'Keterangan Tenaga Kerja Non Konstruksi maksimal 255 karakter.',
+
+            'progress.required' => 'Data Progress Pembangunan wajib diisi.',
+            'progress.array' => 'Format data Progress Pembangunan tidak valid.',
+
+            'progress.*.*.target.numeric' => 'Target harus berupa angka.',
+            'progress.*.*.target.min' => 'Target tidak boleh negatif.',
+
+            'progress.*.*.persen.numeric' => 'Persentase progres harus berupa angka.',
+            'progress.*.*.persen.min' => 'Persentase progres minimal 0%.',
+            'progress.*.*.persen.max' => 'Persentase progres maksimal 100%.',
+
+            'progress.*.*.keterangan.string' => 'Keterangan harus berupa teks.',
+            'progress.*.*.keterangan.max' => 'Keterangan maksimal 255 karakter.',
+        ];
+    }
+
+    /**
      * Store Progres KNMP
      */
     public function store(Request $request, Knmp $knmp)
@@ -35,7 +98,7 @@ class ProgresController extends Controller
             'progress.*.*.target' => 'nullable|numeric|min:0',
             'progress.*.*.persen' => 'nullable|numeric|min:0|max:100',
             'progress.*.*.keterangan' => 'nullable|string|max:255',
-        ], [], [], 'progresKnmp');
+        ], $this->validationMessages());
 
         DB::beginTransaction();
 
@@ -85,7 +148,7 @@ class ProgresController extends Controller
             return back()->with('success', 'Progres Pembangunan KNMP berhasil ditambahkan!');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menyimpan data. Silakan coba lagi atau hubungi administrator.');
         }
     }
 
@@ -114,7 +177,7 @@ class ProgresController extends Controller
             'progress.*.*.target' => 'nullable|numeric|min:0',
             'progress.*.*.persen' => 'nullable|numeric|min:0|max:100',
             'progress.*.*.keterangan' => 'nullable|string|max:255',
-        ]);
+        ], $this->validationMessages());
 
         DB::beginTransaction();
 
@@ -122,7 +185,7 @@ class ProgresController extends Controller
             $progres = ProgresKnmp::where('knmp_id', $knmp->id)->first();
 
             if (!$progres) {
-                return back()->with('error', 'Data Progres KNMP tidak ditemukan');
+                return back()->with('error', 'Data Progres KNMP tidak ditemukan. Silakan refresh halaman.');
             }
 
             $tkTotal = $validated['tk_laki'] + $validated['tk_perempuan'];
@@ -171,7 +234,7 @@ class ProgresController extends Controller
             return back()->with('success', 'Progres Pembangunan KNMP berhasil diperbarui!');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return back()->with('error', 'Gagal memperbarui data. Silakan coba lagi atau hubungi administrator.');
         }
     }
 }

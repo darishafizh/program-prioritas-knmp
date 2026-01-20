@@ -14,7 +14,7 @@ class ProgresKnmpTemplateExport implements WithMultipleSheets
     public function sheets(): array
     {
         return [
-            'Progres Utama' => new ProgresKnmpMainSheet(),
+            'Progres Umum' => new ProgresKnmpMainSheet(),
             'Detail Komponen' => new ProgresKnmpDetailSheet(),
         ];
     }

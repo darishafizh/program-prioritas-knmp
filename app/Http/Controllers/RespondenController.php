@@ -122,7 +122,7 @@ class RespondenController extends Controller
             return back()->with('success', 'Informasi Responden berhasil disimpan!');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menyimpan data responden. Silakan coba lagi atau hubungi administrator.');
         }
     }
 
@@ -161,7 +161,7 @@ class RespondenController extends Controller
             return back()->with('success', count($request->responden_ids) . ' responden berhasil dihapus');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menghapus responden. Silakan coba lagi atau hubungi administrator.');
         }
     }
 

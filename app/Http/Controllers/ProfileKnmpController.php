@@ -10,6 +10,71 @@ use Illuminate\Support\Facades\DB;
 class ProfileKnmpController extends Controller
 {
     /**
+     * Custom validation messages in Indonesian
+     */
+    private function validationMessages()
+    {
+        return [
+            'knmp_id.required' => 'Data KNMP tidak valid.',
+            'knmp_id.integer' => 'Data KNMP tidak valid.',
+            'knmp_id.min' => 'Data KNMP tidak valid.',
+            
+            'jumlah_penduduk.required' => 'Jumlah Penduduk Desa wajib diisi.',
+            'jumlah_penduduk.integer' => 'Jumlah Penduduk Desa harus berupa angka.',
+            'jumlah_penduduk.min' => 'Jumlah Penduduk Desa tidak boleh negatif.',
+            
+            'jumlah_nelayan.required' => 'Jumlah Nelayan wajib diisi.',
+            'jumlah_nelayan.integer' => 'Jumlah Nelayan harus berupa angka.',
+            'jumlah_nelayan.min' => 'Jumlah Nelayan tidak boleh negatif.',
+            
+            'pendapatan_rata_rata.required' => 'Pendapatan Rata-rata Nelayan wajib diisi.',
+            'pendapatan_rata_rata.numeric' => 'Pendapatan Rata-rata Nelayan harus berupa angka.',
+            'pendapatan_rata_rata.min' => 'Pendapatan Rata-rata Nelayan tidak boleh negatif.',
+            
+            'volume_produksi.required' => 'Volume Produksi wajib diisi.',
+            'volume_produksi.numeric' => 'Volume Produksi harus berupa angka.',
+            'volume_produksi.min' => 'Volume Produksi tidak boleh negatif.',
+            
+            'nilai_produksi.required' => 'Nilai Produksi wajib diisi.',
+            'nilai_produksi.numeric' => 'Nilai Produksi harus berupa angka.',
+            'nilai_produksi.min' => 'Nilai Produksi tidak boleh negatif.',
+            
+            'komoditas_1.string' => 'Komoditas Utama 1 harus berupa teks.',
+            'komoditas_1.max' => 'Komoditas Utama 1 maksimal 255 karakter.',
+            
+            'komoditas_2.string' => 'Komoditas Utama 2 harus berupa teks.',
+            'komoditas_2.max' => 'Komoditas Utama 2 maksimal 255 karakter.',
+            
+            'harga_komoditas_1.numeric' => 'Harga Komoditas 1 harus berupa angka.',
+            'harga_komoditas_1.min' => 'Harga Komoditas 1 tidak boleh negatif.',
+            
+            'harga_komoditas_2.numeric' => 'Harga Komoditas 2 harus berupa angka.',
+            'harga_komoditas_2.min' => 'Harga Komoditas 2 tidak boleh negatif.',
+            
+            'calon_koperasi.string' => 'Calon Koperasi harus berupa teks.',
+            'calon_koperasi.max' => 'Calon Koperasi maksimal 255 karakter.',
+            
+            'nama_ketua.string' => 'Nama Ketua harus berupa teks.',
+            'nama_ketua.max' => 'Nama Ketua maksimal 255 karakter.',
+            
+            'sk_kopdeskel.string' => 'SK Kopdeskel harus berupa teks.',
+            'sk_kopdeskel.max' => 'SK Kopdeskel maksimal 255 karakter.',
+            
+            'nomor_induk.string' => 'Nomor Induk Kopdeskel harus berupa teks.',
+            'nomor_induk.max' => 'Nomor Induk Kopdeskel maksimal 255 karakter.',
+            
+            'jumlah_anggota_laki.integer' => 'Jumlah Anggota Laki-laki harus berupa angka.',
+            'jumlah_anggota_laki.min' => 'Jumlah Anggota Laki-laki tidak boleh negatif.',
+            
+            'jumlah_anggota_perempuan.integer' => 'Jumlah Anggota Perempuan harus berupa angka.',
+            'jumlah_anggota_perempuan.min' => 'Jumlah Anggota Perempuan tidak boleh negatif.',
+            
+            'koordinat_lokasi.string' => 'Koordinat Lokasi harus berupa teks.',
+            'koordinat_lokasi.max' => 'Koordinat Lokasi maksimal 255 karakter.',
+        ];
+    }
+
+    /**
      * Store a new Profile KNMP
      */
     public function store(Request $request)
@@ -34,7 +99,7 @@ class ProfileKnmpController extends Controller
             'jumlah_anggota_laki' => 'nullable|integer|min:0',
             'jumlah_anggota_perempuan' => 'nullable|integer|min:0',
             'koordinat_lokasi' => 'nullable|string|max:255',
-        ]);
+        ], $this->validationMessages());
 
         DB::beginTransaction();
         try {
@@ -78,7 +143,7 @@ class ProfileKnmpController extends Controller
             return back()->with('success', 'Profil KNMP berhasil ditambahkan!');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menyimpan data. Silakan coba lagi atau hubungi administrator.');
         }
     }
 
@@ -106,14 +171,14 @@ class ProfileKnmpController extends Controller
             'jumlah_anggota_laki' => 'nullable|integer|min:0',
             'jumlah_anggota_perempuan' => 'nullable|integer|min:0',
             'koordinat_lokasi' => 'nullable|string|max:255',
-        ]);
+        ], $this->validationMessages());
 
         DB::beginTransaction();
         try {
             $profile = ProfileKnmp::where('knmp_id', $knmp->id)->first();
 
             if (!$profile) {
-                return back()->with('error', 'Data Profil KNMP tidak ditemukan');
+                return back()->with('error', 'Data Profil KNMP tidak ditemukan. Silakan refresh halaman.');
             }
 
             $infra = $request->input('infrastruktur_pendukung', []);
@@ -155,7 +220,7 @@ class ProfileKnmpController extends Controller
             return back()->with('success', 'Profil KNMP berhasil diperbarui!');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return back()->with('error', 'Gagal memperbarui data. Silakan coba lagi atau hubungi administrator.');
         }
     }
 }
