@@ -262,12 +262,13 @@
                                             </button>
                                             @if(Auth::user()->isAdmin())
                                                 <form action="{{ route('survey.destroy', $knmp->id) }}" method="POST"
-                                                    class="d-inline"
-                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus KNMP ini?');">
+                                                    class="d-inline delete-knmp-form">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-action btn-action-outline-danger"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus KNMP">
+                                                    <button type="button"
+                                                        class="btn btn-action btn-action-outline-danger btn-delete-knmp"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus KNMP"
+                                                        data-knmp-name="{{ $knmp->nama }}">
                                                         <i class="mdi mdi-trash-can"></i>
                                                     </button>
                                                 </form>
@@ -753,6 +754,85 @@
         #imagePreviewModal .modal-backdrop {
             background: rgba(0, 0, 0, 0.9);
         }
+
+        /* Custom Dialog Styles (matching edit-responden) */
+        .custom-dialog-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-dialog-overlay.show {
+            display: flex;
+        }
+
+        .custom-dialog {
+            background: #fff;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-dialog-icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #fef3cd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+        }
+
+        .custom-dialog-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .custom-dialog-message {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        .custom-dialog-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .custom-dialog-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .custom-dialog-btn.cancel {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .custom-dialog-btn.confirm {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .custom-dialog-btn:hover {
+            transform: translateY(-2px);
+        }
     </style>
 
     <script>
@@ -775,6 +855,25 @@
             }, 300);
         }
     </script>
+
+    <!-- Custom Dialog Overlay for Delete KNMP -->
+    <div id="customDialogOverlay" class="custom-dialog-overlay">
+        <div id="customDialog" class="custom-dialog warning">
+            <div class="custom-dialog-icon-circle">
+                <span id="dialogIcon">⚠</span>
+            </div>
+            <h3 class="custom-dialog-title" id="dialogTitle">Hapus KNMP?</h3>
+            <p class="custom-dialog-message" id="dialogMessage">Apakah Anda yakin ingin menghapus KNMP ini?</p>
+            <div class="custom-dialog-actions" id="dialogActions">
+                <button type="button" class="custom-dialog-btn cancel" onclick="closeCustomDialog()">
+                    Batal
+                </button>
+                <button type="button" class="custom-dialog-btn confirm" id="confirmDialogBtn">
+                    Hapus
+                </button>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -878,5 +977,30 @@
                 });
             }
         });
+
+        // Delete KNMP Custom Dialog Confirmation
+        let currentDeleteForm = null;
+
+        $(document).on('click', '.btn-delete-knmp', function (e) {
+            e.preventDefault();
+            currentDeleteForm = $(this).closest('form');
+            const knmpName = $(this).data('knmp-name') || 'ini';
+
+            document.getElementById('dialogTitle').textContent = 'Hapus KNMP?';
+            document.getElementById('dialogMessage').textContent = `Apakah Anda yakin ingin menghapus KNMP "${knmpName}"?`;
+            document.getElementById('customDialogOverlay').classList.add('show');
+
+            document.getElementById('confirmDialogBtn').onclick = function () {
+                closeCustomDialog();
+                if (currentDeleteForm) {
+                    currentDeleteForm.submit();
+                }
+            };
+        });
+
+        function closeCustomDialog() {
+            document.getElementById('customDialogOverlay').classList.remove('show');
+            currentDeleteForm = null;
+        }
     </script>
 @endpush
