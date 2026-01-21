@@ -359,18 +359,18 @@ class ImportController extends Controller
     /**
      * Download template Excel for a specific section
      */
-    public function downloadTemplate($section)
+    public function downloadTemplate(Request $request, $section)
     {
         $templates = [
-            'responden' => ['export' => RespondenTemplateExport::class, 'filename' => 'template-informasi-responden.xlsx'],
-            'profile-knmp' => ['export' => ProfileKnmpTemplateExport::class, 'filename' => 'template-profile-knmp.xlsx'],
-            'progres-knmp' => ['export' => ProgresKnmpTemplateExport::class, 'filename' => 'template-progres-knmp.xlsx'],
-            'tanggapan-masyarakat' => ['export' => TanggapanMasyarakatTemplateExport::class, 'filename' => 'template-tanggapan-masyarakat.xlsx'],
-            'tingkat-kebahagiaan' => ['export' => TingkatKebahagiaanTemplateExport::class, 'filename' => 'template-tingkat-kebahagiaan.xlsx'],
-            'informasi-usaha' => ['export' => InformasiUsahaTemplateExport::class, 'filename' => 'template-informasi-usaha.xlsx'],
-            'informasi-pemasaran' => ['export' => InformasiPemasaranTemplateExport::class, 'filename' => 'template-informasi-pemasaran.xlsx'],
-            'pendapatan-rt' => ['export' => InformasiPendapatanRtTemplateExport::class, 'filename' => 'template-pendapatan-rumah-tangga.xlsx'],
-            'sosial-kelembagaan' => ['export' => SosialKelembagaanTemplateExport::class, 'filename' => 'template-sosial-kelembagaan.xlsx'],
+            'responden' => ['export' => RespondenTemplateExport::class, 'filename' => 'template-informasi-responden.xlsx', 'needs_responden' => false],
+            'profile-knmp' => ['export' => ProfileKnmpTemplateExport::class, 'filename' => 'template-profile-knmp.xlsx', 'needs_responden' => false],
+            'progres-knmp' => ['export' => ProgresKnmpTemplateExport::class, 'filename' => 'template-progres-knmp.xlsx', 'needs_responden' => false],
+            'tanggapan-masyarakat' => ['export' => TanggapanMasyarakatTemplateExport::class, 'filename' => 'template-tanggapan-masyarakat.xlsx', 'needs_responden' => true],
+            'tingkat-kebahagiaan' => ['export' => TingkatKebahagiaanTemplateExport::class, 'filename' => 'template-tingkat-kebahagiaan.xlsx', 'needs_responden' => true],
+            'informasi-usaha' => ['export' => InformasiUsahaTemplateExport::class, 'filename' => 'template-informasi-usaha.xlsx', 'needs_responden' => true],
+            'informasi-pemasaran' => ['export' => InformasiPemasaranTemplateExport::class, 'filename' => 'template-informasi-pemasaran.xlsx', 'needs_responden' => true],
+            'pendapatan-rt' => ['export' => InformasiPendapatanRtTemplateExport::class, 'filename' => 'template-pendapatan-rumah-tangga.xlsx', 'needs_responden' => true],
+            'sosial-kelembagaan' => ['export' => SosialKelembagaanTemplateExport::class, 'filename' => 'template-sosial-kelembagaan.xlsx', 'needs_responden' => true],
         ];
 
         if (!isset($templates[$section])) {
@@ -378,6 +378,15 @@ class ImportController extends Controller
         }
 
         $template = $templates[$section];
-        return Excel::download(new $template['export'](), $template['filename']);
+        $respondenIds = $request->input('responden_ids', []);
+
+        // For sections that need responden, pass the IDs to the export class
+        if ($template['needs_responden'] && !empty($respondenIds)) {
+            $exportInstance = new $template['export']($respondenIds);
+        } else {
+            $exportInstance = new $template['export']();
+        }
+
+        return Excel::download($exportInstance, $template['filename']);
     }
 }

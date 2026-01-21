@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\InformasiResponden;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -10,9 +11,30 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class InformasiPemasaranTemplateExport implements FromArray, WithHeadings, WithStyles, ShouldAutoSize
 {
+    protected $respondenIds;
+
+    public function __construct($respondenIds = null)
+    {
+        $this->respondenIds = $respondenIds;
+    }
+
     public function array(): array
     {
-        return [];
+        if (empty($this->respondenIds)) {
+            return [];
+        }
+
+        $respondents = InformasiResponden::whereIn('id', $this->respondenIds)
+            ->orderBy('id')
+            ->get(['id', 'nama_responden']);
+
+        return $respondents->map(function ($responden) {
+            return [
+                $responden->id,
+                '', // kendala_pemasaran_text
+                '', // cara_penanganan_ikan
+            ];
+        })->toArray();
     }
 
     public function headings(): array

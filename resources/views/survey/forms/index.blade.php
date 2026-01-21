@@ -222,7 +222,8 @@
             <div class="section-list-header mb-3">
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center">
-                        <span class="mdi mdi-format-list-bulleted-square text-white bg-primary rounded p-1 me-2 fs-4"></span>
+                        <span
+                            class="mdi mdi-format-list-bulleted-square text-white bg-primary rounded p-1 me-2 fs-4"></span>
                         <h5 class="mb-0 fw-semibold">Bagian Kuesioner</h5>
                     </div>
                     <span class="badge bg-primary text-white rounded-pill px-3">10 Bagian</span>
@@ -381,10 +382,12 @@
                                     data-route="{{ route('forms.import_tanggapan_masyarakat', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
-                                <a href="{{ route('forms.download_template', 'tanggapan-masyarakat') }}"
-                                    class="btn btn-secondary text-white btn-sm ms-2">
+                                <button type="button"
+                                    class="btn btn-secondary text-white btn-sm ms-2 btn-select-responden"
+                                    data-bs-toggle="modal" data-bs-target="#selectRespondenModal"
+                                    data-section="tanggapan-masyarakat" data-section-name="Tanggapan Masyarakat">
                                     <i class="mdi mdi-download me-1"></i>Download Template
-                                </a>
+                                </button>
                             </div>
                             @include('survey.forms.form_layouts.tanggapan_masyarakat')
                         </div>
@@ -421,10 +424,12 @@
                                     data-route="{{ route('forms.import_tingkat_kebahagiaan', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
-                                <a href="{{ route('forms.download_template', 'tingkat-kebahagiaan') }}"
-                                    class="btn btn-secondary text-white btn-sm ms-2">
+                                <button type="button"
+                                    class="btn btn-secondary text-white btn-sm ms-2 btn-select-responden"
+                                    data-bs-toggle="modal" data-bs-target="#selectRespondenModal"
+                                    data-section="tingkat-kebahagiaan" data-section-name="Tingkat Kebahagiaan">
                                     <i class="mdi mdi-download me-1"></i>Download Template
-                                </a>
+                                </button>
                             </div>
                             @include('survey.forms.form_layouts.tingkat_kebahagiaan_nelayan')
                         </div>
@@ -461,10 +466,12 @@
                                     data-route="{{ route('forms.import_informasi_usaha', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
-                                <a href="{{ route('forms.download_template', 'informasi-usaha') }}"
-                                    class="btn btn-secondary text-white btn-sm ms-2">
+                                <button type="button"
+                                    class="btn btn-secondary text-white btn-sm ms-2 btn-select-responden"
+                                    data-bs-toggle="modal" data-bs-target="#selectRespondenModal"
+                                    data-section="informasi-usaha" data-section-name="Informasi Usaha">
                                     <i class="mdi mdi-download me-1"></i>Download Template
-                                </a>
+                                </button>
                             </div>
                             @include('survey.forms.form_layouts.informasi_usaha')
                         </div>
@@ -501,10 +508,12 @@
                                     data-route="{{ route('forms.import_informasi_pemasaran', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
-                                <a href="{{ route('forms.download_template', 'informasi-pemasaran') }}"
-                                    class="btn btn-secondary text-white btn-sm ms-2">
+                                <button type="button"
+                                    class="btn btn-secondary text-white btn-sm ms-2 btn-select-responden"
+                                    data-bs-toggle="modal" data-bs-target="#selectRespondenModal"
+                                    data-section="informasi-pemasaran" data-section-name="Informasi Pemasaran">
                                     <i class="mdi mdi-download me-1"></i>Download Template
-                                </a>
+                                </button>
                             </div>
                             @include('survey.forms.form_layouts.informasi_pemasaran_hasil_perikanan')
                         </div>
@@ -541,10 +550,12 @@
                                     data-route="{{ route('forms.import_pendapatan_rt', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
-                                <a href="{{ route('forms.download_template', 'pendapatan-rt') }}"
-                                    class="btn btn-secondary text-white btn-sm ms-2">
+                                <button type="button"
+                                    class="btn btn-secondary text-white btn-sm ms-2 btn-select-responden"
+                                    data-bs-toggle="modal" data-bs-target="#selectRespondenModal"
+                                    data-section="pendapatan-rt" data-section-name="Pendapatan Rumah Tangga">
                                     <i class="mdi mdi-download me-1"></i>Download Template
-                                </a>
+                                </button>
                             </div>
                             @include('survey.forms.form_layouts.informasi_pendapatan_rumah_tangga')
                         </div>
@@ -581,10 +592,12 @@
                                     data-route="{{ route('forms.import_sosial_kelembagaan', $knmp->id) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
-                                <a href="{{ route('forms.download_template', 'sosial-kelembagaan') }}"
-                                    class="btn btn-secondary text-white btn-sm ms-2">
+                                <button type="button"
+                                    class="btn btn-secondary text-white btn-sm ms-2 btn-select-responden"
+                                    data-bs-toggle="modal" data-bs-target="#selectRespondenModal"
+                                    data-section="sosial-kelembagaan" data-section-name="Sosial dan Kelembagaan">
                                     <i class="mdi mdi-download me-1"></i>Download Template
-                                </a>
+                                </button>
                             </div>
                             @include('survey.forms.form_layouts.sosial_dan_kelembagaan')
                         </div>
@@ -641,7 +654,8 @@
                                                     <button type="submit" class="btn btn-primary btn-sm px-3">
                                                         <i class="mdi mdi-upload me-1"></i>Upload
                                                     </button>
-                                                    <button type="button" class="btn btn-secondary text-white btn-sm ms-2"
+                                                    <button type="button"
+                                                        class="btn btn-secondary text-white btn-sm ms-2"
                                                         onclick="clearPreview()">
                                                         <i class="mdi mdi-close me-1"></i>Batal
                                                     </button>
@@ -1219,6 +1233,26 @@
                 margin: 1.75rem auto;
             }
         }
+
+        /* =============================== */
+        /* SELECT RESPONDEN MODAL STYLES */
+        /* =============================== */
+        #selectRespondenModal .modal-dialog {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100%;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        #selectRespondenModal .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+        }
     </style>
 
     <script>
@@ -1329,11 +1363,13 @@
                     </div>
                     <div class="modal-body">
                         <div class="alert alert-info py-2 mb-3">
-                            <small><i class="mdi mdi-information me-1"></i> Pastikan format file sesuai template yang telah didownload.</small>
+                            <small><i class="mdi mdi-information me-1"></i> Pastikan format file sesuai template yang
+                                telah didownload.</small>
                         </div>
                         <div class="mb-3">
                             <label for="importFile" class="form-label">Pilih File Excel (.xlsx, .xls, .csv)</label>
-                            <input class="form-control" type="file" id="importFile" name="file" accept=".xlsx, .xls, .csv" required>
+                            <input class="form-control" type="file" id="importFile" name="file"
+                                accept=".xlsx, .xls, .csv" required>
                         </div>
                         <input type="hidden" name="knmp_id" value="{{ $knmp->id }}">
                     </div>
@@ -1349,18 +1385,160 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var importModal = document.getElementById('importModal');
             if (importModal) {
-                importModal.addEventListener('show.bs.modal', function(event) {
+                importModal.addEventListener('show.bs.modal', function (event) {
                     var button = event.relatedTarget;
                     var route = button.getAttribute('data-route');
                     var section = button.getAttribute('data-section');
                     var modalForm = importModal.querySelector('#importForm');
-                    
+
                     // Update form action
                     modalForm.action = route;
                 });
+            }
+        });
+    </script>
+
+    {{-- Select Responden Modal for Template Download --}}
+    <div class="modal fade" id="selectRespondenModal" tabindex="-1" aria-labelledby="selectRespondenModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background: #f8f9fa; color: #333; border-radius: 12px 12px 0 0; border-bottom: 1px solid #dee2e6;">
+                    <h5 class="modal-title" id="selectRespondenModalLabel">
+                        <i class="mdi mdi-account-check me-2 text-primary"></i>Pilih Responden untuk Template
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info py-2 mb-3">
+                        <small><i class="mdi mdi-information me-1"></i> Pilih responden yang akan disertakan dalam
+                            template. ID responden akan otomatis terisi di kolom pertama.</small>
+                    </div>
+
+                    <input type="hidden" id="selectedSection" value="">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="selectAllResponden">
+                                <i class="mdi mdi-checkbox-multiple-marked me-1"></i>Pilih Semua
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" id="deselectAllResponden">
+                                <i class="mdi mdi-checkbox-multiple-blank-outline me-1"></i>Hapus Semua
+                            </button>
+                        </div>
+                        <span class="badge bg-primary" id="selectedCount">0 dipilih</span>
+                    </div>
+
+                    <div class="responden-list-container"
+                        style="max-height: 350px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 8px; padding: 10px;">
+                        @if(isset($respondenList) && count($respondenList) > 0)
+                            @foreach($respondenList as $responden)
+                                <div class="form-check responden-check-item py-2 px-3 mb-1"
+                                    style="background: #f8f9fa; border-radius: 6px;">
+                                    <input class="form-check-input responden-checkbox" type="checkbox"
+                                        value="{{ $responden->id }}" id="responden_{{ $responden->id }}"
+                                        data-nama="{{ $responden->nama_responden }}">
+                                    <label class="form-check-label d-flex justify-content-between w-100"
+                                        for="responden_{{ $responden->id }}">
+                                        <span>
+                                            <strong>{{ $responden->nama_responden }}</strong>
+                                        </span>
+                                        <span class="text-muted small">ID: {{ $responden->id }}</span>
+                                    </label>
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="text-center py-4 text-muted">
+                                <i class="mdi mdi-account-off mdi-48px"></i>
+                                <p class="mt-2 mb-0">Belum ada responden. Silakan tambahkan responden di Section C terlebih
+                                    dahulu.</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <a href="#" id="downloadTemplateBtn" class="btn btn-primary" @if(!isset($respondenList) || count($respondenList) == 0) disabled @endif>
+                        <i class="mdi mdi-download me-1"></i>Download Template
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var selectRespondenModal = document.getElementById('selectRespondenModal');
+
+            if (selectRespondenModal) {
+                // When modal opens, set the section from the button that triggered it
+                selectRespondenModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var section = button.getAttribute('data-section');
+                    var sectionName = button.getAttribute('data-section-name');
+
+                    document.getElementById('selectedSection').value = section;
+                    document.getElementById('selectRespondenModalLabel').innerHTML =
+                        '<i class="mdi mdi-account-check me-2"></i>Pilih Responden - ' + sectionName;
+
+                    // Reset checkboxes
+                    document.querySelectorAll('.responden-checkbox').forEach(function (cb) {
+                        cb.checked = false;
+                    });
+                    updateSelectedCount();
+                    updateDownloadLink();
+                });
+
+                // Select All button
+                document.getElementById('selectAllResponden').addEventListener('click', function () {
+                    document.querySelectorAll('.responden-checkbox').forEach(function (cb) {
+                        cb.checked = true;
+                    });
+                    updateSelectedCount();
+                    updateDownloadLink();
+                });
+
+                // Deselect All button
+                document.getElementById('deselectAllResponden').addEventListener('click', function () {
+                    document.querySelectorAll('.responden-checkbox').forEach(function (cb) {
+                        cb.checked = false;
+                    });
+                    updateSelectedCount();
+                    updateDownloadLink();
+                });
+
+                // Update count when checkbox changes
+                document.querySelectorAll('.responden-checkbox').forEach(function (cb) {
+                    cb.addEventListener('change', function () {
+                        updateSelectedCount();
+                        updateDownloadLink();
+                    });
+                });
+            }
+
+            function updateSelectedCount() {
+                var count = document.querySelectorAll('.responden-checkbox:checked').length;
+                document.getElementById('selectedCount').textContent = count + ' dipilih';
+            }
+
+            function updateDownloadLink() {
+                var section = document.getElementById('selectedSection').value;
+                var checkedBoxes = document.querySelectorAll('.responden-checkbox:checked');
+                var baseUrl = "{{ route('forms.download_template', 'SECTION_PLACEHOLDER') }}".replace('SECTION_PLACEHOLDER', section);
+
+                if (checkedBoxes.length > 0) {
+                    var params = [];
+                    checkedBoxes.forEach(function (cb) {
+                        params.push('responden_ids[]=' + cb.value);
+                    });
+                    baseUrl += '?' + params.join('&');
+                }
+
+                var downloadBtn = document.getElementById('downloadTemplateBtn');
+                downloadBtn.href = baseUrl;
+                downloadBtn.classList.remove('disabled');
             }
         });
     </script>
