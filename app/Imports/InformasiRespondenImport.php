@@ -24,6 +24,8 @@ class InformasiRespondenImport implements ToModel, WithHeadingRow, WithValidatio
     public function __construct($knmpId)
     {
         $this->knmpId = $knmpId;
+        // Fetch KNMP data to get location information
+        $this->knmp = Knmp::find($knmpId);
     }
 
     /**
@@ -58,10 +60,11 @@ class InformasiRespondenImport implements ToModel, WithHeadingRow, WithValidatio
             'jumlah_anggota_perempuan_bekerja' => $row['jumlah_anggota_perempuan_bekerja'] ?? null,
             'jumlah_abk' => $row['jumlah_abk'] ?? null,
             'pengalaman_usaha' => $row['pengalaman_usaha'] ?? null,
-            'province_id' => $provinceId,
-            'regency_id' => $regencyId,
-            'district_id' => $districtId,
-            'village_id' => $villageId,
+            // Get location IDs from KNMP address instead of Excel
+            'province_id' => $this->knmp->province_id ?? null,
+            'regency_id' => $this->knmp->regency_id ?? null,
+            'district_id' => $this->knmp->district_id ?? null,
+            'village_id' => $this->knmp->village_id ?? null,
             'tanggal_wawancara' => $this->parseDate($row['tanggal_wawancara'] ?? null),
             'nama_enumerator' => $row['nama_enumerator'] ?? null,
             'jenis_kelamin_enumerator' => $row['jenis_kelamin_enumerator'] ?? null,

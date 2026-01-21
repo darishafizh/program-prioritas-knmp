@@ -37,10 +37,7 @@ class RespondenTemplateExport implements FromArray, WithHeadings, WithStyles, Sh
             'jumlah_anggota_perempuan_bekerja',
             'jumlah_abk',
             'pengalaman_usaha',
-            'province_id',
-            'regency_id',
-            'district_id',
-            'village_id',
+            // province_id, regency_id, district_id, village_id removed - auto-populated from KNMP address
             'tanggal_wawancara',
             'nama_enumerator',
             'jenis_kelamin_enumerator',
