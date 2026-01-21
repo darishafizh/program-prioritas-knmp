@@ -18,6 +18,10 @@ class BuktiUpload extends Model
         'ukuran_file',
     ];
 
+    protected $casts = [
+        'ukuran_file' => 'integer',
+    ];
+
     public function knmp()
     {
         return $this->belongsTo(Knmp::class, 'knmp_id');

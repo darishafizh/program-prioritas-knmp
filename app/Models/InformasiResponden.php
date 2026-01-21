@@ -41,6 +41,16 @@ class InformasiResponden extends Model
         'no_hp_enumerator',
     ];
 
+    protected $casts = [
+        'umur' => 'integer',
+        'jumlah_anggota_rumah' => 'integer',
+        'jumlah_anggota_perempuan_rumah' => 'integer',
+        'jumlah_anggota_bekerja' => 'integer',
+        'jumlah_anggota_perempuan_bekerja' => 'integer',
+        'jumlah_abk' => 'integer',
+        'pengalaman_usaha' => 'integer',
+    ];
+
     public function knmp()
     {
         return $this->belongsTo(Knmp::class, 'knmp_id');

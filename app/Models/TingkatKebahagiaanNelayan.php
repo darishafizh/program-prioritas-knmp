@@ -21,6 +21,10 @@ class TingkatKebahagiaanNelayan extends Model
         'skor_nilai',
     ];
 
+    protected $casts = [
+        'skor_nilai' => 'integer',
+    ];
+
     public function knmp()
     {
         return $this->belongsTo(Knmp::class, 'knmp_id');
