@@ -27,6 +27,14 @@ class InformasiPendapatanRumahTangga extends Model
         'kontribusi_perempuan_persen',
     ];
 
+    protected $casts = [
+        'pendapatan_perikanan' => 'integer',
+        'pendapatan_non_perikanan' => 'integer',
+        'pendapatan_total' => 'integer',
+        'kontribusi_nelayan_persen' => 'float',
+        'kontribusi_perempuan_persen' => 'float',
+    ];
+
     public function knmp()
     {
         return $this->belongsTo(Knmp::class);

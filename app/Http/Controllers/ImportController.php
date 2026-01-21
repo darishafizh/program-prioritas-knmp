@@ -45,9 +45,81 @@ class ImportController extends Controller
                 $errorMessages[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
             }
             return back()->with('error', 'Gagal import: ' . implode('; ', array_slice($errorMessages, 0, 3)));
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorMessage = $this->parseQueryException($e);
+            \Log::error('Import Responden DB Error', ['message' => $e->getMessage()]);
+            return back()->with('error', $errorMessage);
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal import data: ' . $e->getMessage());
+            \Log::error('Import Responden Error', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Gagal import data: ' . $this->simplifyErrorMessage($e->getMessage()));
         }
+    }
+
+    /**
+     * Parse QueryException to user-friendly message
+     */
+    private function parseQueryException(\Illuminate\Database\QueryException $e): string
+    {
+        $message = $e->getMessage();
+        
+        // Incorrect integer value
+        if (str_contains($message, 'Incorrect integer value')) {
+            preg_match("/Incorrect integer value: '(.+?)' for column '(.+?)'/", $message, $matches);
+            if (count($matches) >= 3) {
+                $value = $matches[1];
+                $column = $matches[2];
+                return "Error: Nilai '{$value}' tidak valid untuk kolom '{$column}'. Pastikan kolom berisi angka/ID yang benar.";
+            }
+        }
+        
+        // Duplicate entry
+        if (str_contains($message, 'Duplicate entry')) {
+            preg_match("/Duplicate entry '(.+?)' for key/", $message, $matches);
+            if (count($matches) >= 2) {
+                return "Error: Data '{$matches[1]}' sudah ada di database (duplikat).";
+            }
+        }
+        
+        // Data too long
+        if (str_contains($message, 'Data too long')) {
+            preg_match("/Data too long for column '(.+?)'/", $message, $matches);
+            if (count($matches) >= 2) {
+                return "Error: Data terlalu panjang untuk kolom '{$matches[1]}'. Kurangi jumlah karakter.";
+            }
+        }
+        
+        // Cannot be null
+        if (str_contains($message, 'cannot be null')) {
+            preg_match("/Column '(.+?)' cannot be null/", $message, $matches);
+            if (count($matches) >= 2) {
+                return "Error: Kolom '{$matches[1]}' wajib diisi (tidak boleh kosong).";
+            }
+        }
+        
+        // Foreign key constraint
+        if (str_contains($message, 'foreign key constraint')) {
+            return "Error: Referensi data tidak valid. Pastikan ID yang dimasukkan sudah ada di database.";
+        }
+        
+        return "Error Database: " . $this->simplifyErrorMessage($message);
+    }
+
+    /**
+     * Simplify long error messages
+     */
+    private function simplifyErrorMessage(string $message): string
+    {
+        // Remove SQL query from message
+        if (str_contains($message, 'SQL:')) {
+            $message = preg_replace('/\(SQL:.*\)/s', '', $message);
+        }
+        
+        // Truncate if too long
+        if (strlen($message) > 200) {
+            $message = substr($message, 0, 200) . '...';
+        }
+        
+        return trim($message);
     }
 
     /**
@@ -70,14 +142,13 @@ class ImportController extends Controller
             }
             \Log::error('Import Profile KNMP Validation Error', ['errors' => $errorMessages]);
             return back()->with('error', 'Gagal import: ' . implode('; ', array_slice($errorMessages, 0, 3)));
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorMessage = $this->parseQueryException($e);
+            \Log::error('Import Profile KNMP DB Error', ['message' => $e->getMessage()]);
+            return back()->with('error', $errorMessage);
         } catch (\Exception $e) {
-            \Log::error('Import Profile KNMP Error', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return back()->with('error', 'Gagal import data: ' . $e->getMessage());
+            \Log::error('Import Profile KNMP Error', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Gagal import data: ' . $this->simplifyErrorMessage($e->getMessage()));
         }
     }
 
@@ -101,14 +172,13 @@ class ImportController extends Controller
             }
             \Log::error('Import Progres KNMP Validation Error', ['errors' => $errorMessages]);
             return back()->with('error', 'Gagal import: ' . implode('; ', array_slice($errorMessages, 0, 3)));
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorMessage = $this->parseQueryException($e);
+            \Log::error('Import Progres KNMP DB Error', ['message' => $e->getMessage()]);
+            return back()->with('error', $errorMessage);
         } catch (\Exception $e) {
-            \Log::error('Import Progres KNMP Error', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return back()->with('error', 'Gagal import data: ' . $e->getMessage());
+            \Log::error('Import Progres KNMP Error', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Gagal import data: ' . $this->simplifyErrorMessage($e->getMessage()));
         }
     }
 
@@ -131,8 +201,13 @@ class ImportController extends Controller
                 $errorMessages[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
             }
             return back()->with('error', 'Gagal import: ' . implode('; ', array_slice($errorMessages, 0, 3)));
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorMessage = $this->parseQueryException($e);
+            \Log::error('Import Tanggapan DB Error', ['message' => $e->getMessage()]);
+            return back()->with('error', $errorMessage);
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal import data: ' . $e->getMessage());
+            \Log::error('Import Tanggapan Error', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Gagal import data: ' . $this->simplifyErrorMessage($e->getMessage()));
         }
     }
 
@@ -155,8 +230,13 @@ class ImportController extends Controller
                 $errorMessages[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
             }
             return back()->with('error', 'Gagal import: ' . implode('; ', array_slice($errorMessages, 0, 3)));
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorMessage = $this->parseQueryException($e);
+            \Log::error('Import Tingkat Kebahagiaan DB Error', ['message' => $e->getMessage()]);
+            return back()->with('error', $errorMessage);
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal import data: ' . $e->getMessage());
+            \Log::error('Import Tingkat Kebahagiaan Error', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Gagal import data: ' . $this->simplifyErrorMessage($e->getMessage()));
         }
     }
 
@@ -179,8 +259,13 @@ class ImportController extends Controller
                 $errorMessages[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
             }
             return back()->with('error', 'Gagal import: ' . implode('; ', array_slice($errorMessages, 0, 3)));
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorMessage = $this->parseQueryException($e);
+            \Log::error('Import Informasi Usaha DB Error', ['message' => $e->getMessage()]);
+            return back()->with('error', $errorMessage);
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal import data: ' . $e->getMessage());
+            \Log::error('Import Informasi Usaha Error', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Gagal import data: ' . $this->simplifyErrorMessage($e->getMessage()));
         }
     }
 
@@ -203,8 +288,13 @@ class ImportController extends Controller
                 $errorMessages[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
             }
             return back()->with('error', 'Gagal import: ' . implode('; ', array_slice($errorMessages, 0, 3)));
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorMessage = $this->parseQueryException($e);
+            \Log::error('Import Informasi Pemasaran DB Error', ['message' => $e->getMessage()]);
+            return back()->with('error', $errorMessage);
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal import data: ' . $e->getMessage());
+            \Log::error('Import Informasi Pemasaran Error', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Gagal import data: ' . $this->simplifyErrorMessage($e->getMessage()));
         }
     }
 
@@ -227,8 +317,13 @@ class ImportController extends Controller
                 $errorMessages[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
             }
             return back()->with('error', 'Gagal import: ' . implode('; ', array_slice($errorMessages, 0, 3)));
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorMessage = $this->parseQueryException($e);
+            \Log::error('Import Pendapatan RT DB Error', ['message' => $e->getMessage()]);
+            return back()->with('error', $errorMessage);
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal import data: ' . $e->getMessage());
+            \Log::error('Import Pendapatan RT Error', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Gagal import data: ' . $this->simplifyErrorMessage($e->getMessage()));
         }
     }
 
@@ -251,8 +346,13 @@ class ImportController extends Controller
                 $errorMessages[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
             }
             return back()->with('error', 'Gagal import: ' . implode('; ', array_slice($errorMessages, 0, 3)));
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorMessage = $this->parseQueryException($e);
+            \Log::error('Import Sosial Kelembagaan DB Error', ['message' => $e->getMessage()]);
+            return back()->with('error', $errorMessage);
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal import data: ' . $e->getMessage());
+            \Log::error('Import Sosial Kelembagaan Error', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Gagal import data: ' . $this->simplifyErrorMessage($e->getMessage()));
         }
     }
 

@@ -24,6 +24,7 @@ class TanggapanMasyarakat extends Model
 
     protected $casts = [
         'kesesuaian_kebutuhan' => 'boolean',
+        // tingkat_kesenangan stores text: 'Senang', 'Biasa Saja', 'Tidak Senang'
     ];
 
     // ===============================

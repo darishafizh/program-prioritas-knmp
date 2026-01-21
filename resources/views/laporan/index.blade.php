@@ -70,7 +70,7 @@
                     <div class="kpi-text">
                         <p class="kpi-label mb-0">Jumlah Penduduk Desa</p>
                         <h4 class="kpi-value mb-0">{{ number_format($stats['jmlKepalaKeluarga'], 0, ',', '.') }}</h4>
-                        <small class="kpi-unit">KK</small>
+                        <small class="kpi-unit">Orang</small>
                     </div>
                 </div>
             </div>
@@ -300,7 +300,7 @@
                     var knmpName = {!! json_encode($selectedKnmp->nama) !!};
                     try {
                         var map = L.map('knmpMap').setView([lat, lng], zoom);
-                        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OSM' }).addTo(map);
+                        L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, attribution: '&copy; Google Satellite' }).addTo(map);
                         L.marker([lat, lng]).addTo(map).bindPopup('<b>' + knmpName + '</b>').openPopup();
                         setTimeout(function() { map.invalidateSize(); }, 300);
                     } catch(e) { console.error('Map error:', e); }
@@ -516,6 +516,89 @@
                     </div>
         </div>
     </div>
+
+    <!-- ==========================================
+         STATISTIK KONDISI KNMP (Dashboard Style)
+    ========================================== -->
+    @if($monitoringStats['responden']['total'] > 0)
+
+
+    <!-- Row 3: Kesejahteraan & Kepuasan -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h5 class="section-title mb-3">
+                <i class="mdi mdi-emoticon-happy me-2"></i>Kesejahteraan & Kepuasan
+            </h5>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <!-- Rata-rata Indeks Kebahagiaan -->
+        <div class="col-lg-6 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center py-4">
+                    <h6 class="fw-semibold mb-3">
+                        <i class="mdi mdi-emoticon-happy-outline me-2 text-success"></i>Rata-rata Indeks Kebahagiaan
+                    </h6>
+                    <div class="gauge-wrapper mx-auto mb-3" style="width: 150px; height: 150px;">
+                        <div class="gauge-circle" style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#10b981 {{ $monitoringStats['kebahagiaan']['avgSkor'] * 20 }}%, #e5e7eb 0); display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 115px; height: 115px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                                <h1 class="mb-0 fw-bold text-success">{{ $monitoringStats['kebahagiaan']['avgSkor'] }}</h1>
+                                <small style="color: #495057;">dari 5</small>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="badge bg-light text-dark px-3 py-2">
+                        <i class="mdi mdi-account-multiple me-1"></i>
+                        {{ $monitoringStats['kebahagiaan']['totalResponden'] }} nelayan disurvei
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rata-rata Kepuasan KNMP -->
+        <div class="col-lg-6 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center py-4">
+                    <h6 class="fw-semibold mb-3">
+                        <i class="mdi mdi-thumb-up-outline me-2 text-primary"></i>Rata-rata Kepuasan KNMP
+                    </h6>
+                    @if(($monitoringStats['tanggapan']['responded'] ?? 0) > 0)
+                    <h1 class="display-3 fw-bold text-primary mb-2">{{ $monitoringStats['tanggapan']['persenSesuai'] }}%</h1>
+                    <p style="color: #495057;" class="small mb-3">merasa KNMP sesuai kebutuhan</p>
+                    <div class="rating-display">
+                        @php
+                            $avgKesenangan = $monitoringStats['tanggapan']['avgKesenangan'];
+                            $labelKesenangan = 'Belum Ada Data';
+                            if ($avgKesenangan >= 2.5) {
+                                $labelKesenangan = 'Senang';
+                            } elseif ($avgKesenangan >= 1.5) {
+                                $labelKesenangan = 'Biasa Saja';
+                            } elseif ($avgKesenangan > 0) {
+                                $labelKesenangan = 'Tidak Senang';
+                            }
+                        @endphp
+                        <span class="badge {{ $avgKesenangan >= 2.5 ? 'bg-success' : ($avgKesenangan >= 1.5 ? 'bg-warning' : ($avgKesenangan > 0 ? 'bg-danger' : 'bg-secondary')) }} px-4 py-2" style="font-size: 1rem;">
+                            <i class="mdi mdi-emoticon{{ $avgKesenangan >= 2.5 ? '-happy' : ($avgKesenangan >= 1.5 ? '-neutral' : ($avgKesenangan > 0 ? '-sad' : '')) }} me-1"></i>
+                            {{ $labelKesenangan }}
+                        </span>
+                        <small style="color: #495057;" class="d-block mt-2">Rata-rata Skor Kepuasan: {{ $avgKesenangan }}/3</small>
+                    </div>
+                    <span class="badge bg-light text-dark mt-3"><i class="mdi mdi-account-check me-1"></i>{{ $monitoringStats['tanggapan']['responded'] }} responden menjawab</span>
+                    @else
+                    <div class="text-center py-3">
+                        <i class="mdi mdi-clipboard-text-outline text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-2 mb-1">Belum ada data lengkap</p>
+                        <small class="text-muted">{{ $monitoringStats['tanggapan']['total'] }} data survei, tapi belum ada yang mengisi kesesuaian kebutuhan</small>
+                    </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @endif
+
     @else
     <div class="row">
         <div class="col-12">
@@ -1110,6 +1193,56 @@
             border-radius: 50%;
             margin-right: 4px;
         }
+        
+        /* Monitoring Card Styles */
+        .monitoring-card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+        }
+        .monitoring-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12) !important;
+        }
+        .monitoring-details {
+            padding-top: 0.5rem;
+            border-top: 1px dashed #e5e7eb;
+            margin-top: 0.5rem;
+        }
+        
+        /* Text Colors */
+        .text-pink { color: #ec4899 !important; }
+        .text-purple { color: #8b5cf6 !important; }
+        
+        /* Bukti Gallery */
+        .bukti-thumb {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .bukti-thumb:hover {
+            transform: scale(1.05);
+        }
+        .bukti-file-icon {
+            height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Stat Cards */
+        .stat-card {
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+        }
+        
+        /* Gauge Circle */
+        .gauge-circle {
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
     </style>
 @endsection
 
@@ -1181,6 +1314,105 @@ $(document).ready(function() {
                                     return context.label + ': Rp ' + value.toLocaleString('id-ID') + ' (' + persen + '%)';
                                 }
                                 return context.label + ': 50%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // ==========================================
+    // MONITORING CHARTS (Section H & I)
+    // ==========================================
+    
+    // H. Pendapatan Rumah Tangga - Bar Chart
+    var pendapatanCtx = document.getElementById('pendapatanRtChart');
+    if (pendapatanCtx) {
+        var perikanan = parseFloat(pendapatanCtx.dataset.perikanan) || 0;
+        var nonPerikanan = parseFloat(pendapatanCtx.dataset.nonPerikanan) || 0;
+        
+        new Chart(pendapatanCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Rata-rata Pendapatan (Rp/Bulan)'],
+                datasets: [
+                    {
+                        label: 'Perikanan',
+                        data: [perikanan],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 6,
+                        barThickness: 40
+                    },
+                    {
+                        label: 'Non-Perikanan',
+                        data: [nonPerikanan],
+                        backgroundColor: '#10b981',
+                        borderRadius: 6,
+                        barThickness: 40
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': Rp ' + context.parsed.x.toLocaleString('id-ID');
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { display: false },
+                        ticks: {
+                            callback: function(value) {
+                                return 'Rp ' + (value / 1000000).toFixed(1) + ' Jt';
+                            }
+                        }
+                    },
+                    y: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+    
+    // I. Sosial Kelembagaan - Doughnut Chart
+    var sosialCtx = document.getElementById('sosialChart');
+    if (sosialCtx) {
+        var anggotaKelompok = parseFloat(sosialCtx.dataset.anggotaKelompok) || 0;
+        var anggotaKoperasi = parseFloat(sosialCtx.dataset.anggotaKoperasi) || 0;
+        var bukan = 100 - Math.max(anggotaKelompok, anggotaKoperasi);
+        
+        new Chart(sosialCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Anggota Kelompok', 'Anggota Koperasi', 'Non-Anggota'],
+                datasets: [{
+                    data: [anggotaKelompok, anggotaKoperasi, bukan > 0 ? bukan : 0],
+                    backgroundColor: ['#3b82f6', '#10b981', '#e5e7eb'],
+                    borderWidth: 0,
+                    hoverOffset: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed.toFixed(1) + '%';
                             }
                         }
                     }

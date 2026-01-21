@@ -42,6 +42,16 @@ class InformasiUsaha extends Model
         'total_biaya_operasional'
     ];
 
+    protected $casts = [
+        'produksi_kg_per_trip' => 'float',
+        'penjualan_rp_per_trip' => 'integer',
+        'total_biaya_operasional' => 'integer',
+        'biaya_solar_rp' => 'integer',
+        'biaya_bensin_rp' => 'integer',
+        'biaya_es_balok_rp' => 'integer',
+        'biaya_es_kantong_rp' => 'integer',
+    ];
+
 
     public function knmp()
     {

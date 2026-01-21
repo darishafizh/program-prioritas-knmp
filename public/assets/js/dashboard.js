@@ -439,8 +439,9 @@ function initDashboardMap() {
     var map = L.map("map-knmp").setView([-2.5, 118], 5);
     window.mapInstance = map;
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19
+    L.tileLayer("https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", {
+        maxZoom: 20,
+        attribution: '&copy; Google Satellite'
     }).addTo(map);
 
     // Red icon
