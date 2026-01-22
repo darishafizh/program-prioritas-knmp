@@ -7,14 +7,55 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\BeforeImport;
 
-class ProfileKnmpImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows
+class ProfileKnmpImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows, WithEvents
 {
     protected $knmpId;
+
+    /**
+     * Required columns for this import type
+     */
+    protected $requiredColumns = [
+        'jml_nelayan',
+        'komoditas_utama_1',
+    ];
 
     public function __construct($knmpId)
     {
         $this->knmpId = $knmpId;
+    }
+
+    /**
+     * Register events to validate headers before import
+     */
+    public function registerEvents(): array
+    {
+        return [
+            BeforeImport::class => function (BeforeImport $event) {
+                $worksheet = $event->reader->getActiveSheet();
+                $headerRow = $worksheet->getRowIterator(1)->current();
+
+                $actualHeaders = [];
+                foreach ($headerRow->getCellIterator() as $cell) {
+                    $value = $cell->getValue();
+                    if (!empty($value)) {
+                        $actualHeaders[] = strtolower(trim($value));
+                    }
+                }
+
+                $missingColumns = array_diff($this->requiredColumns, $actualHeaders);
+
+                if (!empty($missingColumns)) {
+                    throw new \Exception(
+                        "File Excel tidak sesuai dengan format Profile KNMP. " .
+                        "Kolom yang diperlukan tidak ditemukan: " . implode(', ', $missingColumns) . ". " .
+                        "Pastikan Anda menggunakan template yang benar."
+                    );
+                }
+            },
+        ];
     }
 
     /**
@@ -27,11 +68,11 @@ class ProfileKnmpImport implements ToModel, WithHeadingRow, WithValidation, Skip
         if (is_null($value) || $value === '') {
             return 0;
         }
-        
+
         $value = strtolower(trim((string) $value));
-        
+
         $trueValues = ['ada', 'ya', 'yes', '1', 'true', 'iya', 'v', '✓', '✔'];
-        
+
         return in_array($value, $trueValues) ? 1 : 0;
     }
 

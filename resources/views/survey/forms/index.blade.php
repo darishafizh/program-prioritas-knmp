@@ -12,72 +12,7 @@
 
 
 {{-- ===================================================== --}}
-{{-- ðŸ”” GLOBAL ALERT --}}
-@if(session('success') || session('error'))
-    <div id="customAlert" class="alert-overlay">
-        <div class="alert-card {{ session('success') ? 'success' : 'error' }}">
-
-            {{-- Icon --}}
-            <div class="alert-icon-circle">
-                @if(session('success'))
-                    <span class="alert-icon">âœ“</span>
-                @else
-                    <span class="alert-icon">âœ•</span>
-                @endif
-            </div>
-
-            {{-- Title --}}
-            <h3 class="alert-title">
-                {{ session('success') ? 'Success!' : 'Failed!' }}
-            </h3>
-
-            {{-- Message --}}
-            <p class="alert-subtitle">
-                {{ session('success') ? session('success') : session('error') }}
-            </p>
-
-            {{-- Progress Bar --}}
-            <div class="alert-progress">
-                <div class="alert-progress-bar"></div>
-            </div>
-
-            {{-- Button --}}
-            <button class="alert-btn" id="alertCloseBtn">
-                {{ session('success') ? 'DONE' : 'TRY AGAIN' }}
-            </button>
-
-        </div>
-    </div>
-@endif
-
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-        const overlay = document.getElementById("customAlert");
-        if (!overlay) return;
-
-        const btn = document.getElementById("alertCloseBtn");
-
-        // Show overlay
-        setTimeout(() => overlay.classList.add("show"), 10);
-
-        // Close if button exists
-        if (btn) {
-            btn.addEventListener("click", () => {
-                overlay.classList.remove("show");
-                setTimeout(() => overlay.remove(), 300);
-            });
-        }
-
-        // Auto close
-        setTimeout(() => {
-            overlay.classList.remove("show");
-            setTimeout(() => overlay.remove(), 250);
-        }, 2600);
-    });
-</script>
+{{-- Alert handled in layouts.app --}}
 
 <!-- start page title -->
 <div class="row">
@@ -1406,7 +1341,8 @@
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <div class="modal-header" style="background: #f8f9fa; color: #333; border-radius: 12px 12px 0 0; border-bottom: 1px solid #dee2e6;">
+                <div class="modal-header"
+                    style="background: #f8f9fa; color: #333; border-radius: 12px 12px 0 0; border-bottom: 1px solid #dee2e6;">
                     <h5 class="modal-title" id="selectRespondenModalLabel">
                         <i class="mdi mdi-account-check me-2 text-primary"></i>Pilih Responden untuk Template
                     </h5>

@@ -195,7 +195,11 @@
 
     {{-- 🔔 GLOBAL ALERT --}}
     @if(session('success') || session('error'))
-        <div id="customAlert" class="alert-overlay">
+        @php
+            $alertMessage = session('success') ?? session('error');
+            $isImportAlert = stripos($alertMessage, 'import') !== false;
+        @endphp
+        <div id="customAlert" class="alert-overlay" data-auto-close="{{ $isImportAlert ? 'false' : 'true' }}">
             <div class="alert-card {{ session('success') ? 'success' : 'error' }}">
                 <div class="alert-icon-circle">
                     @if(session('success'))
@@ -205,10 +209,15 @@
                     @endif
                 </div>
                 <h3 class="alert-title">{{ session('success') ? 'Success!' : 'Failed!' }}</h3>
-                <p class="alert-subtitle">{{ session('success') ? session('success') : session('error') }}</p>
-                <div class="alert-progress">
-                    <div class="alert-progress-bar"></div>
-                </div>
+                <p class="alert-subtitle">{{ $alertMessage }}</p>
+
+                {{-- Only show progress bar if auto-close is enabled --}}
+                @if(!$isImportAlert)
+                    <div class="alert-progress">
+                        <div class="alert-progress-bar"></div>
+                    </div>
+                @endif
+
                 <button class="alert-btn" id="alertCloseBtn">{{ session('success') ? 'DONE' : 'TRY AGAIN' }}</button>
             </div>
         </div>
@@ -220,6 +229,8 @@
             if (!overlay) return;
 
             const closeBtn = document.getElementById("alertCloseBtn");
+            const shouldAutoClose = overlay.getAttribute('data-auto-close') === 'true';
+
             setTimeout(() => overlay.classList.add("show"), 20);
 
             function closeAlert() {
@@ -228,7 +239,11 @@
             }
 
             if (closeBtn) closeBtn.addEventListener("click", closeAlert);
-            setTimeout(closeAlert, 2500);
+
+            // Only auto-close if not an import alert
+            if (shouldAutoClose) {
+                setTimeout(closeAlert, 2500);
+            }
         });
     </script>
 
@@ -247,7 +262,8 @@
 
     @include('layouts.foot')
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     {{-- ⚡ FIXED: Jangan inisialisasi tooltip/popover/offcanvas manual --}}
     {{-- Semua sudah di-handle oleh app.min.js / vendor.min.js --}}

@@ -8,16 +8,57 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\BeforeImport;
 use Illuminate\Support\Facades\DB;
 
-class ProgresKnmpImport implements WithMultipleSheets
+class ProgresKnmpImport implements WithMultipleSheets, WithEvents
 {
     protected $knmpId;
     protected $progresId;
 
+    /**
+     * Required columns for main sheet (Sheet 1)
+     */
+    protected $requiredColumns = [
+        'anggaran_total',
+        'tk_laki',
+    ];
+
     public function __construct($knmpId)
     {
         $this->knmpId = $knmpId;
+    }
+
+    /**
+     * Register events to validate headers before import
+     */
+    public function registerEvents(): array
+    {
+        return [
+            BeforeImport::class => function (BeforeImport $event) {
+                $worksheet = $event->reader->getActiveSheet();
+                $headerRow = $worksheet->getRowIterator(1)->current();
+
+                $actualHeaders = [];
+                foreach ($headerRow->getCellIterator() as $cell) {
+                    $value = $cell->getValue();
+                    if (!empty($value)) {
+                        $actualHeaders[] = strtolower(trim($value));
+                    }
+                }
+
+                $missingColumns = array_diff($this->requiredColumns, $actualHeaders);
+
+                if (!empty($missingColumns)) {
+                    throw new \Exception(
+                        "File Excel tidak sesuai dengan format Progres KNMP. " .
+                        "Kolom yang diperlukan tidak ditemukan: " . implode(', ', $missingColumns) . ". " .
+                        "Pastikan Anda menggunakan template yang benar."
+                    );
+                }
+            },
+        ];
     }
 
     public function sheets(): array
@@ -96,7 +137,7 @@ class ProgresKnmpMainImport implements ToModel, WithHeadingRow, SkipsEmptyRows
 
         $progres = ProgresKnmp::create($data);
         $this->parentImport->setProgresId($progres->id);
-        
+
         return null; // We handle creation manually
     }
 }
@@ -124,7 +165,7 @@ class ProgresKnmpDetailImport implements ToModel, WithHeadingRow, SkipsEmptyRows
 
         // Get progres_id from parent or find it
         $progresId = $this->parentImport->getProgresId();
-        
+
         if (!$progresId) {
             $progres = ProgresKnmp::where('knmp_id', $this->knmpId)->first();
             if (!$progres) {

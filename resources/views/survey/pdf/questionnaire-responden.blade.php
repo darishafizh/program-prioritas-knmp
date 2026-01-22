@@ -386,7 +386,8 @@
             <table class="info-table">
                 <tr>
                     <td class="info-label">Nama Responden</td>
-                    <td class="info-value"><strong style="color: #1a202c; font-size: 11px;">{{ $responden->nama_responden }}</strong></td>
+                    <td class="info-value"><strong
+                            style="color: #1a202c; font-size: 11px;">{{ $responden->nama_responden }}</strong></td>
                 </tr>
                 <tr>
                     <td class="info-label">NIK</td>
@@ -394,7 +395,8 @@
                 </tr>
                 <tr>
                     <td class="info-label">Tanggal Wawancara</td>
-                    <td class="info-value" style="color: #2d3748;">{{ \Carbon\Carbon::parse($responden->tanggal_wawancara)->format('d F Y') }}</td>
+                    <td class="info-value" style="color: #2d3748;">
+                        {{ \Carbon\Carbon::parse($responden->tanggal_wawancara)->format('d F Y') }}</td>
                 </tr>
                 <tr>
                     <td class="info-label">Enumerator</td>
@@ -421,27 +423,34 @@
                     <table class="info-table">
                         <tr>
                             <td class="info-label">Jumlah Penduduk</td>
-                            <td class="info-value">{{ number_format($profileKnmp->jml_penduduk_des ?? 0, 0, ',', '.') }} jiwa</td>
+                            <td class="info-value">{{ number_format($profileKnmp->jml_penduduk_des ?? 0, 0, ',', '.') }}
+                                jiwa</td>
                         </tr>
                         <tr>
                             <td class="info-label">Jumlah Nelayan</td>
-                            <td class="info-value">{{ number_format($profileKnmp->jml_nelayan ?? 0, 0, ',', '.') }} orang</td>
+                            <td class="info-value">{{ number_format($profileKnmp->jml_nelayan ?? 0, 0, ',', '.') }} orang
+                            </td>
                         </tr>
                         <tr>
                             <td class="info-label">Pendapatan Rata-rata</td>
-                            <td class="info-value">Rp {{ number_format($profileKnmp->pendapatan_rata_rata_nelayan ?? 0, 0, ',', '.') }}</td>
+                            <td class="info-value">Rp
+                                {{ number_format($profileKnmp->pendapatan_rata_rata_nelayan ?? 0, 0, ',', '.') }}</td>
                         </tr>
                         <tr>
                             <td class="info-label">Volume Produksi</td>
-                            <td class="info-value">{{ number_format($profileKnmp->volume_produksi_ton ?? 0, 2, ',', '.') }} ton/tahun</td>
+                            <td class="info-value">{{ number_format($profileKnmp->volume_produksi_ton ?? 0, 2, ',', '.') }}
+                                ton/tahun</td>
                         </tr>
                         <tr>
                             <td class="info-label">Nilai Produksi</td>
-                            <td class="info-value">Rp {{ number_format($profileKnmp->nilai_produksi ?? 0, 0, ',', '.') }}</td>
+                            <td class="info-value">Rp {{ number_format($profileKnmp->nilai_produksi ?? 0, 0, ',', '.') }}
+                            </td>
                         </tr>
                         <tr>
                             <td class="info-label">Komoditas Utama</td>
-                            <td class="info-value">{{ $profileKnmp->komoditas_utama_1 ?? '-' }}{{ $profileKnmp->komoditas_utama_2 ? ', ' . $profileKnmp->komoditas_utama_2 : '' }}</td>
+                            <td class="info-value">
+                                {{ $profileKnmp->komoditas_utama_1 ?? '-' }}{{ $profileKnmp->komoditas_utama_2 ? ', ' . $profileKnmp->komoditas_utama_2 : '' }}
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -467,7 +476,8 @@
                             </tr>
                             <tr>
                                 <td class="info-label">Anggaran Konstruksi</td>
-                                <td class="info-value">Rp {{ number_format($progres->anggaran_konstruksi ?? 0, 0, ',', '.') }}</td>
+                                <td class="info-value">Rp {{ number_format($progres->anggaran_konstruksi ?? 0, 0, ',', '.') }}
+                                </td>
                             </tr>
                             <tr>
                                 <td class="info-label">Anggaran Sarpras</td>
@@ -475,7 +485,8 @@
                             </tr>
                             <tr>
                                 <td class="info-label">Tenaga Kerja Total</td>
-                                <td class="info-value">{{ $progres->tk_total ?? 0 }} orang (L: {{ $progres->tk_laki ?? 0 }}, P: {{ $progres->tk_perempuan ?? 0 }})</td>
+                                <td class="info-value">{{ $progres->tk_total ?? 0 }} orang (L: {{ $progres->tk_laki ?? 0 }}, P:
+                                    {{ $progres->tk_perempuan ?? 0 }})</td>
                             </tr>
                             <tr>
                                 <td class="info-label">Tenaga Kerja Lokal</td>
@@ -593,7 +604,8 @@
                             @foreach($soals as $soal)
                                 <tr>
                                     <td class="text-center">{{ $soal->nomor_soal }}</td>
-                                    <td>{{ $tingkatKebahagiaan_pertanyaan[$soal->kategori][$soal->nomor_soal] ?? 'Soal ' . $soal->nomor_soal }}</td>
+                                    <td>{{ $tingkatKebahagiaan_pertanyaan[$soal->kategori][$soal->nomor_soal] ?? 'Soal ' . $soal->nomor_soal }}
+                                    </td>
                                     <td>{{ $soal->jawaban_teks }}</td>
                                     <td class="text-center">{{ $soal->skor_nilai }}</td>
                                 </tr>
@@ -629,7 +641,8 @@
                         </tr>
                         <tr>
                             <td class="info-label">Tanggal Lahir</td>
-                            <td class="info-value">{{ \Carbon\Carbon::parse($responden->tanggal_lahir)->format('d/m/Y') }}</td>
+                            <td class="info-value">{{ \Carbon\Carbon::parse($responden->tanggal_lahir)->format('d/m/Y') }}
+                            </td>
                         </tr>
                         <tr>
                             <td class="info-label">Umur</td>
@@ -649,7 +662,8 @@
                         </tr>
                         <tr>
                             <td class="info-label">Tanggal Wawancara</td>
-                            <td class="info-value">{{ \Carbon\Carbon::parse($responden->tanggal_wawancara)->format('d/m/Y') }}</td>
+                            <td class="info-value">
+                                {{ \Carbon\Carbon::parse($responden->tanggal_wawancara)->format('d/m/Y') }}</td>
                         </tr>
                         <tr>
                             <td class="info-label">Enumerator</td>
@@ -703,11 +717,13 @@
                             </tr>
                             <tr>
                                 <td class="info-label">Penjualan per Trip</td>
-                                <td class="info-value">Rp {{ number_format($usaha->penjualan_rp_per_trip ?? 0, 0, ',', '.') }}</td>
+                                <td class="info-value">Rp {{ number_format($usaha->penjualan_rp_per_trip ?? 0, 0, ',', '.') }}
+                                </td>
                             </tr>
                             <tr>
                                 <td class="info-label">Total Biaya Operasional</td>
-                                <td class="info-value">Rp {{ number_format($usaha->total_biaya_operasional ?? 0, 0, ',', '.') }}</td>
+                                <td class="info-value">Rp {{ number_format($usaha->total_biaya_operasional ?? 0, 0, ',', '.') }}
+                                </td>
                             </tr>
                         </table>
                     </div>
@@ -771,27 +787,33 @@
                         <tbody>
                             <tr>
                                 <td>Eceran</td>
-                                <td class="text-center">{{ number_format($informasiPemasaran->detail_pemasaran->eceran_kg ?? 0, 2) }}</td>
+                                <td class="text-center">
+                                    {{ number_format($informasiPemasaran->detail_pemasaran->eceran_kg ?? 0, 2) }}</td>
                             </tr>
                             <tr>
                                 <td>Koperasi</td>
-                                <td class="text-center">{{ number_format($informasiPemasaran->detail_pemasaran->koperasi_kg ?? 0, 2) }}</td>
+                                <td class="text-center">
+                                    {{ number_format($informasiPemasaran->detail_pemasaran->koperasi_kg ?? 0, 2) }}</td>
                             </tr>
                             <tr>
                                 <td>Tengkulak</td>
-                                <td class="text-center">{{ number_format($informasiPemasaran->detail_pemasaran->tengkulak_kg ?? 0, 2) }}</td>
+                                <td class="text-center">
+                                    {{ number_format($informasiPemasaran->detail_pemasaran->tengkulak_kg ?? 0, 2) }}</td>
                             </tr>
                             <tr>
                                 <td>Pengepul</td>
-                                <td class="text-center">{{ number_format($informasiPemasaran->detail_pemasaran->pengepul_kg ?? 0, 2) }}</td>
+                                <td class="text-center">
+                                    {{ number_format($informasiPemasaran->detail_pemasaran->pengepul_kg ?? 0, 2) }}</td>
                             </tr>
                             <tr>
                                 <td>Pedagang Besar</td>
-                                <td class="text-center">{{ number_format($informasiPemasaran->detail_pemasaran->pedagang_besar_kg ?? 0, 2) }}</td>
+                                <td class="text-center">
+                                    {{ number_format($informasiPemasaran->detail_pemasaran->pedagang_besar_kg ?? 0, 2) }}</td>
                             </tr>
                             <tr>
                                 <td>Lainnya</td>
-                                <td class="text-center">{{ number_format($informasiPemasaran->detail_pemasaran->lainnya_kg ?? 0, 2) }}</td>
+                                <td class="text-center">
+                                    {{ number_format($informasiPemasaran->detail_pemasaran->lainnya_kg ?? 0, 2) }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -812,15 +834,18 @@
                     <table class="info-table">
                         <tr>
                             <td class="info-label">Pendapatan Perikanan</td>
-                            <td class="info-value">Rp {{ number_format($pendapatanRt->pendapatan_perikanan ?? 0, 0, ',', '.') }}</td>
+                            <td class="info-value">Rp
+                                {{ number_format($pendapatanRt->pendapatan_perikanan ?? 0, 0, ',', '.') }}</td>
                         </tr>
                         <tr>
                             <td class="info-label">Pendapatan Non-Perikanan</td>
-                            <td class="info-value">Rp {{ number_format($pendapatanRt->pendapatan_non_perikanan ?? 0, 0, ',', '.') }}</td>
+                            <td class="info-value">Rp
+                                {{ number_format($pendapatanRt->pendapatan_non_perikanan ?? 0, 0, ',', '.') }}</td>
                         </tr>
                         <tr>
                             <td class="info-label">Pendapatan Total</td>
-                            <td class="info-value"><strong>Rp {{ number_format($pendapatanRt->pendapatan_total ?? 0, 0, ',', '.') }}</strong></td>
+                            <td class="info-value"><strong>Rp
+                                    {{ number_format($pendapatanRt->pendapatan_total ?? 0, 0, ',', '.') }}</strong></td>
                         </tr>
                         <tr>
                             <td class="info-label">Kontribusi Nelayan</td>
@@ -964,17 +989,19 @@
                                     <td style="width: 33%; padding: 5px; vertical-align: top; border: none;">
                                         @if($file)
                                             @php
-                                                $imagePath = public_path('storage/'.$file->path_file);
+                                                $imagePath = public_path('storage/' . $file->path_file);
                                                 $displaySrc = $imagePath;
-                                                
+
                                                 // Jika file ada, konversi ke base64 untuk DomPDF
                                                 if (file_exists($imagePath)) {
                                                     try {
                                                         $extension = strtolower(pathinfo($imagePath, PATHINFO_EXTENSION));
                                                         $mimeType = 'image/jpeg';
-                                                        if ($extension == 'png') $mimeType = 'image/png';
-                                                        elseif ($extension == 'gif') $mimeType = 'image/gif';
-                                                        
+                                                        if ($extension == 'png')
+                                                            $mimeType = 'image/png';
+                                                        elseif ($extension == 'gif')
+                                                            $mimeType = 'image/gif';
+
                                                         $imageData = file_get_contents($imagePath);
                                                         $displaySrc = 'data:' . $mimeType . ';base64,' . base64_encode($imageData);
                                                     } catch (\Exception $e) {
@@ -982,13 +1009,18 @@
                                                     }
                                                 }
                                             @endphp
-                                            <div style="border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden; background: #f8fafc;">
+                                            <div
+                                                style="border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden; background: #f8fafc;">
                                                 <div style="text-align: center; padding: 5px; background: #ffffff;">
-                                                    <img src="{{ $displaySrc }}" alt="{{ $file->nama_file }}" style="max-width: 100%; max-height: 120px; height: auto;">
+                                                    <img src="{{ $displaySrc }}" alt="{{ $file->nama_file }}"
+                                                        style="max-width: 100%; max-height: 120px; height: auto;">
                                                 </div>
-                                                <div style="padding: 8px; background: #f7fafc; border-top: 1px solid #e2e8f0; font-size: 8px;">
-                                                    <strong style="color: #2d3748;">{{ Illuminate\Support\Str::limit($file->nama_file, 18) }}</strong><br>
-                                                    <span style="color: #718096;">{{ number_format($file->ukuran_file / 1024, 1) }} KB</span>
+                                                <div
+                                                    style="padding: 8px; background: #f7fafc; border-top: 1px solid #e2e8f0; font-size: 8px;">
+                                                    <strong
+                                                        style="color: #2d3748;">{{ Illuminate\Support\Str::limit($file->nama_file, 18) }}</strong><br>
+                                                    <span style="color: #718096;">{{ number_format($file->ukuran_file / 1024, 1) }}
+                                                        KB</span>
                                                 </div>
                                             </div>
                                         @endif
@@ -1045,7 +1077,7 @@
             @if($logoExists)
                 <img src="{{ $path }}" style="width: 80px; height: auto;" alt="Logo KKP">
             @endif
-            
+
             <div class="cover-title">Dokumen Kuesioner Selesai</div>
             <p class="cover-subtitle">Laporan ini dibuat otomatis oleh Sistem Kuesioner KNMP</p>
 
