@@ -66,6 +66,15 @@ class ProgresKnmpImport implements WithMultipleSheets, WithEvents
     {
         return $this->importedDetails;
     }
+
+    public function registerEvents(): array
+    {
+        return [
+            BeforeImport::class => function (BeforeImport $event) {
+                Log::info("ProgresKnmpImport: Import process started for KNMP ID: " . $this->knmpId);
+            },
+        ];
+    }
 }
 
 /**
