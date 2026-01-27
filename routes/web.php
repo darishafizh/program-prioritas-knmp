@@ -58,6 +58,10 @@ Route::middleware('auth')->group(function () {
     // ==============================
     // ANALYTICS ROUTES (Admin Only)
     // ==============================
+    Route::post('/analytics/import-progres-nasional', [\App\Http\Controllers\ImportController::class, 'importProgresKnmpNasional'])
+        ->middleware('role:admin')
+        ->name('analytics.import_progres_nasional');
+
     Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class, 'index'])
         ->middleware('role:admin')
         ->name('analytics.index');

@@ -24,8 +24,8 @@
                             <option value="year" {{ ($period ?? '') == 'year' ? 'selected' : '' }}>Tahun Ini</option>
                         </select>
                     </form>
-                    <a href="{{ route('dashboard.export-pdf', ['period' => $period ?? 'all']) }}" 
-                       class="btn btn-sm btn-outline-primary" target="_blank">
+                    <a href="{{ route('dashboard.export-pdf', ['period' => $period ?? 'all']) }}"
+                        class="btn btn-sm btn-outline-primary" target="_blank">
                         <i class="mdi mdi-file-pdf-box me-1"></i>Export PDF
                     </a>
                 </div>
@@ -208,7 +208,7 @@
                                         <td>
                                             <span class="badge bg-soft-primary text-primary">{{ $prov->total_knmp }}</span>
                                         </td>
-                                        <td>
+                                        <td>iip
                                             <div class="d-flex align-items-center">
                                                 <div class="progress flex-grow-1 me-2" style="height: 8px;">
                                                     <div class="progress-bar bg-success"
@@ -273,14 +273,14 @@
                                             <div class="d-flex align-items-center">
                                                 <div class="progress flex-grow-1 me-2" style="height: 8px;">
                                                     <div class="progress-bar 
-                                                            @if($prov->avg_capaian >= 50) bg-warning 
-                                                            @else bg-danger @endif"
+                                                                                                                                                                                                                                                                                                                    @if($prov->avg_capaian >= 50) bg-warning 
+                                                                                                                                                                                                                                                                                                                    @else bg-danger @endif"
                                                         style="width: {{ min($prov->avg_capaian, 100) }}%"></div>
                                                 </div>
                                                 <span
                                                     class="fw-semibold 
-                                                        @if($prov->avg_capaian >= 50) text-warning 
-                                                        @else text-danger @endif">{{ number_format($prov->avg_capaian, 1) }}%</span>
+                                                                                                                                                                                                                                                                                                                @if($prov->avg_capaian >= 50) text-warning 
+                                                                                                                                                                                                                                                                                                                @else text-danger @endif">{{ number_format($prov->avg_capaian, 1) }}%</span>
                                             </div>
                                         </td>
                                     </tr>

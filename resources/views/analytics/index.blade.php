@@ -304,6 +304,139 @@
         </div>
     </div>
 
+    <!-- Progres KNMP Nasional -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="header-title mb-0">
+                        <i class="mdi mdi-chart-bar me-2 text-info"></i>
+                        Progres Pembangunan KNMP Nasional
+                    </h5>
+                    <div class="d-flex align-items-center gap-2">
+                        <!-- Search Input -->
+                        <div class="input-group input-group-sm" style="width: 200px;">
+                            <span class="input-group-text bg-light border-end-0"><i class="mdi mdi-magnify"></i></span>
+                            <input type="text" id="paramsSearch" class="form-control border-start-0 ps-0"
+                                placeholder="Cari KNMP..." onkeyup="filterTable()">
+                        </div>
+
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#importProgresNasionalModal">
+                            <i class="mdi mdi-upload me-1"></i> Import/Update Data
+                        </button>
+                        <a href="{{ route('forms.download_template', ['section' => 'progres-knmp-nasional']) }}"
+                            class="btn btn-sm btn-outline-secondary">
+                            <i class="mdi mdi-download me-1"></i> Template
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-light p-3 rounded me-3">
+                            <h2 class="mb-0 text-primary">{{ number_format($progresNasionalAvg, 2) }}%</h2>
+                            <small class="text-muted">Rata-rata Nasional</small>
+                        </div>
+                        <div class="flex-grow-1">
+                            <p class="mb-1 text-muted">Statistik Import Data:</p>
+                            <div class="d-flex gap-3">
+                                <span class="badge bg-soft-info text-info p-2">
+                                    <i class="mdi mdi-map-marker me-1"></i> {{ count($progresNasional) }} Lokasi
+                                </span>
+                                <span class="badge bg-soft-success text-success p-2">
+                                    <i class="mdi mdi-check-circle me-1"></i>
+                                    {{ $progresNasional->where('progres', 100)->count() }} Selesai (100%)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if(count($progresNasional) > 0)
+                        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                            <table class="table table-centered table-nowrap mb-0">
+                                <thead class="table-light fade-sticky-header">
+                                    <tr>
+                                        <th style="width: 50px;">#</th>
+                                        <th>Nama KNMP</th>
+                                        <th style="width: 250px;">Status Progres</th>
+                                        <th style="width: 100px;" class="text-end">Persentase</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($progresNasional as $index => $item)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td class="fw-semibold">
+                                                {{ $item->knmp ? $item->knmp->nama : 'KNMP #' . $item->knmp_id }}
+                                            </td>
+                                            <td>
+                                                <div class="progress" style="height: 8px;">
+                                                    @php
+                                                        $colorClass = 'bg-danger';
+                                                        if ($item->progres >= 100)
+                                                            $colorClass = 'bg-success';
+                                                        elseif ($item->progres >= 75)
+                                                            $colorClass = 'bg-primary';
+                                                        elseif ($item->progres >= 50)
+                                                            $colorClass = 'bg-warning';
+                                                    @endphp
+                                                    <div class="progress-bar {{ $colorClass }}" role="progressbar"
+                                                        style="width: {{ $item->progres }}%" aria-valuenow="{{ $item->progres }}"
+                                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </td>
+                                            <td class="text-end fw-bold">
+                                                <span class="{{ $item->progres >= 100 ? 'text-success' : '' }}">
+                                                    {{ number_format($item->progres, 2) }}%
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="text-center py-5 text-muted">
+                            <i class="mdi mdi-database-off fs-1"></i>
+                            <p class="mt-2">Belum ada data progres nasional.</p>
+                            <button type="button" class="btn btn-sm btn-primary mt-2" data-bs-toggle="modal"
+                                data-bs-target="#importProgresNasionalModal">
+                                Import Data Sekarang
+                            </button>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Import -->
+    <div class="modal fade" id="importProgresNasionalModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('analytics.import_progres_nasional') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title">Import Progres Nasional</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">File Excel (.xlsx)</label>
+                            <input type="file" name="file" class="form-control" accept=".xlsx, .xls, .csv" required>
+                            <small class="text-muted d-block mt-1">Format: knmp_id, progres</small>
+                            <small class="text-muted">Data akan di-update (replace) berdasarkan knmp_id.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Import</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Trend Charts -->
     <div class="row">
         <!-- Survey Trend -->
@@ -370,12 +503,51 @@
 
 @push('scripts')
     <script>
+        function filterTable() {
+            // Declare variables
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("paramsSearch");
+            filter = input.value.toUpperCase();
+            // Get the table body (assuming there's only one table with this class or use ID if possible)
+            var tbody = document.querySelector(".table-responsive table tbody");
+            tr = tbody.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                // Column 1 is Nama KNMP (index 1 because index 0 is Number)
+                td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
+            // ... existing code ...
             const trendLabels = @json($trendLabels);
             const surveyData = @json($trendData['surveys'] ?? []);
             const tenagaKerjaData = @json($trendData['tenaga_kerja'] ?? []);
             const capaianData = @json($trendData['capaian'] ?? []);
+
             const kebahagiaanData = @json($trendData['kebahagiaan'] ?? []);
+
+            // Progres Nasional Data
+            const progresNasional = @json($progresNasional ?? []);
+            const progresNasionalLabels = progresNasional.map(item => item.knmp ? item.knmp.nama : 'KNMP #' + item.knmp_id);
+            const progresNasionalValues = progresNasional.map(item => item.progres);
+            const progresNasionalColors = progresNasionalValues.map(val => {
+                if (val >= 100) return '#10b981'; // Green
+                if (val >= 75) return '#3b82f6'; // Blue
+                if (val >= 50) return '#f59e0b'; // Orange
+                return '#ef4444'; // Red
+            });
+
+            // Comparison bar chart data
 
             // Comparison bar chart data
             const comparisonLabels = @json($comparisonLabels);
@@ -480,6 +652,10 @@
                     }
                 }
             });
+
+
+
+            // Progres Nasional Chart removed in favor of table view
 
             // Survey Trend Chart
             new Chart(document.getElementById('surveyTrendChart'), {

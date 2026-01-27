@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\Knmp;
 use App\Models\InformasiResponden;
 use App\Models\TingkatKebahagiaanNelayan;
+use App\Models\ProgresKnmpNasional; // Added
 
 class AnalyticsController extends Controller
 {
@@ -216,6 +217,12 @@ class AnalyticsController extends Controller
         $totalKnmpAllTime = Knmp::count();
         $totalTenagaKerjaAllTime = DB::table('progres_knmp')->sum('tk_total') ?? 0;
 
+        // ===================================
+        // PROGRES KNMP NASIONAL
+        // ===================================
+        $progresNasional = ProgresKnmpNasional::with('knmp')->orderBy('progres', 'desc')->get();
+        $progresNasionalAvg = $progresNasional->avg('progres') ?? 0;
+
         return view('analytics.index', compact(
             'period',
             'periodLabel',
@@ -255,7 +262,10 @@ class AnalyticsController extends Controller
             // All time totals
             'totalSurveyAllTime',
             'totalKnmpAllTime',
-            'totalTenagaKerjaAllTime'
+            'totalTenagaKerjaAllTime',
+            // Progres Nasional
+            'progresNasional',
+            'progresNasionalAvg'
         ));
     }
 }

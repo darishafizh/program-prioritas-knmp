@@ -23,6 +23,8 @@ use App\Exports\InformasiUsahaTemplateExport;
 use App\Exports\InformasiPemasaranTemplateExport;
 use App\Exports\InformasiPendapatanRtTemplateExport;
 use App\Exports\SosialKelembagaanTemplateExport;
+use App\Imports\ProgresKnmpNasionalImport; // Added
+use App\Exports\ProgresKnmpNasionalTemplateExport; // Added
 
 class ImportController extends Controller
 {
@@ -61,7 +63,7 @@ class ImportController extends Controller
     private function parseQueryException(\Illuminate\Database\QueryException $e): string
     {
         $message = $e->getMessage();
-        
+
         // Incorrect integer value
         if (str_contains($message, 'Incorrect integer value')) {
             preg_match("/Incorrect integer value: '(.+?)' for column '(.+?)'/", $message, $matches);
@@ -71,7 +73,7 @@ class ImportController extends Controller
                 return "Error: Nilai '{$value}' tidak valid untuk kolom '{$column}'. Pastikan kolom berisi angka/ID yang benar.";
             }
         }
-        
+
         // Duplicate entry
         if (str_contains($message, 'Duplicate entry')) {
             preg_match("/Duplicate entry '(.+?)' for key/", $message, $matches);
@@ -79,7 +81,7 @@ class ImportController extends Controller
                 return "Error: Data '{$matches[1]}' sudah ada di database (duplikat).";
             }
         }
-        
+
         // Data too long
         if (str_contains($message, 'Data too long')) {
             preg_match("/Data too long for column '(.+?)'/", $message, $matches);
@@ -87,7 +89,7 @@ class ImportController extends Controller
                 return "Error: Data terlalu panjang untuk kolom '{$matches[1]}'. Kurangi jumlah karakter.";
             }
         }
-        
+
         // Cannot be null
         if (str_contains($message, 'cannot be null')) {
             preg_match("/Column '(.+?)' cannot be null/", $message, $matches);
@@ -95,12 +97,12 @@ class ImportController extends Controller
                 return "Error: Kolom '{$matches[1]}' wajib diisi (tidak boleh kosong).";
             }
         }
-        
+
         // Foreign key constraint
         if (str_contains($message, 'foreign key constraint')) {
             return "Error: Referensi data tidak valid. Pastikan ID yang dimasukkan sudah ada di database.";
         }
-        
+
         return "Error Database: " . $this->simplifyErrorMessage($message);
     }
 
@@ -113,12 +115,12 @@ class ImportController extends Controller
         if (str_contains($message, 'SQL:')) {
             $message = preg_replace('/\(SQL:.*\)/s', '', $message);
         }
-        
+
         // Truncate if too long
         if (strlen($message) > 200) {
             $message = substr($message, 0, 200) . '...';
         }
-        
+
         return trim($message);
     }
 
@@ -357,6 +359,35 @@ class ImportController extends Controller
     }
 
     /**
+     * Import Progres KNMP Nasional (Analytics)
+     */
+    public function importProgresKnmpNasional(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:10240',
+        ]);
+
+        try {
+            Excel::import(new ProgresKnmpNasionalImport, $request->file('file'));
+            return back()->with('success', 'Data Progres KNMP Nasional berhasil diimport!');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $errorMessages[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
+            }
+            return back()->with('error', 'Gagal import: ' . implode('; ', array_slice($errorMessages, 0, 3)));
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorMessage = $this->parseQueryException($e);
+            \Log::error('Import Progres KNMP Nasional DB Error', ['message' => $e->getMessage()]);
+            return back()->with('error', $errorMessage);
+        } catch (\Exception $e) {
+            \Log::error('Import Progres KNMP Nasional Error', ['message' => $e->getMessage()]);
+            return back()->with('error', 'Gagal import data: ' . $this->simplifyErrorMessage($e->getMessage()));
+        }
+    }
+
+    /**
      * Download template Excel for a specific section
      */
     public function downloadTemplate(Request $request, $section)
@@ -371,6 +402,7 @@ class ImportController extends Controller
             'informasi-pemasaran' => ['export' => InformasiPemasaranTemplateExport::class, 'filename' => 'template-informasi-pemasaran.xlsx', 'needs_responden' => true],
             'pendapatan-rt' => ['export' => InformasiPendapatanRtTemplateExport::class, 'filename' => 'template-pendapatan-rumah-tangga.xlsx', 'needs_responden' => true],
             'sosial-kelembagaan' => ['export' => SosialKelembagaanTemplateExport::class, 'filename' => 'template-sosial-kelembagaan.xlsx', 'needs_responden' => true],
+            'progres-knmp-nasional' => ['export' => ProgresKnmpNasionalTemplateExport::class, 'filename' => 'template-progres-knmp-nasional.xlsx', 'needs_responden' => false],
         ];
 
         if (!isset($templates[$section])) {
