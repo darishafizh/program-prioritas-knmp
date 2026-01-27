@@ -100,8 +100,42 @@
             transition: transform 0.2s;
         }
         .sort-active {
-            background-color: #eff6ff !important; /* light blue bg */
-            color: #1d4ed8 !important; /* darker blue text */
+            background-color: #eff6ff !important;
+            color: #1d4ed8 !important;
+        }
+
+        /* Enhanced Search Field */
+        .search-field-enhanced {
+            border: 1px solid #d1d5db !important;
+            border-radius: 8px !important;
+            overflow: hidden;
+            background: #fff;
+        }
+        .search-field-enhanced .input-group-text {
+            background: #f8f9fa;
+            border: none;
+            border-right: 1px solid #e5e7eb;
+            padding: 0.5rem 0.75rem;
+        }
+        .search-field-enhanced .input-group-text i {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        .search-field-enhanced .form-control {
+            border: none;
+            padding: 0.5rem 0.75rem;
+        }
+        .search-field-enhanced .form-control:focus {
+            box-shadow: none;
+        }
+        .search-field-enhanced:focus-within {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Fix modal centering - override app.css margin */
+        #importProgresNasionalModal .modal-dialog {
+            margin: auto !important;
         }
     </style>
 @endpush
@@ -335,7 +369,7 @@
                     </h5>
                     <div class="d-flex align-items-center">
                         <!-- Search Input -->
-                        <div class="input-group input-group-sm me-2" style="width: 250px;">
+                        <div class="input-group input-group-sm me-2 search-field-enhanced" style="width: 220px;">
                             <span class="input-group-text"><i class="mdi mdi-magnify"></i></span>
                             <input type="text" id="paramsSearch" class="form-control"
                                 placeholder="Cari KNMP..." onkeyup="filterTable()">
@@ -384,7 +418,7 @@
                                             Nama KNMP <i class="mdi mdi-sort ms-1 text-muted"></i>
                                         </th>
                                         <th style="width: 250px;">Status Progres</th>
-                                        <th style="width: 120px;" class="text-end sortable cursor-pointer" onclick="sortTable(3)">
+                                        <th style="width: 140px; white-space: nowrap;" class="text-end sortable" onclick="sortTable(3)">
                                             Persentase <i class="mdi mdi-sort ms-1 text-muted"></i>
                                         </th>
                                     </tr>

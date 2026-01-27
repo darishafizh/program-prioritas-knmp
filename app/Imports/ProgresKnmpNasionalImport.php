@@ -3,21 +3,24 @@
 namespace App\Imports;
 
 use App\Models\ProgresKnmpNasional;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
-class ProgresKnmpNasionalImport implements ToModel, WithHeadingRow, SkipsEmptyRows
+class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
 {
     public $failures = [];
     public $successCount = 0;
 
     /**
-     * @param array $row
+     * Process the collection of rows from Excel
      *
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @param Collection $rows
+     * @return void
      */
-    public function model(array $row)
+    public function collection(Collection $rows)
     {
         $existingKnmpIds = \App\Models\Knmp::pluck('id')->toArray();
 
@@ -57,3 +60,4 @@ class ProgresKnmpNasionalImport implements ToModel, WithHeadingRow, SkipsEmptyRo
         }
     }
 }
+
