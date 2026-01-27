@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('progres_kendala')) {
+            return;
+        }
+
         Schema::create('progres_kendala', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('progres_id');

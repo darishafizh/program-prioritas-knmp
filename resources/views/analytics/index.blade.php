@@ -83,6 +83,26 @@
             font-size: 0.875rem;
             opacity: 0.9;
         }
+
+        .sortable {
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+        }
+        .sortable:hover {
+            background-color: #f3f4f6;
+            color: #3b82f6;
+        }
+        .sortable i {
+            font-size: 1.1em;
+            vertical-align: middle;
+            transition: transform 0.2s;
+        }
+        .sort-active {
+            background-color: #eff6ff !important; /* light blue bg */
+            color: #1d4ed8 !important; /* darker blue text */
+        }
     </style>
 @endpush
 
@@ -308,27 +328,30 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
                     <h5 class="header-title mb-0">
                         <i class="mdi mdi-chart-bar me-2 text-info"></i>
                         Progres Pembangunan KNMP Nasional
                     </h5>
-                    <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center">
                         <!-- Search Input -->
-                        <div class="input-group input-group-sm" style="width: 200px;">
-                            <span class="input-group-text bg-light border-end-0"><i class="mdi mdi-magnify"></i></span>
-                            <input type="text" id="paramsSearch" class="form-control border-start-0 ps-0"
+                        <div class="input-group input-group-sm me-2" style="width: 250px;">
+                            <span class="input-group-text"><i class="mdi mdi-magnify"></i></span>
+                            <input type="text" id="paramsSearch" class="form-control"
                                 placeholder="Cari KNMP..." onkeyup="filterTable()">
                         </div>
 
-                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#importProgresNasionalModal">
-                            <i class="mdi mdi-upload me-1"></i> Import/Update Data
-                        </button>
-                        <a href="{{ route('forms.download_template', ['section' => 'progres-knmp-nasional']) }}"
-                            class="btn btn-sm btn-outline-secondary">
-                            <i class="mdi mdi-download me-1"></i> Template
-                        </a>
+                        <!-- Action Buttons -->
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#importProgresNasionalModal">
+                                <i class="mdi mdi-upload me-1"></i> Import/Update
+                            </button>
+                            <a href="{{ route('forms.download_template', ['section' => 'progres-knmp-nasional']) }}"
+                                class="btn btn-outline-secondary">
+                                <i class="mdi mdi-download me-1"></i> Template
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -357,9 +380,13 @@
                                 <thead class="table-light fade-sticky-header">
                                     <tr>
                                         <th style="width: 50px;">#</th>
-                                        <th>Nama KNMP</th>
+                                        <th onclick="sortTable(1)" style="cursor: pointer;" class="sortable">
+                                            Nama KNMP <i class="mdi mdi-sort ms-1 text-muted"></i>
+                                        </th>
                                         <th style="width: 250px;">Status Progres</th>
-                                        <th style="width: 100px;" class="text-end">Persentase</th>
+                                        <th style="width: 120px;" class="text-end sortable cursor-pointer" onclick="sortTable(3)">
+                                            Persentase <i class="mdi mdi-sort ms-1 text-muted"></i>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -412,7 +439,7 @@
 
     <!-- Modal Import -->
     <div class="modal fade" id="importProgresNasionalModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="{{ route('analytics.import_progres_nasional') }}" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -501,20 +528,18 @@
     </div>
 @endsection
 
+
+
 @push('scripts')
     <script>
+        // ... (filterTable function remains same) ...
         function filterTable() {
-            // Declare variables
             var input, filter, table, tr, td, i, txtValue;
             input = document.getElementById("paramsSearch");
             filter = input.value.toUpperCase();
-            // Get the table body (assuming there's only one table with this class or use ID if possible)
             var tbody = document.querySelector(".table-responsive table tbody");
             tr = tbody.getElementsByTagName("tr");
-
-            // Loop through all table rows, and hide those who don't match the search query
             for (i = 0; i < tr.length; i++) {
-                // Column 1 is Nama KNMP (index 1 because index 0 is Number)
                 td = tr[i].getElementsByTagName("td")[1];
                 if (td) {
                     txtValue = td.textContent || td.innerText;
@@ -525,6 +550,74 @@
                     }
                 }
             }
+        }
+
+        let sortDirections = [true, true, true, true]; 
+
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.querySelector(".table-responsive table");
+            switching = true;
+            dir = sortDirections[n] ? "asc" : "desc";
+            
+            // 1. Reset all headers styling
+            const headers = table.querySelectorAll("th.sortable");
+            headers.forEach((th) => {
+                th.classList.remove('sort-active');
+                const icon = th.querySelector("i");
+                if (icon) {
+                    icon.className = "mdi mdi-sort ms-1 opacity-25"; // default faint icon
+                }
+            });
+            
+            // 2. Highlight active header
+            const currentHeader = n === 1 ? table.querySelectorAll("th")[1] : table.querySelectorAll("th")[3];
+            currentHeader.classList.add('sort-active');
+            
+            const currentIcon = currentHeader.querySelector("i");
+            if (currentIcon) {
+                // Use distinct icons for clear feedback
+                currentIcon.className = dir === "asc" 
+                    ? "mdi mdi-sort-ascending ms-1 fw-bold" 
+                    : "mdi mdi-sort-descending ms-1 fw-bold";
+            }
+
+            while (switching) {
+                // ... (sorting logic remains same) ...
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("td")[n];
+                    y = rows[i + 1].getElementsByTagName("td")[n];
+                    let xVal = x.textContent || x.innerText;
+                    let yVal = y.textContent || y.innerText;
+                    if (n === 3) {
+                        xVal = parseFloat(xVal.replace('%', '').replace(',', '.'));
+                        yVal = parseFloat(yVal.replace('%', '').replace(',', '.'));
+                    } else {
+                        xVal = xVal.toLowerCase();
+                        yVal = yVal.toLowerCase();
+                    }
+                    if (dir == "asc") {
+                        if (xVal > yVal) { shouldSwitch = true; break; }
+                    } else if (dir == "desc") {
+                        if (xVal < yVal) { shouldSwitch = true; break; }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+            sortDirections[n] = (dir === "asc");
+            for (i = 1; i < rows.length; i++) rows[i].getElementsByTagName("td")[0].innerHTML = i;
         }
 
         document.addEventListener('DOMContentLoaded', function () {

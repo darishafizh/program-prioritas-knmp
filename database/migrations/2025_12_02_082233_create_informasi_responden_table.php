@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('informasi_responden')) {
+            return;
+        }
+
         Schema::create('informasi_responden', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('knmp_id')->index();

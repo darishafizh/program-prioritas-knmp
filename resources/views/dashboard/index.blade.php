@@ -208,7 +208,7 @@
                                         <td>
                                             <span class="badge bg-soft-primary text-primary">{{ $prov->total_knmp }}</span>
                                         </td>
-                                        <td>iip
+                                        <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="progress flex-grow-1 me-2" style="height: 8px;">
                                                     <div class="progress-bar bg-success"

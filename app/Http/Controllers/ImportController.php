@@ -361,6 +361,9 @@ class ImportController extends Controller
     /**
      * Import Progres KNMP Nasional (Analytics)
      */
+    /**
+     * Import Progres KNMP Nasional (Analytics)
+     */
     public function importProgresKnmpNasional(Request $request)
     {
         $request->validate([
@@ -368,8 +371,22 @@ class ImportController extends Controller
         ]);
 
         try {
-            Excel::import(new ProgresKnmpNasionalImport, $request->file('file'));
-            return back()->with('success', 'Data Progres KNMP Nasional berhasil diimport!');
+            $import = new ProgresKnmpNasionalImport;
+            Excel::import($import, $request->file('file'));
+
+            if (count($import->failures) > 0) {
+                // If there are failures, show them along with success count
+                $failureMsg = implode('<br>', array_slice($import->failures, 0, 10)); // Limit display
+                if (count($import->failures) > 10) {
+                    $failureMsg .= "<br>...dan " . (count($import->failures) - 10) . " error lainnya.";
+                }
+
+                $msg = "Import Selesai. <br><b>Berhasil: {$import->successCount} data.</b><br><br><b>Gagal (" . count($import->failures) . "):</b><br>" . $failureMsg;
+                return back()->with('error', $msg); // Use 'error' style to make sure they read the warnings
+            }
+
+            return back()->with('success', "Sukses! {$import->successCount} data Progres KNMP Nasional berhasil diimport.");
+
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
             $errorMessages = [];
