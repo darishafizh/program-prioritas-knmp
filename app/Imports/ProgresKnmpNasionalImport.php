@@ -3,61 +3,48 @@
 namespace App\Imports;
 
 use App\Models\ProgresKnmpNasional;
-use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
-class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
+class ProgresKnmpNasionalImport implements ToModel, WithHeadingRow, SkipsEmptyRows
 {
     public $failures = [];
     public $successCount = 0;
 
     /**
-     * Process the collection of rows from Excel
+     * @param array $row
      *
-     * @param Collection $rows
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function collection(Collection $rows)
+    public function model(array $row)
     {
-        $existingKnmpIds = \App\Models\Knmp::pluck('id')->toArray();
-
-        foreach ($rows as $index => $row) {
-            $rowNumber = $index + 2; // Assuming header is row 1
-
-            // 1. Strict Validation: knmp_id must exist
+        foreach ($rows as $row) {
+            // Skip if knmp_id is missing
             if (empty($row['knmp_id'])) {
-                $this->failures[] = "Baris {$rowNumber}: Kolom 'knmp_id' kosong.";
                 continue;
             }
 
+            // Cast to integer to ensure matching with DB primary key type
             $knmpId = (int) $row['knmp_id'];
 
-            if (!in_array($knmpId, $existingKnmpIds)) {
-                $this->failures[] = "Baris {$rowNumber}: KNMP ID '{$knmpId}' tidak ditemukan di database.";
-                continue;
-            }
-
-            // 2. Clear numeric parsing
+            // Get progres value and clean it
             $progresValue = $row['progres'] ?? 0;
             if (is_string($progresValue)) {
                 $progresValue = str_replace(',', '.', $progresValue);
             }
             $progresValue = (float) $progresValue;
 
-            try {
-                // 3. Update or Create
-                ProgresKnmpNasional::updateOrCreate(
-                    ['knmp_id' => $knmpId],
-                    ['progres' => $progresValue]
-                );
-                $this->successCount++;
-            } catch (\Exception $e) {
-                $this->failures[] = "Baris {$rowNumber}: Gagal menyimpan database. " . $e->getMessage();
-            }
+            // Use updateOrCreate for reliable update/insert
+            ProgresKnmpNasional::updateOrCreate(
+                ['knmp_id' => $knmpId],
+                ['progres' => $progresValue]
+            );
+
+            Log::info("Updated progres KNMP Nasional", [
+                'knmp_id' => $knmpId,
+                'progres' => $progresValue
+            ]);
         }
     }
 }
-
