@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Models\Knmp;
+use App\Models\ProgresKnmpNasional;
 
 class DashboardController extends Controller
 {
@@ -87,83 +88,24 @@ class DashboardController extends Controller
         // 4. Hitung Rata-rata Indeks Kebahagiaan Nelayan
         $rataRataKebahagiaan = TingkatKebahagiaanNelayan::avg('skor_nilai') ?? 0;
 
-        // 5. Hitung Jumlah Desa dengan Aset Bertambah (KNMP yang punya data ProgresKnmp)
-        $desaAsetBertambah = DB::table('progres_knmp')
-            ->distinct('knmp_id')
-            ->count('knmp_id');
 
-        // ===================================
-        // DATA UNTUK GRAFIK
-        // ===================================
 
-        // Chart 1: Capaian Indikator per KNMP
-        $capaianPerKnmpData = DB::table('progres_knmp_details')
-            ->join('progres_knmp', 'progres_knmp_details.progres_id', '=', 'progres_knmp.id')
-            ->join('knmp', 'progres_knmp.knmp_id', '=', 'knmp.id')
-            ->select('knmp.nama', DB::raw('COALESCE(AVG(progres_knmp_details.persen), 0) as avg_persen'))
-            ->groupBy('knmp.id', 'knmp.nama')
-            ->orderBy('knmp.id')
-            ->limit(10)
-            ->get();
 
-        $labelKnmp = $capaianPerKnmpData->pluck('nama')->toArray();
-        $capaianPerKnmp = $capaianPerKnmpData->pluck('avg_persen')->map(function ($val) {
-            return round($val, 2);
-        })->toArray();
-
-        // Chart 2: Distribusi Kategori Aset (berdasarkan kolom 'komponen')
-        $distribusiAset = DB::table('progres_knmp_details')
-            ->select('komponen', DB::raw('COUNT(*) as total'))
-            ->whereNotNull('komponen')
-            ->groupBy('komponen')
-            ->orderByDesc('total')
-            ->limit(5)
-            ->get();
-
-        $distribusiAsetLabels = $distribusiAset->pluck('komponen')->toArray();
-        $distribusiAsetData = $distribusiAset->pluck('total')->toArray();
-
-        // Chart 3: Penyerapan Tenaga Kerja (dari progres_knmp per bulan)
-        $penyerapanData = DB::table('progres_knmp')
-            ->select(
-                DB::raw('MONTH(created_at) as bulan'),
-                DB::raw('COALESCE(SUM(tk_total), 0) as total')
-            )
-            ->whereYear('created_at', date('Y'))
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->orderBy('bulan')
-            ->get()
-            ->keyBy('bulan');
-
-        $penyerapanLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-        $penyerapanTenagaKerja = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $penyerapanTenagaKerja[] = isset($penyerapanData[$i]) ? (int) $penyerapanData[$i]->total : 0;
-        }
-
-        // Chart 4: Tingkat Kesejahteraan (berdasarkan kategori skor kebahagiaan)
-        $kesejahteraanStats = DB::table('tingkat_kebahagiaan_nelayan')
-            ->select(DB::raw('
-                SUM(CASE WHEN skor_nilai >= 8 THEN 1 ELSE 0 END) as sangat_sejahtera,
-                SUM(CASE WHEN skor_nilai >= 6 AND skor_nilai < 8 THEN 1 ELSE 0 END) as sejahtera,
-                SUM(CASE WHEN skor_nilai >= 4 AND skor_nilai < 6 THEN 1 ELSE 0 END) as cukup_sejahtera,
-                SUM(CASE WHEN skor_nilai < 4 THEN 1 ELSE 0 END) as kurang_sejahtera,
-                COUNT(*) as total
-            '))
-            ->first();
-
-        $totalKesejahteraan = $kesejahteraanStats->total ?: 1;
-        $tingkatKesejahteraanLabels = ['Sangat Sejahtera', 'Sejahtera', 'Cukup Sejahtera', 'Kurang Sejahtera'];
-        $tingkatKesejahteraanData = [
-            round(($kesejahteraanStats->sangat_sejahtera / $totalKesejahteraan) * 100, 0),
-            round(($kesejahteraanStats->sejahtera / $totalKesejahteraan) * 100, 0),
-            round(($kesejahteraanStats->cukup_sejahtera / $totalKesejahteraan) * 100, 0),
-            round(($kesejahteraanStats->kurang_sejahtera / $totalKesejahteraan) * 100, 0),
-        ];
 
         // ===================================
         // DATA UNTUK STATISTIK NASIONAL
         // ===================================
+
+        // Progres KNMP Nasional (dari tabel progres_knmp_nasional)
+        $progresNasional = ProgresKnmpNasional::with('knmp')
+            ->orderBy('progres', 'desc')
+            ->get();
+        $progresNasionalAvg = $progresNasional->avg('progres') ?? 0;
+
+        // Rata-rata Anggota Kopdeskel
+        $rataRataAnggotaKopdeskel = DB::table('profile_knmp')
+            ->selectRaw('AVG(COALESCE(jumlah_anggota_laki, 0) + COALESCE(jumlah_anggota_perempuan, 0)) as avg_anggota')
+            ->value('avg_anggota') ?? 0;
 
         // Progress Nasional
         $totalKnmpNasional = count($desa_knmp);
@@ -173,29 +115,9 @@ class DashboardController extends Controller
         // Total Tenaga Kerja Terserap
         $totalTenagaKerja = DB::table('progres_knmp')->sum('tk_total') ?? 0;
 
-        // Statistik per Provinsi
-        $statistikProvinsi = DB::table('knmp')
-            ->join('knmp_provinces', 'knmp.province_id', '=', 'knmp_provinces.id')
-            ->leftJoin('progres_knmp', 'knmp.id', '=', 'progres_knmp.knmp_id')
-            ->leftJoin('progres_knmp_details', 'progres_knmp.id', '=', 'progres_knmp_details.progres_id')
-            ->select(
-                'knmp_provinces.id as province_id',
-                'knmp_provinces.name as province_name',
-                DB::raw('COUNT(DISTINCT knmp.id) as total_knmp'),
-                DB::raw('COALESCE(AVG(progres_knmp_details.persen), 0) as avg_capaian')
-            )
-            ->groupBy('knmp_provinces.id', 'knmp_provinces.name')
-            ->orderByDesc('avg_capaian')
-            ->get();
-
-        // Top 5 Provinsi (capaian tertinggi)
-        $topProvinsi = $statistikProvinsi->take(5);
-
-        // Bottom 5 Provinsi (perlu perhatian)
-        $bottomProvinsi = $statistikProvinsi->sortBy('avg_capaian')->take(5)->values();
-
+    
         // Jumlah provinsi yang sudah ter-cover
-        $totalProvinsiCovered = $statistikProvinsi->count();
+        // $totalProvinsiCovered = $statistikProvinsi->count();
 
         return view('dashboard.index', compact(
             'greeting',
@@ -207,25 +129,29 @@ class DashboardController extends Controller
             'tingkatKelengkapanData',
             'capaianIndikator',
             'rataRataKebahagiaan',
-            'desaAsetBertambah',
+            // 'desaAsetBertambah',
             // Data untuk grafik
-            'capaianPerKnmp',
-            'labelKnmp',
-            'distribusiAsetData',
-            'distribusiAsetLabels',
-            'penyerapanTenagaKerja',
-            'penyerapanLabels',
-            'tingkatKesejahteraanData',
-            'tingkatKesejahteraanLabels',
+            // 'capaianPerKnmp',
+            // 'labelKnmp',
+            // 'distribusiAsetData',
+            // 'distribusiAsetLabels',
+            // 'penyerapanTenagaKerja',
+            // 'penyerapanLabels',
+            // 'tingkatKesejahteraanData',
+            // 'tingkatKesejahteraanLabels',
             // Data statistik nasional
             'progressNasional',
             'totalTenagaKerja',
-            'statistikProvinsi',
-            'topProvinsi',
-            'bottomProvinsi',
-            'totalProvinsiCovered',
+            // 'statistikProvinsi',
+            // 'topProvinsi',
+            // 'bottomProvinsi',
+            // 'totalProvinsiCovered',
             'totalKnmpNasional',
-            'targetKnmp'
+            'targetKnmp',
+            // Data progres nasional dan kopdeskel
+            'progresNasional',
+            'progresNasionalAvg',
+            'rataRataAnggotaKopdeskel'
         ));
     }
 
@@ -285,38 +211,11 @@ class DashboardController extends Controller
         // Kebahagiaan
         $rataRataKebahagiaan = TingkatKebahagiaanNelayan::avg('skor_nilai') ?? 0;
 
-        // Desa Aset Bertambah
-        $desaAsetBertambah = DB::table('progres_knmp')
-            ->distinct('knmp_id')
-            ->count('knmp_id');
 
-        // Capaian per KNMP
-        $capaianPerKnmpData = DB::table('progres_knmp_details')
-            ->join('progres_knmp', 'progres_knmp_details.progres_id', '=', 'progres_knmp.id')
-            ->join('knmp', 'progres_knmp.knmp_id', '=', 'knmp.id')
-            ->select('knmp.nama', DB::raw('COALESCE(AVG(progres_knmp_details.persen), 0) as avg_persen'))
-            ->groupBy('knmp.id', 'knmp.nama')
-            ->orderBy('knmp.id')
-            ->limit(10)
-            ->get();
 
-        // Statistik per Provinsi
-        $statistikProvinsi = DB::table('knmp')
-            ->join('knmp_provinces', 'knmp.province_id', '=', 'knmp_provinces.id')
-            ->leftJoin('progres_knmp', 'knmp.id', '=', 'progres_knmp.knmp_id')
-            ->leftJoin('progres_knmp_details', 'progres_knmp.id', '=', 'progres_knmp_details.progres_id')
-            ->select(
-                'knmp_provinces.id as province_id',
-                'knmp_provinces.name as province_name',
-                DB::raw('COUNT(DISTINCT knmp.id) as total_knmp'),
-                DB::raw('COALESCE(AVG(progres_knmp_details.persen), 0) as avg_capaian')
-            )
-            ->groupBy('knmp_provinces.id', 'knmp_provinces.name')
-            ->orderByDesc('avg_capaian')
-            ->get();
 
-        $topProvinsi = $statistikProvinsi->take(5);
-        $bottomProvinsi = $statistikProvinsi->sortBy('avg_capaian')->take(5)->values();
+
+
 
         // Tenaga Kerja
         $totalTenagaKerja = DB::table('progres_knmp')->sum('tk_total') ?? 0;
@@ -334,12 +233,13 @@ class DashboardController extends Controller
             'desa_knmp',
             'totalSurveyTerisi',
             'tingkatKelengkapanData',
+            'tingkatKelengkapanData',
             'capaianIndikator',
             'rataRataKebahagiaan',
-            'desaAsetBertambah',
-            'capaianPerKnmpData',
-            'topProvinsi',
-            'bottomProvinsi',
+            // 'desaAsetBertambah',
+            // 'capaianPerKnmpData',
+            // 'topProvinsi',
+            // 'bottomProvinsi',
             'totalTenagaKerja',
             'progressNasional',
             'totalKnmpNasional',

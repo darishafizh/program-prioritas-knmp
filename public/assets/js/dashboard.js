@@ -469,8 +469,8 @@ function initDashboardMap() {
                             ${item.regency ? item.regency.name : '-'}, ${item.province ? item.province.name : '-'}
                         </div>
                     </div>
-                    <a href="${detailUrl}" class="btn btn-xs btn-primary w-100 rounded-pill">
-                        <i class="mdi mdi-eye me-1"></i> Lihat Data Survey
+                    <a href="${detailUrl}" class="btn btn-xs btn-primary w-100 rounded-pill" style="color: #ffffff !important;">
+                        <i class="mdi mdi-eye me-1" style="color: #ffffff !important;"></i> Lihat Data Survey
                     </a>
                 </div>
             `;
