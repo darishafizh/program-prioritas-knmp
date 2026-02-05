@@ -56,6 +56,12 @@ class InformasiUsahaTemplateExport implements FromArray, WithHeadings, WithStyle
                 '', // biaya_es_kantong_rp
                 '', // volume_es_kantong
                 '', // total_biaya_operasional
+                '', // ikan_1_jenis
+                '', // ikan_1_kg_trip
+                '', // ikan_1_persen
+                '', // ikan_2_jenis
+                '', // ikan_2_kg_trip
+                '', // ikan_2_persen
             ];
         })->toArray();
     }
@@ -89,6 +95,12 @@ class InformasiUsahaTemplateExport implements FromArray, WithHeadings, WithStyle
             'biaya_es_kantong_rp',
             'volume_es_kantong',
             'total_biaya_operasional',
+            'ikan_1_jenis',
+            'ikan_1_kg_trip',
+            'ikan_1_persen',
+            'ikan_2_jenis',
+            'ikan_2_kg_trip',
+            'ikan_2_persen',
         ];
     }
 

@@ -33,7 +33,7 @@ class FormsController extends Controller
 
         // Get all respondents for this KNMP
         $respondenList = InformasiResponden::where('knmp_id', $knmp->id)
-            ->orderBy('nama_responden')
+            ->orderBy('id', 'asc')
             ->get();
 
         $provinces = KnmpProvinces::where('id', $knmp->province_id)->get();

@@ -3,14 +3,16 @@
 namespace App\Imports;
 
 use App\Models\InformasiUsaha;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeImport;
+use Maatwebsite\Excel\Row;
+use App\Models\InformasiUsahaIkan;
 
-class InformasiUsahaImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows, WithEvents
+class InformasiUsahaImport implements OnEachRow, WithHeadingRow, WithValidation, SkipsEmptyRows, WithEvents
 {
     protected $knmpId;
 
@@ -21,6 +23,7 @@ class InformasiUsahaImport implements ToModel, WithHeadingRow, WithValidation, S
         'responden_id',
         'nama_kapal',
         'jenis_alat_tangkap',
+        'ikan_1_jenis',
     ];
 
     public function __construct($knmpId)
@@ -59,43 +62,75 @@ class InformasiUsahaImport implements ToModel, WithHeadingRow, WithValidation, S
         ];
     }
 
-    public function model(array $row)
+    public function onRow(Row $row)
     {
-        return new InformasiUsaha([
-            'knmp_id' => $this->knmpId,
-            'responden_id' => $row['responden_id'] ?? null,
-            'nama_kapal' => $row['nama_kapal'] ?? null,
-            'tahun_pembuatan' => $row['tahun_pembuatan'] ?? null,
-            'ukuran_gt' => $row['ukuran_gt'] ?? null,
-            'dimensi_perahu' => $row['dimensi_perahu'] ?? null,
-            'jenis_bahan_baku' => $row['jenis_bahan_baku'] ?? null,
-            'jenis_mesin' => $row['jenis_mesin'] ?? null,
-            'alat_penyimpanan' => $row['alat_penyimpanan'] ?? null,
-            'jenis_alat_tangkap' => $row['jenis_alat_tangkap'] ?? null,
-            'hari_per_trip' => $row['hari_per_trip'] ?? null,
-            'waktu_melaut_jam' => $row['waktu_melaut_jam'] ?? null,
-            'jarak_penangkapan_mil' => $row['jarak_penangkapan_mil'] ?? null,
-            'waktu_tempuh_jam' => $row['waktu_tempuh_jam'] ?? null,
-            'jml_trip_per_bulan' => $row['jml_trip_per_bulan'] ?? null,
-            'jml_bulan_melaut' => $row['jml_bulan_melaut'] ?? null,
-            'produksi_kg_per_trip' => $row['produksi_kg_per_trip'] ?? null,
-            'penjualan_rp_per_trip' => $row['penjualan_rp_per_trip'] ?? null,
-            'biaya_solar_rp' => $row['biaya_solar_rp'] ?? null,
-            'volume_solar_liter' => $row['volume_solar_liter'] ?? null,
-            'biaya_bensin_rp' => $row['biaya_bensin_rp'] ?? null,
-            'volume_bensin_liter' => $row['volume_bensin_liter'] ?? null,
-            'biaya_es_balok_rp' => $row['biaya_es_balok_rp'] ?? null,
-            'volume_es_balok' => $row['volume_es_balok'] ?? null,
-            'biaya_es_kantong_rp' => $row['biaya_es_kantong_rp'] ?? null,
-            'volume_es_kantong' => $row['volume_es_kantong'] ?? null,
-            'total_biaya_operasional' => $row['total_biaya_operasional'] ?? null,
-        ]);
+        $rowIndex = $row->getIndex();
+        $row      = $row->toArray();
+
+        // 1. Create or Update parent: InformasiUsaha
+        $informasiUsaha = InformasiUsaha::updateOrCreate(
+            [
+                'knmp_id'      => $this->knmpId,
+                'responden_id' => $row['responden_id'],
+            ],
+            [
+                'nama_kapal'              => $row['nama_kapal'] ?? null,
+                'tahun_pembuatan'         => $row['tahun_pembuatan'] ?? null,
+                'ukuran_gt'               => $row['ukuran_gt'] ?? null,
+                'dimensi_perahu'          => $row['dimensi_perahu'] ?? null,
+                'jenis_bahan_baku'        => $row['jenis_bahan_baku'] ?? null,
+                'jenis_mesin'             => $row['jenis_mesin'] ?? null,
+                'alat_penyimpanan'        => $row['alat_penyimpanan'] ?? null,
+                'jenis_alat_tangkap'      => $row['jenis_alat_tangkap'] ?? null,
+                'hari_per_trip'           => $row['hari_per_trip'] ?? null,
+                'waktu_melaut_jam'        => $row['waktu_melaut_jam'] ?? null,
+                'jarak_penangkapan_mil'   => $row['jarak_penangkapan_mil'] ?? null,
+                'waktu_tempuh_jam'        => $row['waktu_tempuh_jam'] ?? null,
+                'jml_trip_per_bulan'      => $row['jml_trip_per_bulan'] ?? null,
+                'jml_bulan_melaut'        => $row['jml_bulan_melaut'] ?? null,
+                'produksi_kg_per_trip'    => $row['produksi_kg_per_trip'] ?? null,
+                'penjualan_rp_per_trip'   => $row['penjualan_rp_per_trip'] ?? null,
+                'biaya_solar_rp'          => $row['biaya_solar_rp'] ?? null,
+                'volume_solar_liter'      => $row['volume_solar_liter'] ?? null,
+                'biaya_bensin_rp'         => $row['biaya_bensin_rp'] ?? null,
+                'volume_bensin_liter'     => $row['volume_bensin_liter'] ?? null,
+                'biaya_es_balok_rp'       => $row['biaya_es_balok_rp'] ?? null,
+                'volume_es_balok'         => $row['volume_es_balok'] ?? null,
+                'biaya_es_kantong_rp'     => $row['biaya_es_kantong_rp'] ?? null,
+                'volume_es_kantong'       => $row['volume_es_kantong'] ?? null,
+                'total_biaya_operasional' => $row['total_biaya_operasional'] ?? null,
+            ]
+        );
+
+        // 2. Create or Update child: InformasiUsahaIkan
+        // We handle up to 2 fish types as defined in template
+        for ($i = 1; $i <= 2; $i++) {
+            $jenisKey   = "ikan_{$i}_jenis";
+            $kgTripKey  = "ikan_{$i}_kg_trip";
+            $persenKey  = "ikan_{$i}_persen";
+
+            if (!empty($row[$jenisKey])) {
+                InformasiUsahaIkan::updateOrCreate(
+                    [
+                        'informasi_usaha_id' => $informasiUsaha->id,
+                        'responden_id'       => $row['responden_id'],
+                        'jenis'              => $row[$jenisKey],
+                    ],
+                    [
+                        'kg_trip' => $row[$kgTripKey] ?? 0,
+                        'persen'  => $row[$persenKey] ?? 0,
+                    ]
+                );
+            }
+        }
     }
 
     public function rules(): array
     {
         return [
             'responden_id' => 'required|exists:informasi_responden,id',
+            'produksi_kg_per_trip' => 'nullable|numeric',
+            'penjualan_rp_per_trip' => 'nullable|numeric',
         ];
     }
 }

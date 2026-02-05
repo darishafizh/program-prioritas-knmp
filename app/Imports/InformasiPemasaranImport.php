@@ -3,14 +3,16 @@
 namespace App\Imports;
 
 use App\Models\InformasiPemasaran;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeImport;
+use Maatwebsite\Excel\Row;
+use App\Models\DetailPemasaranIkan;
 
-class InformasiPemasaranImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows, WithEvents
+class InformasiPemasaranImport implements OnEachRow, WithHeadingRow, WithValidation, SkipsEmptyRows, WithEvents
 {
     protected $knmpId;
 
@@ -21,6 +23,13 @@ class InformasiPemasaranImport implements ToModel, WithHeadingRow, WithValidatio
         'responden_id',
         'kendala_pemasaran_text',
         'cara_penanganan_ikan',
+        'eceran_kg',
+        'koperasi_kg',
+        'tengkulak_kg',
+        'pengepul_kg',
+        'pedagang_besar_kg',
+        'lainnya_kg',
+        'lainnya_keterangan',
     ];
 
     public function __construct($knmpId)
@@ -59,20 +68,51 @@ class InformasiPemasaranImport implements ToModel, WithHeadingRow, WithValidatio
         ];
     }
 
-    public function model(array $row)
+    public function onRow(Row $row)
     {
-        return new InformasiPemasaran([
-            'knmp_id' => $this->knmpId,
-            'responden_id' => $row['responden_id'] ?? null,
-            'kendala_pemasaran_text' => $row['kendala_pemasaran_text'] ?? null,
-            'cara_penanganan_ikan' => $row['cara_penanganan_ikan'] ?? null,
-        ]);
+        $rowIndex = $row->getIndex();
+        $row      = $row->toArray();
+
+        // 1. Create or Update parent: InformasiPemasaran
+        $informasiPemasaran = InformasiPemasaran::updateOrCreate(
+            [
+                'knmp_id'      => $this->knmpId,
+                'responden_id' => $row['responden_id'],
+            ],
+            [
+                'kendala_pemasaran_text' => $row['kendala_pemasaran_text'] ?? null,
+                'cara_penanganan_ikan'   => $row['cara_penanganan_ikan'] ?? null,
+            ]
+        );
+
+        // 2. Create or Update child: DetailPemasaranIkan
+        DetailPemasaranIkan::updateOrCreate(
+            [
+                'pemasaran_id' => $informasiPemasaran->id,
+            ],
+            [
+                'responden_id'      => $row['responden_id'], // Keep redundancy if needed by Schema
+                'eceran_kg'         => $row['eceran_kg'] ?? 0,
+                'koperasi_kg'       => $row['koperasi_kg'] ?? 0,
+                'tengkulak_kg'      => $row['tengkulak_kg'] ?? 0,
+                'pengepul_kg'       => $row['pengepul_kg'] ?? 0,
+                'pedagang_besar_kg' => $row['pedagang_besar_kg'] ?? 0,
+                'lainnya_kg'        => $row['lainnya_kg'] ?? 0,
+                'lainnya_keterangan'=> $row['lainnya_keterangan'] ?? null,
+            ]
+        );
     }
 
     public function rules(): array
     {
         return [
             'responden_id' => 'required|exists:informasi_responden,id',
+            'eceran_kg' => 'nullable|numeric',
+            'koperasi_kg' => 'nullable|numeric',
+            'tengkulak_kg' => 'nullable|numeric',
+            'pengepul_kg' => 'nullable|numeric',
+            'pedagang_besar_kg' => 'nullable|numeric',
+            'lainnya_kg' => 'nullable|numeric',
         ];
     }
 }

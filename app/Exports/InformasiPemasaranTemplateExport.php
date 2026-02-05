@@ -33,6 +33,13 @@ class InformasiPemasaranTemplateExport implements FromArray, WithHeadings, WithS
                 $responden->id,
                 '', // kendala_pemasaran_text
                 '', // cara_penanganan_ikan
+                '', // eceran_kg
+                '', // koperasi_kg
+                '', // tengkulak_kg
+                '', // pengepul_kg
+                '', // pedagang_besar_kg
+                '', // lainnya_kg
+                '', // lainnya_keterangan
             ];
         })->toArray();
     }
@@ -43,6 +50,13 @@ class InformasiPemasaranTemplateExport implements FromArray, WithHeadings, WithS
             'responden_id',
             'kendala_pemasaran_text',
             'cara_penanganan_ikan',
+            'eceran_kg',
+            'koperasi_kg',
+            'tengkulak_kg',
+            'pengepul_kg',
+            'pedagang_besar_kg',
+            'lainnya_kg',
+            'lainnya_keterangan',
         ];
     }
 
