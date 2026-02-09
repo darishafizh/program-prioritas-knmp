@@ -6,13 +6,23 @@ use App\Models\ProgresKnmpNasional;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
+use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
-class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
+class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEmptyRows, WithCalculatedFormulas
 {
     public $failures = [];
     public $successCount = 0;
+    protected $tanggal;
+
+    /**
+     * Constructor with date parameter
+     */
+    public function __construct($tanggal = null)
+    {
+        $this->tanggal = $tanggal ?? now()->toDateString();
+    }
 
     /**
      * Process the collection of rows from Excel
@@ -48,10 +58,15 @@ class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEm
             $progresValue = (float) $progresValue;
 
             try {
-                // 3. Update or Create
+                // Use updateOrCreate to handle both insert and update
                 ProgresKnmpNasional::updateOrCreate(
-                    ['knmp_id' => $knmpId],
-                    ['progres' => $progresValue]
+                    [
+                        'knmp_id' => $knmpId,
+                        'tanggal' => $this->tanggal
+                    ],
+                    [
+                        'progres' => $progresValue
+                    ]
                 );
                 $this->successCount++;
             } catch (\Exception $e) {
@@ -60,4 +75,3 @@ class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEm
         }
     }
 }
-

@@ -3,11 +3,7 @@
         <nav class="header-nav">
             <!-- Logo & Brand -->
             <a class="header-brand" href="{{ route('dashboard.index') }}">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="Logo KKP" class="header-logo">
-                <div class="header-brand-text">
-                    <span class="header-brand-title">Monev KNMP</span>
-                    <span class="header-brand-subtitle">Kementerian Kelautan dan Perikanan</span>
-                </div>
+                <img src="{{ asset('assets/images/knmp-logo.png') }}" alt="Logo KNMP" class="header-logo">
             </a>
 
             <!-- Mobile Toggle -->
@@ -51,8 +47,8 @@
 
                     <!-- Informasi Umum - untuk semua user -->
                     <li class="header-nav-item">
-                        <a class="header-nav-link {{ request()->routeIs('laporan.*') ? 'active' : '' }}"
-                            href="{{ route('laporan.index') }}">
+                        <a class="header-nav-link {{ request()->routeIs('informasi_umum.*') ? 'active' : '' }}"
+                            href="{{ route('informasi_umum.index') }}">
                             <i class="mdi mdi-information-outline"></i>
                             <span>Informasi Umum</span>
                         </a>
@@ -155,6 +151,9 @@
     .header-logo {
         height: 40px;
         width: auto;
+        background: #fff;
+        border-radius: 8px;
+        padding: 4px;
     }
 
     .header-brand-text {

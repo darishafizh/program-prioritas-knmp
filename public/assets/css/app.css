@@ -775,8 +775,8 @@ p { margin-bottom: var(--space-4); color: var(--muted); }
 }
 
 .page-title {
-    font-size: var(--font-size-2xl);
-    font-weight: 700;
+    font-size: var(--font-size-lg);
+    font-weight: 600;
     margin-bottom: 0;
     color: var(--dark);
 }

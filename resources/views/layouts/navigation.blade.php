@@ -40,8 +40,8 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('laporan.*') ? 'active' : '' }}" href="{{ route('laporan.index') }}" id="topnav-laporan" role="button">
-                            <i class="mdi mdi-chart-bar me-1"></i>Laporan
+                        <a class="nav-link {{ request()->routeIs('informasi_umum.*') ? 'active' : '' }}" href="{{ route('informasi_umum.index') }}" id="topnav-informasi-umum" role="button">
+                            <i class="mdi mdi-chart-bar me-1"></i>Informasi Umum
                         </a>
                     </li>
 

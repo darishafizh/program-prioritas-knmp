@@ -1,13 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\InformasiUmumController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormsController;
 use App\Http\Controllers\KeteranganEnumeratorController;
-use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\InformasiUmumController;
 use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\RespondenController;
 use App\Http\Controllers\EvidenceController;
@@ -76,6 +75,8 @@ Route::middleware('auth')->group(function () {
 
         // Admin only: Add and Delete KNMP
         Route::post('/', [SurveyController::class, 'store'])->middleware('role:admin')->name('survey.store');
+        Route::post('/import', [SurveyController::class, 'import'])->middleware('role:admin')->name('survey.import');
+        Route::get('/template', [SurveyController::class, 'downloadTemplate'])->middleware('role:admin')->name('survey.template');
         Route::delete('/{id}', [SurveyController::class, 'destroy'])->middleware('role:admin')->name('survey.destroy');
 
         // AJAX endpoints for cascade dropdown
@@ -157,8 +158,8 @@ Route::middleware('auth')->group(function () {
     // ==============================
     // REPORT ROUTES
     // ==============================
-    Route::group(['prefix' => 'laporan'], function () {
-        Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::group(['prefix' => 'informasi-umum'], function () {
+        Route::get('/', [InformasiUmumController::class, 'index'])->name('informasi_umum.index');
     });
 
     // ==============================

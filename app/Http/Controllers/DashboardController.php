@@ -7,11 +7,15 @@ use App\Http\Controllers\Controller;
 use App\Models\InformasiResponden;
 use App\Models\TingkatKebahagiaanNelayan;
 use App\Models\TargetRealisasi;
+use App\Models\InformasiPendapatanRumahTangga;
+use App\Models\SosialKelembagaan;
+use App\Models\ProfileKnmp;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Models\Knmp;
 use App\Models\ProgresKnmpNasional;
+use App\Models\TanggapanMasyarakat;
 
 class DashboardController extends Controller
 {
@@ -88,19 +92,74 @@ class DashboardController extends Controller
         // 4. Hitung Rata-rata Indeks Kebahagiaan Nelayan
         $rataRataKebahagiaan = TingkatKebahagiaanNelayan::avg('skor_nilai') ?? 0;
 
-
-
-
-
         // ===================================
         // DATA UNTUK STATISTIK NASIONAL
         // ===================================
 
         // Progres KNMP Nasional (dari tabel progres_knmp_nasional)
-        $progresNasional = ProgresKnmpNasional::with('knmp')
-            ->orderBy('progres', 'desc')
-            ->get();
+        // Get available dates for filter dropdown
+        $availableProgressDates = ProgresKnmpNasional::selectRaw('DISTINCT tanggal')
+            ->whereNotNull('tanggal')
+            ->orderBy('tanggal', 'desc')
+            ->pluck('tanggal')
+            ->toArray();
+        
+        // Get selected date from request or use latest available
+        $selectedProgresDate = $request->get('progres_date');
+        if (!$selectedProgresDate && count($availableProgressDates) > 0) {
+            $selectedProgresDate = $availableProgressDates[0]; // Latest date
+        }
+        
+        // Query progres data by selected date
+        $progresNasionalQuery = ProgresKnmpNasional::with('knmp')->orderBy('progres', 'desc');
+        if ($selectedProgresDate) {
+            $progresNasionalQuery->where('tanggal', $selectedProgresDate);
+        }
+        $progresNasional = $progresNasionalQuery->get();
         $progresNasionalAvg = $progresNasional->avg('progres') ?? 0;
+
+        // ===================================
+        // NEW KPI CALCULATIONS
+        // ===================================
+
+        // 1. Total KNMP (sudah ada: count($desa_knmp))
+        $totalKnmp = count($desa_knmp);
+
+        // 2. Ketersediaan Infrastruktur (%) - berdasarkan komponen yang sudah terisi di progres_knmp_details
+        // Total komponen = 28 per KNMP, hitung rata-rata ketersediaan
+        $totalKomponenPerKnmp = 28;
+        $knmpDenganProgress = DB::table('progres_knmp')
+            ->join('progres_knmp_details', 'progres_knmp.id', '=', 'progres_knmp_details.progres_id')
+            ->select('progres_knmp.knmp_id', DB::raw('COUNT(DISTINCT progres_knmp_details.komponen) as komponen_terisi'))
+            ->groupBy('progres_knmp.knmp_id')
+            ->get();
+        
+        $ketersediaanInfrastruktur = $knmpDenganProgress->count() > 0
+            ? round(($knmpDenganProgress->avg('komponen_terisi') / $totalKomponenPerKnmp) * 100, 2)
+            : 0;
+
+        // 3. Indeks Kesesuaian Kebutuhan (%) - persentase responden yang menyatakan sesuai kebutuhan
+        $totalTanggapan = TanggapanMasyarakat::count();
+        $sesuaiKebutuhan = TanggapanMasyarakat::where('kesesuaian_kebutuhan', 1)->count();
+        $indeksKesesuaianKebutuhan = $totalTanggapan > 0
+            ? round(($sesuaiKebutuhan / $totalTanggapan) * 100, 2)
+            : 0;
+
+        // 4. Pendapatan RT Nelayan - rata-rata pendapatan total dari informasi_pendapatan_rumah_tangga
+        $pendapatanRtNelayan = InformasiPendapatanRumahTangga::avg('pendapatan_total') ?? 0;
+
+        // 5. Indeks Kesejahteraan Nelayan - berdasarkan rata-rata skor kebahagiaan (skala 1-10)
+        $indeksKesejahteraan = round($rataRataKebahagiaan, 2);
+
+        // 6. Tingkat Kelembagaan Nelayan (%) - persentase nelayan yang tergabung dalam kelompok/koperasi
+        $totalSosial = SosialKelembagaan::count();
+        $anggotaKelompokKoperasi = SosialKelembagaan::where(function ($q) {
+            $q->where('anggota_kelompok', 'Ya')
+              ->orWhere('anggota_koperasi', 'Ya');
+        })->count();
+        $tingkatKelembagaan = $totalSosial > 0
+            ? round(($anggotaKelompokKoperasi / $totalSosial) * 100, 2)
+            : 0;
 
         // Rata-rata Anggota Kopdeskel
         $rataRataAnggotaKopdeskel = DB::table('profile_knmp')
@@ -115,9 +174,6 @@ class DashboardController extends Controller
         // Total Tenaga Kerja Terserap
         $totalTenagaKerja = DB::table('progres_knmp')->sum('tk_total') ?? 0;
 
-    
-        // Jumlah provinsi yang sudah ter-cover
-        // $totalProvinsiCovered = $statistikProvinsi->count();
 
         return view('dashboard.index', compact(
             'greeting',
@@ -129,29 +185,24 @@ class DashboardController extends Controller
             'tingkatKelengkapanData',
             'capaianIndikator',
             'rataRataKebahagiaan',
-            // 'desaAsetBertambah',
-            // Data untuk grafik
-            // 'capaianPerKnmp',
-            // 'labelKnmp',
-            // 'distribusiAsetData',
-            // 'distribusiAsetLabels',
-            // 'penyerapanTenagaKerja',
-            // 'penyerapanLabels',
-            // 'tingkatKesejahteraanData',
-            // 'tingkatKesejahteraanLabels',
             // Data statistik nasional
             'progressNasional',
             'totalTenagaKerja',
-            // 'statistikProvinsi',
-            // 'topProvinsi',
-            // 'bottomProvinsi',
-            // 'totalProvinsiCovered',
             'totalKnmpNasional',
             'targetKnmp',
             // Data progres nasional dan kopdeskel
             'progresNasional',
             'progresNasionalAvg',
-            'rataRataAnggotaKopdeskel'
+            'availableProgressDates',
+            'selectedProgresDate',
+            'rataRataAnggotaKopdeskel',
+            // New KPI data
+            'totalKnmp',
+            'ketersediaanInfrastruktur',
+            'indeksKesesuaianKebutuhan',
+            'pendapatanRtNelayan',
+            'indeksKesejahteraan',
+            'tingkatKelembagaan'
         ));
     }
 

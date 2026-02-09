@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <title>Monev KNMP - KKP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="{{ asset('assets/images/logo.png') }}">
+    <link rel="shortcut icon" href="https://kampungnelayanmerahputih.kkp.go.id/img/favicon.ico">
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
 </head>
@@ -222,7 +222,7 @@
     <div class="login-wrapper">
         <div class="login-left-panel">
             <div class="logo-container">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="Logo KKP">
+                <img src="https://kampungnelayanmerahputih.kkp.go.id/img/favicon.ico" alt="Logo KNMP">
                 <h1 class="ministry-name">Kementerian Kelautan<br>dan Perikanan</h1>
                 <p class="ministry-subtitle">Sistem Monitoring dan Evaluasi KNMP</p>
             </div>

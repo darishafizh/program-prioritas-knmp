@@ -63,73 +63,69 @@
     <!-- start page title -->
     <div class="row">
         <div class="col-12">
-            <div class="page-title-box">
-                <div class="page-title-left">
-                    <h4 class="page-title">Dashboard</h4>
-                    <small class="text-muted">Data: {{ $periodLabel ?? 'Semua Waktu' }}</small>
+            <div class="page-title-box d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <div class="me-3" style="font-size: 2rem; color: #f59e0b;">
+                        <i class="mdi {{ $greetingIcon ?? 'mdi-weather-sunny' }}"></i>
+                    </div>
+                    <div>
+                        <h4 class="page-title mb-1">{{ $greeting }}, {{ Auth::user()->name ?? 'Pengguna' }}!</h4>
+                        <p class="text-muted mb-0" style="font-size: 0.85rem;">Setiap langkah kecil membawa kita lebih dekat ke tujuan besar.</p>
+                    </div>
                 </div>
-                <div class="page-title-right d-flex align-items-center gap-2">
-                    <form method="GET" action="{{ route('dashboard.index') }}" class="d-flex align-items-center gap-2">
-                        <label class="mb-0 text-muted me-1">Filter:</label>
-                        <select name="period" class="form-select form-select-sm" style="width: auto;"
-                            onchange="this.form.submit()">
-                            <option value="all" {{ ($period ?? 'all') == 'all' ? 'selected' : '' }}>Semua Waktu</option>
-                            <option value="week" {{ ($period ?? '') == 'week' ? 'selected' : '' }}>Minggu Ini</option>
-                            <option value="month" {{ ($period ?? '') == 'month' ? 'selected' : '' }}>Bulan Ini</option>
-                            <option value="year" {{ ($period ?? '') == 'year' ? 'selected' : '' }}>Tahun Ini</option>
-                        </select>
-                    </form>
-                    <a href="{{ route('dashboard.export-pdf', ['period' => $period ?? 'all']) }}"
-                        class="btn btn-sm btn-outline-primary" target="_blank">
-                        <i class="mdi mdi-file-pdf-box me-1"></i>Export PDF
-                    </a>
+                <div class="text-end">
+                    <span class="text-muted" style="font-size: 0.9rem;">
+                        <i class="mdi mdi-calendar-today me-1"></i>
+                        <span id="current-date-display"></span>
+                    </span>
                 </div>
             </div>
         </div>
     </div>
     <!-- end page title -->
 
-    <!-- Greeting Banner - Clean Modern Design -->
-    <div class="row mb-4">
+    <!-- Filter Bar -->
+    <div class="row mb-3">
         <div class="col-12">
-            <div class="greeting-card-clean">
-                <div class="d-flex align-items-center justify-content-between greeting-wrapper">
-                    <!-- Left: Icon + Text -->
-                    <div class="d-flex align-items-center">
-                        <div class="greeting-icon-clean me-3">
-                            <i class="mdi {{ $greetingIcon ?? 'mdi-weather-sunny' }}"></i>
+            <div class="card border-0 shadow-sm mb-0">
+                <div class="card-body py-2 px-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <i class="mdi mdi-filter-outline text-muted me-2" style="font-size: 1.2rem;"></i>
+                            <span class="text-muted me-2">Periode:</span>
+                            <form method="GET" action="{{ route('dashboard.index') }}" class="d-inline">
+                                <select name="period" class="form-select form-select-sm border-0 bg-light" 
+                                    style="width: auto; font-weight: 500;" onchange="this.form.submit()">
+                                    <option value="all" {{ ($period ?? 'all') == 'all' ? 'selected' : '' }}>Semua Waktu</option>
+                                    <option value="week" {{ ($period ?? '') == 'week' ? 'selected' : '' }}>Minggu Ini</option>
+                                    <option value="month" {{ ($period ?? '') == 'month' ? 'selected' : '' }}>Bulan Ini</option>
+                                    <option value="year" {{ ($period ?? '') == 'year' ? 'selected' : '' }}>Tahun Ini</option>
+                                </select>
+                            </form>
                         </div>
-                        <div>
-                            <h4 class="greeting-title-clean mb-0">{{ $greeting }}, <span
-                                    class="greeting-name-clean">{{ Auth::user()->name ?? 'Pengguna' }}</span></h4>
-                            <p class="greeting-motivation-clean mb-0">Setiap langkah kecil membawa kita lebih dekat ke
-                                tujuan besar. <span class="greeting-tagline">#2026KKPGrowStronger</span></p>
-                        </div>
-                    </div>
-
-                    <!-- Right: Date -->
-                    <div class="greeting-date-clean">
-                        <i class="mdi mdi-calendar-today me-1"></i>
-                        <span id="current-date-display"></span>
+                        <a href="{{ route('dashboard.export-pdf', ['period' => $period ?? 'all']) }}"
+                            class="btn btn-sm btn-primary" target="_blank">
+                            <i class="mdi mdi-file-pdf-box me-1"></i>Export PDF
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Statistic Cards - Baris 1 (Original KPI Cards) --}}
+    {{-- Statistic Cards - Baris 1 --}}
     <div class="row">
         <div class="col-lg-4 col-md-6">
             <div class="card widget-flat">
                 <div class="card-body">
                     <div class="widget-icon">
-                        <i class="mdi mdi-map-marker-radius"></i>
+                        <i class="mdi mdi-home-city"></i>
                     </div>
-                    <h5>Total Lokasi KNMP</h5>
-                    <h3>{{ number_format(count($desa_knmp ?? []), 0, ',', '.') }}</h3>
+                    <h5>Total KNMP</h5>
+                    <h3>{{ number_format($totalKnmp ?? 0, 0, ',', '.') }}</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-trending-up text-success me-1"></i>
-                        Lokasi tersebar di seluruh Indonesia
+                        <i class="mdi mdi-map-marker-radius text-primary me-1"></i>
+                        Lokasi KNMP aktif
                     </p>
                 </div>
             </div>
@@ -140,13 +136,13 @@
                 <div class="card-body">
                     <div class="widget-icon"
                         style="background: linear-gradient(135deg, #10B981 0%, #34D399 100%); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
-                        <i class="mdi mdi-clipboard-text-search"></i>
+                        <i class="mdi mdi-domain"></i>
                     </div>
-                    <h5>Total Survey</h5>
-                    <h3>{{ number_format($totalSurveyTerisi ?? 0, 0, ',', '.') }}</h3>
+                    <h5>Ketersediaan Infrastruktur</h5>
+                    <h3>{{ number_format($ketersediaanInfrastruktur ?? 0, 2, ',', '.') }}%</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.8rem;">
                         <i class="mdi mdi-check-circle text-success me-1"></i>
-                        Survey terisi lengkap
+                        Komponen infrastruktur tersedia
                     </p>
                 </div>
             </div>
@@ -156,14 +152,14 @@
             <div class="card widget-flat">
                 <div class="card-body">
                     <div class="widget-icon"
-                        style="background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
-                        <i class="mdi mdi-database-check"></i>
+                        style="background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);">
+                        <i class="mdi mdi-cash-multiple"></i>
                     </div>
-                    <h5>Tingkat Kelengkapan Data</h5>
-                    <h3>{{ number_format($tingkatKelengkapanData ?? 0, 2, ',', '.') }}%</h3>
+                    <h5>Pendapatan RT Nelayan</h5>
+                    <h3>Rp {{ number_format($pendapatanRtNelayan ?? 0, 0, ',', '.') }}</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-information-outline text-info me-1"></i>
-                        Dari total seluruh data
+                        <i class="mdi mdi-trending-up text-success me-1"></i>
+                        Rata-rata pendapatan/orang/bulan
                     </p>
                 </div>
             </div>
@@ -176,14 +172,14 @@
             <div class="card widget-flat">
                 <div class="card-body">
                     <div class="widget-icon"
-                        style="background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);">
-                        <i class="mdi mdi-bullseye-arrow"></i>
+                        style="background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+                        <i class="mdi mdi-clipboard-check-outline"></i>
                     </div>
-                    <h5>Rata-rata Capaian Indikator</h5>
-                    <h3>{{ number_format($capaianIndikator ?? 0, 2, ',', '.') }}%</h3>
+                    <h5>Indeks Kesesuaian Kebutuhan</h5>
+                    <h3>{{ number_format($indeksKesesuaianKebutuhan ?? 0, 2, ',', '.') }}%</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-chart-line text-primary me-1"></i>
-                        Target tercapai
+                        <i class="mdi mdi-check-decagram text-warning me-1"></i>
+                        Responden menyatakan sesuai
                     </p>
                 </div>
             </div>
@@ -196,8 +192,8 @@
                         style="background: linear-gradient(135deg, #EC4899 0%, #F472B6 100%); box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);">
                         <i class="mdi mdi-emoticon-happy"></i>
                     </div>
-                    <h5>Rata-rata Indeks Kebahagiaan</h5>
-                    <h3>{{ number_format($rataRataKebahagiaan ?? 0, 2, ',', '.') }}</h3>
+                    <h5>Indeks Kesejahteraan Nelayan</h5>
+                    <h3>{{ number_format($indeksKesejahteraan ?? 0, 2, ',', '.') }}</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.8rem;">
                         <i class="mdi mdi-thumb-up text-success me-1"></i>
                         Skala 1-10
@@ -213,11 +209,11 @@
                         style="background: linear-gradient(135deg, #14B8A6 0%, #2DD4BF 100%); box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);">
                         <i class="mdi mdi-account-group"></i>
                     </div>
-                    <h5>Rata-rata Anggota Kopdeskel</h5>
-                    <h3>{{ number_format($rataRataAnggotaKopdeskel ?? 0, 0, ',', '.') }}</h3>
+                    <h5>Tingkat Kelembagaan Nelayan</h5>
+                    <h3>{{ number_format($tingkatKelembagaan ?? 0, 2, ',', '.') }}%</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.8rem;">
                         <i class="mdi mdi-account-multiple text-info me-1"></i>
-                        Anggota per Kopdeskel
+                        Nelayan dalam kelompok/koperasi
                     </p>
                 </div>
             </div>
@@ -230,7 +226,7 @@
 
 
     {{-- Progres KNMP Nasional --}}
-    <div class="row mb-4">
+    <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -238,9 +234,23 @@
                         <i class="mdi mdi-chart-bar me-2 text-info"></i>
                         Progres Pembangunan KNMP Nasional
                     </h5>
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <!-- Date Filter Dropdown -->
+                        @if(count($availableProgressDates ?? []) > 0)
+                            <div class="input-group input-group-sm me-2" style="width: 180px;">
+                                <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                                <select class="form-select" id="progresDateFilter" onchange="filterByDate(this.value)">
+                                    @foreach($availableProgressDates as $date)
+                                        <option value="{{ $date }}" {{ $selectedProgresDate == $date ? 'selected' : '' }}>
+                                            {{ \Carbon\Carbon::parse($date)->format('d M Y') }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
+
                         <!-- Search Input -->
-                        <div class="input-group input-group-sm me-2 search-field-enhanced" style="width: 220px;">
+                        <div class="input-group input-group-sm me-2 search-field-enhanced" style="width: 180px;">
                             <span class="input-group-text"><i class="mdi mdi-magnify"></i></span>
                             <input type="text" id="paramsSearch" class="form-control"
                                 placeholder="Cari KNMP..." onkeyup="filterTable()">
@@ -354,10 +364,15 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
+                            <label class="form-label">Tanggal Data <span class="text-danger">*</span></label>
+                            <input type="date" name="tanggal" class="form-control" value="{{ date('Y-m-d') }}" required>
+                            <small class="text-muted">Pilih tanggal untuk data progres yang akan diimport.</small>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label">File Excel (.xlsx)</label>
                             <input type="file" name="file" class="form-control" accept=".xlsx, .xls, .csv" required>
                             <small class="text-muted d-block mt-1">Format: knmp_id, progres</small>
-                            <small class="text-muted">Data akan di-update (replace) berdasarkan knmp_id.</small>
+                            <small class="text-muted">Data akan ditambahkan untuk tanggal yang dipilih. Data lama tidak akan dihapus.</small>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -370,7 +385,7 @@
     </div>
 
     {{-- MAP SECTION --}}
-    <div class="row mt-4">
+    <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
@@ -404,6 +419,12 @@
                     }
                 }
             }
+        }
+
+        function filterByDate(date) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('progres_date', date);
+            window.location.href = url.toString();
         }
 
         let sortDirections = [true, true, true, true]; 
@@ -503,7 +524,7 @@
             tingkatKesejahteraanData: {!! json_encode($tingkatKesejahteraanData ?? [0, 0, 0, 0]) !!},
             tingkatKesejahteraanLabels: {!! json_encode($tingkatKesejahteraanLabels ?? ['Sangat Sejahtera', 'Sejahtera', 'Cukup Sejahtera', 'Kurang Sejahtera']) !!},
             desaKnmp: @json($desa_knmp ?? []),
-            detailUrlPattern: "{{ route('survey.questionnaires-pdf', ['knmp' => ':id']) }}"
+            detailUrlPattern: "{{ route('informasi_umum.index') }}?knmp_id=:id"
         };
     </script>
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>

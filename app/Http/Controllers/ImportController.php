@@ -368,10 +368,12 @@ class ImportController extends Controller
     {
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv|max:10240',
+            'tanggal' => 'required|date',
         ]);
 
         try {
-            $import = new ProgresKnmpNasionalImport;
+            $tanggal = $request->input('tanggal');
+            $import = new ProgresKnmpNasionalImport($tanggal);
             Excel::import($import, $request->file('file'));
 
             if (count($import->failures) > 0) {
@@ -381,26 +383,21 @@ class ImportController extends Controller
                     $failureMsg .= "<br>...dan " . (count($import->failures) - 10) . " error lainnya.";
                 }
 
-                $msg = "Import Selesai. <br><b>Berhasil: {$import->successCount} data.</b><br><br><b>Gagal (" . count($import->failures) . "):</b><br>" . $failureMsg;
+                $msg = "Import Selesai (Tanggal: {$tanggal}). <br><b>Berhasil: {$import->successCount} data.</b><br><br><b>Gagal (" . count($import->failures) . "):</b><br>" . $failureMsg;
                 return back()->with('error', $msg); // Use 'error' style to make sure they read the warnings
             }
 
-            return back()->with('success', "Sukses! {$import->successCount} data Progres KNMP Nasional berhasil diimport.");
+            return back()->with('success', "Sukses! {$import->successCount} data Progres KNMP Nasional berhasil diimport untuk tanggal {$tanggal}.");
 
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
-            $errorMessages = [];
-            foreach ($failures as $failure) {
-                $errorMessages[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
-            }
-            return back()->with('error', 'Gagal import: ' . implode('; ', array_slice($errorMessages, 0, 3)));
+            return back()->with('error', 'Import gagal. ' . count($failures) . ' baris memiliki format yang tidak valid. Pastikan format file sesuai template.');
         } catch (\Illuminate\Database\QueryException $e) {
-            $errorMessage = $this->parseQueryException($e);
             \Log::error('Import Progres KNMP Nasional DB Error', ['message' => $e->getMessage()]);
-            return back()->with('error', $errorMessage);
+            return back()->with('error', 'Import gagal. Terjadi kesalahan database. Silakan coba lagi atau hubungi administrator.');
         } catch (\Exception $e) {
             \Log::error('Import Progres KNMP Nasional Error', ['message' => $e->getMessage()]);
-            return back()->with('error', 'Gagal import data: ' . $this->simplifyErrorMessage($e->getMessage()));
+            return back()->with('error', 'Import gagal. Terjadi kesalahan saat memproses file. Pastikan format file sesuai template.');
         }
     }
 

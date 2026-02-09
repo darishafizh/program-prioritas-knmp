@@ -14,6 +14,11 @@ class ProgresKnmpNasional extends Model
     protected $fillable = [
         'knmp_id',
         'progres',
+        'tanggal',
+    ];
+
+    protected $casts = [
+        'tanggal' => 'date',
     ];
 
     /**

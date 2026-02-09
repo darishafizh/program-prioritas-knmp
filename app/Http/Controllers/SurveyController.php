@@ -8,6 +8,8 @@ use App\Models\KnmpProvinces;
 use App\Models\KnmpRegencies;
 use App\Models\KnmpDistricts;
 use App\Models\KnmpVillages;
+use App\Imports\KnmpImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -62,6 +64,38 @@ class SurveyController extends Controller
         ]);
 
         return redirect()->route('survey.index')->with('success', 'KNMP berhasil ditambahkan!');
+    }
+
+    /**
+     * Import KNMP from Excel (Admin only)
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:10240',
+        ]);
+
+        try {
+            Excel::import(new KnmpImport, $request->file('file'));
+            return redirect()->route('survey.index')->with('success', 'Data KNMP berhasil diimport dari Excel!');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errors = [];
+            foreach ($failures as $failure) {
+                $errors[] = "Baris {$failure->row()}: " . implode(', ', $failure->errors());
+            }
+            return redirect()->back()->withErrors($errors);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal import: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Download template Excel for KNMP import
+     */
+    public function downloadTemplate()
+    {
+        return Excel::download(new \App\Exports\KnmpTemplateExport, 'template_import_knmp.xlsx');
     }
 
     /**

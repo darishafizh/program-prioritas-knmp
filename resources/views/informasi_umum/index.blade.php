@@ -28,7 +28,7 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm selector-card">
                 <div class="card-body py-3">
-                    <form method="GET" action="{{ route('laporan.index') }}" id="knmpForm" class="d-flex align-items-center gap-3 flex-wrap">
+                    <form method="GET" action="{{ route('informasi_umum.index') }}" id="knmpForm" class="d-flex align-items-center gap-3 flex-wrap">
                         <div class="selector-icon">
                             <i class="mdi mdi-home-city"></i>
                         </div>

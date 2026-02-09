@@ -50,12 +50,14 @@ class FormsController extends Controller
         $progresKnmp = ProgresKnmp::with('details')->where('knmp_id', $knmp->id)->first();
 
         // Calculate average progress
+        // Total components: A.Konstruksi(19) + B.Kapal(3) + C.RantaiDingin(5) + D.SPBU(1) = 28
+        $totalComponents = 28;
         $rataRataProgres = 0;
         if ($progresKnmp) {
             $detailProgres = ProgresKnmpDetail::where('progres_id', $progresKnmp->id)->get();
-            if ($detailProgres->count() > 0) {
-                $rataRataProgres = round($detailProgres->avg('persen') ?? 0, 1);
-            }
+            // Sum all persen values and divide by total components (not just filled ones)
+            $sumPersen = $detailProgres->sum('persen') ?? 0;
+            $rataRataProgres = round($sumPersen / $totalComponents, 1);
         }
 
         // Get existing data for edit

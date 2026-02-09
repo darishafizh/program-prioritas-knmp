@@ -209,6 +209,10 @@
                         </div>
                         @if(Auth::user()->isAdmin())
                             <div class="col-sm-6 text-end">
+                                <button type="button" class="btn btn-success me-2" data-bs-toggle="modal"
+                                    data-bs-target="#importKnmpModal">
+                                    <i class="mdi mdi-file-excel me-1"></i>Import Excel
+                                </button>
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                     data-bs-target="#addKnmpModal">
                                     <i class="mdi mdi-plus me-1"></i>Tambah KNMP
@@ -371,6 +375,58 @@
         </div>
     @endif
 
+    <!-- Import KNMP Modal (Admin Only) -->
+    @if(Auth::user()->isAdmin())
+        <div class="modal fade" id="importKnmpModal" tabindex="-1" aria-labelledby="importKnmpModalLabel" aria-hidden="true"
+            style="z-index: 1055;">
+            <div class="modal-dialog modal-dialog-centered" style="display: flex; justify-content: center; margin: auto;">
+                <div class="modal-content"
+                    style="border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.25);">
+                    <form action="{{ route('survey.import') }}" method="POST" enctype="multipart/form-data" id="importKnmpForm">
+                        @csrf
+                        <div class="modal-header"
+                            style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 1.25rem 1.5rem; border: none;">
+                            <div class="d-flex align-items-center">
+                                <div
+                                    style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="mdi mdi-file-excel" style="font-size: 1.5rem; color: #fff;"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h5 class="modal-title mb-0 text-white" id="importKnmpModalLabel">Import KNMP</h5>
+                                    <small style="color: rgba(255,255,255,0.7);">Import data KNMP dari file Excel</small>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <div class="alert alert-info mb-3" style="border-radius: 10px;">
+                                <i class="mdi mdi-information-outline me-1"></i>
+                                <strong>Format file:</strong> Excel/CSV dengan kolom: <code>nama</code>, <code>provinsi</code>, <code>kabupaten</code>, <code>kecamatan</code>, <code>desa</code>, <code>latitude</code> (opsional), <code>longitude</code> (opsional)
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">File Excel/CSV <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control" name="file" accept=".xlsx,.xls,.csv" required>
+                                <div class="form-text">Format: .xlsx, .xls, atau .csv (Maks. 10MB)</div>
+                            </div>
+                            <div class="text-center">
+                                <a href="{{ route('survey.template') }}" class="btn btn-outline-success btn-sm">
+                                    <i class="mdi mdi-download me-1"></i>Download Template
+                                </a>
+                            </div>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-center gap-2"
+                            style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; background: #f8fafc;">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="mdi mdi-upload me-1"></i>Import Data
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <!-- Evidence Modals for each KNMP -->
     @foreach ($knmps as $knmp)

@@ -9,7 +9,7 @@
     <meta content="Kementerian Kelautan dan Perikanan" name="author" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('assets/images/logo.png') }}">
+    <link rel="shortcut icon" href="{{ asset('assets/images/kkp-logo.png') }}">
 
     <!-- Google Fonts - Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -340,9 +340,9 @@
         <!-- Left Panel - Logo -->
         <div class="login-left-panel">
             <div class="logo-container">
-                <img src="{{ asset('assets/images/logo.png') }}" alt="Logo KKP">
-                <h1 class="ministry-name">Kementerian Kelautan<br>dan Perikanan</h1>
-                <p class="ministry-subtitle">Sistem Monitoring dan Evaluasi KNMP</p>
+                <img src="{{ asset('assets/images/kkp-logo.png') }}" alt="Logo KKP">
+                <h1 class="ministry-name">Biro Perencanaan <br> Kementerian Kelautan dan Perikanan</h1>
+                <p class="ministry-subtitle">Sistem Monitoring dan Evaluasi <br> Kampung Nelayan Merah Putih</p>
             </div>
             <div class="footer-text">
                 ©

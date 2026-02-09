@@ -470,7 +470,7 @@ function initDashboardMap() {
                         </div>
                     </div>
                     <a href="${detailUrl}" class="btn btn-xs btn-primary w-100 rounded-pill" style="color: #ffffff !important;">
-                        <i class="mdi mdi-eye me-1" style="color: #ffffff !important;"></i> Lihat Data Survey
+                        <i class="mdi mdi-information-outline me-1" style="color: #ffffff !important;"></i> Lihat Informasi Umum
                     </a>
                 </div>
             `;
