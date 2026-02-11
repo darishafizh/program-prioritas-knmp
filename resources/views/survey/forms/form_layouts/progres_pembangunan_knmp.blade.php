@@ -346,7 +346,7 @@
                             <div class="input-group input-group-sm">
                                 <input type="number"
                                     name="progress[{{ $code }}][{{ $index }}][persen]"
-                                    class="form-control"
+                                    class="form-control form-control-sm"
                                     value="{{ old('progress.' . $code . '.' . $index . '.persen', $existingDetail->persen ?? '') }}"
                                     max="100">
                                 <span class="input-group-text">%</span>

@@ -3,6 +3,18 @@
     $hasData = isset($profileKnmp) && $profileKnmp && $profileKnmp->id;
 @endphp
 
+{{-- ALERT ERROR VALIDASI --}}
+@if ($errors->any())
+<div class="alert alert-danger">
+    <strong>Terjadi kesalahan:</strong>
+    <ul class="mb-0">
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
 {{-- View Mode (when data exists) --}}
 <div id="profileKnmpViewMode" class="{{ $hasData ? '' : 'd-none' }}">
     <div class="row">
@@ -18,6 +30,18 @@
             <div class="mb-3">
                 <label class="form-label">Jumlah Nelayan</label>
                 <input type="text" class="form-control" value="{{ $profileKnmp->jml_nelayan ?? '' }}" readonly disabled>
+            </div>
+
+            {{-- Jumlah Kapal --}}
+            <div class="mb-3">
+                <label class="form-label">Jumlah Kapal</label>
+                <input type="text" class="form-control" value="{{ $profileKnmp->jumlah_kapal ?? '' }}" readonly disabled>
+            </div>
+
+            {{-- Serapan Tenaga Kerja --}}
+            <div class="mb-3">
+                <label class="form-label">Serapan Tenaga Kerja</label>
+                <input type="text" class="form-control" value="{{ $profileKnmp->serapan_tenaga_kerja ?? '' }}" readonly disabled>
             </div>
 
             {{-- Pendapatan --}}
@@ -142,7 +166,7 @@
 
             {{-- Koordinat --}}
             <div class="mb-3">
-                <label class="form-label">Koordinat Lokasi (GPS)</label>
+                <label class="form-label">Koordinat Lokasi (Lat, Long)</label>
                 <input type="text" class="form-control" value="{{ $profileKnmp->koordinat_lokasi ?? '' }}" readonly disabled>
             </div>
 
@@ -179,6 +203,20 @@
                     <label class="form-label">Jumlah Nelayan</label>
                     <input type="number" name="jumlah_nelayan" class="form-control"
                         value="{{ old('jumlah_nelayan', $profileKnmp->jml_nelayan ?? '') }}">
+                </div>
+
+                {{-- Jumlah Kapal --}}
+                <div class="mb-3">
+                    <label class="form-label">Jumlah Kapal</label>
+                    <input type="number" name="jumlah_kapal" class="form-control"
+                        value="{{ old('jumlah_kapal', $profileKnmp->jumlah_kapal ?? '') }}">
+                </div>
+
+                {{-- Serapan Tenaga Kerja --}}
+                <div class="mb-3">
+                    <label class="form-label">Serapan Tenaga Kerja</label>
+                    <input type="number" name="serapan_tenaga_kerja" class="form-control"
+                        value="{{ old('serapan_tenaga_kerja', $profileKnmp->serapan_tenaga_kerja ?? '') }}">
                 </div>
 
                 {{-- Pendapatan --}}

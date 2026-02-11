@@ -6,6 +6,7 @@ use App\Models\Knmp;
 use App\Models\InformasiResponden;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Requests\StoreRespondenRequest;
 use App\Exports\RespondenExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -122,7 +123,11 @@ class RespondenController extends Controller
             return back()->with('success', 'Informasi Responden berhasil disimpan!');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal menyimpan data responden. Silakan coba lagi atau hubungi administrator.');
+            Log::error('Gagal menyimpan Informasi Responden: ' . $e->getMessage(), [
+                'knmp_id' => $knmpId,
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return back()->withInput()->with('error', 'Gagal menyimpan data responden: ' . $e->getMessage());
         }
     }
 
@@ -161,7 +166,10 @@ class RespondenController extends Controller
             return back()->with('success', count($request->responden_ids) . ' responden berhasil dihapus');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal menghapus responden. Silakan coba lagi atau hubungi administrator.');
+            Log::error('Gagal menghapus responden: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return back()->with('error', 'Gagal menghapus responden: ' . $e->getMessage());
         }
     }
 

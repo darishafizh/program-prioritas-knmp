@@ -16,12 +16,30 @@ class TingkatKebahagiaanNelayanImport implements ToModel, WithHeadingRow, WithVa
     protected $knmpId;
 
     /**
-     * Required columns for this import type
+     * Required columns for this import type.
+     * Supports both old format (with skor_nilai) and new format (with pertanyaan).
      */
     protected $requiredColumns = [
         'responden_id',
         'nomor_soal',
         'kategori',
+    ];
+
+    /**
+     * Mapping from text answer to numeric score
+     */
+    protected static $textToScore = [
+        'sangat setuju' => 5,
+        'setuju' => 4,
+        'netral' => 3,
+        'tidak setuju' => 2,
+        'sangat tidak setuju' => 1,
+        // Alternative mappings
+        'sangat senang' => 5,
+        'senang' => 4,
+        'biasa saja' => 3,
+        'tidak senang' => 2,
+        'sangat tidak senang' => 1,
     ];
 
     public function __construct($knmpId)
@@ -65,15 +83,23 @@ class TingkatKebahagiaanNelayanImport implements ToModel, WithHeadingRow, WithVa
         // Lookup responden_id if it's a name string
         $respondenId = $this->lookupRespondenId($row['responden_id'] ?? null);
 
-        // Convert skor_nilai from text or formula to numeric
-        $skorNilai = $this->convertSkorNilai($row['skor_nilai'] ?? $row['jawaban_teks'] ?? null);
+        // Get jawaban_teks from the row
+        $jawabanTeks = trim($row['jawaban_teks'] ?? '');
+
+        // Convert jawaban_teks to numeric score
+        // Priority: jawaban_teks → skor_nilai (for backward compatibility)
+        $skorNilai = $this->convertSkorNilai($jawabanTeks);
+        if ($skorNilai === null && isset($row['skor_nilai'])) {
+            // Fallback to skor_nilai column if present (backward compatible with old template)
+            $skorNilai = $this->convertSkorNilai($row['skor_nilai']);
+        }
 
         return new TingkatKebahagiaanNelayan([
             'knmp_id' => $this->knmpId,
             'responden_id' => $respondenId,
             'nomor_soal' => $row['nomor_soal'] ?? null,
             'kategori' => $row['kategori'] ?? null,
-            'jawaban_teks' => $row['jawaban_teks'] ?? null,
+            'jawaban_teks' => !empty($jawabanTeks) ? $jawabanTeks : ($row['jawaban_teks'] ?? null),
             'skor_nilai' => $skorNilai,
         ]);
     }
@@ -96,37 +122,40 @@ class TingkatKebahagiaanNelayanImport implements ToModel, WithHeadingRow, WithVa
     }
 
     /**
-     * Convert text answer to numeric score
+     * Convert text answer to numeric score.
+     * Accepts both text labels and numeric values.
      */
     protected function convertSkorNilai($value)
     {
-        if (empty($value))
+        if (empty($value) && $value !== 0 && $value !== '0')
             return null;
-        if (is_numeric($value))
-            return (int) $value;
 
-        // If it's a formula string, extract the answer text
-        $value = trim($value);
+        // If already numeric (1-5), return directly
+        if (is_numeric($value)) {
+            $num = (int) $value;
+            return ($num >= 1 && $num <= 5) ? $num : null;
+        }
 
-        // Map text answers to numeric scores
-        $textToScore = [
-            'Sangat Setuju' => 5,
-            'Setuju' => 4,
-            'Netral' => 3,
-            'Tidak Setuju' => 2,
-            'Sangat Tidak Setuju' => 1,
-            // Alternative mappings
-            'Sangat Senang' => 5,
-            'Senang' => 4,
-            'Biasa Saja' => 3,
-            'Tidak Senang' => 2,
-            'Sangat Tidak Senang' => 1,
+        // Normalize to lowercase and trim
+        $normalized = strtolower(trim($value));
+
+        // Exact match first (more reliable)
+        if (isset(self::$textToScore[$normalized])) {
+            return self::$textToScore[$normalized];
+        }
+
+        // Partial match as fallback (order matters: longest match first)
+        $orderedKeys = [
+            'sangat tidak setuju', 'sangat tidak senang',
+            'sangat setuju', 'sangat senang',
+            'tidak setuju', 'tidak senang',
+            'biasa saja', 'netral',
+            'setuju', 'senang',
         ];
 
-        // Check if value matches any key (case-insensitive)
-        foreach ($textToScore as $text => $score) {
-            if (stripos($value, $text) !== false) {
-                return $score;
+        foreach ($orderedKeys as $text) {
+            if (strpos($normalized, $text) !== false) {
+                return self::$textToScore[$text];
             }
         }
 
@@ -137,6 +166,7 @@ class TingkatKebahagiaanNelayanImport implements ToModel, WithHeadingRow, WithVa
     {
         return [
             'nomor_soal' => 'required',
+            'jawaban_teks' => 'required',
         ];
     }
 
@@ -144,6 +174,7 @@ class TingkatKebahagiaanNelayanImport implements ToModel, WithHeadingRow, WithVa
     {
         return [
             'nomor_soal.required' => 'Kolom "nomor_soal" wajib diisi pada baris :attribute',
+            'jawaban_teks.required' => 'Kolom "jawaban_teks" wajib diisi pada baris :attribute. Pilih: Sangat Tidak Setuju, Tidak Setuju, Netral, Setuju, atau Sangat Setuju.',
         ];
     }
 }

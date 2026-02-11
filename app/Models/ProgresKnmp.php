@@ -27,7 +27,7 @@ class ProgresKnmp extends Model
     ];
 
     protected $casts = [
-        // Remove array cast for kendala and cctv - they should be strings
+        'kendala' => 'array',
     ];
 
     public function knmp()

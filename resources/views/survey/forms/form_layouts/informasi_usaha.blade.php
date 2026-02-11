@@ -37,10 +37,10 @@
                 <input type="text" name="nama_kapal" class="form-control" value="{{ old('nama_kapal') }}">
             </div>
             <div class="mb-3"><label class="form-label">Tahun Pembuatan Kapal</label>
-                <input type="number" name="tahun_pembuatan" class="form-control" value="{{ old('tahun_pembuatan') }}">
+                <input type="number" name="tahun_pembuatan" class="form-control" inputmode="numeric" value="{{ old('tahun_pembuatan') }}">
             </div>
             <div class="mb-3"><label class="form-label">Ukuran Perahu/ Tonase Kotor (GT)</label>
-                <input type="number" name="ukuran_gt" class="form-control" step="any" value="{{ old('ukuran_gt') }}">
+                <input type="number" name="ukuran_gt" class="form-control" step="any" inputmode="decimal" value="{{ old('ukuran_gt') }}">
             </div>
             <div class="mb-3"><label class="form-label">Dimensi Perahu (Panjang x Lebar x Dalam)</label>
                 <input type="text" name="dimensi_perahu" class="form-control" placeholder="Contoh: 10 x 3 x 1.5"
@@ -129,74 +129,66 @@
     <div class="row">
         <div class="col-md-6">
             <div class="mb-3"><label class="form-label">1. Jumlah hari per trip (hari/trip)</label>
-                <input type="number" name="hari_per_trip" class="form-control" step="any"
+                <input type="number" name="hari_per_trip" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('hari_per_trip') }}">
             </div>
             <div class="mb-3"><label class="form-label">2. Lama waktu melaut setiap trip (jam/trip)</label>
-                <input type="number" name="waktu_melaut_jam" class="form-control" step="any"
+                <input type="number" name="waktu_melaut_jam" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('waktu_melaut_jam') }}">
             </div>
             <div class="mb-3"><label class="form-label">3. Jarak ke daerah penangkapan (mil)</label>
-                <input type="number" name="jarak_penangkapan_mil" class="form-control" step="any"
+                <input type="number" name="jarak_penangkapan_mil" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('jarak_penangkapan_mil') }}">
             </div>
             <div class="mb-3"><label class="form-label">4. Waktu tempuh ke daerah penangkapan (jam)</label>
-                <input type="number" name="waktu_tempuh_jam" class="form-control" step="any"
+                <input type="number" name="waktu_tempuh_jam" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('waktu_tempuh_jam') }}">
             </div>
             <div class="mb-3"><label class="form-label">5. Jumlah trip/bulan (trip/bulan)</label>
-                <input type="number" name="jml_trip_per_bulan" class="form-control" step="any"
+                <input type="number" name="jml_trip_per_bulan" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('jml_trip_per_bulan') }}">
             </div>
             <div class="mb-3"><label class="form-label">6. Jumlah bulan melaut (bulan/tahun)</label>
-                <input type="number" name="jml_bulan_melaut" class="form-control" step="any"
+                <input type="number" name="jml_bulan_melaut" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('jml_bulan_melaut') }}">
             </div>
             <div class="mb-3"><label class="form-label">7. Rata-rata Produksi Per Trip (Kg/Trip)</label>
-                <input type="number" name="produksi_kg_per_trip" class="form-control" step="any"
+                <input type="number" name="produksi_kg_per_trip" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('produksi_kg_per_trip') }}">
             </div>
             <div class="mb-3"><label class="form-label">8. Rata-rata Penjualan Ikan Per Trip (Rp/Trip)</label>
-                <input type="number" name="penjualan_rp_per_trip" class="form-control" step="any"
+                <input type="number" name="penjualan_rp_per_trip" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('penjualan_rp_per_trip') }}">
             </div>
         </div>
         <div class="col-md-6">
-            <div class="mb-3"><label class="form-label">9. Biaya Solar Per Trip (Rp/Trip)</label>
-                <input type="number" name="biaya_solar_rp" class="form-control" step="any"
-                    value="{{ old('biaya_solar_rp') }}">
-            </div>
-            <div class="mb-3"><label class="form-label">10. Volume Solar Per Trip (Liter/Trip)</label>
-                <input type="number" name="volume_solar_liter" class="form-control" step="any"
-                    value="{{ old('volume_solar_liter') }}">
-            </div>
-            <div class="mb-3"><label class="form-label">11. Biaya Bensin Per Trip (Rp/Trip)</label>
-                <input type="number" name="biaya_bensin_rp" class="form-control" step="any"
+            <div class="mb-3"><label class="form-label">9. Biaya Bensin Per Trip (Rp/Trip)</label>
+                <input type="number" name="biaya_bensin_rp" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('biaya_bensin_rp') }}">
             </div>
-            <div class="mb-3"><label class="form-label">12. Volume Bensin Per Trip (Liter/Trip)</label>
-                <input type="number" name="volume_bensin_liter" class="form-control" step="any"
+            <div class="mb-3"><label class="form-label">10. Volume Bensin Per Trip (Liter/Trip)</label>
+                <input type="number" name="volume_bensin_liter" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('volume_bensin_liter') }}">
             </div>
-            <div class="mb-3"><label class="form-label">13. Biaya Es Balok dari Pabrik Per Trip (Rp/Trip)</label>
-                <input type="number" name="biaya_es_balok_rp" class="form-control" step="any"
+            <div class="mb-3"><label class="form-label">11. Biaya Es Balok dari Pabrik Per Trip (Rp/Trip)</label>
+                <input type="number" name="biaya_es_balok_rp" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('biaya_es_balok_rp') }}">
             </div>
-            <div class="mb-3"><label class="form-label">14. Volume Es Balok dari Pabrik Per Trip
+            <div class="mb-3"><label class="form-label">12. Volume Es Balok dari Pabrik Per Trip
                     (Balok/Trip)</label>
-                <input type="number" name="volume_es_balok" class="form-control" step="any"
+                <input type="number" name="volume_es_balok" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('volume_es_balok') }}">
             </div>
-            <div class="mb-3"><label class="form-label">15. Biaya Es Kantong Per Trip (Rp/Trip)</label>
-                <input type="number" name="biaya_es_kantong_rp" class="form-control" step="any"
+            <div class="mb-3"><label class="form-label">13. Biaya Es Kantong Per Trip (Rp/Trip)</label>
+                <input type="number" name="biaya_es_kantong_rp" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('biaya_es_kantong_rp') }}">
             </div>
-            <div class="mb-3"><label class="form-label">16. Volume Es Kantong Per Trip (Kantong/Trip)</label>
-                <input type="number" name="volume_es_kantong" class="form-control" step="any"
+            <div class="mb-3"><label class="form-label">14. Volume Es Kantong Per Trip (Kantong/Trip)</label>
+                <input type="number" name="volume_es_kantong" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('volume_es_kantong') }}">
             </div>
-            <div class="mb-3"><label class="form-label">17. Total Biaya Operasional Tiap Melaut (Rp/Trip)</label>
-                <input type="number" name="total_biaya_operasional" class="form-control" step="any"
+            <div class="mb-3"><label class="form-label">15. Total Biaya Operasional Tiap Melaut (Rp/Trip)</label>
+                <input type="number" name="total_biaya_operasional" class="form-control" step="any" inputmode="decimal"
                     value="{{ old('total_biaya_operasional') }}">
             </div>
         </div>
@@ -231,10 +223,10 @@
                     <td>1.</td>
                     <td><input type="text" name="ikan_utama[1][jenis]" class="form-control"
                             value="{{ old('ikan_utama.1.jenis', $ikan1->jenis ?? '') }}"></td>
-                    <td><input type="number" name="ikan_utama[1][kg_trip]" class="form-control" step="any"
+                    <td><input type="number" name="ikan_utama[1][kg_trip]" class="form-control" step="any" inputmode="decimal"
                             value="{{ old('ikan_utama.1.kg_trip', $ikan1->kg_trip ?? '') }}">
                     </td>
-                    <td><input type="number" name="ikan_utama[1][persen]" class="form-control" step="any"
+                    <td><input type="number" name="ikan_utama[1][persen]" class="form-control" step="any" inputmode="decimal"
                             placeholder="Auto atau Manual"
                             value="{{ old('ikan_utama.1.persen', $ikan1->persen ?? '') }}"></td>
                 </tr>
@@ -242,10 +234,10 @@
                     <td>2.</td>
                     <td><input type="text" name="ikan_utama[2][jenis]" class="form-control"
                             value="{{ old('ikan_utama.2.jenis', $ikan2->jenis ?? '') }}"></td>
-                    <td><input type="number" name="ikan_utama[2][kg_trip]" class="form-control" step="any"
+                    <td><input type="number" name="ikan_utama[2][kg_trip]" class="form-control" step="any" inputmode="decimal"
                             value="{{ old('ikan_utama.2.kg_trip', $ikan2->kg_trip ?? '') }}">
                     </td>
-                    <td><input type="number" name="ikan_utama[2][persen]" class="form-control" step="any"
+                    <td><input type="number" name="ikan_utama[2][persen]" class="form-control" step="any" inputmode="decimal"
                             placeholder="Auto atau Manual"
                             value="{{ old('ikan_utama.2.persen', $ikan2->persen ?? '') }}"></td>
                 </tr>

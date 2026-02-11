@@ -1,5 +1,18 @@
+{{-- ALERT ERROR VALIDASI --}}
+@if ($errors->any())
+<div class="alert alert-danger">
+    <strong>Terjadi kesalahan:</strong>
+    <ul class="mb-0">
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
 <form method="POST" action="{{ route('forms.store_informasi_responden', ['knmp' => $knmp->id]) }}">
     @csrf
+    <input type="hidden" name="active_section" value="collapseC">
     {{-- Hidden field untuk knmp_id (asumsi) --}}
     <input type="hidden" name="knmp_id" value="{{ $knmp->id ?? '' }}">
 

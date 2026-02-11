@@ -613,6 +613,11 @@ p { margin-bottom: var(--space-4); color: var(--muted); }
     color: var(--muted);
 }
 
+.input-group-sm .input-group-text {
+    padding: 10px 14px;
+    font-size: var(--font-size-sm);
+}
+
 /* ==================== Tables ==================== */
 .table {
     width: 100%;

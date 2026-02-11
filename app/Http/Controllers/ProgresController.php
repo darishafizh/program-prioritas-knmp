@@ -7,6 +7,7 @@ use App\Models\ProgresKnmp;
 use App\Models\ProgresKnmpDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProgresController extends Controller
 {
@@ -37,11 +38,11 @@ class ProgresController extends Controller
             'tk_perempuan.min' => 'Jumlah Tenaga Kerja Perempuan tidak boleh negatif.',
 
             'tk_upah.required' => 'Upah Tenaga Kerja per Hari wajib diisi.',
-            'tk_upah.numeric' => 'Upah Tenaga Kerja per Hari harus berupa angka.',
+            'tk_upah.integer' => 'Upah Tenaga Kerja per Hari harus berupa angka bulat.',
             'tk_upah.min' => 'Upah Tenaga Kerja per Hari tidak boleh negatif.',
 
             'tk_durasi.required' => 'Lama Bekerja di Proyek wajib diisi.',
-            'tk_durasi.numeric' => 'Lama Bekerja di Proyek harus berupa angka.',
+            'tk_durasi.integer' => 'Lama Bekerja di Proyek harus berupa angka bulat.',
             'tk_durasi.min' => 'Lama Bekerja di Proyek tidak boleh negatif.',
 
             'tk_lokal.required' => 'Jumlah Tenaga Kerja Lokal wajib diisi.',
@@ -61,7 +62,7 @@ class ProgresController extends Controller
             'progress.required' => 'Data Progress Pembangunan wajib diisi.',
             'progress.array' => 'Format data Progress Pembangunan tidak valid.',
 
-            'progress.*.*.target.numeric' => 'Target harus berupa angka.',
+            'progress.*.*.target.integer' => 'Target harus berupa angka bulat.',
             'progress.*.*.target.min' => 'Target tidak boleh negatif.',
 
             'progress.*.*.persen.numeric' => 'Persentase progres harus berupa angka.',
@@ -85,8 +86,8 @@ class ProgresController extends Controller
 
             'tk_laki' => 'required|integer|min:0',
             'tk_perempuan' => 'required|integer|min:0',
-            'tk_upah' => 'required|numeric|min:0',
-            'tk_durasi' => 'required|numeric|min:0',
+            'tk_upah' => 'required|integer|min:0',
+            'tk_durasi' => 'required|integer|min:0',
             'tk_lokal' => 'required|integer|min:0',
             'tk_luar' => 'required|integer|min:0',
 
@@ -95,7 +96,7 @@ class ProgresController extends Controller
 
             'progress' => 'required|array',
             'progress.*.*.komponen' => 'required|string|max:255',
-            'progress.*.*.target' => 'nullable|numeric|min:0',
+            'progress.*.*.target' => 'nullable|integer|min:0',
             'progress.*.*.persen' => 'nullable|numeric|min:0|max:100',
             'progress.*.*.keterangan' => 'nullable|string|max:255',
         ], $this->validationMessages());
@@ -148,7 +149,11 @@ class ProgresController extends Controller
             return back()->with('success', 'Progres Pembangunan KNMP berhasil ditambahkan!');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal menyimpan data. Silakan coba lagi atau hubungi administrator.');
+            Log::error('Gagal menyimpan Progres KNMP: ' . $e->getMessage(), [
+                'knmp_id' => $knmp->id,
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return back()->withInput()->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
         }
     }
 
@@ -164,8 +169,8 @@ class ProgresController extends Controller
 
             'tk_laki' => 'required|integer|min:0',
             'tk_perempuan' => 'required|integer|min:0',
-            'tk_upah' => 'required|numeric|min:0',
-            'tk_durasi' => 'required|numeric|min:0',
+            'tk_upah' => 'required|integer|min:0',
+            'tk_durasi' => 'required|integer|min:0',
             'tk_lokal' => 'required|integer|min:0',
             'tk_luar' => 'required|integer|min:0',
 
@@ -174,7 +179,7 @@ class ProgresController extends Controller
 
             'progress' => 'required|array',
             'progress.*.*.komponen' => 'required|string|max:255',
-            'progress.*.*.target' => 'nullable|numeric|min:0',
+            'progress.*.*.target' => 'nullable|integer|min:0',
             'progress.*.*.persen' => 'nullable|numeric|min:0|max:100',
             'progress.*.*.keterangan' => 'nullable|string|max:255',
         ], $this->validationMessages());
@@ -234,7 +239,11 @@ class ProgresController extends Controller
             return back()->with('success', 'Progres Pembangunan KNMP berhasil diperbarui!');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal memperbarui data. Silakan coba lagi atau hubungi administrator.');
+            Log::error('Gagal memperbarui Progres KNMP: ' . $e->getMessage(), [
+                'knmp_id' => $knmp->id,
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return back()->withInput()->with('error', 'Gagal memperbarui data: ' . $e->getMessage());
         }
     }
 }

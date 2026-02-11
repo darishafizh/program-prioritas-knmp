@@ -64,29 +64,85 @@ class TanggapanMasyarakatImport implements ToModel, WithHeadingRow, WithValidati
         return new TanggapanMasyarakat([
             'knmp_id' => $this->knmpId,
             'responden_id' => $row['responden_id'] ?? null,
-            'kesesuaian_kebutuhan' => $this->parseBoolean($row['kesesuaian_kebutuhan'] ?? null),
+            'kesesuaian_kebutuhan' => $this->parseKesesuaian($row['kesesuaian_kebutuhan'] ?? null),
             'item_tidak_sesuai' => $row['item_tidak_sesuai'] ?? null,
-            'tingkat_kesenangan' => $row['tingkat_kesenangan'] ?? null,
+            'tingkat_kesenangan' => $this->parseKesenangan($row['tingkat_kesenangan'] ?? null),
             'alasan_tidak_senang' => $row['alasan_tidak_senang'] ?? null,
             'harapan_masyarakat' => $row['harapan_masyarakat'] ?? null,
             'masukan_saran_perbaikan' => $row['masukan_saran_perbaikan'] ?? null,
         ]);
     }
 
-    protected function parseBoolean($value)
+    /**
+     * Convert kesesuaian_kebutuhan text to numeric value.
+     * "Ya, sesuai" => 1, "Tidak sesuai" => 0
+     * Also accepts numeric values directly.
+     */
+    protected function parseKesesuaian($value)
     {
         if (is_null($value))
             return null;
-        if (is_bool($value))
-            return $value;
-        $value = strtolower(trim($value));
-        return in_array($value, ['ya', 'yes', '1', 'true', 'sesuai']);
+
+        // Already numeric
+        if (is_numeric($value))
+            return (int) $value;
+
+        $normalized = strtolower(trim($value));
+
+        // Map text to value
+        $map = [
+            'ya, sesuai' => 1,
+            'ya sesuai' => 1,
+            'sesuai' => 1,
+            'ya' => 1,
+            'yes' => 1,
+            'tidak sesuai' => 0,
+            'tidak' => 0,
+            'no' => 0,
+        ];
+
+        return $map[$normalized] ?? null;
+    }
+
+    /**
+     * Convert tingkat_kesenangan text — stored as-is since the form uses text values.
+     * Normalizes common variations.
+     */
+    protected function parseKesenangan($value)
+    {
+        if (is_null($value) || trim($value) === '')
+            return null;
+
+        $normalized = strtolower(trim($value));
+
+        // Normalize to exact values expected by the form
+        $map = [
+            'senang' => 'Senang',
+            'biasa saja' => 'Biasa saja',
+            'biasa' => 'Biasa saja',
+            'tidak senang' => 'Tidak Senang',
+            'tidak' => 'Tidak Senang',
+        ];
+
+        return $map[$normalized] ?? $value;
     }
 
     public function rules(): array
     {
         return [
             'responden_id' => 'required|exists:informasi_responden,id',
+            'kesesuaian_kebutuhan' => 'required',
+            'tingkat_kesenangan' => 'required',
+        ];
+    }
+
+    public function customValidationMessages()
+    {
+        return [
+            'responden_id.required' => 'Kolom "responden_id" wajib diisi pada baris :attribute.',
+            'responden_id.exists' => 'Responden pada baris :attribute tidak ditemukan di database.',
+            'kesesuaian_kebutuhan.required' => 'Kolom "kesesuaian_kebutuhan" wajib diisi pada baris :attribute. Pilih: Ya, sesuai atau Tidak sesuai.',
+            'tingkat_kesenangan.required' => 'Kolom "tingkat_kesenangan" wajib diisi pada baris :attribute. Pilih: Senang, Biasa saja, atau Tidak Senang.',
         ];
     }
 }

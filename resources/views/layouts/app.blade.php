@@ -5,6 +5,7 @@
     @include('layouts.head')
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
     @stack('styles')
 
@@ -268,6 +269,86 @@
     {{-- ⚡ FIXED: Jangan inisialisasi tooltip/popover/offcanvas manual --}}
     {{-- Semua sudah di-handle oleh app.min.js / vendor.min.js --}}
     {{-- Ini mencegah "Option 'container' provided type 'null'" --}}
+
+    {{-- Flatpickr datepicker with Indonesian locale --}}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            flatpickr.localize(flatpickr.l10ns.id);
+            document.querySelectorAll('input[type="date"]').forEach(function (el) {
+                el.type = 'text';
+                el.setAttribute('autocomplete', 'off');
+                var fp = flatpickr(el, {
+                    dateFormat: 'Y-m-d',
+                    altInput: true,
+                    altFormat: 'd / m / Y',
+                    allowInput: true,
+                    defaultDate: el.value || null,
+                    onChange: function(selectedDates, dateStr, instance) {
+                        var evt = new Event('change', { bubbles: true });
+                        instance.element.dispatchEvent(evt);
+                    }
+                });
+                // Wrap the visible alt-input with calendar icon
+                var altInput = fp.altInput;
+                if (altInput) {
+                    altInput.placeholder = 'dd / mm / yyyy';
+                    var wrapper = document.createElement('div');
+                    wrapper.className = 'input-group';
+                    var iconSpan = document.createElement('span');
+                    iconSpan.className = 'input-group-text';
+                    iconSpan.innerHTML = '<i class="mdi mdi-calendar"></i>';
+                    iconSpan.style.cursor = 'pointer';
+                    iconSpan.addEventListener('click', function() { fp.open(); });
+                    altInput.parentNode.insertBefore(wrapper, altInput);
+                    wrapper.appendChild(iconSpan);
+                    wrapper.appendChild(altInput);
+                }
+            });
+        });
+    </script>
+
+    {{-- Override browser HTML5 validation messages to Indonesian --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('input, select, textarea').forEach(function (el) {
+                el.addEventListener('invalid', function () {
+                    var v = this.validity;
+                    if (v.valueMissing) {
+                        this.setCustomValidity('Kolom ini wajib diisi.');
+                    } else if (v.typeMismatch) {
+                        if (this.type === 'email') {
+                            this.setCustomValidity('Masukkan alamat email yang valid.');
+                        } else if (this.type === 'url') {
+                            this.setCustomValidity('Masukkan URL yang valid.');
+                        } else if (this.type === 'number') {
+                            this.setCustomValidity('Masukkan angka yang valid.');
+                        } else {
+                            this.setCustomValidity('Format input tidak sesuai.');
+                        }
+                    } else if (v.badInput) {
+                        this.setCustomValidity('Masukkan angka yang valid.');
+                    } else if (v.rangeUnderflow) {
+                        this.setCustomValidity('Nilai minimal adalah ' + this.min + '.');
+                    } else if (v.rangeOverflow) {
+                        this.setCustomValidity('Nilai maksimal adalah ' + this.max + '.');
+                    } else if (v.tooShort) {
+                        this.setCustomValidity('Minimal ' + this.minLength + ' karakter. Anda memasukkan ' + this.value.length + ' karakter.');
+                    } else if (v.tooLong) {
+                        this.setCustomValidity('Maksimal ' + this.maxLength + ' karakter.');
+                    } else if (v.stepMismatch) {
+                        this.setCustomValidity('Masukkan nilai yang valid.');
+                    } else if (v.patternMismatch) {
+                        this.setCustomValidity(this.title || 'Format input tidak sesuai.');
+                    }
+                });
+                el.addEventListener('input', function () {
+                    this.setCustomValidity('');
+                });
+            });
+        });
+    </script>
 
     @stack('scripts')
 </body>

@@ -6,7 +6,16 @@
 {{-- AUTO ERROR ALERT (VALIDATION FAILS) --}}
 {{-- ===================================================== --}}
 @if ($errors->any() && !session('error'))
-@php(session()->flash('error', 'Lengkapi semua form!'))
+@php
+    $errorList = $errors->all();
+    $errorCount = count($errorList);
+    $shownErrors = array_slice($errorList, 0, 3);
+    $errorMessage = 'Terjadi kesalahan input: ' . implode('; ', $shownErrors);
+    if ($errorCount > 3) {
+        $errorMessage .= ' (dan ' . ($errorCount - 3) . ' kesalahan lainnya)';
+    }
+    session()->flash('error', $errorMessage);
+@endphp
 @endif
 
 

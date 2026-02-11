@@ -47,7 +47,7 @@
                 <input type="number" name="pemasaran_pengepul_kg" class="form-control" step="any"
                     value="{{ old('pemasaran_pengepul_kg') }}">
             </div>
-            <div class="mb-3"><label class="form-label">Pedagang Besar (PT, CV, BUMD, BUMDES)</label>
+            <div class="mb-3"><label class="form-label">Pedagang Besar (PT, CV, BUMD, BUMDES) (Kg/Trip)</label>
                 <input type="number" name="pemasaran_pedagang_besar_kg" class="form-control" step="any"
                     value="{{ old('pemasaran_pedagang_besar_kg') }}">
             </div>

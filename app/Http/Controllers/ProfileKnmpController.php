@@ -6,6 +6,7 @@ use App\Models\Knmp;
 use App\Models\ProfileKnmp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProfileKnmpController extends Controller
 {
@@ -83,6 +84,8 @@ class ProfileKnmpController extends Controller
             'knmp_id' => 'required|integer|min:1',
             'jumlah_penduduk' => 'required|integer|min:0',
             'jumlah_nelayan' => 'required|integer|min:0',
+            'jumlah_kapal' => 'nullable|integer|min:0',
+            'serapan_tenaga_kerja' => 'nullable|integer|min:0',
             'pendapatan_rata_rata' => 'required|numeric|min:0',
             'volume_produksi' => 'required|numeric|min:0',
             'nilai_produksi' => 'required|numeric|min:0',
@@ -109,6 +112,8 @@ class ProfileKnmpController extends Controller
                 'knmp_id' => $validated['knmp_id'],
                 'jml_penduduk_des' => $validated['jumlah_penduduk'],
                 'jml_nelayan' => $validated['jumlah_nelayan'],
+                'jumlah_kapal' => $validated['jumlah_kapal'] ?? null,
+                'serapan_tenaga_kerja' => $validated['serapan_tenaga_kerja'] ?? null,
                 'pendapatan_rata_rata_nelayan' => $validated['pendapatan_rata_rata'],
                 'volume_produksi_ton' => $validated['volume_produksi'],
                 'nilai_produksi' => $validated['nilai_produksi'],
@@ -143,7 +148,10 @@ class ProfileKnmpController extends Controller
             return back()->with('success', 'Profil KNMP berhasil ditambahkan!');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal menyimpan data. Silakan coba lagi atau hubungi administrator.');
+            Log::error('Gagal menyimpan Profil KNMP: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return back()->withInput()->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
         }
     }
 
@@ -155,6 +163,8 @@ class ProfileKnmpController extends Controller
         $validated = $request->validate([
             'jumlah_penduduk' => 'required|integer|min:0',
             'jumlah_nelayan' => 'required|integer|min:0',
+            'jumlah_kapal' => 'nullable|integer|min:0',
+            'serapan_tenaga_kerja' => 'nullable|integer|min:0',
             'pendapatan_rata_rata' => 'required|numeric|min:0',
             'volume_produksi' => 'required|numeric|min:0',
             'nilai_produksi' => 'required|numeric|min:0',
@@ -186,6 +196,8 @@ class ProfileKnmpController extends Controller
             $profilData = [
                 'jml_penduduk_des' => $validated['jumlah_penduduk'],
                 'jml_nelayan' => $validated['jumlah_nelayan'],
+                'jumlah_kapal' => $validated['jumlah_kapal'] ?? null,
+                'serapan_tenaga_kerja' => $validated['serapan_tenaga_kerja'] ?? null,
                 'pendapatan_rata_rata_nelayan' => $validated['pendapatan_rata_rata'],
                 'volume_produksi_ton' => $validated['volume_produksi'],
                 'nilai_produksi' => $validated['nilai_produksi'],
@@ -220,7 +232,11 @@ class ProfileKnmpController extends Controller
             return back()->with('success', 'Profil KNMP berhasil diperbarui!');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal memperbarui data. Silakan coba lagi atau hubungi administrator.');
+            Log::error('Gagal memperbarui Profil KNMP: ' . $e->getMessage(), [
+                'knmp_id' => $knmp->id,
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return back()->withInput()->with('error', 'Gagal memperbarui data: ' . $e->getMessage());
         }
     }
 }

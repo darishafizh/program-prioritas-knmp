@@ -14,6 +14,8 @@ class ProfileKnmp extends Model
         'knmp_id',
         'jml_penduduk_des',
         'jml_nelayan',
+        'jumlah_kapal',
+        'serapan_tenaga_kerja',
         'pendapatan_rata_rata_nelayan',
         'volume_produksi_ton',
         'nilai_produksi',
