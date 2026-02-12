@@ -3,14 +3,15 @@
 namespace App\Imports;
 
 use App\Models\TanggapanMasyarakat;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeImport;
+use Maatwebsite\Excel\Row;
 
-class TanggapanMasyarakatImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows, WithEvents
+class TanggapanMasyarakatImport implements OnEachRow, WithHeadingRow, WithValidation, SkipsEmptyRows, WithEvents
 {
     protected $knmpId;
 
@@ -59,37 +60,41 @@ class TanggapanMasyarakatImport implements ToModel, WithHeadingRow, WithValidati
         ];
     }
 
-    public function model(array $row)
+    public function onRow(Row $row)
     {
-        return new TanggapanMasyarakat([
-            'knmp_id' => $this->knmpId,
-            'responden_id' => $row['responden_id'] ?? null,
-            'kesesuaian_kebutuhan' => $this->parseKesesuaian($row['kesesuaian_kebutuhan'] ?? null),
-            'item_tidak_sesuai' => $row['item_tidak_sesuai'] ?? null,
-            'tingkat_kesenangan' => $this->parseKesenangan($row['tingkat_kesenangan'] ?? null),
-            'alasan_tidak_senang' => $row['alasan_tidak_senang'] ?? null,
-            'harapan_masyarakat' => $row['harapan_masyarakat'] ?? null,
-            'masukan_saran_perbaikan' => $row['masukan_saran_perbaikan'] ?? null,
-        ]);
+        $row = $row->toArray();
+
+        // Use updateOrCreate to prevent duplicates on re-import
+        TanggapanMasyarakat::updateOrCreate(
+            [
+                'knmp_id' => $this->knmpId,
+                'responden_id' => $row['responden_id'] ?? null,
+            ],
+            [
+                'kesesuaian_kebutuhan' => $this->parseKesesuaian($row['kesesuaian_kebutuhan'] ?? null),
+                'item_tidak_sesuai' => $row['item_tidak_sesuai'] ?? null,
+                'tingkat_kesenangan' => $this->parseKesenangan($row['tingkat_kesenangan'] ?? null),
+                'alasan_tidak_senang' => $row['alasan_tidak_senang'] ?? null,
+                'harapan_masyarakat' => $row['harapan_masyarakat'] ?? null,
+                'masukan_saran_perbaikan' => $row['masukan_saran_perbaikan'] ?? null,
+            ]
+        );
     }
 
     /**
      * Convert kesesuaian_kebutuhan text to numeric value.
      * "Ya, sesuai" => 1, "Tidak sesuai" => 0
-     * Also accepts numeric values directly.
      */
     protected function parseKesesuaian($value)
     {
         if (is_null($value))
             return null;
 
-        // Already numeric
         if (is_numeric($value))
             return (int) $value;
 
         $normalized = strtolower(trim($value));
 
-        // Map text to value
         $map = [
             'ya, sesuai' => 1,
             'ya sesuai' => 1,
@@ -105,8 +110,7 @@ class TanggapanMasyarakatImport implements ToModel, WithHeadingRow, WithValidati
     }
 
     /**
-     * Convert tingkat_kesenangan text — stored as-is since the form uses text values.
-     * Normalizes common variations.
+     * Convert tingkat_kesenangan text — normalizes common variations.
      */
     protected function parseKesenangan($value)
     {
@@ -115,7 +119,6 @@ class TanggapanMasyarakatImport implements ToModel, WithHeadingRow, WithValidati
 
         $normalized = strtolower(trim($value));
 
-        // Normalize to exact values expected by the form
         $map = [
             'senang' => 'Senang',
             'biasa saja' => 'Biasa saja',

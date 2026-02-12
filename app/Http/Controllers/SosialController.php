@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SosialKelembagaan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SosialController extends Controller
 {
@@ -30,23 +31,34 @@ class SosialController extends Controller
             'required' => 'Wajib diisi',
         ]);
 
-        SosialKelembagaan::create([
-            'knmp_id' => $knmp,
-            'responden_id' => $validated['responden_id'],
-            'anggota_kelompok' => $validated['anggota_kelompok'],
-            'manfaat_kelompok' => $validated['manfaat_kelompok'],
-            'anggota_koperasi' => $validated['anggota_koperasi'],
-            'tertarik_koperasi' => $validated['tertarik_koperasi'],
-            'manfaat_koperasi' => $validated['manfaat_koperasi'],
-            'koperasi_rapat_tahunan' => $validated['koperasi_rapat_tahunan'],
-            'koperasi_partisipasi_aktif' => $validated['koperasi_partisipasi_aktif'],
-            'koperasi_pengurus_kompeten' => $validated['koperasi_pengurus_kompeten'],
-            'koperasi_transparan' => $validated['koperasi_transparan'],
-            'koperasi_keuangan_sehat' => $validated['koperasi_keuangan_sehat'],
-            'koperasi_jaringan_pasar' => $validated['koperasi_jaringan_pasar'],
-            'koperasi_kepercayaan_usaha' => $validated['koperasi_kepercayaan_usaha'],
-        ]);
+        DB::beginTransaction();
+        try {
+            SosialKelembagaan::updateOrCreate(
+                [
+                    'knmp_id' => $knmp,
+                    'responden_id' => $validated['responden_id'],
+                ],
+                [
+                    'anggota_kelompok' => $validated['anggota_kelompok'],
+                    'manfaat_kelompok' => $validated['manfaat_kelompok'],
+                    'anggota_koperasi' => $validated['anggota_koperasi'],
+                    'tertarik_koperasi' => $validated['tertarik_koperasi'],
+                    'manfaat_koperasi' => $validated['manfaat_koperasi'],
+                    'koperasi_rapat_tahunan' => $validated['koperasi_rapat_tahunan'],
+                    'koperasi_partisipasi_aktif' => $validated['koperasi_partisipasi_aktif'],
+                    'koperasi_pengurus_kompeten' => $validated['koperasi_pengurus_kompeten'],
+                    'koperasi_transparan' => $validated['koperasi_transparan'],
+                    'koperasi_keuangan_sehat' => $validated['koperasi_keuangan_sehat'],
+                    'koperasi_jaringan_pasar' => $validated['koperasi_jaringan_pasar'],
+                    'koperasi_kepercayaan_usaha' => $validated['koperasi_kepercayaan_usaha'],
+                ]
+            );
 
-        return back()->with('success', 'Data Sosial & Kelembagaan berhasil disimpan');
+            DB::commit();
+            return back()->with('success', 'Data Sosial & Kelembagaan berhasil disimpan');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return back()->withInput()->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
+        }
     }
 }

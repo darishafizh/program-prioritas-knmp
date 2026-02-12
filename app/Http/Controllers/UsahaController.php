@@ -34,35 +34,42 @@ class UsahaController extends Controller
         DB::beginTransaction();
 
         try {
-            $usaha = InformasiUsaha::create([
-                'knmp_id' => $request->knmp_id,
-                'responden_id' => $request->responden_id,
-                'nama_kapal' => $request->nama_kapal,
-                'tahun_pembuatan' => $request->tahun_pembuatan,
-                'ukuran_gt' => $request->ukuran_gt,
-                'dimensi_perahu' => $request->dimensi_perahu,
-                'jenis_bahan_baku' => $request->jenis_bahan_baku,
-                'jenis_mesin' => $request->jenis_mesin,
-                'alat_penyimpanan' => $request->alat_penyimpanan,
-                'jenis_alat_tangkap' => $request->jenis_alat_tangkap,
-                'hari_per_trip' => $request->hari_per_trip,
-                'waktu_melaut_jam' => $request->waktu_melaut_jam,
-                'jarak_penangkapan_mil' => $request->jarak_penangkapan_mil,
-                'waktu_tempuh_jam' => $request->waktu_tempuh_jam,
-                'jml_trip_per_bulan' => $request->jml_trip_per_bulan,
-                'jml_bulan_melaut' => $request->jml_bulan_melaut,
-                'produksi_kg_per_trip' => $request->produksi_kg_per_trip,
-                'penjualan_rp_per_trip' => $request->penjualan_rp_per_trip,
-                'biaya_solar_rp' => $request->biaya_solar_rp,
-                'volume_solar_liter' => $request->volume_solar_liter,
-                'biaya_bensin_rp' => $request->biaya_bensin_rp,
-                'volume_bensin_liter' => $request->volume_bensin_liter,
-                'biaya_es_balok_rp' => $request->biaya_es_balok_rp,
-                'volume_es_balok' => $request->volume_es_balok,
-                'biaya_es_kantong_rp' => $request->biaya_es_kantong_rp,
-                'volume_es_kantong' => $request->volume_es_kantong,
-                'total_biaya_operasional' => $request->total_biaya_operasional,
-            ]);
+            $usaha = InformasiUsaha::updateOrCreate(
+                [
+                    'knmp_id' => $request->knmp_id,
+                    'responden_id' => $request->responden_id,
+                ],
+                [
+                    'nama_kapal' => $request->nama_kapal,
+                    'tahun_pembuatan' => $request->tahun_pembuatan,
+                    'ukuran_gt' => $request->ukuran_gt,
+                    'dimensi_perahu' => $request->dimensi_perahu,
+                    'jenis_bahan_baku' => $request->jenis_bahan_baku,
+                    'jenis_mesin' => $request->jenis_mesin,
+                    'alat_penyimpanan' => $request->alat_penyimpanan,
+                    'jenis_alat_tangkap' => $request->jenis_alat_tangkap,
+                    'hari_per_trip' => $request->hari_per_trip,
+                    'waktu_melaut_jam' => $request->waktu_melaut_jam,
+                    'jarak_penangkapan_mil' => $request->jarak_penangkapan_mil,
+                    'waktu_tempuh_jam' => $request->waktu_tempuh_jam,
+                    'jml_trip_per_bulan' => $request->jml_trip_per_bulan,
+                    'jml_bulan_melaut' => $request->jml_bulan_melaut,
+                    'produksi_kg_per_trip' => $request->produksi_kg_per_trip,
+                    'penjualan_rp_per_trip' => $request->penjualan_rp_per_trip,
+                    'biaya_solar_rp' => $request->biaya_solar_rp,
+                    'volume_solar_liter' => $request->volume_solar_liter,
+                    'biaya_bensin_rp' => $request->biaya_bensin_rp,
+                    'volume_bensin_liter' => $request->volume_bensin_liter,
+                    'biaya_es_balok_rp' => $request->biaya_es_balok_rp,
+                    'volume_es_balok' => $request->volume_es_balok,
+                    'biaya_es_kantong_rp' => $request->biaya_es_kantong_rp,
+                    'volume_es_kantong' => $request->volume_es_kantong,
+                    'total_biaya_operasional' => $request->total_biaya_operasional,
+                ]
+            );
+
+            // Hapus ikan lama lalu insert ulang (jumlah ikan bisa berubah)
+            InformasiUsahaIkan::where('informasi_usaha_id', $usaha->id)->delete();
 
             foreach ($request->ikan_utama as $row) {
                 InformasiUsahaIkan::create([

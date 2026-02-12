@@ -4,20 +4,20 @@ namespace App\Imports;
 
 use App\Models\TingkatKebahagiaanNelayan;
 use App\Models\InformasiResponden;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeImport;
+use Maatwebsite\Excel\Row;
 
-class TingkatKebahagiaanNelayanImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows, WithEvents
+class TingkatKebahagiaanNelayanImport implements OnEachRow, WithHeadingRow, WithValidation, SkipsEmptyRows, WithEvents
 {
     protected $knmpId;
 
     /**
      * Required columns for this import type.
-     * Supports both old format (with skor_nilai) and new format (with pertanyaan).
      */
     protected $requiredColumns = [
         'responden_id',
@@ -78,8 +78,10 @@ class TingkatKebahagiaanNelayanImport implements ToModel, WithHeadingRow, WithVa
         ];
     }
 
-    public function model(array $row)
+    public function onRow(Row $row)
     {
+        $row = $row->toArray();
+
         // Lookup responden_id if it's a name string
         $respondenId = $this->lookupRespondenId($row['responden_id'] ?? null);
 
@@ -90,18 +92,22 @@ class TingkatKebahagiaanNelayanImport implements ToModel, WithHeadingRow, WithVa
         // Priority: jawaban_teks → skor_nilai (for backward compatibility)
         $skorNilai = $this->convertSkorNilai($jawabanTeks);
         if ($skorNilai === null && isset($row['skor_nilai'])) {
-            // Fallback to skor_nilai column if present (backward compatible with old template)
             $skorNilai = $this->convertSkorNilai($row['skor_nilai']);
         }
 
-        return new TingkatKebahagiaanNelayan([
-            'knmp_id' => $this->knmpId,
-            'responden_id' => $respondenId,
-            'nomor_soal' => $row['nomor_soal'] ?? null,
-            'kategori' => $row['kategori'] ?? null,
-            'jawaban_teks' => !empty($jawabanTeks) ? $jawabanTeks : ($row['jawaban_teks'] ?? null),
-            'skor_nilai' => $skorNilai,
-        ]);
+        // Use updateOrCreate to prevent duplicates on re-import
+        TingkatKebahagiaanNelayan::updateOrCreate(
+            [
+                'knmp_id' => $this->knmpId,
+                'responden_id' => $respondenId,
+                'nomor_soal' => $row['nomor_soal'] ?? null,
+            ],
+            [
+                'kategori' => $row['kategori'] ?? null,
+                'jawaban_teks' => !empty($jawabanTeks) ? $jawabanTeks : ($row['jawaban_teks'] ?? null),
+                'skor_nilai' => $skorNilai,
+            ]
+        );
     }
 
     /**
@@ -165,6 +171,7 @@ class TingkatKebahagiaanNelayanImport implements ToModel, WithHeadingRow, WithVa
     public function rules(): array
     {
         return [
+            'responden_id' => 'required',
             'nomor_soal' => 'required',
             'jawaban_teks' => 'required',
         ];
@@ -173,6 +180,7 @@ class TingkatKebahagiaanNelayanImport implements ToModel, WithHeadingRow, WithVa
     public function customValidationMessages()
     {
         return [
+            'responden_id.required' => 'Kolom "responden_id" wajib diisi pada baris :attribute.',
             'nomor_soal.required' => 'Kolom "nomor_soal" wajib diisi pada baris :attribute',
             'jawaban_teks.required' => 'Kolom "jawaban_teks" wajib diisi pada baris :attribute. Pilih: Sangat Tidak Setuju, Tidak Setuju, Netral, Setuju, atau Sangat Setuju.',
         ];

@@ -63,22 +63,26 @@ class TanggapanController extends Controller
 
         try {
             DB::transaction(function () use ($validated, $knmp) {
-                TanggapanMasyarakat::create([
-                    'knmp_id' => $knmp->id,
-                    'responden_id' => $validated['responden_id'],
-                    'kesesuaian_kebutuhan' => (bool) $validated['kesesuaian_kebutuhan'],
-                    'item_tidak_sesuai' =>
-                        $validated['kesesuaian_kebutuhan'] == 0
-                        ? $validated['item_tidak_sesuai']
-                        : null,
-                    'tingkat_kesenangan' => $validated['tingkat_kesenangan'],
-                    'alasan_tidak_senang' =>
-                        $validated['tingkat_kesenangan'] === 'Tidak Senang'
-                        ? $validated['alasan_tidak_senang']
-                        : null,
-                    'harapan_masyarakat' => $validated['harapan_masyarakat'],
-                    'masukan_saran_perbaikan' => $validated['masukan_saran_perbaikan'],
-                ]);
+                TanggapanMasyarakat::updateOrCreate(
+                    [
+                        'knmp_id' => $knmp->id,
+                        'responden_id' => $validated['responden_id'],
+                    ],
+                    [
+                        'kesesuaian_kebutuhan' => (bool) $validated['kesesuaian_kebutuhan'],
+                        'item_tidak_sesuai' =>
+                            $validated['kesesuaian_kebutuhan'] == 0
+                            ? $validated['item_tidak_sesuai']
+                            : null,
+                        'tingkat_kesenangan' => $validated['tingkat_kesenangan'],
+                        'alasan_tidak_senang' =>
+                            $validated['tingkat_kesenangan'] === 'Tidak Senang'
+                            ? $validated['alasan_tidak_senang']
+                            : null,
+                        'harapan_masyarakat' => $validated['harapan_masyarakat'],
+                        'masukan_saran_perbaikan' => $validated['masukan_saran_perbaikan'],
+                    ]
+                );
             });
 
             return back()->with('success', 'Tanggapan Masyarakat berhasil disimpan');

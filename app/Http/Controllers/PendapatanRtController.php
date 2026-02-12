@@ -29,19 +29,23 @@ class PendapatanRtController extends Controller
 
         DB::beginTransaction();
         try {
-            InformasiPendapatanRumahTangga::create([
-                'knmp_id' => $request->knmp_id,
-                'responden_id' => $request->responden_id,
-                'pendapatan_perikanan' => $request->pendapatan_perikanan,
-                'pendapatan_non_perikanan' => $request->pendapatan_non_perikanan ?? 0,
-                'pendapatan_total' => $request->pendapatan_total,
-                'kontribusi_nelayan_persen' => $request->kontribusi_nelayan_persen,
-                'jumlah_sumber_penghasilan' => $request->jumlah_sumber_penghasilan,
-                'ketergantungan_perikanan' => $request->ketergantungan_perikanan,
-                'stabilitas_pendapatan' => $request->stabilitas_pendapatan,
-                'keterlibatan_perempuan' => $request->keterlibatan_perempuan,
-                'kontribusi_perempuan_persen' => $request->kontribusi_perempuan_persen,
-            ]);
+            InformasiPendapatanRumahTangga::updateOrCreate(
+                [
+                    'knmp_id' => $request->knmp_id,
+                    'responden_id' => $request->responden_id,
+                ],
+                [
+                    'pendapatan_perikanan' => $request->pendapatan_perikanan,
+                    'pendapatan_non_perikanan' => $request->pendapatan_non_perikanan ?? 0,
+                    'pendapatan_total' => $request->pendapatan_total,
+                    'kontribusi_nelayan_persen' => $request->kontribusi_nelayan_persen,
+                    'jumlah_sumber_penghasilan' => $request->jumlah_sumber_penghasilan,
+                    'ketergantungan_perikanan' => $request->ketergantungan_perikanan,
+                    'stabilitas_pendapatan' => $request->stabilitas_pendapatan,
+                    'keterlibatan_perempuan' => $request->keterlibatan_perempuan,
+                    'kontribusi_perempuan_persen' => $request->kontribusi_perempuan_persen,
+                ]
+            );
 
             DB::commit();
             return back()->with('success', 'Pendapatan Rumah Tangga berhasil disimpan.');

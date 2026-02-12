@@ -73,14 +73,18 @@ class KebahagiaanController extends Controller
                     continue;
                 }
 
-                TingkatKebahagiaanNelayan::create([
-                    'knmp_id' => $knmp_id,
-                    'responden_id' => $responden_id,
-                    'nomor_soal' => (int) $m[2],
-                    'kategori' => $m[1],
-                    'jawaban_teks' => $value,
-                    'skor_nilai' => $skorMap[$value],
-                ]);
+                TingkatKebahagiaanNelayan::updateOrCreate(
+                    [
+                        'knmp_id' => $knmp_id,
+                        'responden_id' => $responden_id,
+                        'nomor_soal' => (int) $m[2],
+                    ],
+                    [
+                        'kategori' => $m[1],
+                        'jawaban_teks' => $value,
+                        'skor_nilai' => $skorMap[$value],
+                    ]
+                );
             }
 
             DB::commit();

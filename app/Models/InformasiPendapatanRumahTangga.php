@@ -31,8 +31,6 @@ class InformasiPendapatanRumahTangga extends Model
         'pendapatan_perikanan' => 'integer',
         'pendapatan_non_perikanan' => 'integer',
         'pendapatan_total' => 'integer',
-        'kontribusi_nelayan_persen' => 'float',
-        'kontribusi_perempuan_persen' => 'float',
     ];
 
     public function knmp()

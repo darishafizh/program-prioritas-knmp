@@ -23,12 +23,19 @@ class PemasaranController extends Controller
 
         DB::beginTransaction();
         try {
-            $pemasaran = InformasiPemasaran::create([
-                'knmp_id' => $request->knmp_id,
-                'responden_id' => $request->responden_id,
-                'kendala_pemasaran_text' => $request->kendala_pemasaran,
-                'cara_penanganan_ikan' => $request->cara_penanganan_ikan,
-            ]);
+            $pemasaran = InformasiPemasaran::updateOrCreate(
+                [
+                    'knmp_id' => $request->knmp_id,
+                    'responden_id' => $request->responden_id,
+                ],
+                [
+                    'kendala_pemasaran_text' => $request->kendala_pemasaran,
+                    'cara_penanganan_ikan' => $request->cara_penanganan_ikan,
+                ]
+            );
+
+            // Hapus detail lama lalu insert ulang
+            DetailPemasaranIkan::where('pemasaran_id', $pemasaran->id)->delete();
 
             DetailPemasaranIkan::create([
                 'pemasaran_id' => $pemasaran->id,
@@ -46,7 +53,7 @@ class PemasaranController extends Controller
             return back()->with('success', 'Informasi Pemasaran berhasil disimpan.');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return back()->with('error', $e->getMessage());
+            return back()->withInput()->with('error', $e->getMessage());
         }
     }
 }

@@ -4,19 +4,18 @@ namespace App\Imports;
 
 use App\Models\InformasiResponden;
 use App\Models\Knmp;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeImport;
-use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Row;
 
-class InformasiRespondenImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows, WithEvents
+class InformasiRespondenImport implements OnEachRow, WithHeadingRow, WithValidation, SkipsEmptyRows, WithEvents
 {
     protected $knmpId;
     protected $knmp;
-    protected $errors = [];
 
     /**
      * Required columns for this import type
@@ -29,7 +28,6 @@ class InformasiRespondenImport implements ToModel, WithHeadingRow, WithValidatio
     public function __construct($knmpId)
     {
         $this->knmpId = $knmpId;
-        // Fetch KNMP data to get location information
         $this->knmp = Knmp::find($knmpId);
     }
 
@@ -64,16 +62,30 @@ class InformasiRespondenImport implements ToModel, WithHeadingRow, WithValidatio
         ];
     }
 
-    /**
-     * @param array $row
-     * @return \Illuminate\Database\Eloquent\Model|null
-     */
-    public function model(array $row)
+    public function onRow(Row $row)
     {
-        return new InformasiResponden([
-            'knmp_id' => $this->knmpId,
-            'nama_responden' => $row['nama_responden'] ?? null,
-            'nik' => $row['nik'] ?? null,
+        $row = $row->toArray();
+
+        $namaResponden = trim($row['nama_responden'] ?? '');
+        $nik = trim($row['nik'] ?? '');
+
+        // Build unique key for updateOrCreate
+        // Priority: NIK (more unique) > nama_responden (fallback)
+        if (!empty($nik)) {
+            $uniqueKey = [
+                'knmp_id' => $this->knmpId,
+                'nik' => $nik,
+            ];
+        } else {
+            $uniqueKey = [
+                'knmp_id' => $this->knmpId,
+                'nama_responden' => $namaResponden,
+            ];
+        }
+
+        $data = [
+            'nama_responden' => $namaResponden,
+            'nik' => !empty($nik) ? $nik : null,
             'nomor_kusuka' => $row['nomor_kusuka'] ?? null,
             'tempat_lahir' => $row['tempat_lahir'] ?? null,
             'tanggal_lahir' => $this->parseDate($row['tanggal_lahir'] ?? null),
@@ -90,7 +102,7 @@ class InformasiRespondenImport implements ToModel, WithHeadingRow, WithValidatio
             'jumlah_anggota_perempuan_bekerja' => $row['jumlah_anggota_perempuan_bekerja'] ?? null,
             'jumlah_abk' => $row['jumlah_abk'] ?? null,
             'pengalaman_usaha' => $row['pengalaman_usaha'] ?? null,
-            // Get location IDs from KNMP address instead of Excel
+            // Get location IDs from KNMP address
             'province_id' => $this->knmp->province_id ?? null,
             'regency_id' => $this->knmp->regency_id ?? null,
             'district_id' => $this->knmp->district_id ?? null,
@@ -99,7 +111,9 @@ class InformasiRespondenImport implements ToModel, WithHeadingRow, WithValidatio
             'nama_enumerator' => $row['nama_enumerator'] ?? null,
             'jenis_kelamin_enumerator' => $row['jenis_kelamin_enumerator'] ?? null,
             'no_hp_enumerator' => $row['no_hp_enumerator'] ?? null,
-        ]);
+        ];
+
+        InformasiResponden::updateOrCreate($uniqueKey, $data);
     }
 
     /**
