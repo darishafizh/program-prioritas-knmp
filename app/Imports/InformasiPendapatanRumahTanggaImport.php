@@ -65,6 +65,55 @@ class InformasiPendapatanRumahTanggaImport implements OnEachRow, WithHeadingRow,
         $row = $row->toArray();
 
         // Use updateOrCreate to prevent duplicates on re-import
+        // Helper to map text answers to scores
+        $getScore = function($type, $value) {
+            if (is_null($value)) return null;
+            if (is_numeric($value)) return (int) $value;
+
+            $val = strtolower(trim($value));
+
+            if ($type === 'kontribusi_nelayan') {
+                if (str_contains($val, '100%')) return 4;
+                if (str_contains($val, 'lebih dari 80')) return 3;
+                if (str_contains($val, '50-80')) return 2;
+                if (str_contains($val, '50–80')) return 2;
+                if (str_contains($val, 'kurang dari 50')) return 1;
+            }
+            if ($type === 'jumlah_sumber') {
+                if (str_contains($val, 'lebih dari 3')) return 4;
+                if (str_contains($val, '3 sumber')) return 3;
+                if (str_contains($val, '2 sumber')) return 2;
+                if (str_contains($val, '1 (hanya')) return 1;
+            }
+            if ($type === 'ketergantungan') {
+                if (str_contains($val, 'sangat bergantung')) return 4;
+                if (str_contains($val, 'cukup bergantung')) return 3;
+                if (str_contains($val, 'sedikit bergantung')) return 2;
+                if (str_contains($val, 'tidak bergantung')) return 1;
+            }
+            if ($type === 'stabilitas') {
+                if (str_contains($val, 'stabil sepanjang')) return 4;
+                if (str_contains($val, 'cenderung stabil')) return 3;
+                if (str_contains($val, 'sangat tidak stabil')) return 1;
+                if (str_contains($val, 'tidak stabil')) return 2;
+            }
+            if ($type === 'keterlibatan_perempuan') {
+                if ($val === 'selalu') return 4;
+                if ($val === 'sering') return 3;
+                if ($val === 'jarang') return 2;
+                if (str_contains($val, 'tidak pernah')) return 1;
+            }
+            if ($type === 'kontribusi_perempuan') {
+                if (str_contains($val, 'lebih dari 75')) return 5;
+                if (str_contains($val, '51%–75') || str_contains($val, '51%-75')) return 4;
+                if (str_contains($val, '25%–50') || str_contains($val, '25%-50')) return 3;
+                if (str_contains($val, 'kurang dari 25')) return 2;
+                if (str_contains($val, 'tidak dilibatkan')) return 1;
+            }
+            return 0;
+        };
+
+        // Use updateOrCreate to prevent duplicates on re-import
         InformasiPendapatanRumahTangga::updateOrCreate(
             [
                 'knmp_id' => $this->knmpId,
@@ -74,12 +123,12 @@ class InformasiPendapatanRumahTanggaImport implements OnEachRow, WithHeadingRow,
                 'pendapatan_perikanan' => $row['pendapatan_perikanan'] ?? null,
                 'pendapatan_non_perikanan' => $row['pendapatan_non_perikanan'] ?? null,
                 'pendapatan_total' => $row['pendapatan_total'] ?? null,
-                'kontribusi_nelayan_persen' => $row['kontribusi_nelayan_persen'] ?? null,
-                'jumlah_sumber_penghasilan' => $row['jumlah_sumber_penghasilan'] ?? null,
-                'ketergantungan_perikanan' => $row['ketergantungan_perikanan'] ?? null,
-                'stabilitas_pendapatan' => $row['stabilitas_pendapatan'] ?? null,
-                'keterlibatan_perempuan' => $row['keterlibatan_perempuan'] ?? null,
-                'kontribusi_perempuan_persen' => $row['kontribusi_perempuan_persen'] ?? null,
+                'kontribusi_nelayan_persen' => $getScore('kontribusi_nelayan', $row['kontribusi_nelayan_persen'] ?? null),
+                'jumlah_sumber_penghasilan' => $getScore('jumlah_sumber', $row['jumlah_sumber_penghasilan'] ?? null),
+                'ketergantungan_perikanan' => $getScore('ketergantungan', $row['ketergantungan_perikanan'] ?? null),
+                'stabilitas_pendapatan' => $getScore('stabilitas', $row['stabilitas_pendapatan'] ?? null),
+                'keterlibatan_perempuan' => $getScore('keterlibatan_perempuan', $row['keterlibatan_perempuan'] ?? null),
+                'kontribusi_perempuan_persen' => $getScore('kontribusi_perempuan', $row['kontribusi_perempuan_persen'] ?? null),
             ]
         );
     }

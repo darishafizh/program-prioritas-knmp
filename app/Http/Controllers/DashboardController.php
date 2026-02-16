@@ -125,17 +125,31 @@ class DashboardController extends Controller
         // 1. Total KNMP (sudah ada: count($desa_knmp))
         $totalKnmp = count($desa_knmp);
 
-        // 2. Ketersediaan Infrastruktur (%) - berdasarkan komponen yang sudah terisi di progres_knmp_details
-        // Total komponen = 28 per KNMP, hitung rata-rata ketersediaan
-        $totalKomponenPerKnmp = 28;
-        $knmpDenganProgress = DB::table('progres_knmp')
-            ->join('progres_knmp_details', 'progres_knmp.id', '=', 'progres_knmp_details.progres_id')
-            ->select('progres_knmp.knmp_id', DB::raw('COUNT(DISTINCT progres_knmp_details.komponen) as komponen_terisi'))
-            ->groupBy('progres_knmp.knmp_id')
-            ->get();
-        
-        $ketersediaanInfrastruktur = $knmpDenganProgress->count() > 0
-            ? round(($knmpDenganProgress->avg('komponen_terisi') / $totalKomponenPerKnmp) * 100, 2)
+        // 2. Ketersediaan Infrastruktur (%) - berdasarkan 12 item infrastruktur di profile_knmp
+        // Hitung rata-rata ketersediaan dari 12 item (infra_jalan_akses, infra_listrik, dll)
+        $infraColumns = [
+            'infra_jalan_akses', 'infra_listrik', 'infra_air_bersih', 'infra_internet',
+            'infra_ipal', 'infra_dermaga_tambat', 'infra_tpi', 'infra_cold_storage',
+            'infra_pabrik_es', 'infra_kantor_koperasi', 'infra_bengkel_nelayan', 'infra_waserda'
+        ];
+
+        $profiles = ProfileKnmp::select($infraColumns)->get();
+        $totalPercentage = 0;
+        $countProfiles = $profiles->count();
+
+        foreach ($profiles as $profile) {
+            $filledCount = 0;
+            foreach ($infraColumns as $col) {
+                if ($profile->$col) {
+                    $filledCount++;
+                }
+            }
+            // Persentase ketersediaan per KNMP (dari 12 item)
+            $totalPercentage += ($filledCount / 12) * 100;
+        }
+
+        $ketersediaanInfrastruktur = $countProfiles > 0
+            ? round($totalPercentage / $countProfiles, 2)
             : 0;
 
         // 3. Indeks Kesesuaian Kebutuhan (%) - persentase responden yang menyatakan sesuai kebutuhan
@@ -152,10 +166,11 @@ class DashboardController extends Controller
         $indeksKesejahteraan = round($rataRataKebahagiaan, 2);
 
         // 6. Tingkat Kelembagaan Nelayan (%) - persentase nelayan yang tergabung dalam kelompok/koperasi
+        // Score: 4=Sangat Aktif, 3=Tidak Aktif, 2=Tidak Pernah, 1=Tidak Ada
         $totalSosial = SosialKelembagaan::count();
         $anggotaKelompokKoperasi = SosialKelembagaan::where(function ($q) {
-            $q->where('anggota_kelompok', 'Ya')
-              ->orWhere('anggota_koperasi', 'Ya');
+            $q->where('anggota_kelompok', '>=', 3)
+              ->orWhere('anggota_koperasi', '>=', 3);
         })->count();
         $tingkatKelembagaan = $totalSosial > 0
             ? round(($anggotaKelompokKoperasi / $totalSosial) * 100, 2)

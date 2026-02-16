@@ -119,196 +119,277 @@
         </div>
     </div>
 
-    <!-- ROW 2: Pendapatan Nelayan + Koperasi -->
-    <div class="d-flex gap-3 mb-4 kpi-row">
-        <!-- Pendapatan - same flex-fill as Row 1 -->
-        <div class="flex-fill">
-            <div class="card border-0 shadow-sm h-100 kpi-card-white">
-                <div class="card-body d-flex align-items-center gap-2">
-                    <div class="kpi-icon kpi-icon-pink">
-                        <i class="mdi mdi-cash-multiple"></i>
-                    </div>
-                    <div class="kpi-text">
-                        <p class="kpi-label mb-0">Avg Pendapatan Nelayan</p>
-                        <h4 class="kpi-value mb-0">Rp {{ number_format($stats['pendapatanNelayan'], 0, ',', '.') }}</h4>
-                        <small class="kpi-unit">Per Bulan</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Koperasi - takes 3 cards width -->
-        <div class="flex-fill" style="flex: 3;">
-            @if($stats['koperasiDesaMerahPutih'])
-            <div class="card border-0 shadow-sm h-100 kpi-card-white">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="kpi-icon kpi-icon-teal">
-                        <i class="mdi mdi-handshake"></i>
-                    </div>
-                    <div class="kpi-text flex-grow-1">
-                        <p class="kpi-label mb-0">Koperasi Desa Merah Putih</p>
-                        <div class="d-flex flex-wrap gap-2 mt-1">
-                            <span class="badge bg-light text-dark"><i class="mdi mdi-office-building-outline me-1"></i>{{ $stats['koperasiDesaMerahPutih']['nama'] }}</span>
-                            <span class="badge bg-light text-dark"><i class="mdi mdi-account-tie me-1"></i>Ketua: {{ $stats['koperasiDesaMerahPutih']['ketua'] }}</span>
-                            <span class="badge bg-light text-dark"><i class="mdi mdi-account-group me-1"></i>{{ $stats['koperasiDesaMerahPutih']['anggotaLaki'] + $stats['koperasiDesaMerahPutih']['anggotaPerempuan'] }} Anggota</span>
-                            <span class="badge bg-light text-dark"><i class="mdi mdi-file-document-outline me-1"></i>SK: {{ $stats['koperasiDesaMerahPutih']['sk'] ?? '-' }}</span>
+
+
+    <!-- ROW 2: Info & Map Combined -->
+    <div class="row mb-4">
+        <!-- Left Col: Info (Pendapatan & Koperasi) -->
+        <div class="col-lg-5 mb-3 mb-lg-0">
+            <div class="d-flex flex-column gap-3 h-100">
+                <!-- Row 1: Pendapatan -->
+                <div class="card border-0 shadow-sm flex-fill kpi-card-white">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="kpi-icon kpi-icon-pink">
+                            <i class="mdi mdi-cash-multiple"></i>
+                        </div>
+                        <div>
+                            <p class="kpi-label text-muted mb-0">Avg. Pendapatan Nelayan</p>
+                            <h4 class="kpi-value mb-0">Rp {{ number_format($stats['pendapatanNelayan'], 0, ',', '.') }}</h4>
+                            <small class="kpi-unit text-muted">Per Bulan</small>
                         </div>
                     </div>
                 </div>
-            </div>
-            @else
-            <div class="card border-0 shadow-sm h-100 kpi-card-white">
-                <div class="card-body d-flex align-items-center justify-content-center">
-                    <span class="text-muted"><i class="mdi mdi-information-outline me-2"></i>Data Koperasi belum tersedia</span>
-                </div>
-            </div>
-            @endif
-        </div>
-    </div>
 
-    <!-- ROW 3: Komoditas Cards -->
-    <div class="row mb-4">
-        
-        <!-- Produksi Keseluruhan -->
-        <div class="col-12 mb-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-md-6 mb-3 mb-md-0">
-                            <div class="d-flex align-items-center">
-                                <div class="kpi-icon kpi-icon-blue me-3">
-                                    <i class="mdi mdi-weight-kilogram"></i>
-                                </div>
+                <!-- Row 2: Koperasi Detail -->
+                <div class="card border-0 shadow-sm flex-fill kpi-card-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3 border-bottom pb-2">
+                            <div class="kpi-icon kpi-icon-teal me-3" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                                <i class="mdi mdi-handshake"></i>
+                            </div>
+                            <h6 class="mb-0 fw-bold text-dark">Koperasi Desa Merah Putih</h6>
+                        </div>
+                        
+                        @if($stats['koperasiDesaMerahPutih'])
+                        <div class="d-flex flex-column gap-3">
+                            <div class="d-flex">
+                                <i class="mdi mdi-office-building-outline text-muted me-2 mt-1"></i>
                                 <div>
-                                    <p class="kpi-label mb-0">Volume Produksi per Tahun</p>
-                                    <h4 class="kpi-value mb-0">{{ number_format($stats['volumeKomoditas1'], 2, ',', '.') }} <small class="text-muted">Ton</small></h4>
+                                    <small class="d-block text-muted" style="font-size: 0.7rem;">NAMA KOPERASI</small>
+                                    <span class="fw-semibold text-dark">{{ $stats['koperasiDesaMerahPutih']['nama'] }}</span>
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <i class="mdi mdi-account-tie text-muted me-2 mt-1"></i>
+                                <div>
+                                    <small class="d-block text-muted" style="font-size: 0.7rem;">KETUA</small>
+                                    <span class="text-dark">{{ $stats['koperasiDesaMerahPutih']['ketua'] }}</span>
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <i class="mdi mdi-account-group text-muted me-2 mt-1"></i>
+                                <div>
+                                    <small class="d-block text-muted" style="font-size: 0.7rem;">ANGGOTA</small>
+                                    <span class="text-dark">{{ $stats['koperasiDesaMerahPutih']['anggotaLaki'] + $stats['koperasiDesaMerahPutih']['anggotaPerempuan'] }} Orang</span>
+                                </div>
+                            </div>
+                                <div class="d-flex">
+                                    <i class="mdi mdi-file-document-outline text-muted me-2 mt-1"></i>
+                                <div>
+                                    <small class="d-block text-muted" style="font-size: 0.7rem;">NO. SK</small>
+                                    <span class="text-dark">{{ $stats['koperasiDesaMerahPutih']['sk'] ?? '-' }}</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center">
-                                <div class="kpi-icon kpi-icon-green me-3">
-                                    <i class="mdi mdi-cash-multiple"></i>
-                                </div>
-                                <div>
-                                    <p class="kpi-label mb-0">Nilai Produksi per Tahun</p>
-                                    <h4 class="kpi-value mb-0">Rp {{ number_format($stats['nilaiKomoditas1'], 0, ',', '.') }}</h4>
-                                </div>
-                            </div>
+                        @else
+                        <div class="text-center py-3">
+                             <span class="text-muted small"><i class="mdi mdi-information-outline me-1"></i>Data Koperasi belum tersedia</span>
                         </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Komoditas 1 -->
-        @if($stats['komoditas1'] && $stats['komoditas1'] != '-')
-        <div class="col-lg-6 mb-3">
-            <div class="card border-0 shadow-sm komoditas-card h-100">
-                <div class="card-header komoditas-header">
-                    <div class="d-flex align-items-center">
-                        <div class="komoditas-icon">
-                            <i class="mdi mdi-fishbowl"></i>
-                        </div>
-                        <div class="ms-3">
-                            <h5 class="mb-0 text-white">{{ $stats['komoditas1'] }}</h5>
-                            <small class="text-white-50">Komoditas Utama 1</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body d-flex align-items-center">
-                    <div class="komoditas-stat w-100">
-                        <i class="mdi mdi-tag-outline text-warning"></i>
-                        <div>
-                            <span class="komoditas-stat-label">Harga Rata-rata</span>
-                            <h5 class="komoditas-stat-value">Rp {{ number_format($stats['hargaKomoditas1'], 0, ',', '.') }} <small>/Kg</small></h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endif
-        
-        <!-- Komoditas 2 -->
-        @if($stats['komoditas2'] && $stats['komoditas2'] != '-')
-        <div class="col-lg-6 mb-3">
-            <div class="card border-0 shadow-sm komoditas-card h-100">
-                <div class="card-header komoditas-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-                    <div class="d-flex align-items-center">
-                        <div class="komoditas-icon">
-                            <i class="mdi mdi-fishbowl-outline"></i>
-                        </div>
-                        <div class="ms-3">
-                            <h5 class="mb-0 text-white">{{ $stats['komoditas2'] }}</h5>
-                            <small class="text-white-50">Komoditas Utama 2</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body d-flex align-items-center">
-                    <div class="komoditas-stat w-100">
-                        <i class="mdi mdi-tag-outline text-warning"></i>
-                        <div>
-                            <span class="komoditas-stat-label">Harga Rata-rata</span>
-                            <h5 class="komoditas-stat-value">Rp {{ number_format($stats['hargaKomoditas2'], 0, ',', '.') }} <small>/Kg</small></h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endif
-        
-        @if((!$stats['komoditas1'] || $stats['komoditas1'] == '-') && (!$stats['komoditas2'] || $stats['komoditas2'] == '-'))
-        <div class="col-12">
-            <div class="alert alert-light text-center py-4">
-                <i class="mdi mdi-information-outline me-2" style="font-size: 1.5rem;"></i>
-                <p class="mb-0">Data komoditas belum tersedia untuk KNMP ini</p>
-            </div>
-        </div>
-        @endif
-    </div>
 
-    <!-- ROW 4: Map + Pie Chart Distribusi Anggaran -->
-    <div class="row mb-4">
-        <!-- Map -->
-        <div class="col-lg-6 mb-3 mb-lg-0">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 py-2">
-                    <h6 class="mb-0">
-                        <i class="mdi mdi-map-marker-radius me-2 text-danger"></i>Lokasi KNMP
-                    </h6>
-                </div>
-                <div class="card-body p-0">
-                    <div id="knmpMap" style="height: 280px; width: 100%; background: #e5e7eb;"></div>
-                    <div class="px-3 py-2 bg-light" style="border-radius: 0 0 8px 8px;">
+        <!-- Right Col: Map -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100 overflow-hidden">
+                <div class="card-body p-0 h-100 position-relative">
+                    <div id="knmpMap" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 0;"></div>
+                    <div class="position-absolute bottom-0 start-0 end-0 bg-white bg-opacity-90 p-3 m-3 rounded shadow-sm" style="z-index: 400;">
+                        <h6 class="mb-1 fw-bold text-dark"><i class="mdi mdi-map-marker-radius text-danger me-2"></i>Lokasi KNMP</h6>
                         <p class="mb-0 small text-muted">
-                            <i class="mdi mdi-map-marker me-1"></i>
                             {{ $selectedKnmp->village->name ?? '' }}, {{ $selectedKnmp->district->name ?? '' }}, {{ $selectedKnmp->regency->name ?? '' }}
                         </p>
                     </div>
+                    
+                    <script>
+                    (function() {
+                        function initMap() {
+                            if (typeof L === 'undefined') { setTimeout(initMap, 100); return; }
+                            var mapEl = document.getElementById('knmpMap');
+                            if (!mapEl || mapEl._leaflet_id) return;
+                            var lat = {{ $selectedKnmp->latitude && is_numeric($selectedKnmp->latitude) ? $selectedKnmp->latitude : -2.5 }};
+                            var lng = {{ $selectedKnmp->longitude && is_numeric($selectedKnmp->longitude) ? $selectedKnmp->longitude : 118 }};
+                            var zoom = {{ ($selectedKnmp->latitude && $selectedKnmp->longitude) ? 13 : 5 }};
+                            var knmpName = {!! json_encode($selectedKnmp->nama) !!};
+                            try {
+                                var map = L.map('knmpMap').setView([lat, lng], zoom);
+                                L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, attribution: '&copy; Google Satellite' }).addTo(map);
+                                L.marker([lat, lng]).addTo(map).bindPopup('<b>' + knmpName + '</b>').openPopup();
+                                setTimeout(function() { map.invalidateSize(); }, 300);
+                            } catch(e) { console.error('Map error:', e); }
+                        }
+                        if (document.readyState === 'complete') initMap();
+                        else window.addEventListener('load', initMap);
+                    })();
+                    </script>
                 </div>
             </div>
-            
-            <!-- Map Script -->
-            <script>
-            (function() {
-                function initMap() {
-                    if (typeof L === 'undefined') { setTimeout(initMap, 100); return; }
-                    var mapEl = document.getElementById('knmpMap');
-                    if (!mapEl || mapEl._leaflet_id) return;
-                    var lat = {{ $selectedKnmp->latitude && is_numeric($selectedKnmp->latitude) ? $selectedKnmp->latitude : -2.5 }};
-                    var lng = {{ $selectedKnmp->longitude && is_numeric($selectedKnmp->longitude) ? $selectedKnmp->longitude : 118 }};
-                    var zoom = {{ ($selectedKnmp->latitude && $selectedKnmp->longitude) ? 13 : 5 }};
-                    var knmpName = {!! json_encode($selectedKnmp->nama) !!};
-                    try {
-                        var map = L.map('knmpMap').setView([lat, lng], zoom);
-                        L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20, attribution: '&copy; Google Satellite' }).addTo(map);
-                        L.marker([lat, lng]).addTo(map).bindPopup('<b>' + knmpName + '</b>').openPopup();
-                        setTimeout(function() { map.invalidateSize(); }, 300);
-                    } catch(e) { console.error('Map error:', e); }
-                }
-                if (document.readyState === 'complete') initMap();
-                else window.addEventListener('load', initMap);
-            })();
-            </script>
+        </div>
+    </div>
+
+    <!-- ROW 3: Produksi & Komoditas Unified Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm overflow-hidden mb-4 rounded-3 h-100">
+                <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0 fw-bold text-dark d-flex align-items-center">
+                        <i class="mdi mdi-chart-areaspline me-2 text-primary fs-4"></i>
+                        <span>Data Produksi & Komoditas</span>
+                    </h5>
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">Tahun {{ date('Y') }}</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="row g-0">
+                        <!-- Left Side: Production Stats -->
+                        <div class="col-lg-5 border-end-lg border-bottom border-bottom-lg-0 bg-white">
+                            <div class="p-4 h-100 d-flex flex-column justify-content-center">
+                                <h6 class="text-uppercase text-muted fw-bold mb-4 small ls-1">Ikhtisar Produksi Tahunan</h6>
+                                
+                                <div class="mb-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="rounded-circle p-2 bg-primary bg-opacity-10 text-primary me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                            <i class="mdi mdi-weight-kilogram fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block mb-1">Volume Produksi</small>
+                                            <h3 class="mb-0 fw-bold text-dark">{{ number_format($stats['volumeKomoditas1'], 2, ',', '.') }} <small class="fs-6 text-muted fw-normal">Ton</small></h3>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle p-2 bg-success bg-opacity-10 text-success me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                            <i class="mdi mdi-cash-multiple fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted d-block mb-1">Nilai Produksi</small>
+                                            <h3 class="mb-0 fw-bold text-success">Rp {{ number_format($stats['nilaiKomoditas1'], 0, ',', '.') }}</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Commodities -->
+                        <div class="col-lg-7 bg-light bg-opacity-50">
+                            <div class="p-4 h-100">
+                                <h6 class="text-uppercase text-muted fw-bold mb-3 small ls-1">Komoditas Unggulan</h6>
+                                
+                                <div class="row g-3">
+                                    <!-- Komoditas 1 -->
+                                    @if($stats['komoditas1'] && $stats['komoditas1'] != '-')
+                                    <div class="col-md-6">
+                                        <div class="card border-0 shadow-sm h-100 hover-card transition-all">
+                                            <div class="card-body p-3">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <div class="rounded-3 bg-primary text-white p-2 me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px;">
+                                                        <i class="mdi mdi-fish fs-4"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-0 fw-bold text-dark">{{ $stats['komoditas1'] }}</h6>
+                                                        <small class="text-primary fw-medium">Utama 1</small>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-end border-top pt-2 mt-1">
+                                                    <small class="text-muted">Harga Rata-rata</small>
+                                                    <div class="text-end">
+                                                        <h6 class="mb-0 fw-bold text-dark">Rp {{ number_format($stats['hargaKomoditas1'], 0, ',', '.') }}</h6>
+                                                        <small class="text-muted" style="font-size: 0.75rem;">per Kg</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+
+                                    <!-- Komoditas 2 -->
+                                    @if($stats['komoditas2'] && $stats['komoditas2'] != '-')
+                                    <div class="col-md-6">
+                                        <div class="card border-0 shadow-sm h-100 hover-card transition-all">
+                                            <div class="card-body p-3">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <div class="rounded-3 bg-success text-white p-2 me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px;">
+                                                        <i class="mdi mdi-fish fs-4"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-0 fw-bold text-dark">{{ $stats['komoditas2'] }}</h6>
+                                                        <small class="text-success fw-medium">Utama 2</small>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-end border-top pt-2 mt-1">
+                                                    <small class="text-muted">Harga Rata-rata</small>
+                                                    <div class="text-end">
+                                                        <h6 class="mb-0 fw-bold text-dark">Rp {{ number_format($stats['hargaKomoditas2'], 0, ',', '.') }}</h6>
+                                                        <small class="text-muted" style="font-size: 0.75rem;">per Kg</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+                                    
+                                    @if((!$stats['komoditas1'] || $stats['komoditas1'] == '-') && (!$stats['komoditas2'] || $stats['komoditas2'] == '-'))
+                                    <div class="col-12">
+                                        <div class="text-center py-5 text-muted bg-white rounded-3 border border-dashed">
+                                            <i class="mdi mdi-fish-off fs-1 mb-2 opacity-50"></i>
+                                            <p class="mb-0 fw-medium">Data komoditas belum tersedia</p>
+                                        </div>
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        .ls-1 { letter-spacing: 1px; }
+        .border-end-lg { border-right: 1px solid #dee2e6 !important; }
+        @media (max-width: 991.98px) {
+            .border-end-lg { border-right: 0 !important; }
+        }
+        .hover-card:hover { transform: translateY(-3px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; }
+        .transition-all { transition: all .3s ease-in-out; }
+    </style>
+
+    <!-- ROW 4: Overall Progress + Pie Chart Distribusi Anggaran -->
+    <div class="row mb-4">
+        <!-- Overall Progress -->
+        <div class="col-lg-6 mb-3 mb-lg-0">
+             <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-2">
+                    <h6 class="mb-0">
+                        <i class="mdi mdi-chart-line me-2 text-info"></i>Progres Pembangunan Fisik
+                    </h6>
+                </div>
+                <div class="card-body d-flex align-items-center justify-content-center flex-column p-4">
+                    <div class="position-relative d-flex align-items-center justify-content-center" style="width: 180px; height: 180px;">
+                        <svg viewBox="0 0 36 36" class="circular-chart" style="width: 100%; height: 100%; transform: rotate(180deg);">
+                            <path class="circle-bg"
+                                d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none" stroke="#eee" stroke-width="3" />
+                            <path class="circle"
+                                stroke-dasharray="{{ $stats['progresNasional'] }}, 100"
+                                d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none" stroke="#0ea5e9" stroke-width="3" stroke-linecap="round" />
+                        </svg>
+                        <div class="position-absolute text-center" style="transform: rotate(-180deg);">
+                            <span class="d-block fw-bold text-dark display-6">{{ number_format($stats['progresNasional'], 1) }}%</span>
+                            <span class="d-block text-muted small">Realisasi Fisik</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Pie Chart -->
@@ -326,20 +407,49 @@
                     </h6>
                 </div>
                 <div class="card-body">
-                    <div style="height: 250px; position: relative;">
-                        <canvas id="budgetPieChart" 
-                            data-budget-konstruksi="{{ $anggaranKonstruksi }}"
-                            data-budget-sarpras="{{ $anggaranSarpras }}">
-                        </canvas>
-                    </div>
-                    <div class="d-flex justify-content-center flex-wrap gap-4 pt-2">
-                        <small><span class="legend-dot" style="background:#3b82f6;"></span> Konstruksi</small>
-                        <small><span class="legend-dot" style="background:#10b981;"></span> Sarana Prasarana</small>
-                    </div>
                     @if($totalBudget > 0)
-                    <div class="text-center mt-2">
-                        <small class="text-muted">Total Anggaran: Rp {{ number_format($totalBudget, 0, ',', '.') }}</small>
-                    </div>
+                        <div style="height: 250px; position: relative;">
+                            <canvas id="budgetPieChart" 
+                                data-budget-konstruksi="{{ $anggaranKonstruksi }}"
+                                data-budget-sarpras="{{ $anggaranSarpras }}">
+                            </canvas>
+                        </div>
+                        <div class="mt-3">
+                            @php
+                                $percentKonstruksi = ($anggaranKonstruksi / $totalBudget) * 100;
+                                $percentSarpras = ($anggaranSarpras / $totalBudget) * 100;
+                            @endphp
+                            <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
+                                <div>
+                                    <span class="legend-dot" style="background:#3b82f6;"></span>
+                                    <span class="small fw-semibold">Konstruksi</span>
+                                </div>
+                                <div class="text-end">
+                                    <span class="d-block small fw-bold">{{ number_format($percentKonstruksi, 1) }}%</span>
+                                    <span class="d-block smaller text-muted">Rp {{ number_format($anggaranKonstruksi, 0, ',', '.') }}</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
+                                <div>
+                                    <span class="legend-dot" style="background:#10b981;"></span>
+                                    <span class="small fw-semibold">Sarana Prasarana</span>
+                                </div>
+                                <div class="text-end">
+                                    <span class="d-block small fw-bold">{{ number_format($percentSarpras, 1) }}%</span>
+                                    <span class="d-block smaller text-muted">Rp {{ number_format($anggaranSarpras, 0, ',', '.') }}</span>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <span class="badge bg-light text-dark border">
+                                    Total: Rp {{ number_format($totalBudget, 0, ',', '.') }}
+                                </span>
+                            </div>
+                        </div>
+                    @else
+                        <div class="d-flex flex-column align-items-center justify-content-center" style="height: 250px;">
+                            <i class="mdi mdi-chart-pie text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+                            <p class="text-muted mt-2 mb-0">Data anggaran belum tersedia</p>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -520,7 +630,7 @@
     <!-- ==========================================
          STATISTIK KONDISI KNMP (Dashboard Style)
     ========================================== -->
-    @if($monitoringStats['responden']['total'] > 0)
+
 
 
     <!-- Row 3: Kesejahteraan & Kepuasan -->
@@ -597,7 +707,40 @@
         </div>
     </div>
 
+
+    <!-- Row 4: Bukti Pendukung -->
+    @if(isset($monitoringStats['bukti']) && $monitoringStats['bukti']['totalFiles'] > 0)
+    <div class="row mb-4">
+        <div class="col-12">
+            <h5 class="section-title mb-3">
+                <i class="mdi mdi-image-multiple me-2"></i>Galeri Bukti Pendukung
+            </h5>
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row g-3">
+                        @foreach($monitoringStats['bukti']['files'] as $file)
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="card h-100 border-0 shadow-none bg-light">
+                                <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100">
+                                    @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                    <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid rounded" alt="Bukti" style="object-fit: cover; height: 120px; width: 100%;">
+                                    @else
+                                    <div class="bukti-file-icon text-center py-4 text-muted">
+                                        <i class="mdi mdi-file-document-outline" style="font-size: 2rem;"></i>
+                                        <small class="d-block mt-2">{{ Str::limit($file->nama_file, 15) }}</small>
+                                    </div>
+                                    @endif
+                                </a>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     @endif
+
 
     @else
     <div class="row">

@@ -67,6 +67,37 @@ class InformasiUsahaImport implements OnEachRow, WithHeadingRow, WithValidation,
         $rowIndex = $row->getIndex();
         $row      = $row->toArray();
 
+        // Helper to map text answers to scores
+        $getScore = function($type, $value) {
+            if (is_null($value)) return null;
+            if (is_numeric($value)) return (int) $value;
+
+            $val = strtolower(trim($value));
+
+            if ($type === 'jenis_bahan_baku') {
+                if ($val === 'fiber') return 4;
+                if ($val === 'kayu laminasi') return 3;
+                if ($val === 'kayu') return 2;
+                if ($val === 'besi') return 1;
+                if ($val === 'lainnya') return 1;
+            }
+
+            if ($type === 'jenis_mesin') {
+                if ($val === 'motor tempel pribadi') return 4;
+                if ($val === 'motor tempel bantuan') return 3;
+                if (str_contains($val, 'sampan')) return 1;
+            }
+
+            if ($type === 'alat_penyimpanan') {
+                if ($val === 'coolbox') return 4;
+                if ($val === 'palka') return 3;
+                if (str_contains($val, 'stereofoam')) return 2;
+                if (str_contains($val, 'tong')) return 1;
+                if ($val === 'lainnya') return 1;
+            }
+            return 0;
+        };
+
         // 1. Create or Update parent: InformasiUsaha
         $informasiUsaha = InformasiUsaha::updateOrCreate(
             [
@@ -78,9 +109,9 @@ class InformasiUsahaImport implements OnEachRow, WithHeadingRow, WithValidation,
                 'tahun_pembuatan'         => $row['tahun_pembuatan'] ?? null,
                 'ukuran_gt'               => $row['ukuran_gt'] ?? null,
                 'dimensi_perahu'          => $row['dimensi_perahu'] ?? null,
-                'jenis_bahan_baku'        => $row['jenis_bahan_baku'] ?? null,
-                'jenis_mesin'             => $row['jenis_mesin'] ?? null,
-                'alat_penyimpanan'        => $row['alat_penyimpanan'] ?? null,
+                'jenis_bahan_baku'        => $getScore('jenis_bahan_baku', $row['jenis_bahan_baku'] ?? null),
+                'jenis_mesin'             => $getScore('jenis_mesin', $row['jenis_mesin'] ?? null),
+                'alat_penyimpanan'        => $getScore('alat_penyimpanan', $row['alat_penyimpanan'] ?? null),
                 'jenis_alat_tangkap'      => $row['jenis_alat_tangkap'] ?? null,
                 'hari_per_trip'           => $row['hari_per_trip'] ?? null,
                 'waktu_melaut_jam'        => $row['waktu_melaut_jam'] ?? null,

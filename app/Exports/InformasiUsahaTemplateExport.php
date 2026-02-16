@@ -6,10 +6,13 @@ use App\Models\InformasiResponden;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class InformasiUsahaTemplateExport implements FromArray, WithHeadings, WithStyles, ShouldAutoSize
+class InformasiUsahaTemplateExport implements FromArray, WithHeadings, WithStyles, ShouldAutoSize, WithEvents
 {
     protected $respondenIds;
 
@@ -115,5 +118,55 @@ class InformasiUsahaTemplateExport implements FromArray, WithHeadings, WithStyle
                 ],
             ],
         ];
+    }
+
+    /**
+     * Register events to add data validation (dropdowns)
+     */
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function (AfterSheet $event) {
+                $sheet = $event->sheet;
+                $rowCount = 1000;
+
+                // Validation Options
+                $bahanBakuOptions = '"Fiber,Kayu Laminasi,Kayu,Besi,Lainnya"';
+                $jenisMesinOptions = '"Motor Tempel Pribadi,Motor Tempel Bantuan,Sampan (tanpa motor)"';
+                $alatPenyimpananOptions = '"Coolbox,Palka,Stereofoam Box,Tong plastik,Lainnya"';
+                $alatTangkapOptions = '"Handline/Pancing Ulur,Rawai Dasar,Pancing Dasar,Jaring Insang/Gillnett,Pole and Line,Purse Seine,Lainnya"';
+
+                // F: Jenis Bahan Baku
+                $this->addValidation($sheet, 'F2:F' . $rowCount, $bahanBakuOptions);
+
+                // G: Jenis Mesin
+                $this->addValidation($sheet, 'G2:G' . $rowCount, $jenisMesinOptions);
+
+                // H: Alat Penyimpanan
+                $this->addValidation($sheet, 'H2:H' . $rowCount, $alatPenyimpananOptions);
+
+                // I: Jenis Alat Tangkap
+                $this->addValidation($sheet, 'I2:I' . $rowCount, $alatTangkapOptions);
+            },
+        ];
+    }
+
+    private function addValidation($sheet, $cellRange, $formula)
+    {
+        $validation = $sheet->getCell(explode(':', $cellRange)[0])->getDataValidation();
+        $validation->setType(DataValidation::TYPE_LIST);
+        $validation->setErrorStyle(DataValidation::STYLE_INFORMATION);
+        $validation->setAllowBlank(true);
+        $validation->setShowInputMessage(true);
+        $validation->setShowErrorMessage(true);
+        $validation->setShowDropDown(true);
+        $validation->setErrorTitle('Input Error');
+        $validation->setError('Nilai tidak valid.');
+        $validation->setPromptTitle('Pilih Data');
+        $validation->setPrompt('Silakan pilih dari daftar.');
+        $validation->setFormula1($formula);
+
+        // Apply to range
+        $sheet->setDataValidation($cellRange, $validation);
     }
 }

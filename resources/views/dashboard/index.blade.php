@@ -103,10 +103,10 @@
                                 </select>
                             </form>
                         </div>
-                        <a href="{{ route('dashboard.export-pdf', ['period' => $period ?? 'all']) }}"
+                        <!-- <a href="{{ route('dashboard.export-pdf', ['period' => $period ?? 'all']) }}"
                             class="btn btn-sm btn-primary" target="_blank">
                             <i class="mdi mdi-file-pdf-box me-1"></i>Export PDF
-                        </a>
+                        </a> -->
                     </div>
                 </div>
             </div>

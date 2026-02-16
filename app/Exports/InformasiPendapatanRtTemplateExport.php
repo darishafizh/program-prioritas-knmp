@@ -9,7 +9,11 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class InformasiPendapatanRtTemplateExport implements FromArray, WithHeadings, WithStyles, ShouldAutoSize
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
+
+class InformasiPendapatanRtTemplateExport implements FromArray, WithHeadings, WithStyles, ShouldAutoSize, WithEvents
 {
     protected $respondenIds;
 
@@ -21,7 +25,10 @@ class InformasiPendapatanRtTemplateExport implements FromArray, WithHeadings, Wi
     public function array(): array
     {
         if (empty($this->respondenIds)) {
-            return [];
+             return [
+                ['1', '', '', '', '', '', '', '', '', ''],
+                ['2', '', '', '', '', '', '', '', '', ''],
+            ];
         }
 
         $respondents = InformasiResponden::whereIn('id', $this->respondenIds)
@@ -71,5 +78,63 @@ class InformasiPendapatanRtTemplateExport implements FromArray, WithHeadings, Wi
                 ],
             ],
         ];
+    }
+
+    /**
+     * Register events to add data validation (dropdowns)
+     */
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function (AfterSheet $event) {
+                $sheet = $event->sheet;
+                $rowCount = 1000;
+
+                // Validation Options
+                $kontribusiNelayanOptions = '"Kurang dari 50%,50-80%,Lebih dari 80%,100% (satu-satunya sumber pendapatan)"';
+                $jumlahSumberOptions = '"1 (hanya satu sumber) dari nelayan,2 sumber,3 sumber,Lebih dari 3 sumber"';
+                $ketergantunganOptions = '"Sangat bergantung,Cukup bergantung,Sedikit bergantung,Tidak bergantung"';
+                $stabilitasOptions = '"Stabil sepanjang tahun,Cenderung stabil,Tidak stabil,Sangat tidak stabil"';
+                $keterlibatanOptions = '"Selalu,Sering,Jarang,Tidak pernah"';
+                $kontribusiPrOptions = '"Lebih dari 75%,51%–75%,25%–50%,Kurang dari 25%,Perempuan tidak dilibatkan dalam kegiatan ekonomi rumah tangga"';
+
+                // E: Kontribusi Nelayan
+                $this->addValidation($sheet, 'E2:E' . $rowCount, $kontribusiNelayanOptions);
+                
+                // F: Jumlah Sumber
+                $this->addValidation($sheet, 'F2:F' . $rowCount, $jumlahSumberOptions);
+
+                // G: Ketergantungan
+                $this->addValidation($sheet, 'G2:G' . $rowCount, $ketergantunganOptions);
+
+                // H: Stabilitas
+                $this->addValidation($sheet, 'H2:H' . $rowCount, $stabilitasOptions);
+
+                // I: Keterlibatan Perempuan
+                $this->addValidation($sheet, 'I2:I' . $rowCount, $keterlibatanOptions);
+
+                // J: Kontribusi Perempuan
+                $this->addValidation($sheet, 'J2:J' . $rowCount, $kontribusiPrOptions);
+            },
+        ];
+    }
+
+    private function addValidation($sheet, $cellRange, $formula)
+    {
+        $validation = $sheet->getCell(explode(':', $cellRange)[0])->getDataValidation();
+        $validation->setType(DataValidation::TYPE_LIST);
+        $validation->setErrorStyle(DataValidation::STYLE_INFORMATION);
+        $validation->setAllowBlank(true);
+        $validation->setShowInputMessage(true);
+        $validation->setShowErrorMessage(true);
+        $validation->setShowDropDown(true);
+        $validation->setErrorTitle('Input Error');
+        $validation->setError('Nilai tidak valid.');
+        $validation->setPromptTitle('Pilih Data');
+        $validation->setPrompt('Silakan pilih dari daftar.');
+        $validation->setFormula1($formula);
+
+        // Apply to range
+        $sheet->setDataValidation($cellRange, $validation);
     }
 }

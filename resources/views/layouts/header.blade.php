@@ -26,7 +26,7 @@
                     </li>
 
                     <!-- Analytics - hanya untuk admin -->
-                    @if(Auth::user()->isAdmin())
+                    <!-- @if(Auth::user()->isAdmin())
                         <li class="header-nav-item">
                             <a class="header-nav-link {{ request()->routeIs('analytics.*') ? 'active' : '' }}"
                                 href="{{ route('analytics.index') }}">
@@ -34,7 +34,7 @@
                                 <span>Analytics</span>
                             </a>
                         </li>
-                    @endif
+                    @endif -->
 
                     <!-- Survey - untuk semua user -->
                     <li class="header-nav-item">
