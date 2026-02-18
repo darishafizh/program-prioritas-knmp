@@ -213,6 +213,7 @@
                                     data-bs-target="#importKnmpModal">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
+
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                     data-bs-target="#addKnmpModal">
                                     <i class="mdi mdi-plus me-1"></i>Tambah KNMP
@@ -428,7 +429,7 @@
         </div>
     @endif
 
-    <!-- Evidence Modals for each KNMP -->
+
     @foreach ($knmps as $knmp)
         <div class="modal fade evidence-modal" id="evidenceModal{{ $knmp->id }}" tabindex="-1"
             aria-labelledby="evidenceModalLabel{{ $knmp->id }}" aria-hidden="true">

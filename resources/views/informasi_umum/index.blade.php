@@ -383,7 +383,7 @@
                                 a 15.9155 15.9155 0 0 1 0 -31.831"
                                 fill="none" stroke="#0ea5e9" stroke-width="3" stroke-linecap="round" />
                         </svg>
-                        <div class="position-absolute text-center" style="transform: rotate(-180deg);">
+                        <div class="position-absolute text-center">
                             <span class="d-block fw-bold text-dark display-6">{{ number_format($stats['progresNasional'], 1) }}%</span>
                             <span class="d-block text-muted small">Realisasi Fisik</span>
                         </div>
@@ -633,75 +633,72 @@
 
 
 
-    <!-- Row 3: Kesejahteraan & Kepuasan -->
+    <!-- Row 3: Kesejahteraan, Kepuasan & Kelembagaan -->
     <div class="row mb-4">
         <div class="col-12">
             <h5 class="section-title mb-3">
-                <i class="mdi mdi-emoticon-happy me-2"></i>Kesejahteraan & Kepuasan
+                <i class="mdi mdi-emoticon-happy me-2"></i>Kesejahteraan, Kepuasan dan Kelembagaan
             </h5>
         </div>
     </div>
 
     <div class="row mb-4">
-        <!-- Rata-rata Indeks Kebahagiaan -->
-        <div class="col-lg-6 col-md-6 mb-3">
+        <!-- 1. Indeks Kesesuaian Kebutuhan -->
+        <div class="col-lg-4 col-md-6 mb-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center py-4">
                     <h6 class="fw-semibold mb-3">
-                        <i class="mdi mdi-emoticon-happy-outline me-2 text-success"></i>Rata-rata Indeks Kebahagiaan
+                        <i class="mdi mdi-thumb-up-outline me-2 text-primary"></i>Indeks Kesesuaian Kebutuhan
                     </h6>
                     <div class="gauge-wrapper mx-auto mb-3" style="width: 150px; height: 150px;">
-                        <div class="gauge-circle" style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#10b981 {{ $monitoringStats['kebahagiaan']['avgSkor'] * 20 }}%, #e5e7eb 0); display: flex; align-items: center; justify-content: center;">
+                        <div class="gauge-circle" style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#3b82f6 {{ $stats['indeksKesesuaianKebutuhan'] }}%, #e5e7eb 0); display: flex; align-items: center; justify-content: center;">
                             <div style="width: 115px; height: 115px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; flex-direction: column;">
-                                <h1 class="mb-0 fw-bold text-success">{{ $monitoringStats['kebahagiaan']['avgSkor'] }}</h1>
-                                <small style="color: #495057;">dari 5</small>
+                                <h1 class="mb-0 fw-bold text-primary">{{ $stats['indeksKesesuaianKebutuhan'] }}%</h1>
+                                <small style="color: #495057;">Tingkat Kesesuaian</small>
                             </div>
                         </div>
                     </div>
-                    <span class="badge bg-light text-dark px-3 py-2">
-                        <i class="mdi mdi-account-multiple me-1"></i>
-                        {{ $monitoringStats['kebahagiaan']['totalResponden'] }} nelayan disurvei
-                    </span>
                 </div>
             </div>
         </div>
 
-        <!-- Rata-rata Kepuasan KNMP -->
-        <div class="col-lg-6 col-md-6 mb-3">
+        <!-- 2. Indeks Kesejahteraan Nelayan -->
+        <div class="col-lg-4 col-md-6 mb-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center py-4">
                     <h6 class="fw-semibold mb-3">
-                        <i class="mdi mdi-thumb-up-outline me-2 text-primary"></i>Rata-rata Kepuasan KNMP
+                        <i class="mdi mdi-emoticon-happy-outline me-2 text-success"></i>Indeks Kesejahteraan Nelayan
                     </h6>
-                    @if(($monitoringStats['tanggapan']['responded'] ?? 0) > 0)
-                    <h1 class="display-3 fw-bold text-primary mb-2">{{ $monitoringStats['tanggapan']['persenSesuai'] }}%</h1>
-                    <p style="color: #495057;" class="small mb-3">merasa KNMP sesuai kebutuhan</p>
-                    <div class="rating-display">
+                    <div class="gauge-wrapper mx-auto mb-3" style="width: 150px; height: 150px;">
                         @php
-                            $avgKesenangan = $monitoringStats['tanggapan']['avgKesenangan'];
-                            $labelKesenangan = 'Belum Ada Data';
-                            if ($avgKesenangan >= 2.5) {
-                                $labelKesenangan = 'Senang';
-                            } elseif ($avgKesenangan >= 1.5) {
-                                $labelKesenangan = 'Biasa Saja';
-                            } elseif ($avgKesenangan > 0) {
-                                $labelKesenangan = 'Tidak Senang';
-                            }
+                            $percentageKesejahteraan = ($stats['indeksKesejahteraan'] / 5) * 100;
                         @endphp
-                        <span class="badge {{ $avgKesenangan >= 2.5 ? 'bg-success' : ($avgKesenangan >= 1.5 ? 'bg-warning' : ($avgKesenangan > 0 ? 'bg-danger' : 'bg-secondary')) }} px-4 py-2" style="font-size: 1rem;">
-                            <i class="mdi mdi-emoticon{{ $avgKesenangan >= 2.5 ? '-happy' : ($avgKesenangan >= 1.5 ? '-neutral' : ($avgKesenangan > 0 ? '-sad' : '')) }} me-1"></i>
-                            {{ $labelKesenangan }}
-                        </span>
-                        <small style="color: #495057;" class="d-block mt-2">Rata-rata Skor Kepuasan: {{ $avgKesenangan }}/3</small>
+                        <div class="gauge-circle" style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#10b981 {{ $percentageKesejahteraan }}%, #e5e7eb 0); display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 115px; height: 115px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                                <h1 class="mb-0 fw-bold text-success">{{ $stats['indeksKesejahteraan'] }}</h1>
+                                <small style="color: #495057;">Skala 1-5</small>
+                            </div>
+                        </div>
                     </div>
-                    <span class="badge bg-light text-dark mt-3"><i class="mdi mdi-account-check me-1"></i>{{ $monitoringStats['tanggapan']['responded'] }} responden menjawab</span>
-                    @else
-                    <div class="text-center py-3">
-                        <i class="mdi mdi-clipboard-text-outline text-muted" style="font-size: 3rem;"></i>
-                        <p class="text-muted mt-2 mb-1">Belum ada data lengkap</p>
-                        <small class="text-muted">{{ $monitoringStats['tanggapan']['total'] }} data survei, tapi belum ada yang mengisi kesesuaian kebutuhan</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Tingkat Kelembagaan Nelayan -->
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center py-4">
+                    <h6 class="fw-semibold mb-3">
+                        <i class="mdi mdi-account-group-outline me-2 text-warning"></i>Tingkat Kelembagaan Nelayan
+                    </h6>
+                    <div class="gauge-wrapper mx-auto mb-3" style="width: 150px; height: 150px;">
+                        <div class="gauge-circle" style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#f59e0b {{ $stats['tingkatKelembagaan'] }}%, #e5e7eb 0); display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 115px; height: 115px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                                <h1 class="mb-0 fw-bold text-warning">{{ $stats['tingkatKelembagaan'] }}%</h1>
+                                <small style="color: #495057;">Partisipasi Aktif</small>
+                            </div>
+                        </div>
                     </div>
-                    @endif
                 </div>
             </div>
         </div>
@@ -709,25 +706,31 @@
 
 
     <!-- Row 4: Bukti Pendukung -->
-    @if(isset($monitoringStats['bukti']) && $monitoringStats['bukti']['totalFiles'] > 0)
-    <div class="row mb-4">
+    <!-- Row 4: Galeri Bukti Pendukung -->
+    <div class="row mb-5">
         <div class="col-12">
             <h5 class="section-title mb-3">
                 <i class="mdi mdi-image-multiple me-2"></i>Galeri Bukti Pendukung
             </h5>
+            
+            @if(isset($monitoringStats['bukti']) && $monitoringStats['bukti']['totalFiles'] > 0)
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <div class="row g-3">
                         @foreach($monitoringStats['bukti']['files'] as $file)
                         <div class="col-6 col-md-4 col-lg-2">
                             <div class="card h-100 border-0 shadow-none bg-light">
-                                <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100">
+                                <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100 position-relative group-hover-overlay">
                                     @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                                    <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid rounded" alt="Bukti" style="object-fit: cover; height: 120px; width: 100%;">
+                                    <div class="ratio ratio-4x3">
+                                        <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid rounded" alt="Bukti" style="object-fit: cover;">
+                                    </div>
                                     @else
-                                    <div class="bukti-file-icon text-center py-4 text-muted">
-                                        <i class="mdi mdi-file-document-outline" style="font-size: 2rem;"></i>
-                                        <small class="d-block mt-2">{{ Str::limit($file->nama_file, 15) }}</small>
+                                    <div class="ratio ratio-4x3 d-flex align-items-center justify-content-center bg-white rounded border">
+                                        <div class="text-center p-2">
+                                            <i class="mdi mdi-file-document-outline text-muted" style="font-size: 2.5rem;"></i>
+                                            <small class="d-block mt-1 text-muted text-truncate" style="max-width: 100%;">{{ $file->nama_file }}</small>
+                                        </div>
                                     </div>
                                     @endif
                                 </a>
@@ -737,9 +740,22 @@
                     </div>
                 </div>
             </div>
+            @else
+            <!-- Empty State -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <div class="mb-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light" style="width: 80px; height: 80px;">
+                            <i class="mdi mdi-camera-off text-muted" style="font-size: 2.5rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                    <h5 class="text-muted fw-normal">Belum Ada Bukti Pendukung</h5>
+                    <p class="text-muted small mb-0">Dokumentasi foto belum tersedia untuk lokasi ini.</p>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
-    @endif
 
 
     @else

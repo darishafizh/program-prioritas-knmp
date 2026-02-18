@@ -97,13 +97,14 @@ class ProgresKnmpMainImport implements ToModel, WithHeadingRow, SkipsEmptyRows
     public function model(array $row)
     {
         $this->rowsProcessed++;
-        Log::info("ProgresKnmpMainImport processing row {$this->rowsProcessed}");
-
+        
         // If we already imported data, skip subsequent rows (likely instruction rows)
         if ($this->dataImported) {
-            Log::info("ProgresKnmpMainImport: Data already imported, skipping row {$this->rowsProcessed}");
-            return null;
+             Log::info("ProgresKnmpMainImport: Data already imported, skipping row {$this->rowsProcessed}");
+             return null;
         }
+
+        Log::info("ProgresKnmpMainImport processing row {$this->rowsProcessed}");
 
         // Check if row has actual meaningful data (at least one numeric field)
         $hasData = !empty($row['anggaran_total']) ||
@@ -134,18 +135,17 @@ class ProgresKnmpMainImport implements ToModel, WithHeadingRow, SkipsEmptyRows
             'anggaran_total' => $this->parseNumeric($row['anggaran_total'] ?? null),
             'anggaran_konstruksi' => $this->parseNumeric($row['anggaran_konstruksi'] ?? null),
             'anggaran_sarpras' => $this->parseNumeric($row['anggaran_sarpras'] ?? null),
-            'tk_laki' => $this->parseNumeric($row['tk_laki'] ?? null),
-            'tk_perempuan' => $this->parseNumeric($row['tk_perempuan'] ?? null),
-            'tk_upah' => $this->parseNumeric($row['tk_upah'] ?? null),
-            'tk_durasi' => $this->parseNumeric($row['tk_durasi'] ?? null),
+            'tk_konstruksi_l' => $this->parseNumeric($row['tk_laki'] ?? null),
+            'tk_konstruksi_p' => $this->parseNumeric($row['tk_perempuan'] ?? null),
+            'upah_per_hari' => $this->parseNumeric($row['tk_upah'] ?? null),
+            'lama_bekerja' => $this->parseNumeric($row['tk_durasi'] ?? null),
             'tk_lokal' => $this->parseNumeric($row['tk_lokal'] ?? null),
             'tk_luar' => $this->parseNumeric($row['tk_luar'] ?? null),
-            'tk_non_konstruksi_jumlah' => $this->parseNumeric($row['tk_non_konstruksi_jumlah'] ?? null),
-            'tk_non_konstruksi_ket' => $row['tk_non_konstruksi_ket'] ?? null,
+            'tk_non_konstruksi' => $row['tk_non_konstruksi_ket'] ?? null,
             'kendala' => $kendala,
             'cctv' => $row['cctv'] ?? null,
         ];
-
+        
         Log::info("ProgresKnmpMainImport: Data to save", $data);
 
         try {
@@ -272,4 +272,3 @@ class ProgresKnmpDetailImport implements ToModel, WithHeadingRow, SkipsEmptyRows
         }
     }
 }
-

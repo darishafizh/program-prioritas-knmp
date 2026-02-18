@@ -28,14 +28,22 @@ class InformasiUmumController extends Controller
 
         $knmpList = $knmpQuery->orderBy('nama')->get();
 
-        // Get selected KNMP (default to first if exists)
-        $selectedKnmpId = $request->get('knmp_id', $knmpList->first()?->id);
-
-        // Ensure user can only access their allowed KNMP
+        // Determine default KNMP ID
         if ($user->isVillageUser() && !$user->isAdmin()) {
-            // Verify the selected KNMP belongs to this user
+             // Village user is locked to their KNMP
+            $selectedKnmpId = $request->get('knmp_id', $user->knmp_id);
             if ($selectedKnmpId != $user->knmp_id) {
                 $selectedKnmpId = $user->knmp_id;
+            }
+        } else {
+            // Admin: Check if there is a 'last_active_knmp' or simply pick one with recent uploads if no specific ID requested
+            if (!$request->has('knmp_id')) {
+                // Try to find KNMP with most recent upload or update
+                $latestUpload = BuktiUpload::latest()->first();
+                $defaultId = $latestUpload ? $latestUpload->knmp_id : $knmpList->first()?->id;
+                $selectedKnmpId = $defaultId;
+            } else {
+                $selectedKnmpId = $request->get('knmp_id');
             }
         }
 
@@ -138,13 +146,75 @@ class InformasiUmumController extends Controller
                 $stats['progresDetails'] = ProgresKnmpDetail::where('progres_id', $stats['progres']->id)
                     ->orderBy('kode')
                     ->get();
+                // Calculate Overall Progress (Average of 4 Components: A, B, C, D)
+                $components = ['A', 'B', 'C', 'D'];
+                $componentAverages = [];
+
+                foreach ($components as $code) {
+                    $details = $stats['progresDetails']->filter(function ($item) use ($code) {
+                        return str_starts_with($item->kode, $code);
+                    });
+
+                    if ($details->count() > 0) {
+                        $componentAverages[] = $details->avg('persen');
+                    } else {
+                        $componentAverages[] = 0;
+                    }
+                }
+
+                $stats['progresNasional'] = count($componentAverages) > 0 ? array_sum($componentAverages) / count($componentAverages) : 0;
+            } else {
+                $stats['progresNasional'] = 0;
             }
 
-            // Progres Nasional (Overall)
-            $stats['progresNasional'] = \App\Models\ProgresKnmpNasional::where('knmp_id', $selectedKnmp->id)->value('progres') ?? 0;
+            // --- KPI Calculations (Filtered by KNMP) ---
+
+            // 1. Indeks Kesesuaian Kebutuhan
+            // Formula: (Count(kesesuaian_kebutuhan=1) / Total) * 100
+            // Filter by KNMP via Responden -> InformasiResponden -> knmp_id (Need to check relationships)
+            // Assuming TanggapanMasyarakat belongs to Responden, and Responden belongs to KNMP
+            // OR checks if TanggapanMasyarakat has direct knmp_id or via responden.
+            // Let's check models first. 
+            // For now, I will assume we need to join with responden table which has knmp_id.
+            
+            // Checking TanggapanMasyarakat model...
+            // It usually has responden_id. InformasiResponden has knmp_id.
+            
+            $totalTanggapan = \App\Models\TanggapanMasyarakat::whereHas('responden', function($q) use ($selectedKnmp) {
+                $q->where('knmp_id', $selectedKnmp->id);
+            })->count();
+
+            $sesuaiKebutuhan = \App\Models\TanggapanMasyarakat::whereHas('responden', function($q) use ($selectedKnmp) {
+                $q->where('knmp_id', $selectedKnmp->id);
+            })->where('kesesuaian_kebutuhan', 1)->count();
+            
+            $stats['indeksKesesuaianKebutuhan'] = $totalTanggapan > 0 ? round(($sesuaiKebutuhan / $totalTanggapan) * 100, 2) : 0;
+
+            // 2. Indeks Kesejahteraan Nelayan (Rata-rata Skor Kebahagiaan)
+             $stats['indeksKesejahteraan'] = \App\Models\TingkatKebahagiaanNelayan::whereHas('responden', function($q) use ($selectedKnmp) {
+                $q->where('knmp_id', $selectedKnmp->id);
+            })->avg('skor_nilai') ?? 0;
+            $stats['indeksKesejahteraan'] = round($stats['indeksKesejahteraan'], 2);
+
+            // 3. Tingkat Kelembagaan Nelayan
+            // Formula: % Anggota Kelompok/Koperasi >= 3 (Aktif)
+            $totalSosial = \App\Models\SosialKelembagaan::whereHas('responden', function($q) use ($selectedKnmp) {
+                $q->where('knmp_id', $selectedKnmp->id);
+            })->count();
+
+            $anggotaAktif = \App\Models\SosialKelembagaan::whereHas('responden', function($q) use ($selectedKnmp) {
+                $q->where('knmp_id', $selectedKnmp->id);
+            })->where(function ($q) {
+                $q->where('anggota_kelompok', '>=', 3)
+                  ->orWhere('anggota_koperasi', '>=', 3);
+            })->count();
+
+            $stats['tingkatKelembagaan'] = $totalSosial > 0 ? round(($anggotaAktif / $totalSosial) * 100, 2) : 0;
+
 
             // J. Bukti Pendukung
-            $bukti = BuktiUpload::where('knmp_id', $selectedKnmp->id)->get();
+            // Use latest() to show newest files first
+            $bukti = BuktiUpload::where('knmp_id', $selectedKnmp->id)->latest()->get();
             $monitoringStats['bukti']['totalFiles'] = $bukti->count();
             $monitoringStats['bukti']['totalSize'] = $bukti->sum('ukuran_file');
             $monitoringStats['bukti']['files'] = $bukti->take(6); // Latest 6 files for preview

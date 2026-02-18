@@ -417,6 +417,7 @@ class ImportController extends Controller
             'pendapatan-rt' => ['export' => InformasiPendapatanRtTemplateExport::class, 'filename' => 'template-pendapatan-rumah-tangga.xlsx', 'needs_responden' => true],
             'sosial-kelembagaan' => ['export' => SosialKelembagaanTemplateExport::class, 'filename' => 'template-sosial-kelembagaan.xlsx', 'needs_responden' => true],
             'progres-knmp-nasional' => ['export' => ProgresKnmpNasionalTemplateExport::class, 'filename' => 'template-progres-knmp-nasional.xlsx', 'needs_responden' => false],
+
         ];
 
         if (!isset($templates[$section])) {
@@ -435,4 +436,6 @@ class ImportController extends Controller
 
         return Excel::download($exportInstance, $template['filename']);
     }
+
+
 }
