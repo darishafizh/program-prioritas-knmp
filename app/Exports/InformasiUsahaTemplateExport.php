@@ -33,7 +33,7 @@ class InformasiUsahaTemplateExport implements FromArray, WithHeadings, WithStyle
 
         return $respondents->map(function ($responden) {
             return [
-                $responden->id,
+                $responden->nama_responden,
                 '', // nama_kapal
                 '', // tahun_pembuatan
                 '', // ukuran_gt
@@ -50,8 +50,6 @@ class InformasiUsahaTemplateExport implements FromArray, WithHeadings, WithStyle
                 '', // jml_bulan_melaut
                 '', // produksi_kg_per_trip
                 '', // penjualan_rp_per_trip
-                '', // biaya_solar_rp
-                '', // volume_solar_liter
                 '', // biaya_bensin_rp
                 '', // volume_bensin_liter
                 '', // biaya_es_balok_rp
@@ -72,7 +70,7 @@ class InformasiUsahaTemplateExport implements FromArray, WithHeadings, WithStyle
     public function headings(): array
     {
         return [
-            'responden_id',
+            'nama_responden',
             'nama_kapal',
             'tahun_pembuatan',
             'ukuran_gt',
@@ -89,8 +87,6 @@ class InformasiUsahaTemplateExport implements FromArray, WithHeadings, WithStyle
             'jml_bulan_melaut',
             'produksi_kg_per_trip',
             'penjualan_rp_per_trip',
-            'biaya_solar_rp',
-            'volume_solar_liter',
             'biaya_bensin_rp',
             'volume_bensin_liter',
             'biaya_es_balok_rp',
@@ -136,16 +132,18 @@ class InformasiUsahaTemplateExport implements FromArray, WithHeadings, WithStyle
                 $alatPenyimpananOptions = '"Coolbox,Palka,Stereofoam Box,Tong plastik,Lainnya"';
                 $alatTangkapOptions = '"Handline/Pancing Ulur,Rawai Dasar,Pancing Dasar,Jaring Insang/Gillnett,Pole and Line,Purse Seine,Lainnya"';
 
-                // F: Jenis Bahan Baku
+                // A: nama_responden, B-D: nama_kapal/tahun/ukuran_gt — input bebas
+                // E: dimensi_perahu — input bebas (angka/teks ukuran)
+                // F: Jenis Bahan Baku — dropdown
                 $this->addValidation($sheet, 'F2:F' . $rowCount, $bahanBakuOptions);
 
-                // G: Jenis Mesin
+                // G: Jenis Mesin — dropdown
                 $this->addValidation($sheet, 'G2:G' . $rowCount, $jenisMesinOptions);
 
-                // H: Alat Penyimpanan
+                // H: Alat Penyimpanan — dropdown
                 $this->addValidation($sheet, 'H2:H' . $rowCount, $alatPenyimpananOptions);
 
-                // I: Jenis Alat Tangkap
+                // I: Jenis Alat Tangkap — dropdown
                 $this->addValidation($sheet, 'I2:I' . $rowCount, $alatTangkapOptions);
             },
         ];

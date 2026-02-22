@@ -77,7 +77,6 @@ class TingkatKebahagiaanTemplateExport implements FromArray, WithHeadings, WithS
         foreach ($respondents as $responden) {
             foreach ($this->questions as $no => $q) {
                 $rows[] = [
-                    $responden->id,
                     $responden->nama_responden,
                     $no,
                     $q['kategori'],
@@ -93,7 +92,6 @@ class TingkatKebahagiaanTemplateExport implements FromArray, WithHeadings, WithS
     public function headings(): array
     {
         return [
-            'responden_id',
             'nama_responden',
             'nomor_soal',
             'kategori',
@@ -131,7 +129,7 @@ class TingkatKebahagiaanTemplateExport implements FromArray, WithHeadings, WithS
                 $options = '"Sangat Tidak Setuju,Tidak Setuju,Netral,Setuju,Sangat Setuju"';
 
                 for ($row = 2; $row <= $lastRow; $row++) {
-                    $validation = $sheet->getCell("F{$row}")->getDataValidation();
+                    $validation = $sheet->getCell("E{$row}")->getDataValidation();
                     $validation->setType(DataValidation::TYPE_LIST);
                     $validation->setErrorStyle(DataValidation::STYLE_STOP);
                     $validation->setAllowBlank(false);
@@ -145,38 +143,33 @@ class TingkatKebahagiaanTemplateExport implements FromArray, WithHeadings, WithS
                     $validation->setFormula1($options);
                 }
 
-                // Protect pre-filled columns (A-E) with light gray background
-                $lightGray = new \PhpOffice\PhpSpreadsheet\Style\Fill();
-                $lightGray->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-                $lightGray->getStartColor()->setRGB('F2F2F2');
-
-                $sheet->getStyle("A2:E{$lastRow}")->getFill()->setFillType(
+                // Protect pre-filled columns (A-D) with light gray background
+                $sheet->getStyle("A2:D{$lastRow}")->getFill()->setFillType(
                     \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID
                 );
-                $sheet->getStyle("A2:E{$lastRow}")->getFill()->getStartColor()->setRGB('F2F2F2');
+                $sheet->getStyle("A2:D{$lastRow}")->getFill()->getStartColor()->setRGB('F2F2F2');
 
                 // Lock pre-filled columns
-                $sheet->getStyle("A2:E{$lastRow}")->getProtection()->setLocked(
+                $sheet->getStyle("A2:D{$lastRow}")->getProtection()->setLocked(
                     \PhpOffice\PhpSpreadsheet\Style\Protection::PROTECTION_PROTECTED
                 );
                 // Unlock jawaban column
-                $sheet->getStyle("F2:F{$lastRow}")->getProtection()->setLocked(
+                $sheet->getStyle("E2:E{$lastRow}")->getProtection()->setLocked(
                     \PhpOffice\PhpSpreadsheet\Style\Protection::PROTECTION_UNPROTECTED
                 );
 
                 // Highlight jawaban_teks column header with green
-                $sheet->getStyle('F1')->getFill()->setFillType(
+                $sheet->getStyle('E1')->getFill()->setFillType(
                     \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID
                 );
-                $sheet->getStyle('F1')->getFill()->getStartColor()->setRGB('70AD47');
+                $sheet->getStyle('E1')->getFill()->getStartColor()->setRGB('70AD47');
 
                 // Set column widths
-                $sheet->getColumnDimension('A')->setWidth(14);
-                $sheet->getColumnDimension('B')->setWidth(25);
-                $sheet->getColumnDimension('C')->setWidth(12);
-                $sheet->getColumnDimension('D')->setWidth(28);
-                $sheet->getColumnDimension('E')->setWidth(60);
-                $sheet->getColumnDimension('F')->setWidth(24);
+                $sheet->getColumnDimension('A')->setWidth(25);
+                $sheet->getColumnDimension('B')->setWidth(12);
+                $sheet->getColumnDimension('C')->setWidth(28);
+                $sheet->getColumnDimension('D')->setWidth(60);
+                $sheet->getColumnDimension('E')->setWidth(24);
 
                 // Enable sheet protection so pre-filled data can't be edited
                 $sheet->getProtection()->setSheet(true);

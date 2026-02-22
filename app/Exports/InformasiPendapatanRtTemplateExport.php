@@ -12,6 +12,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class InformasiPendapatanRtTemplateExport implements FromArray, WithHeadings, WithStyles, ShouldAutoSize, WithEvents
 {
@@ -25,9 +26,10 @@ class InformasiPendapatanRtTemplateExport implements FromArray, WithHeadings, Wi
     public function array(): array
     {
         if (empty($this->respondenIds)) {
-             return [
-                ['1', '', '', '', '', '', '', '', '', ''],
-                ['2', '', '', '', '', '', '', '', '', ''],
+            // Default placeholder rows - formula di kolom D (index 4, kolom ke-4)
+            return [
+                ['Nama Responden 1', '', '', '=B2+C2', '', '', '', '', '', ''],
+                ['Nama Responden 2', '', '', '=B3+C3', '', '', '', '', '', ''],
             ];
         }
 
@@ -35,18 +37,21 @@ class InformasiPendapatanRtTemplateExport implements FromArray, WithHeadings, Wi
             ->orderBy('id')
             ->get(['id', 'nama_responden']);
 
-        return $respondents->map(function ($responden) {
+        // Offset baris: baris 2 = data pertama (baris 1 = header)
+        $startRow = 2;
+        return $respondents->values()->map(function ($responden, $index) use ($startRow) {
+            $row = $startRow + $index;
             return [
-                $responden->id,
-                '', // pendapatan_perikanan
-                '', // pendapatan_non_perikanan
-                '', // pendapatan_total
-                '', // kontribusi_nelayan_persen
-                '', // jumlah_sumber_penghasilan
-                '', // ketergantungan_perikanan
-                '', // stabilitas_pendapatan
-                '', // keterlibatan_perempuan
-                '', // kontribusi_perempuan_persen
+                $responden->nama_responden,
+                '', // B: pendapatan_perikanan
+                '', // C: pendapatan_non_perikanan
+                '=B' . $row . '+C' . $row, // D: pendapatan_total (formula)
+                '', // E: kontribusi_nelayan_persen
+                '', // F: jumlah_sumber_penghasilan
+                '', // G: ketergantungan_perikanan
+                '', // H: stabilitas_pendapatan
+                '', // I: keterlibatan_perempuan
+                '', // J: kontribusi_perempuan_persen
             ];
         })->toArray();
     }
@@ -54,21 +59,36 @@ class InformasiPendapatanRtTemplateExport implements FromArray, WithHeadings, Wi
     public function headings(): array
     {
         return [
-            'responden_id',
-            'pendapatan_perikanan',
-            'pendapatan_non_perikanan',
-            'pendapatan_total',
-            'kontribusi_nelayan_persen',
-            'jumlah_sumber_penghasilan',
-            'ketergantungan_perikanan',
-            'stabilitas_pendapatan',
-            'keterlibatan_perempuan',
-            'kontribusi_perempuan_persen',
+            'nama_responden',           // A
+            'pendapatan_perikanan',     // B
+            'pendapatan_non_perikanan', // C
+            'pendapatan_total',         // D (formula)
+            'kontribusi_nelayan_persen',// E
+            'jumlah_sumber_penghasilan',// F
+            'ketergantungan_perikanan', // G
+            'stabilitas_pendapatan',    // H
+            'keterlibatan_perempuan',   // I
+            'kontribusi_perempuan_persen', // J
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
+        $rowCount = $sheet->getHighestRow();
+
+        // Format kolom B, C, D sebagai angka (rupiah)
+        $numberFormat = '#,##0';
+        $sheet->getStyle('B2:D' . max($rowCount, 1000))
+            ->getNumberFormat()
+            ->setFormatCode($numberFormat);
+
+        // Kunci kolom D agar tidak bisa diedit (protected / locked)
+        // Cukup beri warna beda agar user tahu ini formula otomatis
+        $sheet->getStyle('D1:D' . max($rowCount, 1000))
+            ->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()->setRGB('E8F5E9'); // hijau muda = otomatis
+
         return [
             1 => [
                 'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
@@ -81,7 +101,7 @@ class InformasiPendapatanRtTemplateExport implements FromArray, WithHeadings, Wi
     }
 
     /**
-     * Register events to add data validation (dropdowns)
+     * Register events to add data validation (dropdowns) and number format
      */
     public function registerEvents(): array
     {
@@ -90,31 +110,39 @@ class InformasiPendapatanRtTemplateExport implements FromArray, WithHeadings, Wi
                 $sheet = $event->sheet;
                 $rowCount = 1000;
 
-                // Validation Options
+                // Dropdown options
                 $kontribusiNelayanOptions = '"Kurang dari 50%,50-80%,Lebih dari 80%,100% (satu-satunya sumber pendapatan)"';
-                $jumlahSumberOptions = '"1 (hanya satu sumber) dari nelayan,2 sumber,3 sumber,Lebih dari 3 sumber"';
-                $ketergantunganOptions = '"Sangat bergantung,Cukup bergantung,Sedikit bergantung,Tidak bergantung"';
-                $stabilitasOptions = '"Stabil sepanjang tahun,Cenderung stabil,Tidak stabil,Sangat tidak stabil"';
-                $keterlibatanOptions = '"Selalu,Sering,Jarang,Tidak pernah"';
-                $kontribusiPrOptions = '"Lebih dari 75%,51%–75%,25%–50%,Kurang dari 25%,Perempuan tidak dilibatkan dalam kegiatan ekonomi rumah tangga"';
+                $jumlahSumberOptions      = '"1 (hanya satu sumber) dari nelayan,2 sumber,3 sumber,Lebih dari 3 sumber"';
+                $ketergantunganOptions    = '"Sangat bergantung,Cukup bergantung,Sedikit bergantung,Tidak bergantung"';
+                $stabilitasOptions        = '"Stabil sepanjang tahun,Cenderung stabil,Tidak stabil,Sangat tidak stabil"';
+                $keterlibatanOptions      = '"Selalu,Sering,Jarang,Tidak pernah"';
+                $kontribusiPrOptions      = '"Lebih dari 75%,51%-75%,25%-50%,Kurang dari 25%,Perempuan tidak dilibatkan dalam kegiatan ekonomi rumah tangga"';
 
-                // E: Kontribusi Nelayan
+                // A: nama_responden — tidak ada dropdown
+                // B: pendapatan_perikanan — input angka bebas (sudah diformat number)
+                // C: pendapatan_non_perikanan — input angka bebas
+                // D: pendapatan_total — formula otomatis, tidak perlu dropdown
+
+                // E: Kontribusi Nelayan Persen
                 $this->addValidation($sheet, 'E2:E' . $rowCount, $kontribusiNelayanOptions);
-                
-                // F: Jumlah Sumber
+
+                // F: Jumlah Sumber Penghasilan
                 $this->addValidation($sheet, 'F2:F' . $rowCount, $jumlahSumberOptions);
 
-                // G: Ketergantungan
+                // G: Ketergantungan Perikanan
                 $this->addValidation($sheet, 'G2:G' . $rowCount, $ketergantunganOptions);
 
-                // H: Stabilitas
+                // H: Stabilitas Pendapatan
                 $this->addValidation($sheet, 'H2:H' . $rowCount, $stabilitasOptions);
 
                 // I: Keterlibatan Perempuan
                 $this->addValidation($sheet, 'I2:I' . $rowCount, $keterlibatanOptions);
 
-                // J: Kontribusi Perempuan
+                // J: Kontribusi Perempuan Persen
                 $this->addValidation($sheet, 'J2:J' . $rowCount, $kontribusiPrOptions);
+
+                // Tambah komen di header D supaya user tahu ini otomatis
+                $sheet->getComment('D1')->getText()->createTextRun('Kolom ini terisi otomatis (= pendapatan_perikanan + pendapatan_non_perikanan). Jangan diubah.');
             },
         ];
     }

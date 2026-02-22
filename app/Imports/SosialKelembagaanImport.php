@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Models\InformasiResponden;
 use App\Models\SosialKelembagaan;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -19,7 +20,7 @@ class SosialKelembagaanImport implements OnEachRow, WithHeadingRow, WithValidati
      * Required columns for this import type
      */
     protected $requiredColumns = [
-        'responden_id',
+        'nama_responden',
         'anggota_kelompok',
         'anggota_koperasi',
     ];
@@ -64,7 +65,30 @@ class SosialKelembagaanImport implements OnEachRow, WithHeadingRow, WithValidati
     {
         $row = $row->toArray();
 
-        // Use updateOrCreate to prevent duplicates on re-import
+        // Cari responden berdasarkan nama dan knmp_id
+        $namaResponden = trim($row['nama_responden'] ?? '');
+        if (empty($namaResponden)) {
+            return;
+        }
+
+        $responden = InformasiResponden::where('knmp_id', $this->knmpId)
+            ->where('nama_responden', $namaResponden)
+            ->first();
+
+        if (!$responden) {
+            // Coba cari dengan nama yang tidak case-sensitive
+            $responden = InformasiResponden::where('knmp_id', $this->knmpId)
+                ->whereRaw('LOWER(nama_responden) = ?', [strtolower($namaResponden)])
+                ->first();
+        }
+
+        if (!$responden) {
+            // Lewati baris jika responden tidak ditemukan
+            return;
+        }
+
+        $respondenId = $responden->id;
+
         // Helper closure to map scores (same logic as controller)
         $getScore = function($type, $value) {
             if (is_null($value)) return null;
@@ -102,7 +126,7 @@ class SosialKelembagaanImport implements OnEachRow, WithHeadingRow, WithValidati
         SosialKelembagaan::updateOrCreate(
             [
                 'knmp_id' => $this->knmpId,
-                'responden_id' => $row['responden_id'] ?? null,
+                'responden_id' => $respondenId,
             ],
             [
                 'anggota_kelompok' => $getScore('anggota', $row['anggota_kelompok'] ?? null),
@@ -125,15 +149,14 @@ class SosialKelembagaanImport implements OnEachRow, WithHeadingRow, WithValidati
     public function rules(): array
     {
         return [
-            'responden_id' => 'required|exists:informasi_responden,id',
+            'nama_responden' => 'required',
         ];
     }
 
     public function customValidationMessages()
     {
         return [
-            'responden_id.required' => 'Kolom "responden_id" wajib diisi pada baris :attribute.',
-            'responden_id.exists' => 'Responden pada baris :attribute tidak ditemukan di database.',
+            'nama_responden.required' => 'Kolom "nama_responden" wajib diisi pada baris :attribute.',
         ];
     }
 }

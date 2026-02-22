@@ -26,8 +26,8 @@ class SosialKelembagaanTemplateExport implements FromArray, WithHeadings, WithSt
         if (empty($this->respondenIds)) {
             // Default empty rows if no responden selected (for blank template)
             return [
-                ['1', '', '', '', '', '', '', '', '', '', '', '', ''],
-                ['2', '', '', '', '', '', '', '', '', '', '', '', ''],
+                ['Nama Responden 1', '', '', '', '', '', '', '', '', '', '', '', ''],
+                ['Nama Responden 2', '', '', '', '', '', '', '', '', '', '', '', ''],
             ];
         }
 
@@ -37,7 +37,7 @@ class SosialKelembagaanTemplateExport implements FromArray, WithHeadings, WithSt
 
         return $respondents->map(function ($responden) {
             return [
-                $responden->id,
+                $responden->nama_responden,
                 '', // anggota_kelompok
                 '', // manfaat_kelompok
                 '', // anggota_koperasi
@@ -57,7 +57,7 @@ class SosialKelembagaanTemplateExport implements FromArray, WithHeadings, WithSt
     public function headings(): array
     {
         return [
-            'responden_id',
+            'nama_responden',
             'anggota_kelompok',
             'manfaat_kelompok',
             'anggota_koperasi',

@@ -30,7 +30,7 @@ class InformasiPemasaranTemplateExport implements FromArray, WithHeadings, WithS
 
         return $respondents->map(function ($responden) {
             return [
-                $responden->id,
+                $responden->nama_responden,
                 '', // kendala_pemasaran_text
                 '', // cara_penanganan_ikan
                 '', // eceran_kg
@@ -47,7 +47,7 @@ class InformasiPemasaranTemplateExport implements FromArray, WithHeadings, WithS
     public function headings(): array
     {
         return [
-            'responden_id',
+            'nama_responden',
             'kendala_pemasaran_text',
             'cara_penanganan_ikan',
             'eceran_kg',

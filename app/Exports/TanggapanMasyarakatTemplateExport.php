@@ -33,7 +33,6 @@ class TanggapanMasyarakatTemplateExport implements FromArray, WithHeadings, With
 
         return $respondents->map(function ($responden) {
             return [
-                $responden->id,
                 $responden->nama_responden,
                 '', // kesesuaian_kebutuhan — dropdown
                 '', // item_tidak_sesuai
@@ -48,7 +47,6 @@ class TanggapanMasyarakatTemplateExport implements FromArray, WithHeadings, With
     public function headings(): array
     {
         return [
-            'responden_id',
             'nama_responden',
             'kesesuaian_kebutuhan',
             'item_tidak_sesuai',
@@ -90,43 +88,43 @@ class TanggapanMasyarakatTemplateExport implements FromArray, WithHeadings, With
                 $kesenanganOptions = '"Senang,Biasa saja,Tidak Senang"';
 
                 for ($row = 2; $row <= $lastRow; $row++) {
-                    // Column C: kesesuaian_kebutuhan dropdown
-                    $valC = $sheet->getCell("C{$row}")->getDataValidation();
-                    $valC->setType(DataValidation::TYPE_LIST);
-                    $valC->setErrorStyle(DataValidation::STYLE_STOP);
-                    $valC->setAllowBlank(false);
-                    $valC->setShowInputMessage(true);
-                    $valC->setShowErrorMessage(true);
-                    $valC->setShowDropDown(true);
-                    $valC->setErrorTitle('Input tidak valid');
-                    $valC->setError('Pilih: Ya, sesuai atau Tidak sesuai');
-                    $valC->setPromptTitle('Kesesuaian Kebutuhan');
-                    $valC->setPrompt('Pilih apakah rencana pembangunan sesuai kebutuhan masyarakat.');
-                    $valC->setFormula1($kesesuaianOptions);
+                    // Column B: kesesuaian_kebutuhan dropdown
+                    $valB = $sheet->getCell("B{$row}")->getDataValidation();
+                    $valB->setType(DataValidation::TYPE_LIST);
+                    $valB->setErrorStyle(DataValidation::STYLE_STOP);
+                    $valB->setAllowBlank(false);
+                    $valB->setShowInputMessage(true);
+                    $valB->setShowErrorMessage(true);
+                    $valB->setShowDropDown(true);
+                    $valB->setErrorTitle('Input tidak valid');
+                    $valB->setError('Pilih: Ya, sesuai atau Tidak sesuai');
+                    $valB->setPromptTitle('Kesesuaian Kebutuhan');
+                    $valB->setPrompt('Pilih apakah rencana pembangunan sesuai kebutuhan masyarakat.');
+                    $valB->setFormula1($kesesuaianOptions);
 
-                    // Column E: tingkat_kesenangan dropdown
-                    $valE = $sheet->getCell("E{$row}")->getDataValidation();
-                    $valE->setType(DataValidation::TYPE_LIST);
-                    $valE->setErrorStyle(DataValidation::STYLE_STOP);
-                    $valE->setAllowBlank(false);
-                    $valE->setShowInputMessage(true);
-                    $valE->setShowErrorMessage(true);
-                    $valE->setShowDropDown(true);
-                    $valE->setErrorTitle('Input tidak valid');
-                    $valE->setError('Pilih: Senang, Biasa saja, atau Tidak Senang');
-                    $valE->setPromptTitle('Tingkat Kesenangan');
-                    $valE->setPrompt('Pilih tingkat kesenangan terhadap rencana pembangunan KNMP.');
-                    $valE->setFormula1($kesenanganOptions);
+                    // Column D: tingkat_kesenangan dropdown
+                    $valD = $sheet->getCell("D{$row}")->getDataValidation();
+                    $valD->setType(DataValidation::TYPE_LIST);
+                    $valD->setErrorStyle(DataValidation::STYLE_STOP);
+                    $valD->setAllowBlank(false);
+                    $valD->setShowInputMessage(true);
+                    $valD->setShowErrorMessage(true);
+                    $valD->setShowDropDown(true);
+                    $valD->setErrorTitle('Input tidak valid');
+                    $valD->setError('Pilih: Senang, Biasa saja, atau Tidak Senang');
+                    $valD->setPromptTitle('Tingkat Kesenangan');
+                    $valD->setPrompt('Pilih tingkat kesenangan terhadap rencana pembangunan KNMP.');
+                    $valD->setFormula1($kesenanganOptions);
                 }
 
-                // Protect pre-filled columns (A-B) with light gray background
-                $sheet->getStyle("A2:B{$lastRow}")->getFill()->setFillType(
+                // Protect pre-filled column (A) with light gray background
+                $sheet->getStyle("A2:A{$lastRow}")->getFill()->setFillType(
                     \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID
                 );
-                $sheet->getStyle("A2:B{$lastRow}")->getFill()->getStartColor()->setRGB('F2F2F2');
+                $sheet->getStyle("A2:A{$lastRow}")->getFill()->getStartColor()->setRGB('F2F2F2');
 
                 // Highlight dropdown columns with green header
-                foreach (['C1', 'E1'] as $cell) {
+                foreach (['B1', 'D1'] as $cell) {
                     $sheet->getStyle($cell)->getFill()->setFillType(
                         \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID
                     );
@@ -134,14 +132,13 @@ class TanggapanMasyarakatTemplateExport implements FromArray, WithHeadings, With
                 }
 
                 // Set column widths
-                $sheet->getColumnDimension('A')->setWidth(14);
-                $sheet->getColumnDimension('B')->setWidth(25);
-                $sheet->getColumnDimension('C')->setWidth(22);
-                $sheet->getColumnDimension('D')->setWidth(30);
-                $sheet->getColumnDimension('E')->setWidth(20);
+                $sheet->getColumnDimension('A')->setWidth(25);
+                $sheet->getColumnDimension('B')->setWidth(22);
+                $sheet->getColumnDimension('C')->setWidth(30);
+                $sheet->getColumnDimension('D')->setWidth(20);
+                $sheet->getColumnDimension('E')->setWidth(30);
                 $sheet->getColumnDimension('F')->setWidth(30);
                 $sheet->getColumnDimension('G')->setWidth(30);
-                $sheet->getColumnDimension('H')->setWidth(30);
             },
         ];
     }

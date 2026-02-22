@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\TanggapanMasyarakat;
+use App\Models\InformasiResponden;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
@@ -19,7 +20,7 @@ class TanggapanMasyarakatImport implements OnEachRow, WithHeadingRow, WithValida
      * Required columns for this import type
      */
     protected $requiredColumns = [
-        'responden_id',
+        'nama_responden',
         'kesesuaian_kebutuhan',
         'tingkat_kesenangan',
     ];
@@ -64,18 +65,38 @@ class TanggapanMasyarakatImport implements OnEachRow, WithHeadingRow, WithValida
     {
         $row = $row->toArray();
 
+        // Cari responden berdasarkan nama dan knmp_id
+        $namaResponden = trim($row['nama_responden'] ?? '');
+        if (empty($namaResponden)) {
+            return;
+        }
+
+        $responden = InformasiResponden::where('knmp_id', $this->knmpId)
+            ->where('nama_responden', $namaResponden)
+            ->first();
+
+        if (!$responden) {
+            $responden = InformasiResponden::where('knmp_id', $this->knmpId)
+                ->whereRaw('LOWER(nama_responden) = ?', [strtolower($namaResponden)])
+                ->first();
+        }
+
+        if (!$responden) {
+            return;
+        }
+
         // Use updateOrCreate to prevent duplicates on re-import
         TanggapanMasyarakat::updateOrCreate(
             [
-                'knmp_id' => $this->knmpId,
-                'responden_id' => $row['responden_id'] ?? null,
+                'knmp_id'      => $this->knmpId,
+                'responden_id' => $responden->id,
             ],
             [
-                'kesesuaian_kebutuhan' => $this->parseKesesuaian($row['kesesuaian_kebutuhan'] ?? null),
-                'item_tidak_sesuai' => $row['item_tidak_sesuai'] ?? null,
-                'tingkat_kesenangan' => $this->parseKesenangan($row['tingkat_kesenangan'] ?? null),
-                'alasan_tidak_senang' => $row['alasan_tidak_senang'] ?? null,
-                'harapan_masyarakat' => $row['harapan_masyarakat'] ?? null,
+                'kesesuaian_kebutuhan'    => $this->parseKesesuaian($row['kesesuaian_kebutuhan'] ?? null),
+                'item_tidak_sesuai'       => $row['item_tidak_sesuai'] ?? null,
+                'tingkat_kesenangan'      => $this->parseKesenangan($row['tingkat_kesenangan'] ?? null),
+                'alasan_tidak_senang'     => $row['alasan_tidak_senang'] ?? null,
+                'harapan_masyarakat'      => $row['harapan_masyarakat'] ?? null,
                 'masukan_saran_perbaikan' => $row['masukan_saran_perbaikan'] ?? null,
             ]
         );
@@ -96,14 +117,14 @@ class TanggapanMasyarakatImport implements OnEachRow, WithHeadingRow, WithValida
         $normalized = strtolower(trim($value));
 
         $map = [
-            'ya, sesuai' => 1,
-            'ya sesuai' => 1,
-            'sesuai' => 1,
-            'ya' => 1,
-            'yes' => 1,
+            'ya, sesuai'   => 1,
+            'ya sesuai'    => 1,
+            'sesuai'       => 1,
+            'ya'           => 1,
+            'yes'          => 1,
             'tidak sesuai' => 0,
-            'tidak' => 0,
-            'no' => 0,
+            'tidak'        => 0,
+            'no'           => 0,
         ];
 
         return $map[$normalized] ?? null;
@@ -120,11 +141,11 @@ class TanggapanMasyarakatImport implements OnEachRow, WithHeadingRow, WithValida
         $normalized = strtolower(trim($value));
 
         $map = [
-            'senang' => 'Senang',
-            'biasa saja' => 'Biasa saja',
-            'biasa' => 'Biasa saja',
+            'senang'       => 'Senang',
+            'biasa saja'   => 'Biasa saja',
+            'biasa'        => 'Biasa saja',
             'tidak senang' => 'Tidak Senang',
-            'tidak' => 'Tidak Senang',
+            'tidak'        => 'Tidak Senang',
         ];
 
         return $map[$normalized] ?? $value;
@@ -133,19 +154,18 @@ class TanggapanMasyarakatImport implements OnEachRow, WithHeadingRow, WithValida
     public function rules(): array
     {
         return [
-            'responden_id' => 'required|exists:informasi_responden,id',
+            'nama_responden'      => 'required',
             'kesesuaian_kebutuhan' => 'required',
-            'tingkat_kesenangan' => 'required',
+            'tingkat_kesenangan'  => 'required',
         ];
     }
 
     public function customValidationMessages()
     {
         return [
-            'responden_id.required' => 'Kolom "responden_id" wajib diisi pada baris :attribute.',
-            'responden_id.exists' => 'Responden pada baris :attribute tidak ditemukan di database.',
+            'nama_responden.required'       => 'Kolom "nama_responden" wajib diisi pada baris :attribute.',
             'kesesuaian_kebutuhan.required' => 'Kolom "kesesuaian_kebutuhan" wajib diisi pada baris :attribute. Pilih: Ya, sesuai atau Tidak sesuai.',
-            'tingkat_kesenangan.required' => 'Kolom "tingkat_kesenangan" wajib diisi pada baris :attribute. Pilih: Senang, Biasa saja, atau Tidak Senang.',
+            'tingkat_kesenangan.required'   => 'Kolom "tingkat_kesenangan" wajib diisi pada baris :attribute. Pilih: Senang, Biasa saja, atau Tidak Senang.',
         ];
     }
 }

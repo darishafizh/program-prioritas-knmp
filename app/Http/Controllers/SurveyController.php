@@ -114,7 +114,7 @@ class SurveyController extends Controller
      */
     public function getRegencies($provinceId)
     {
-        $regencies = KnmpRegencies::where('province_id', $provinceId)->orderBy('name', 'asc')->get();
+        $regencies = KnmpRegencies::where('knmp_province_id', $provinceId)->orderBy('name', 'asc')->get();
         return response()->json($regencies);
     }
 
@@ -123,7 +123,7 @@ class SurveyController extends Controller
      */
     public function getDistricts($regencyId)
     {
-        $districts = KnmpDistricts::where('regency_id', $regencyId)->orderBy('name', 'asc')->get();
+        $districts = KnmpDistricts::where('knmp_regency_id', $regencyId)->orderBy('name', 'asc')->get();
         return response()->json($districts);
     }
 
@@ -132,7 +132,7 @@ class SurveyController extends Controller
      */
     public function getVillages($districtId)
     {
-        $villages = KnmpVillages::where('district_id', $districtId)->orderBy('name', 'asc')->get();
+        $villages = KnmpVillages::where('knmp_district_id', $districtId)->orderBy('name', 'asc')->get();
         return response()->json($villages);
     }
 }

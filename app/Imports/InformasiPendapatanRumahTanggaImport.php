@@ -3,15 +3,17 @@
 namespace App\Imports;
 
 use App\Models\InformasiPendapatanRumahTangga;
+use App\Models\InformasiResponden;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 use Maatwebsite\Excel\Events\BeforeImport;
 use Maatwebsite\Excel\Row;
 
-class InformasiPendapatanRumahTanggaImport implements OnEachRow, WithHeadingRow, WithValidation, SkipsEmptyRows, WithEvents
+class InformasiPendapatanRumahTanggaImport implements OnEachRow, WithHeadingRow, WithValidation, SkipsEmptyRows, WithEvents, WithCalculatedFormulas
 {
     protected $knmpId;
 
@@ -19,7 +21,7 @@ class InformasiPendapatanRumahTanggaImport implements OnEachRow, WithHeadingRow,
      * Required columns for this import type
      */
     protected $requiredColumns = [
-        'responden_id',
+        'nama_responden',
         'pendapatan_perikanan',
         'pendapatan_total',
     ];
@@ -64,9 +66,42 @@ class InformasiPendapatanRumahTanggaImport implements OnEachRow, WithHeadingRow,
     {
         $row = $row->toArray();
 
-        // Use updateOrCreate to prevent duplicates on re-import
+        // Cari responden berdasarkan nama dan knmp_id
+        $namaResponden = trim($row['nama_responden'] ?? '');
+        if (empty($namaResponden)) {
+            return;
+        }
+
+        $responden = InformasiResponden::where('knmp_id', $this->knmpId)
+            ->where('nama_responden', $namaResponden)
+            ->first();
+
+        if (!$responden) {
+            $responden = InformasiResponden::where('knmp_id', $this->knmpId)
+                ->whereRaw('LOWER(nama_responden) = ?', [strtolower($namaResponden)])
+                ->first();
+        }
+
+        if (!$responden) {
+            return;
+        }
+
+        $respondenId = $responden->id;
+
+        // Baca nilai numerik kolom B, C, D
+        // WithCalculatedFormulas memastikan formula =B+C di kolom D sudah dihitung
+        $pendapatanPerikanan    = is_numeric($row['pendapatan_perikanan'] ?? null)
+            ? (float) $row['pendapatan_perikanan'] : 0;
+        $pendapatanNonPerikanan = is_numeric($row['pendapatan_non_perikanan'] ?? null)
+            ? (float) $row['pendapatan_non_perikanan'] : 0;
+
+        // Gunakan nilai formula jika tersedia, fallback ke penjumlahan manual
+        $pendapatanTotal = is_numeric($row['pendapatan_total'] ?? null)
+            ? (float) $row['pendapatan_total']
+            : ($pendapatanPerikanan + $pendapatanNonPerikanan);
+
         // Helper to map text answers to scores
-        $getScore = function($type, $value) {
+        $getScore = function ($type, $value) {
             if (is_null($value)) return null;
             if (is_numeric($value)) return (int) $value;
 
@@ -116,18 +151,18 @@ class InformasiPendapatanRumahTanggaImport implements OnEachRow, WithHeadingRow,
         // Use updateOrCreate to prevent duplicates on re-import
         InformasiPendapatanRumahTangga::updateOrCreate(
             [
-                'knmp_id' => $this->knmpId,
-                'responden_id' => $row['responden_id'] ?? null,
+                'knmp_id'      => $this->knmpId,
+                'responden_id' => $respondenId,
             ],
             [
-                'pendapatan_perikanan' => $row['pendapatan_perikanan'] ?? null,
-                'pendapatan_non_perikanan' => $row['pendapatan_non_perikanan'] ?? null,
-                'pendapatan_total' => $row['pendapatan_total'] ?? null,
-                'kontribusi_nelayan_persen' => $getScore('kontribusi_nelayan', $row['kontribusi_nelayan_persen'] ?? null),
-                'jumlah_sumber_penghasilan' => $getScore('jumlah_sumber', $row['jumlah_sumber_penghasilan'] ?? null),
-                'ketergantungan_perikanan' => $getScore('ketergantungan', $row['ketergantungan_perikanan'] ?? null),
-                'stabilitas_pendapatan' => $getScore('stabilitas', $row['stabilitas_pendapatan'] ?? null),
-                'keterlibatan_perempuan' => $getScore('keterlibatan_perempuan', $row['keterlibatan_perempuan'] ?? null),
+                'pendapatan_perikanan'        => $pendapatanPerikanan ?: null,
+                'pendapatan_non_perikanan'    => $pendapatanNonPerikanan ?: null,
+                'pendapatan_total'            => $pendapatanTotal ?: null,
+                'kontribusi_nelayan_persen'   => $getScore('kontribusi_nelayan', $row['kontribusi_nelayan_persen'] ?? null),
+                'jumlah_sumber_penghasilan'   => $getScore('jumlah_sumber', $row['jumlah_sumber_penghasilan'] ?? null),
+                'ketergantungan_perikanan'    => $getScore('ketergantungan', $row['ketergantungan_perikanan'] ?? null),
+                'stabilitas_pendapatan'       => $getScore('stabilitas', $row['stabilitas_pendapatan'] ?? null),
+                'keterlibatan_perempuan'      => $getScore('keterlibatan_perempuan', $row['keterlibatan_perempuan'] ?? null),
                 'kontribusi_perempuan_persen' => $getScore('kontribusi_perempuan', $row['kontribusi_perempuan_persen'] ?? null),
             ]
         );
@@ -136,15 +171,15 @@ class InformasiPendapatanRumahTanggaImport implements OnEachRow, WithHeadingRow,
     public function rules(): array
     {
         return [
-            'responden_id' => 'required|exists:informasi_responden,id',
+            'nama_responden' => 'required',
         ];
     }
 
     public function customValidationMessages()
     {
         return [
-            'responden_id.required' => 'Kolom "responden_id" wajib diisi pada baris :attribute.',
-            'responden_id.exists' => 'Responden pada baris :attribute tidak ditemukan di database.',
+            'nama_responden.required' => 'Kolom "nama_responden" wajib diisi pada baris :attribute.',
+            'nama_responden.exists'   => 'Responden pada baris :attribute tidak ditemukan di database.',
         ];
     }
 }

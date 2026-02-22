@@ -1359,7 +1359,7 @@
                 <div class="modal-body">
                     <div class="alert alert-info py-2 mb-3">
                         <small><i class="mdi mdi-information me-1"></i> Pilih responden yang akan disertakan dalam
-                            template. ID responden akan otomatis terisi di kolom pertama.</small>
+                            template. <span class="badge rounded-circle bg-success ms-1" style="width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;"><i class="mdi mdi-check" style="font-size:0.7rem;"></i></span> menandakan responden sudah memiliki data pada kuesioner ini.</small>
                     </div>
 
                     <input type="hidden" id="selectedSection" value="">
@@ -1380,17 +1380,24 @@
                         style="max-height: 350px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 8px; padding: 10px;">
                         @if(isset($respondenList) && count($respondenList) > 0)
                             @foreach($respondenList as $responden)
-                                <div class="form-check responden-check-item py-2 px-3 mb-1"
-                                    style="background: #f8f9fa; border-radius: 6px;">
-                                    <input class="form-check-input responden-checkbox" type="checkbox"
-                                        value="{{ $responden->id }}" id="responden_{{ $responden->id }}"
-                                        data-nama="{{ $responden->nama_responden }}">
-                                    <label class="form-check-label d-flex justify-content-between w-100"
-                                        for="responden_{{ $responden->id }}">
-                                        <span>
-                                            <strong>{{ $responden->nama_responden }}</strong>
+                                <div class="responden-check-item d-flex align-items-center mb-1 px-2 py-2"
+                                    style="background: #f8f9fa; border-radius: 6px; transition: background 0.2s;"
+                                    id="check-item-{{ $responden->id }}">
+                                    <div class="ps-1 pe-2 flex-shrink-0">
+                                        <input class="form-check-input responden-checkbox" type="checkbox"
+                                            value="{{ $responden->id }}" id="responden_{{ $responden->id }}"
+                                            data-nama="{{ $responden->nama_responden }}">
+                                    </div>
+                                    <label class="d-flex justify-content-between align-items-center w-100 mb-0"
+                                        for="responden_{{ $responden->id }}" style="cursor:pointer;">
+                                        <strong class="text-dark">{{ $responden->nama_responden }}</strong>
+                                        <span class="d-flex align-items-center gap-2">
+                                            <span class="text-muted small">ID: {{ $responden->id }}</span>
+                                            <span class="responden-data-badge badge rounded-circle bg-success"
+                                                style="width:20px;height:20px;display:none;align-items:center;justify-content:center;padding:0;">
+                                                <i class="mdi mdi-check" style="font-size:0.7rem;"></i>
+                                            </span>
                                         </span>
-                                        <span class="text-muted small">ID: {{ $responden->id }}</span>
                                     </label>
                                 </div>
                             @endforeach
@@ -1432,6 +1439,28 @@
                     document.querySelectorAll('.responden-checkbox').forEach(function (cb) {
                         cb.checked = false;
                     });
+
+                    // Toggle badges based on active section using JS data
+                    var respondenWithData = @json($respondenWithData ?? []);
+                    var activeIds = respondenWithData[section] || [];
+
+                    document.querySelectorAll('.responden-checkbox').forEach(function (cb) {
+                        var respondenId = parseInt(cb.value, 10);
+                        var item  = cb.closest('.responden-check-item');
+                        var badge = item ? item.querySelector('.responden-data-badge') : null;
+
+                        if (item && badge) {
+                            var hasData = activeIds.map(function(id){ return parseInt(id, 10); }).indexOf(respondenId) !== -1;
+                            if (hasData) {
+                                badge.style.display = 'inline-flex';
+                                item.style.background = '#e8f5e9';
+                            } else {
+                                badge.style.display = 'none';
+                                item.style.background = '#f8f9fa';
+                            }
+                        }
+                    });
+
                     updateSelectedCount();
                     updateDownloadLink();
                 });

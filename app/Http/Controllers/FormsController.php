@@ -36,6 +36,16 @@ class FormsController extends Controller
             ->orderBy('id', 'asc')
             ->get();
 
+        // Get responden IDs that already have data per section (for badge display in modal)
+        $respondenWithData = [
+            'tanggapan-masyarakat'  => TanggapanMasyarakat::where('knmp_id', $knmp->id)->pluck('responden_id')->toArray(),
+            'tingkat-kebahagiaan'   => TingkatKebahagiaanNelayan::where('knmp_id', $knmp->id)->distinct()->pluck('responden_id')->toArray(),
+            'informasi-usaha'       => InformasiUsaha::where('knmp_id', $knmp->id)->pluck('responden_id')->toArray(),
+            'informasi-pemasaran'   => InformasiPemasaran::where('knmp_id', $knmp->id)->pluck('responden_id')->toArray(),
+            'pendapatan-rt'         => InformasiPendapatanRumahTangga::where('knmp_id', $knmp->id)->pluck('responden_id')->toArray(),
+            'sosial-kelembagaan'    => SosialKelembagaan::where('knmp_id', $knmp->id)->pluck('responden_id')->toArray(),
+        ];
+
         $provinces = KnmpProvinces::where('id', $knmp->province_id)->get();
         $regencies = KnmpRegencies::where('id', $knmp->regency_id)->get();
         $districts = KnmpDistricts::where('id', $knmp->district_id)->get();
@@ -86,6 +96,7 @@ class FormsController extends Controller
         return view('survey.forms.index', compact(
             'knmp',
             'respondenList',
+            'respondenWithData',
             'provinces',
             'regencies',
             'districts',

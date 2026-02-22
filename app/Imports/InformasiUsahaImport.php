@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\InformasiUsaha;
+use App\Models\InformasiResponden;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
@@ -20,7 +21,7 @@ class InformasiUsahaImport implements OnEachRow, WithHeadingRow, WithValidation,
      * Required columns for this import type
      */
     protected $requiredColumns = [
-        'responden_id',
+        'nama_responden',
         'nama_kapal',
         'jenis_alat_tangkap',
         'ikan_1_jenis',
@@ -67,6 +68,28 @@ class InformasiUsahaImport implements OnEachRow, WithHeadingRow, WithValidation,
         $rowIndex = $row->getIndex();
         $row      = $row->toArray();
 
+        // Cari responden berdasarkan nama dan knmp_id
+        $namaResponden = trim($row['nama_responden'] ?? '');
+        if (empty($namaResponden)) {
+            return;
+        }
+
+        $responden = InformasiResponden::where('knmp_id', $this->knmpId)
+            ->where('nama_responden', $namaResponden)
+            ->first();
+
+        if (!$responden) {
+            $responden = InformasiResponden::where('knmp_id', $this->knmpId)
+                ->whereRaw('LOWER(nama_responden) = ?', [strtolower($namaResponden)])
+                ->first();
+        }
+
+        if (!$responden) {
+            return;
+        }
+
+        $respondenId = $responden->id;
+
         // Helper to map text answers to scores
         $getScore = function($type, $value) {
             if (is_null($value)) return null;
@@ -102,7 +125,7 @@ class InformasiUsahaImport implements OnEachRow, WithHeadingRow, WithValidation,
         $informasiUsaha = InformasiUsaha::updateOrCreate(
             [
                 'knmp_id'      => $this->knmpId,
-                'responden_id' => $row['responden_id'],
+                'responden_id' => $respondenId,
             ],
             [
                 'nama_kapal'              => $row['nama_kapal'] ?? null,
@@ -134,17 +157,16 @@ class InformasiUsahaImport implements OnEachRow, WithHeadingRow, WithValidation,
         );
 
         // 2. Create or Update child: InformasiUsahaIkan
-        // We handle up to 2 fish types as defined in template
         for ($i = 1; $i <= 2; $i++) {
-            $jenisKey   = "ikan_{$i}_jenis";
-            $kgTripKey  = "ikan_{$i}_kg_trip";
-            $persenKey  = "ikan_{$i}_persen";
+            $jenisKey  = "ikan_{$i}_jenis";
+            $kgTripKey = "ikan_{$i}_kg_trip";
+            $persenKey = "ikan_{$i}_persen";
 
             if (!empty($row[$jenisKey])) {
                 InformasiUsahaIkan::updateOrCreate(
                     [
                         'informasi_usaha_id' => $informasiUsaha->id,
-                        'responden_id'       => $row['responden_id'],
+                        'responden_id'       => $respondenId,
                         'jenis'              => $row[$jenisKey],
                     ],
                     [
@@ -159,9 +181,16 @@ class InformasiUsahaImport implements OnEachRow, WithHeadingRow, WithValidation,
     public function rules(): array
     {
         return [
-            'responden_id' => 'required|exists:informasi_responden,id',
+            'nama_responden'       => 'required',
             'produksi_kg_per_trip' => 'nullable|numeric',
             'penjualan_rp_per_trip' => 'nullable|numeric',
+        ];
+    }
+
+    public function customValidationMessages()
+    {
+        return [
+            'nama_responden.required' => 'Kolom "nama_responden" wajib diisi pada baris :attribute.',
         ];
     }
 }

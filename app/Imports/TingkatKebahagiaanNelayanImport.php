@@ -20,7 +20,7 @@ class TingkatKebahagiaanNelayanImport implements OnEachRow, WithHeadingRow, With
      * Required columns for this import type.
      */
     protected $requiredColumns = [
-        'responden_id',
+        'nama_responden',
         'nomor_soal',
         'kategori',
     ];
@@ -82,8 +82,8 @@ class TingkatKebahagiaanNelayanImport implements OnEachRow, WithHeadingRow, With
     {
         $row = $row->toArray();
 
-        // Lookup responden_id if it's a name string
-        $respondenId = $this->lookupRespondenId($row['responden_id'] ?? null);
+        // Lookup responden_id dari nama
+        $respondenId = $this->lookupRespondenId($row['nama_responden'] ?? null);
 
         // Get jawaban_teks from the row
         $jawabanTeks = trim($row['jawaban_teks'] ?? '');
@@ -180,7 +180,7 @@ class TingkatKebahagiaanNelayanImport implements OnEachRow, WithHeadingRow, With
     public function customValidationMessages()
     {
         return [
-            'responden_id.required' => 'Kolom "responden_id" wajib diisi pada baris :attribute.',
+            'nama_responden.required' => 'Kolom "nama_responden" wajib diisi pada baris :attribute.',
             'nomor_soal.required' => 'Kolom "nomor_soal" wajib diisi pada baris :attribute',
             'jawaban_teks.required' => 'Kolom "jawaban_teks" wajib diisi pada baris :attribute. Pilih: Sangat Tidak Setuju, Tidak Setuju, Netral, Setuju, atau Sangat Setuju.',
         ];
