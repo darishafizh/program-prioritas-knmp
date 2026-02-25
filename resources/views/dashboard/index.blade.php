@@ -9,15 +9,18 @@
             user-select: none;
             transition: all 0.2s;
         }
+
         .sortable:hover {
             background-color: #f3f4f6;
             color: #3b82f6;
         }
+
         .sortable i {
             font-size: 1.1em;
             vertical-align: middle;
             transition: transform 0.2s;
         }
+
         .sort-active {
             background-color: #eff6ff !important;
             color: #1d4ed8 !important;
@@ -30,23 +33,28 @@
             overflow: hidden;
             background: #fff;
         }
+
         .search-field-enhanced .input-group-text {
             background: #f8f9fa;
             border: none;
             border-right: 1px solid #e5e7eb;
             padding: 0.5rem 0.75rem;
         }
+
         .search-field-enhanced .input-group-text i {
             color: #6b7280;
             font-size: 1.1rem;
         }
+
         .search-field-enhanced .form-control {
             border: none;
             padding: 0.5rem 0.75rem;
         }
+
         .search-field-enhanced .form-control:focus {
             box-shadow: none;
         }
+
         .search-field-enhanced:focus-within {
             border-color: #3b82f6 !important;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
@@ -70,7 +78,8 @@
                     </div>
                     <div>
                         <h4 class="page-title mb-1">{{ $greeting }}, {{ Auth::user()->name ?? 'Pengguna' }}!</h4>
-                        <p class="text-muted mb-0" style="font-size: 0.85rem;">Setiap langkah kecil membawa kita lebih dekat ke tujuan besar.</p>
+                        <p class="text-muted mb-0" style="font-size: 0.85rem;">Setiap langkah kecil membawa kita lebih dekat
+                            ke tujuan besar.</p>
                     </div>
                 </div>
                 <div class="text-end">
@@ -94,19 +103,21 @@
                             <i class="mdi mdi-filter-outline text-muted me-2" style="font-size: 1.2rem;"></i>
                             <span class="text-muted me-2">Periode:</span>
                             <form method="GET" action="{{ route('dashboard.index') }}" class="d-inline">
-                                <select name="period" class="form-select form-select-sm border-0 bg-light" 
+                                <select name="period" class="form-select form-select-sm border-0 bg-light"
                                     style="width: auto; font-weight: 500;" onchange="this.form.submit()">
-                                    <option value="all" {{ ($period ?? 'all') == 'all' ? 'selected' : '' }}>Semua Waktu</option>
+                                    <option value="all" {{ ($period ?? 'all') == 'all' ? 'selected' : '' }}>Semua Waktu
+                                    </option>
                                     <option value="week" {{ ($period ?? '') == 'week' ? 'selected' : '' }}>Minggu Ini</option>
-                                    <option value="month" {{ ($period ?? '') == 'month' ? 'selected' : '' }}>Bulan Ini</option>
+                                    <option value="month" {{ ($period ?? '') == 'month' ? 'selected' : '' }}>Bulan Ini
+                                    </option>
                                     <option value="year" {{ ($period ?? '') == 'year' ? 'selected' : '' }}>Tahun Ini</option>
                                 </select>
                             </form>
                         </div>
                         <!-- <a href="{{ route('dashboard.export-pdf', ['period' => $period ?? 'all']) }}"
-                            class="btn btn-sm btn-primary" target="_blank">
-                            <i class="mdi mdi-file-pdf-box me-1"></i>Export PDF
-                        </a> -->
+                                        class="btn btn-sm btn-primary" target="_blank">
+                                        <i class="mdi mdi-file-pdf-box me-1"></i>Export PDF
+                                    </a> -->
                     </div>
                 </div>
             </div>
@@ -237,7 +248,7 @@
                     <div class="d-flex align-items-center flex-wrap gap-2">
                         <!-- Date Filter Dropdown -->
                         @if(count($availableProgressDates ?? []) > 0)
-                            <div class="input-group input-group-sm me-2" style="width: 180px;">
+                            <div class="input-group input-group-sm me-2" style="width: auto;">
                                 <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
                                 <select class="form-select" id="progresDateFilter" onchange="filterByDate(this.value)">
                                     @foreach($availableProgressDates as $date)
@@ -252,8 +263,8 @@
                         <!-- Search Input -->
                         <div class="input-group input-group-sm me-2 search-field-enhanced" style="width: 180px;">
                             <span class="input-group-text"><i class="mdi mdi-magnify"></i></span>
-                            <input type="text" id="paramsSearch" class="form-control"
-                                placeholder="Cari KNMP..." onkeyup="filterTable()">
+                            <input type="text" id="paramsSearch" class="form-control" placeholder="Cari KNMP..."
+                                onkeyup="filterTable()">
                         </div>
 
                         <!-- Action Buttons -->
@@ -299,7 +310,8 @@
                                             Nama KNMP <i class="mdi mdi-sort ms-1 text-muted"></i>
                                         </th>
                                         <th style="width: 250px;">Status Progres</th>
-                                        <th style="width: 140px; white-space: nowrap;" class="text-end sortable" onclick="sortTable(3)">
+                                        <th style="width: 140px; white-space: nowrap;" class="text-end sortable"
+                                            onclick="sortTable(3)">
                                             Persentase <i class="mdi mdi-sort ms-1 text-muted"></i>
                                         </th>
                                     </tr>
@@ -372,7 +384,8 @@
                             <label class="form-label">File Excel (.xlsx)</label>
                             <input type="file" name="file" class="form-control" accept=".xlsx, .xls, .csv" required>
                             <small class="text-muted d-block mt-1">Format: knmp_id, progres</small>
-                            <small class="text-muted">Data akan ditambahkan untuk tanggal yang dipilih. Data lama tidak akan dihapus.</small>
+                            <small class="text-muted">Data akan ditambahkan untuk tanggal yang dipilih. Data lama tidak akan
+                                dihapus.</small>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -427,7 +440,7 @@
             window.location.href = url.toString();
         }
 
-        let sortDirections = [true, true, true, true]; 
+        let sortDirections = [true, true, true, true];
 
         function sortTable(n) {
             var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
@@ -435,7 +448,7 @@
             if (!table) return; // Guard clause
             switching = true;
             dir = sortDirections[n] ? "asc" : "desc";
-            
+
             // 1. Reset all headers styling
             const headers = table.querySelectorAll("th.sortable");
             headers.forEach((th) => {
@@ -445,7 +458,7 @@
                     icon.className = "mdi mdi-sort ms-1 opacity-25"; // default faint icon
                 }
             });
-            
+
             // 2. Highlight active header
             const headerIndexRef = n === 1 ? 1 : 3; // Mapped because HTML collection might differ
             const headersAll = table.querySelectorAll("th");
@@ -454,14 +467,14 @@
             // Simple mapping: 
             // n=1 (Nama KNMP) is headersAll[1]
             // n=3 (Persentase) is headersAll[3]
-             if(headersAll.length > n) currentHeader = headersAll[n];
-            
-            if(currentHeader) {
+            if (headersAll.length > n) currentHeader = headersAll[n];
+
+            if (currentHeader) {
                 currentHeader.classList.add('sort-active');
                 const currentIcon = currentHeader.querySelector("i");
                 if (currentIcon) {
-                    currentIcon.className = dir === "asc" 
-                        ? "mdi mdi-sort-ascending ms-1 fw-bold" 
+                    currentIcon.className = dir === "asc"
+                        ? "mdi mdi-sort-ascending ms-1 fw-bold"
                         : "mdi mdi-sort-descending ms-1 fw-bold";
                 }
             }
@@ -474,9 +487,9 @@
                     shouldSwitch = false;
                     x = rows[i].getElementsByTagName("td")[n];
                     y = rows[i + 1].getElementsByTagName("td")[n];
-                    
+
                     if (!x || !y) continue;
-                    
+
                     let xVal = x.textContent || x.innerText;
                     let yVal = y.textContent || y.innerText;
                     if (n === 3) {
@@ -507,8 +520,8 @@
             // Renumber rows
             rows = table.rows;
             for (i = 1; i < rows.length; i++) {
-                 let numCell = rows[i].getElementsByTagName("td")[0];
-                 if(numCell) numCell.innerHTML = i;
+                let numCell = rows[i].getElementsByTagName("td")[0];
+                if (numCell) numCell.innerHTML = i;
             }
         }
     </script>
