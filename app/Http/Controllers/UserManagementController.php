@@ -17,7 +17,7 @@ class UserManagementController extends Controller
     {
         $users = User::with('roles')->orderBy('created_at', 'desc')->get();
         $roles = Role::all();
-        
+
         return view('user_management.index', compact('users', 'roles'));
     }
 
@@ -30,7 +30,7 @@ class UserManagementController extends Controller
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users,username',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
+            'password' => ['required', 'string', \Illuminate\Validation\Rules\Password::min(8)->mixedCase()->numbers()],
             'role' => 'required|exists:roles,name',
         ]);
 
@@ -58,18 +58,18 @@ class UserManagementController extends Controller
             'name' => 'required|string|max:255',
             'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'password' => 'nullable|string|min:6',
+            'password' => ['nullable', 'string', \Illuminate\Validation\Rules\Password::min(8)->mixedCase()->numbers()],
             'role' => 'required|exists:roles,name',
         ]);
 
         $user->name = $request->name;
         $user->username = $request->username;
         $user->email = $request->email;
-        
+
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
-        
+
         $user->save();
 
         // Update role
@@ -86,7 +86,7 @@ class UserManagementController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-        
+
         // Don't allow deleting yourself
         if ($user->id === auth()->id()) {
             return redirect()->route('user_management.index')

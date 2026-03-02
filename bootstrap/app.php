@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
             return route('login');
         });
 
+        // Register global middleware
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
         // Register role middleware alias
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
