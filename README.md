@@ -1,59 +1,208 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="300" alt="Laravel Logo">
 </p>
 
-## About Laravel
+# 📋 Aplikasi Kuesioner Program Prioritas KNMP
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+> **Kawasan Nelayan Maju dan Prioritas (KNMP)** — Sistem aplikasi kuesioner dan monitoring untuk program prioritas KNMP, Direktorat Jenderal Perikanan Tangkap, Kementerian Kelautan dan Perikanan (KKP).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🖥️ System Environment
 
-## Learning Laravel
+### Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+| Layer                     | Teknologi           | Versi       |
+| ------------------------- | ------------------- | ----------- |
+| **Backend Framework**     | Laravel             | ^12.0       |
+| **Bahasa Pemrograman**    | PHP                 | ^8.2        |
+| **Database**              | MySQL               | 5.7+ / 8.0+ |
+| **Frontend CSS**          | Tailwind CSS        | ^4.0        |
+| **Build Tool**            | Vite                | ^7.0        |
+| **Vite Plugin**           | laravel-vite-plugin | ^2.0        |
+| **HTTP Client**           | Axios               | ^1.11       |
+| **Package Manager (PHP)** | Composer            | 2.x         |
+| **Package Manager (JS)**  | NPM                 | 10.x+       |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Paket Tambahan (Dependencies)
 
-## Laravel Sponsors
+| Paket                     | Kegunaan                          |
+| ------------------------- | --------------------------------- |
+| `barryvdh/laravel-dompdf` | Generasi laporan PDF              |
+| `maatwebsite/excel`       | Ekspor & impor data ke/dari Excel |
+| `laravel/tinker`          | REPL interaktif untuk debugging   |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Dev Dependencies
 
-### Premium Partners
+| Paket             | Kegunaan                       |
+| ----------------- | ------------------------------ |
+| `laravel/pail`    | Real-time log viewer           |
+| `laravel/pint`    | PHP code style fixer           |
+| `laravel/sail`    | Docker development environment |
+| `phpunit/phpunit` | Unit & feature testing         |
+| `fakerphp/faker`  | Data dummy generator           |
+| `mockery/mockery` | Mocking library untuk testing  |
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## ⚙️ Konfigurasi Environment
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Aplikasi menggunakan file `.env` untuk konfigurasi. Salin `.env.example` ke `.env` dan sesuaikan:
 
-## Code of Conduct
+```env
+# Aplikasi
+APP_NAME=Laravel
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Database (MySQL)
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=program-prioritas-knmp
+DB_USERNAME=root
+DB_PASSWORD=
 
-## Security Vulnerabilities
+# Session & Cache
+SESSION_DRIVER=database
+CACHE_STORE=database
+QUEUE_CONNECTION=database
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 🚀 Instalasi & Setup
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Prasyarat (Prerequisites)
+
+Pastikan sistem Anda sudah memiliki:
+
+- ✅ **PHP** >= 8.2 (dengan ekstensi: `mbstring`, `xml`, `curl`, `mysql`, `zip`, `gd`)
+- ✅ **Composer** >= 2.x
+- ✅ **Node.js** >= 20.x & **NPM** >= 10.x
+- ✅ **MySQL** >= 5.7 atau 8.0+
+- ✅ **Git**
+
+### Langkah Instalasi
+
+```bash
+# 1. Clone repository
+git clone https://github.com/YOUR_USERNAME/program-prioritas-knmp.git
+cd program-prioritas-knmp
+
+# 2. Install PHP dependencies
+composer install
+
+# 3. Salin file environment
+cp .env.example .env
+
+# 4. Generate application key
+php artisan key:generate
+
+# 5. Konfigurasi database di file .env
+#    Sesuaikan DB_DATABASE, DB_USERNAME, DB_PASSWORD
+
+# 6. Jalankan migrasi database
+php artisan migrate
+
+# 7. Jalankan seeder (opsional, untuk data awal)
+php artisan db:seed
+
+# 8. Install Node.js dependencies
+npm install
+
+# 9. Build assets
+npm run build
+```
+
+### Menjalankan Aplikasi (Development)
+
+```bash
+# Opsi 1: Jalankan semua service sekaligus
+composer dev
+
+# Opsi 2: Jalankan secara terpisah
+php artisan serve          # Server Laravel (http://localhost:8000)
+npm run dev                # Vite dev server (hot reload)
+php artisan queue:listen   # Queue worker
+```
+
+---
+
+## 📁 Struktur Proyek
+
+```
+program-prioritas-knmp/
+├── app/
+│   ├── Console/          # Artisan commands
+│   ├── Exports/          # Export classes (Excel/PDF) — 15 file
+│   ├── Http/
+│   │   ├── Controllers/  # Controller logic — 31 file
+│   │   ├── Middleware/    # Custom middleware — 2 file
+│   │   └── Requests/     # Form request validation
+│   ├── Imports/          # Import classes (Excel) — 11 file
+│   ├── Models/           # Eloquent models — 39 file
+│   ├── Providers/        # Service providers
+│   └── Traits/           # Reusable traits
+├── database/
+│   ├── migrations/       # Database migrations — 55 file
+│   └── seeders/          # Database seeders — 18 file
+├── resources/
+│   ├── css/              # Stylesheet (Tailwind CSS)
+│   ├── js/               # JavaScript assets
+│   └── views/            # Blade templates
+├── routes/
+│   ├── web.php           # Route definisi web
+│   └── console.php       # Console routes
+├── public/               # Public assets
+├── config/               # Konfigurasi aplikasi
+├── storage/              # File storage & logs
+├── tests/                # Unit & feature tests
+├── composer.json         # PHP dependencies
+├── package.json          # Node.js dependencies
+├── vite.config.js        # Vite configuration
+└── tailwind.config.js    # Tailwind CSS configuration
+```
+
+---
+
+## 📊 Fitur Utama
+
+| Fitur                       | Deskripsi                                                        |
+| --------------------------- | ---------------------------------------------------------------- |
+| **Manajemen Responden**     | Input dan kelola data responden kuesioner                        |
+| **Kuesioner Multi-Bagian**  | Informasi umum, usaha, pemasaran, pendapatan, sosial kelembagaan |
+| **Progres KNMP**            | Monitoring progres pembangunan kawasan nelayan                   |
+| **Komponen & Anggaran**     | Pengelolaan komponen dan anggaran KNMP                           |
+| **Kendala & Tindak Lanjut** | Pencatatan kendala dan progres penyelesaian                      |
+| **Ekspor Data**             | Laporan dalam format Excel dan PDF                               |
+| **Impor Data**              | Impor data dari file Excel                                       |
+| **Activity Log**            | Pencatatan aktivitas pengguna                                    |
+| **Role Management**         | Manajemen hak akses berdasarkan peran                            |
+| **Dashboard**               | Ringkasan data dan statistik                                     |
+
+---
+
+## 🧪 Testing
+
+```bash
+# Jalankan semua test
+php artisan test
+
+# Atau menggunakan PHPUnit langsung
+./vendor/bin/phpunit
+```
+
+---
+
+## 📝 Dokumentasi Tambahan
+
+- [Dokumentasi Edit Form Prefill](EDIT_FORM_PREFILL_DOCUMENTATION.md)
+- [Dokumentasi Edit Responden](EDIT_RESPONDEN_DOCUMENTATION.md)
+
+---
+
+## 📄 Lisensi
+
+Proyek ini menggunakan framework [Laravel](https://laravel.com) yang dilisensikan di bawah [MIT License](https://opensource.org/licenses/MIT).
