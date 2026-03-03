@@ -392,8 +392,6 @@
                         </div>
 
                         <div class="mb-3">
-                            <a href="{{ route('password.request') }}" class="text-muted float-end"><small>Lupa
-                                    password?</small></a>
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group">
                                 <input type="password" id="password" class="form-control" name="password" required

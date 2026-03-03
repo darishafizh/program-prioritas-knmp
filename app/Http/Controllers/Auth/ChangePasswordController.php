@@ -27,7 +27,7 @@ class ChangePasswordController extends Controller
                     }
                 }
             ],
-            'password' => 'required|min:8|confirmed|different:current_password',
+            'password' => ['required', 'min:8', 'confirmed', 'different:current_password', \Illuminate\Validation\Rules\Password::min(8)->mixedCase()->numbers()],
         ]);
 
         $user = Auth::user();

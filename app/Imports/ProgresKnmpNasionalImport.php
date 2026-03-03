@@ -14,6 +14,10 @@ class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEm
 {
     public $failures = [];
     public $successCount = 0;
+    public $duplicateCount = 0;
+    public $notFoundCount = 0;
+    public $emptyCount = 0;
+    public $errorCount = 0;
     protected $tanggal;
 
     /**
@@ -22,6 +26,14 @@ class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEm
     public function __construct($tanggal = null)
     {
         $this->tanggal = $tanggal ?? now()->toDateString();
+    }
+
+    /**
+     * Get total failure count
+     */
+    public function totalFailures()
+    {
+        return $this->duplicateCount + $this->notFoundCount + $this->emptyCount + $this->errorCount;
     }
 
     /**
@@ -35,22 +47,20 @@ class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEm
         $existingKnmpIds = \App\Models\Knmp::pluck('id')->toArray();
 
         foreach ($rows as $index => $row) {
-            $rowNumber = $index + 2; // Assuming header is row 1
+            $rowNumber = $index + 2;
 
-            // 1. Strict Validation: knmp_id must exist
             if (empty($row['knmp_id'])) {
-                $this->failures[] = "Baris {$rowNumber}: Kolom 'knmp_id' kosong.";
+                $this->emptyCount++;
                 continue;
             }
 
             $knmpId = (int) $row['knmp_id'];
 
             if (!in_array($knmpId, $existingKnmpIds)) {
-                $this->failures[] = "Baris {$rowNumber}: KNMP ID '{$knmpId}' tidak ditemukan di database.";
+                $this->notFoundCount++;
                 continue;
             }
 
-            // 2. Clear numeric parsing
             $progresValue = $row['progres'] ?? 0;
             if (is_string($progresValue)) {
                 $progresValue = str_replace(',', '.', $progresValue);
@@ -58,7 +68,6 @@ class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEm
             $progresValue = (float) $progresValue;
 
             try {
-                // Use updateOrCreate to handle both insert and update
                 ProgresKnmpNasional::updateOrCreate(
                     [
                         'knmp_id' => $knmpId,
@@ -69,8 +78,17 @@ class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEm
                     ]
                 );
                 $this->successCount++;
+            } catch (\Illuminate\Database\QueryException $e) {
+                Log::error("Import Progres KNMP Nasional - Baris {$rowNumber}", ['error' => $e->getMessage()]);
+                $errorCode = $e->errorInfo[1] ?? null;
+                if ($errorCode == 1062) {
+                    $this->duplicateCount++;
+                } else {
+                    $this->errorCount++;
+                }
             } catch (\Exception $e) {
-                $this->failures[] = "Baris {$rowNumber}: Gagal menyimpan database. " . $e->getMessage();
+                Log::error("Import Progres KNMP Nasional - Baris {$rowNumber}", ['error' => $e->getMessage()]);
+                $this->errorCount++;
             }
         }
     }

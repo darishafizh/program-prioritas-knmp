@@ -376,15 +376,31 @@ class ImportController extends Controller
             $import = new ProgresKnmpNasionalImport($tanggal);
             Excel::import($import, $request->file('file'));
 
-            if (count($import->failures) > 0) {
-                // If there are failures, show them along with success count
-                $failureMsg = implode('<br>', array_slice($import->failures, 0, 10)); // Limit display
-                if (count($import->failures) > 10) {
-                    $failureMsg .= "<br>...dan " . (count($import->failures) - 10) . " error lainnya.";
+            if ($import->totalFailures() > 0) {
+                // Build concise summary message
+                $details = [];
+                if ($import->duplicateCount > 0) {
+                    $details[] = "{$import->duplicateCount} data sudah ada (duplikat)";
+                }
+                if ($import->notFoundCount > 0) {
+                    $details[] = "{$import->notFoundCount} KNMP ID tidak ditemukan";
+                }
+                if ($import->emptyCount > 0) {
+                    $details[] = "{$import->emptyCount} baris KNMP ID kosong";
+                }
+                if ($import->errorCount > 0) {
+                    $details[] = "{$import->errorCount} data gagal disimpan";
                 }
 
-                $msg = "Import Selesai (Tanggal: {$tanggal}). <br><b>Berhasil: {$import->successCount} data.</b><br><br><b>Gagal (" . count($import->failures) . "):</b><br>" . $failureMsg;
-                return back()->with('error', $msg); // Use 'error' style to make sure they read the warnings
+                $totalFail = $import->totalFailures();
+                $failSummary = implode(', ', $details);
+
+                if ($import->successCount > 0) {
+                    $msg = "Import Selesai (Tanggal: {$tanggal}). Berhasil: {$import->successCount} data. Gagal: {$totalFail} data — {$failSummary}.";
+                } else {
+                    $msg = "Import Gagal (Tanggal: {$tanggal}). Semua {$totalFail} data gagal diimport — {$failSummary}. Silakan periksa file dan coba lagi.";
+                }
+                return back()->with('error', $msg);
             }
 
             return back()->with('success', "Sukses! {$import->successCount} data Progres KNMP Nasional berhasil diimport untuk tanggal {$tanggal}.");
