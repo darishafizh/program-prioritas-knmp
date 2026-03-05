@@ -458,18 +458,83 @@ function initDashboardMap() {
     desaKNMP.forEach(function (item) {
         if (item.latitude !== null && item.longitude !== null) {
             var detailUrl = detailUrlPattern.replace(':id', item.id);
+            var profile = item.profile_knmp || {};
+            var progres = item.progres_knmp || {};
+            var progresNasional = item.latest_progres_nasional || null;
+            var respondenCount = item.informasi_responden_count || 0;
+
+            // Format currency
+            function formatRupiah(num) {
+                if (!num || num == 0) return '-';
+                return 'Rp ' + Number(num).toLocaleString('id-ID');
+            }
+
+            // Format number
+            function formatNum(num) {
+                if (!num && num !== 0) return '-';
+                return Number(num).toLocaleString('id-ID');
+            }
+
+            // Progres bar color
+            var progresVal = progresNasional ? Number(progresNasional.progres) : 0;
+            var progresColor = '#ef4444';
+            if (progresVal >= 100) progresColor = '#22c55e';
+            else if (progresVal >= 75) progresColor = '#3b82f6';
+            else if (progresVal >= 50) progresColor = '#f59e0b';
+
             var popupContent = `
-                <div class="p-1">
-                    <h6 class="mb-2 text-primary fw-bold" style="font-size: 14px;">${item.nama ?? "Lokasi KNMP " + item.id}</h6>
-                    <div class="mb-2 small text-muted">
-                        <div class="mb-1"><i class="mdi mdi-map-marker-radius me-1 text-danger"></i> 
+                <div style="min-width: 260px; max-width: 300px; font-family: 'Segoe UI', sans-serif;">
+                    <h6 class="mb-1 fw-bold" style="font-size: 14px; color: #1e40af;">${item.nama ?? "Lokasi KNMP " + item.id}</h6>
+                    <div class="mb-2" style="font-size: 11.5px; color: #6b7280;">
+                        <div class="mb-1"><i class="mdi mdi-map-marker-radius me-1 text-danger"></i>
                             ${item.village ? item.village.name : '-'}, ${item.district ? item.district.name : '-'}
                         </div>
                         <div><i class="mdi mdi-city me-1 text-secondary"></i>
                             ${item.regency ? item.regency.name : '-'}, ${item.province ? item.province.name : '-'}
                         </div>
                     </div>
-                    <a href="${detailUrl}" class="btn btn-xs btn-primary w-100 rounded-pill" style="color: #ffffff !important;">
+
+                    ${progresNasional ? `
+                    <div class="mb-2" style="background: #f0f9ff; border-radius: 6px; padding: 6px 8px;">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small style="font-weight: 600; color: #1e40af; font-size: 11px;"><i class="mdi mdi-chart-line me-1"></i>Progres Pembangunan</small>
+                            <small style="font-weight: 700; color: ${progresColor}; font-size: 12px;">${progresVal.toFixed(1)}%</small>
+                        </div>
+                        <div style="background: #e2e8f0; border-radius: 4px; height: 6px; overflow: hidden;">
+                            <div style="background: ${progresColor}; height: 100%; width: ${Math.min(progresVal, 100)}%; border-radius: 4px; transition: width 0.3s;"></div>
+                        </div>
+                    </div>` : ''}
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 8px;">
+                        <div style="background: #fefce8; border-radius: 6px; padding: 5px 7px;">
+                            <div style="font-size: 10px; color: #a16207;"><i class="mdi mdi-fish me-1"></i>Nelayan</div>
+                            <div style="font-size: 13px; font-weight: 700; color: #854d0e;">${formatNum(profile.jml_nelayan)}</div>
+                        </div>
+                        <div style="background: #f0fdf4; border-radius: 6px; padding: 5px 7px;">
+                            <div style="font-size: 10px; color: #15803d;"><i class="mdi mdi-account-hard-hat me-1"></i>Tenaga Kerja</div>
+                            <div style="font-size: 13px; font-weight: 700; color: #166534;">${formatNum(progres.tk_total)}</div>
+                        </div>
+                        <div style="background: #faf5ff; border-radius: 6px; padding: 5px 7px;">
+                            <div style="font-size: 10px; color: #7e22ce;"><i class="mdi mdi-cash me-1"></i>Pendapatan</div>
+                            <div style="font-size: 11.5px; font-weight: 700; color: #6b21a8;">${formatRupiah(profile.pendapatan_rata_rata_nelayan)}</div>
+                        </div>
+                        <div style="background: #fff7ed; border-radius: 6px; padding: 5px 7px;">
+                            <div style="font-size: 10px; color: #c2410c;"><i class="mdi mdi-package-variant me-1"></i>Produksi</div>
+                            <div style="font-size: 13px; font-weight: 700; color: #9a3412;">${profile.volume_produksi_ton ? formatNum(profile.volume_produksi_ton) + ' ton' : '-'}</div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mb-2" style="font-size: 11px;">
+                        ${profile.komoditas_utama_1 ? `<span style="background: #dbeafe; color: #1e40af; border-radius: 10px; padding: 2px 8px; font-weight: 500;"><i class="mdi mdi-tag me-1"></i>${profile.komoditas_utama_1}</span>` : ''}
+                        ${profile.komoditas_utama_2 ? `<span style="background: #e0e7ff; color: #4338ca; border-radius: 10px; padding: 2px 8px; font-weight: 500;"><i class="mdi mdi-tag me-1"></i>${profile.komoditas_utama_2}</span>` : ''}
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 11px; color: #6b7280;">
+                        <span><i class="mdi mdi-clipboard-account me-1 text-info"></i>Responden: <b>${respondenCount}</b></span>
+                        ${profile.jml_penduduk_des ? `<span><i class="mdi mdi-account-group me-1"></i>Penduduk: <b>${formatNum(profile.jml_penduduk_des)}</b></span>` : ''}
+                    </div>
+
+                    <a href="${detailUrl}" class="btn btn-sm btn-primary w-100 rounded-pill" style="color: #ffffff !important; font-size: 12px;">
                         <i class="mdi mdi-information-outline me-1" style="color: #ffffff !important;"></i> Lihat Informasi Umum
                     </a>
                 </div>
@@ -477,7 +542,7 @@ function initDashboardMap() {
 
             L.marker([item.latitude, item.longitude], { icon: redIcon })
                 .addTo(map)
-                .bindPopup(popupContent, { minWidth: 200 });
+                .bindPopup(popupContent, { minWidth: 260, maxWidth: 320 });
         }
     });
 

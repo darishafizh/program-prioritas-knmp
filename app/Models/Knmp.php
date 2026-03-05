@@ -44,4 +44,29 @@ class Knmp extends Model
     {
         return $this->hasMany(BuktiUpload::class, 'knmp_id');
     }
+
+    public function profileKnmp()
+    {
+        return $this->hasOne(ProfileKnmp::class, 'knmp_id');
+    }
+
+    public function progresKnmp()
+    {
+        return $this->hasOne(ProgresKnmp::class, 'knmp_id');
+    }
+
+    public function informasiResponden()
+    {
+        return $this->hasMany(InformasiResponden::class, 'knmp_id');
+    }
+
+    public function progresNasional()
+    {
+        return $this->hasMany(ProgresKnmpNasional::class, 'knmp_id');
+    }
+
+    public function latestProgresNasional()
+    {
+        return $this->hasOne(ProgresKnmpNasional::class, 'knmp_id')->latestOfMany('tanggal');
+    }
 }

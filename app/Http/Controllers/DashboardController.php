@@ -54,7 +54,16 @@ class DashboardController extends Controller
             $greetingIcon = 'mdi-weather-night';
         }
 
-        $desa_knmp = Knmp::with(['province', 'regency', 'district', 'village'])
+        $desa_knmp = Knmp::with([
+            'province',
+            'regency',
+            'district',
+            'village',
+            'profileKnmp',
+            'progresKnmp',
+            'latestProgresNasional',
+        ])
+            ->withCount('informasiResponden')
             ->get();
 
         // 1. Hitung responden yang telah mengisi survey
@@ -103,13 +112,13 @@ class DashboardController extends Controller
             ->orderBy('tanggal', 'desc')
             ->pluck('tanggal')
             ->toArray();
-        
+
         // Get selected date from request or use latest available
         $selectedProgresDate = $request->get('progres_date');
         if (!$selectedProgresDate && count($availableProgressDates) > 0) {
             $selectedProgresDate = $availableProgressDates[0]; // Latest date
         }
-        
+
         // Query progres data by selected date
         $progresNasionalQuery = ProgresKnmpNasional::with('knmp')->orderBy('progres', 'desc');
         if ($selectedProgresDate) {
@@ -128,9 +137,18 @@ class DashboardController extends Controller
         // 2. Ketersediaan Infrastruktur (%) - berdasarkan 12 item infrastruktur di profile_knmp
         // Hitung rata-rata ketersediaan dari 12 item (infra_jalan_akses, infra_listrik, dll)
         $infraColumns = [
-            'infra_jalan_akses', 'infra_listrik', 'infra_air_bersih', 'infra_internet',
-            'infra_ipal', 'infra_dermaga_tambat', 'infra_tpi', 'infra_cold_storage',
-            'infra_pabrik_es', 'infra_kantor_koperasi', 'infra_bengkel_nelayan', 'infra_waserda'
+            'infra_jalan_akses',
+            'infra_listrik',
+            'infra_air_bersih',
+            'infra_internet',
+            'infra_ipal',
+            'infra_dermaga_tambat',
+            'infra_tpi',
+            'infra_cold_storage',
+            'infra_pabrik_es',
+            'infra_kantor_koperasi',
+            'infra_bengkel_nelayan',
+            'infra_waserda'
         ];
 
         $profiles = ProfileKnmp::select($infraColumns)->get();
@@ -170,7 +188,7 @@ class DashboardController extends Controller
         $totalSosial = SosialKelembagaan::count();
         $anggotaKelompokKoperasi = SosialKelembagaan::where(function ($q) {
             $q->where('anggota_kelompok', '>=', 3)
-              ->orWhere('anggota_koperasi', '>=', 3);
+                ->orWhere('anggota_koperasi', '>=', 3);
         })->count();
         $tingkatKelembagaan = $totalSosial > 0
             ? round(($anggotaKelompokKoperasi / $totalSosial) * 100, 2)
