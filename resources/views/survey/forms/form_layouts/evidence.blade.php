@@ -56,8 +56,10 @@
 
 <div class="file-canvas">
     <div class="file-list-wrapper">
+        @php /** @var \App\Models\BuktiUpload[]|\Illuminate\Database\Eloquent\Collection $buktiUploads */ @endphp
         @forelse ($buktiUploads ?? [] as $file)
             @php
+                /** @var \App\Models\BuktiUpload $file */
                 $isImage = Str::startsWith($file->tipe_file, 'image');
                 $fileExists = \Illuminate\Support\Facades\Storage::disk('public')->exists($file->path_file);
                 $imageUrl = $fileExists ? asset('storage/' . $file->path_file) : '';
