@@ -39,7 +39,65 @@ class SurveyController extends Controller
         // Get provinces for dropdown (Admin only)
         $provinces = KnmpProvinces::orderBy('name', 'asc')->get();
 
-        return view('survey.index', compact('knmps', 'provinces'));
+        // Calculate KPI Stats for the 6 Cards
+        $knmpIds = $knmps->pluck('id')->toArray();
+        $totalKnmp = count($knmps);
+
+        // Ketersediaan Infrastruktur
+        $infraColumns = [
+            'infra_jalan_akses', 'infra_listrik', 'infra_air_bersih', 'infra_internet',
+            'infra_ipal', 'infra_dermaga_tambat', 'infra_tpi', 'infra_cold_storage',
+            'infra_pabrik_es', 'infra_kantor_koperasi', 'infra_bengkel_nelayan', 'infra_waserda'
+        ];
+        $profiles = \App\Models\ProfileKnmp::whereIn('knmp_id', $knmpIds)->select($infraColumns)->get();
+        $totalPercentage = 0;
+        $countProfiles = $profiles->count();
+        foreach ($profiles as $profile) {
+            $filledCount = 0;
+            foreach ($infraColumns as $col) {
+                if ($profile->$col) {
+                    $filledCount++;
+                }
+            }
+            $totalPercentage += ($filledCount / 12) * 100;
+        }
+        $ketersediaanInfrastruktur = $countProfiles > 0 ? round($totalPercentage / $countProfiles, 2) : 0;
+
+        // Indeks Kesesuaian Kebutuhan
+        $totalTanggapan = \App\Models\TanggapanMasyarakat::whereHas('responden', function ($q) use ($knmpIds) {
+            $q->whereIn('knmp_id', $knmpIds);
+        })->count();
+        $sesuaiKebutuhan = \App\Models\TanggapanMasyarakat::where('kesesuaian_kebutuhan', 1)->whereHas('responden', function ($q) use ($knmpIds) {
+            $q->whereIn('knmp_id', $knmpIds);
+        })->count();
+        $indeksKesesuaianKebutuhan = $totalTanggapan > 0 ? round(($sesuaiKebutuhan / $totalTanggapan) * 100, 2) : 0;
+
+        // Pendapatan RT Nelayan
+        $pendapatanRtNelayan = \App\Models\InformasiPendapatanRumahTangga::whereHas('responden', function ($q) use ($knmpIds) {
+            $q->whereIn('knmp_id', $knmpIds);
+        })->avg('pendapatan_total') ?? 0;
+
+        // Indeks Kesejahteraan Nelayan
+        $rataRataKebahagiaan = \App\Models\TingkatKebahagiaanNelayan::whereHas('responden', function ($q) use ($knmpIds) {
+            $q->whereIn('knmp_id', $knmpIds);
+        })->avg('skor_nilai') ?? 0;
+        $indeksKesejahteraan = round($rataRataKebahagiaan, 2);
+
+        // Tingkat Kelembagaan Nelayan
+        $totalSosial = \App\Models\SosialKelembagaan::whereHas('responden', function ($q) use ($knmpIds) {
+            $q->whereIn('knmp_id', $knmpIds);
+        })->count();
+        $anggotaKelompokKoperasi = \App\Models\SosialKelembagaan::whereHas('responden', function ($q) use ($knmpIds) {
+            $q->whereIn('knmp_id', $knmpIds);
+        })->where(function ($q) {
+            $q->where('anggota_kelompok', '>=', 3)->orWhere('anggota_koperasi', '>=', 3);
+        })->count();
+        $tingkatKelembagaan = $totalSosial > 0 ? round(($anggotaKelompokKoperasi / $totalSosial) * 100, 2) : 0;
+
+        return view('survey.index', compact(
+            'knmps', 'provinces', 'totalKnmp', 'ketersediaanInfrastruktur',
+            'indeksKesesuaianKebutuhan', 'pendapatanRtNelayan', 'indeksKesejahteraan', 'tingkatKelembagaan'
+        ));
     }
 
     /**

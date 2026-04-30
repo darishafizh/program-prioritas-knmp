@@ -148,117 +148,28 @@
     </div>
     @endif
 
-    {{-- Statistic Cards - Baris 1 --}}
-    <div class="row">
-        <div class="col-lg-4 col-md-6">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="widget-icon">
-                        <i class="mdi mdi-home-city"></i>
-                    </div>
-                    <h5>Total KNMP</h5>
-                    <h3>{{ number_format($totalKnmp ?? 0, 0, ',', '.') }}</h3>
-                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-map-marker-radius text-primary me-1"></i>
-                        Lokasi KNMP aktif
-                    </p>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-lg-4 col-md-6">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="widget-icon"
-                        style="background: linear-gradient(135deg, #10B981 0%, #34D399 100%); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
-                        <i class="mdi mdi-domain"></i>
-                    </div>
-                    <h5>Ketersediaan Infrastruktur</h5>
-                    <h3>{{ number_format($ketersediaanInfrastruktur ?? 0, 2, ',', '.') }}%</h3>
-                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-check-circle text-success me-1"></i>
-                        Komponen infrastruktur tersedia
-                    </p>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-lg-4 col-md-6">
-            <div class="card widget-flat">
+
+
+
+
+
+    {{-- Tahap Progress Chart --}}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="mdi mdi-chart-bar text-primary me-1"></i>Analisis Rata-Rata Progres per Tahap
+                    </h5>
+                </div>
                 <div class="card-body">
-                    <div class="widget-icon"
-                        style="background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);">
-                        <i class="mdi mdi-cash-multiple"></i>
-                    </div>
-                    <h5>Pendapatan RT Nelayan</h5>
-                    <h3>Rp {{ number_format($pendapatanRtNelayan ?? 0, 0, ',', '.') }}</h3>
-                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-trending-up text-success me-1"></i>
-                        Rata-rata pendapatan/orang/bulan
-                    </p>
+                    <div id="tahapProgressChart" style="height: 350px;"></div>
                 </div>
             </div>
         </div>
     </div>
-
-    {{-- Statistic Cards - Baris 2 --}}
-    <div class="row">
-        <div class="col-lg-4 col-md-6">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="widget-icon"
-                        style="background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
-                        <i class="mdi mdi-clipboard-check-outline"></i>
-                    </div>
-                    <h5>Indeks Kesesuaian Kebutuhan</h5>
-                    <h3>{{ number_format($indeksKesesuaianKebutuhan ?? 0, 2, ',', '.') }}%</h3>
-                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-check-decagram text-warning me-1"></i>
-                        Responden menyatakan sesuai
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="widget-icon"
-                        style="background: linear-gradient(135deg, #EC4899 0%, #F472B6 100%); box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);">
-                        <i class="mdi mdi-emoticon-happy"></i>
-                    </div>
-                    <h5>Indeks Kesejahteraan Nelayan</h5>
-                    <h3>{{ number_format($indeksKesejahteraan ?? 0, 2, ',', '.') }}</h3>
-                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-thumb-up text-success me-1"></i>
-                        Skala 1-10
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4 col-md-6">
-            <div class="card widget-flat">
-                <div class="card-body">
-                    <div class="widget-icon"
-                        style="background: linear-gradient(135deg, #14B8A6 0%, #2DD4BF 100%); box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);">
-                        <i class="mdi mdi-account-group"></i>
-                    </div>
-                    <h5>Tingkat Kelembagaan Nelayan</h5>
-                    <h3>{{ number_format($tingkatKelembagaan ?? 0, 2, ',', '.') }}%</h3>
-                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-account-multiple text-info me-1"></i>
-                        Nelayan dalam kelompok/koperasi
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-
-
 
     {{-- Progres KNMP Nasional --}}
     <div class="row">
@@ -603,6 +514,7 @@
             tingkatKesejahteraanData: {!! json_encode($tingkatKesejahteraanData ?? [0, 0, 0, 0]) !!},
             tingkatKesejahteraanLabels: {!! json_encode($tingkatKesejahteraanLabels ?? ['Sangat Sejahtera', 'Sejahtera', 'Cukup Sejahtera', 'Kurang Sejahtera']) !!},
             desaKnmp: @json($desa_knmp ?? []),
+            chartTahapData: @json($chartTahapData ?? []),
             detailUrlPattern: "{{ route('informasi_umum.index') }}?knmp_id=:id"
         };
     </script>

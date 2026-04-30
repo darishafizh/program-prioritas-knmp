@@ -18,8 +18,8 @@ class InformasiUmumController extends Controller
     {
         $user = auth()->user();
 
-        // Filter KNMP list based on user access
-        $knmpQuery = Knmp::with(['province', 'regency', 'district', 'village']);
+        // Filter KNMP list based on user access, only select needed columns and relationships for dropdown
+        $knmpQuery = Knmp::with(['province:id,name', 'regency:id,name'])->select('id', 'nama', 'province_id', 'regency_id');
 
         // If user is a village user (not admin), only show their assigned KNMP
         if ($user->isVillageUser() && !$user->isAdmin()) {
@@ -111,6 +111,7 @@ class InformasiUmumController extends Controller
             if ($stats['profile']) {
                 $stats['jmlKepalaKeluarga'] = $stats['profile']->jml_penduduk_des ?? 0;
                 $stats['totalNelayan'] = $stats['profile']->jml_nelayan ?? 0;
+                $stats['jumlahKapal'] = $stats['profile']->jumlah_kapal ?? 0;
                 $stats['pendapatanNelayan'] = $stats['profile']->pendapatan_rata_rata_nelayan ?? 0;
 
                 // Komoditas Utama 1
@@ -213,11 +214,10 @@ class InformasiUmumController extends Controller
 
 
             // J. Bukti Pendukung
-            // Use latest() to show newest files first
-            $bukti = BuktiUpload::where('knmp_id', $selectedKnmp->id)->latest()->get();
-            $monitoringStats['bukti']['totalFiles'] = $bukti->count();
-            $monitoringStats['bukti']['totalSize'] = $bukti->sum('ukuran_file');
-            $monitoringStats['bukti']['files'] = $bukti->take(6); // Latest 6 files for preview
+            // Use DB aggregates instead of loading all models into memory
+            $monitoringStats['bukti']['totalFiles'] = BuktiUpload::where('knmp_id', $selectedKnmp->id)->count();
+            $monitoringStats['bukti']['totalSize'] = BuktiUpload::where('knmp_id', $selectedKnmp->id)->sum('ukuran_file');
+            $monitoringStats['bukti']['files'] = BuktiUpload::where('knmp_id', $selectedKnmp->id)->latest()->take(6)->get();
         }
 
         return view('informasi_umum.index', compact('knmpList', 'selectedKnmp', 'selectedKnmpId', 'stats', 'monitoringStats'));
