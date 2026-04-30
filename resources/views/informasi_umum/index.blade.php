@@ -6,8 +6,8 @@
         <div class="col-12">
             <div class="page-title-box">
                 <div class="page-title-left">
-                    <h4 class="page-title"><i class="mdi mdi-chart-box-outline me-2"></i>Informasi Umum</h4>
-                    <small class="text-muted">Ringkasan Statistik Kampung Nelayan Merah Putih</small>
+                    <h4 class="page-title" style="font-size:0.95rem;"><i class="mdi mdi-chart-box-outline me-2"></i>Informasi Umum</h4>
+                    <small class="text-muted" style="font-size:0.72rem;">Monitoring & Analisis Data Kampung Nelayan Merah Putih</small>
                 </div>
                 <div class="page-title-right">
                     <nav aria-label="breadcrumb">
@@ -53,153 +53,149 @@
 
     @if($selectedKnmp)
         <!-- KNMP Title -->
-        <div class="mb-3">
-            <h5 class="fw-bold text-dark mb-0">
-                <i class="mdi mdi-map-marker-check text-primary me-2"></i>
-                {{ $selectedKnmp->nama }}, Kec. {{ $selectedKnmp->district->name ?? '-' }}, Kab.
-                {{ $selectedKnmp->regency->name ?? '-' }}, Prov. {{ $selectedKnmp->province->name ?? '-' }}
-            </h5>
+        <div class="mb-3 p-3 rounded-3" style="background:linear-gradient(135deg,#f8fafc,#eef2ff);border-left:3px solid #0054A6;">
+            <h6 class="fw-bold text-dark mb-1" style="font-size:0.85rem;">
+                <i class="mdi mdi-map-marker-check text-primary me-1" style="font-size:0.9rem;"></i>
+                {{ ucwords(strtolower($selectedKnmp->nama)) }}
+            </h6>
+            <p class="mb-0 text-muted" style="font-size:0.7rem;">Kec. {{ ucwords(strtolower($selectedKnmp->district->name ?? '-')) }}, Kab. {{ ucwords(strtolower($selectedKnmp->regency->name ?? '-')) }}, Prov. {{ ucwords(strtolower($selectedKnmp->province->name ?? '-')) }}</p>
         </div>
 
-        <!-- ROW 1: KPI Cards (4 cards) -->
-        <div class="d-flex gap-3 mb-4 kpi-row">
-            <div class="flex-fill">
+        <!-- ROW 1: KPI Cards (5 cards) -->
+        <div class="d-flex gap-3 mb-4 kpi-row overflow-auto pb-2">
+            <!-- 1. Penduduk -->
+            <div class="flex-fill" style="min-width: 170px;">
                 <div class="card border-0 shadow-sm h-100 kpi-card-white">
                     <div class="card-body d-flex align-items-center gap-2">
                         <div class="kpi-icon kpi-icon-blue">
                             <i class="mdi mdi-account-group"></i>
                         </div>
                         <div class="kpi-text">
-                            <p class="kpi-label mb-0">Jumlah Penduduk Desa</p>
-                            <h4 class="kpi-value mb-0">{{ number_format($stats['jmlKepalaKeluarga'], 0, ',', '.') }}</h4>
+                            <p class="kpi-label mb-0">Penduduk Desa</p>
+                            <h5 class="kpi-value mb-0">{{ number_format($stats['jmlKepalaKeluarga'], 0, ',', '.') }}</h5>
                             <small class="kpi-unit">Orang</small>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="flex-fill">
+            <!-- 2. Nelayan -->
+            <div class="flex-fill" style="min-width: 170px;">
                 <div class="card border-0 shadow-sm h-100 kpi-card-white">
                     <div class="card-body d-flex align-items-center gap-2">
                         <div class="kpi-icon kpi-icon-green">
                             <i class="mdi mdi-fish"></i>
                         </div>
                         <div class="kpi-text">
-                            <p class="kpi-label mb-0">Jumlah Nelayan</p>
-                            <h4 class="kpi-value mb-0">{{ number_format($stats['totalNelayan'], 0, ',', '.') }}</h4>
+                            <p class="kpi-label mb-0">Total Nelayan</p>
+                            <h5 class="kpi-value mb-0">{{ number_format($stats['totalNelayan'], 0, ',', '.') }}</h5>
                             <small class="kpi-unit">Orang</small>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="flex-fill">
+            <!-- 3. Kapal -->
+            <div class="flex-fill" style="min-width: 170px;">
                 <div class="card border-0 shadow-sm h-100 kpi-card-white">
                     <div class="card-body d-flex align-items-center gap-2">
                         <div class="kpi-icon kpi-icon-orange">
                             <i class="mdi mdi-ferry"></i>
                         </div>
                         <div class="kpi-text">
-                            <p class="kpi-label mb-0">Jumlah Kapal</p>
-                            <h4 class="kpi-value mb-0">{{ number_format($stats['jumlahKapal'], 0, ',', '.') }}</h4>
+                            <p class="kpi-label mb-0">Armada Kapal</p>
+                            <h5 class="kpi-value mb-0">{{ number_format($stats['jumlahKapal'], 0, ',', '.') }}</h5>
                             <small class="kpi-unit">Unit</small>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="flex-fill">
+            <!-- 4. Tenaga Kerja -->
+            <div class="flex-fill" style="min-width: 170px;">
                 <div class="card border-0 shadow-sm h-100 kpi-card-white">
                     <div class="card-body d-flex align-items-center gap-2">
                         <div class="kpi-icon kpi-icon-purple">
                             <i class="mdi mdi-account-hard-hat"></i>
                         </div>
                         <div class="kpi-text">
-                            <p class="kpi-label mb-0">Tenaga Kerja</p>
-                            <h4 class="kpi-value mb-0">{{ number_format($stats['serapanTenagaKerja'], 0, ',', '.') }}</h4>
+                            <p class="kpi-label mb-0">Serapan TK</p>
+                            <h5 class="kpi-value mb-0">{{ number_format($stats['serapanTenagaKerja'], 0, ',', '.') }}</h5>
                             <small class="kpi-unit">Orang</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 5. Pendapatan -->
+            <div class="flex-fill" style="min-width: 200px;">
+                <div class="card border-0 shadow-sm h-100 kpi-card-white">
+                    <div class="card-body d-flex align-items-center gap-2">
+                        <div class="kpi-icon kpi-icon-pink">
+                            <i class="mdi mdi-cash-multiple"></i>
+                        </div>
+                        <div class="kpi-text">
+                            <p class="kpi-label mb-0">Avg. Pendapatan</p>
+                            <h5 class="kpi-value mb-0">Rp {{ number_format($stats['pendapatanNelayan'], 0, ',', '.') }}</h5>
+                            <small class="kpi-unit">Bulan</small>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-
-
-        <!-- ROW 2: Info & Map Combined -->
-        <div class="row mb-4">
-            <!-- Left Col: Info (Pendapatan & Koperasi) -->
-            <div class="col-lg-5 mb-3 mb-lg-0">
-                <div class="d-flex flex-column gap-3 h-100">
-                    <!-- Row 1: Pendapatan -->
-                    <div class="card border-0 shadow-sm flex-fill kpi-card-white">
-                        <div class="card-body d-flex align-items-center gap-3">
-                            <div class="kpi-icon kpi-icon-pink">
-                                <i class="mdi mdi-cash-multiple"></i>
+        <!-- ROW 2: Koperasi & Map Combined -->
+        <div class="row mb-4 align-items-stretch">
+            <!-- Left Col: Koperasi Detail -->
+            <div class="col-lg-6 mb-3 mb-lg-0">
+                <div class="card border-0 shadow-sm h-100 kpi-card-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3 border-bottom pb-2">
+                            <div class="kpi-icon kpi-icon-teal me-3" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                                <i class="mdi mdi-handshake"></i>
                             </div>
-                            <div>
-                                <p class="kpi-label text-muted mb-0">Avg. Pendapatan Nelayan</p>
-                                <h4 class="kpi-value mb-0">Rp {{ number_format($stats['pendapatanNelayan'], 0, ',', '.') }}</h4>
-                                <small class="kpi-unit text-muted">Per Bulan</small>
-                            </div>
+                            <h6 class="mb-0 fw-bold text-dark" style="font-size:0.9rem;">Koperasi Desa Merah Putih</h6>
                         </div>
-                    </div>
 
-                    <!-- Row 2: Koperasi Detail -->
-                    <div class="card border-0 shadow-sm flex-fill kpi-card-white">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3 border-bottom pb-2">
-                                <div class="kpi-icon kpi-icon-teal me-3" style="width: 40px; height: 40px; font-size: 1.2rem;">
-                                    <i class="mdi mdi-handshake"></i>
+                        @if($stats['koperasiDesaMerahPutih'])
+                            <div class="d-flex flex-column gap-3">
+                                <div class="d-flex">
+                                    <i class="mdi mdi-office-building-outline text-muted me-2 mt-1"></i>
+                                    <div>
+                                        <small class="d-block text-muted" style="font-size: 0.65rem;letter-spacing:0.5px;">NAMA KOPERASI</small>
+                                        <span class="fw-semibold text-dark" style="font-size:0.85rem;">{{ $stats['koperasiDesaMerahPutih']['nama'] }}</span>
+                                    </div>
                                 </div>
-                                <h6 class="mb-0 fw-bold text-dark">Koperasi Desa Merah Putih</h6>
+                                <div class="d-flex">
+                                    <i class="mdi mdi-account-tie text-muted me-2 mt-1"></i>
+                                    <div>
+                                        <small class="d-block text-muted" style="font-size: 0.65rem;letter-spacing:0.5px;">KETUA</small>
+                                        <span class="text-dark" style="font-size:0.85rem;">{{ $stats['koperasiDesaMerahPutih']['ketua'] }}</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <i class="mdi mdi-account-group text-muted me-2 mt-1"></i>
+                                    <div>
+                                        <small class="d-block text-muted" style="font-size: 0.65rem;letter-spacing:0.5px;">ANGGOTA</small>
+                                        <span class="text-dark" style="font-size:0.85rem;">{{ $stats['koperasiDesaMerahPutih']['anggotaLaki'] + $stats['koperasiDesaMerahPutih']['anggotaPerempuan'] }} Orang</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <i class="mdi mdi-file-document-outline text-muted me-2 mt-1"></i>
+                                    <div>
+                                        <small class="d-block text-muted" style="font-size: 0.65rem;letter-spacing:0.5px;">NO. SK</small>
+                                        <span class="text-dark" style="font-size:0.85rem;">{{ $stats['koperasiDesaMerahPutih']['sk'] ?? '-' }}</span>
+                                    </div>
+                                </div>
                             </div>
-
-                            @if($stats['koperasiDesaMerahPutih'])
-                                <div class="d-flex flex-column gap-3">
-                                    <div class="d-flex">
-                                        <i class="mdi mdi-office-building-outline text-muted me-2 mt-1"></i>
-                                        <div>
-                                            <small class="d-block text-muted" style="font-size: 0.7rem;">NAMA KOPERASI</small>
-                                            <span
-                                                class="fw-semibold text-dark">{{ $stats['koperasiDesaMerahPutih']['nama'] }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex">
-                                        <i class="mdi mdi-account-tie text-muted me-2 mt-1"></i>
-                                        <div>
-                                            <small class="d-block text-muted" style="font-size: 0.7rem;">KETUA</small>
-                                            <span class="text-dark">{{ $stats['koperasiDesaMerahPutih']['ketua'] }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex">
-                                        <i class="mdi mdi-account-group text-muted me-2 mt-1"></i>
-                                        <div>
-                                            <small class="d-block text-muted" style="font-size: 0.7rem;">ANGGOTA</small>
-                                            <span
-                                                class="text-dark">{{ $stats['koperasiDesaMerahPutih']['anggotaLaki'] + $stats['koperasiDesaMerahPutih']['anggotaPerempuan'] }}
-                                                Orang</span>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex">
-                                        <i class="mdi mdi-file-document-outline text-muted me-2 mt-1"></i>
-                                        <div>
-                                            <small class="d-block text-muted" style="font-size: 0.7rem;">NO. SK</small>
-                                            <span class="text-dark">{{ $stats['koperasiDesaMerahPutih']['sk'] ?? '-' }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            @else
-                                <div class="text-center py-3">
-                                    <span class="text-muted small"><i class="mdi mdi-information-outline me-1"></i>Data Koperasi
-                                        belum tersedia</span>
-                                </div>
-                            @endif
-                        </div>
+                        @else
+                            <div class="text-center py-4">
+                                <span class="text-muted small"><i class="mdi mdi-information-outline me-1"></i>Data Koperasi belum tersedia</span>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
 
             <!-- Right Col: Map -->
-            <div class="col-lg-7">
-                <div class="card border-0 shadow-sm h-100 overflow-hidden">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100 overflow-hidden" style="min-height: 280px;">
                     <div class="card-body p-0 h-100 position-relative">
                         <div id="knmpMap"
                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 0;"></div>
@@ -243,12 +239,12 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card border-0 shadow-sm overflow-hidden mb-4 rounded-3 h-100">
-                    <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
-                        <h5 class="mb-0 fw-bold text-dark d-flex align-items-center">
-                            <i class="mdi mdi-chart-areaspline me-2 text-primary fs-4"></i>
+                    <div class="card-header bg-white border-bottom py-2 d-flex align-items-center justify-content-between">
+                        <h6 class="mb-0 fw-bold text-dark d-flex align-items-center" style="font-size:0.8rem;">
+                            <i class="mdi mdi-chart-areaspline me-2 text-primary" style="font-size:1rem;"></i>
                             <span>Data Produksi & Komoditas</span>
-                        </h5>
-                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">Tahun
+                        </h6>
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-pill" style="font-size:0.65rem;">Tahun
                             {{ date('Y') }}</span>
                     </div>
                     <div class="card-body p-0">
@@ -256,35 +252,35 @@
                             <!-- Left Side: Production Stats -->
                             <div class="col-lg-5 border-end-lg border-bottom border-bottom-lg-0 bg-white">
                                 <div class="p-4 h-100 d-flex flex-column justify-content-center">
-                                    <h6 class="text-uppercase text-muted fw-bold mb-4 small ls-1">Ikhtisar Produksi Tahunan</h6>
+                                    <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size:0.65rem;letter-spacing:1px;">Ikhtisar Produksi Tahunan</h6>
 
                                     <div class="mb-4">
                                         <div class="d-flex align-items-center mb-2">
-                                            <div class="rounded-circle p-2 bg-primary bg-opacity-10 text-primary me-3 d-flex align-items-center justify-content-center"
-                                                style="width: 48px; height: 48px;">
-                                                <i class="mdi mdi-weight-kilogram fs-4"></i>
+                                            <div class="rounded-circle p-2 bg-primary bg-opacity-10 text-primary me-2 d-flex align-items-center justify-content-center"
+                                                style="width: 36px; height: 36px;">
+                                                <i class="mdi mdi-weight-kilogram" style="font-size:1.1rem;"></i>
                                             </div>
                                             <div>
-                                                <small class="text-muted d-block mb-1">Volume Produksi</small>
-                                                <h3 class="mb-0 fw-bold text-dark">
+                                                <small class="text-muted d-block" style="font-size:0.65rem;">Volume Produksi</small>
+                                                <h5 class="mb-0 fw-bold text-dark" style="font-size:0.95rem;">
                                                     {{ number_format($stats['volumeKomoditas1'], 2, ',', '.') }} <small
-                                                        class="fs-6 text-muted fw-normal">Ton</small>
-                                                </h3>
+                                                        class="text-muted fw-normal" style="font-size:0.7rem;">Ton</small>
+                                                </h5>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div>
                                         <div class="d-flex align-items-center">
-                                            <div class="rounded-circle p-2 bg-success bg-opacity-10 text-success me-3 d-flex align-items-center justify-content-center"
-                                                style="width: 48px; height: 48px;">
-                                                <i class="mdi mdi-cash-multiple fs-4"></i>
+                                            <div class="rounded-circle p-2 bg-success bg-opacity-10 text-success me-2 d-flex align-items-center justify-content-center"
+                                                style="width: 36px; height: 36px;">
+                                                <i class="mdi mdi-cash-multiple" style="font-size:1.1rem;"></i>
                                             </div>
                                             <div>
-                                                <small class="text-muted d-block mb-1">Nilai Produksi</small>
-                                                <h3 class="mb-0 fw-bold text-success">Rp
+                                                <small class="text-muted d-block" style="font-size:0.65rem;">Nilai Produksi</small>
+                                                <h5 class="mb-0 fw-bold text-success" style="font-size:0.95rem;">Rp
                                                     {{ number_format($stats['nilaiKomoditas1'], 0, ',', '.') }}
-                                                </h3>
+                                                </h5>
                                             </div>
                                         </div>
                                     </div>
@@ -294,7 +290,7 @@
                             <!-- Right Side: Commodities -->
                             <div class="col-lg-7 bg-light bg-opacity-50">
                                 <div class="p-4 h-100">
-                                    <h6 class="text-uppercase text-muted fw-bold mb-3 small ls-1">Komoditas Unggulan</h6>
+                                    <h6 class="text-uppercase text-muted fw-bold mb-2" style="font-size:0.65rem;letter-spacing:1px;">Komoditas Unggulan</h6>
 
                                     <div class="row g-3">
                                         <!-- Komoditas 1 -->
@@ -405,13 +401,13 @@
             <div class="col-lg-6 mb-3 mb-lg-0">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-white border-0 py-2">
-                        <h6 class="mb-0">
-                            <i class="mdi mdi-chart-line me-2 text-info"></i>Progres Pembangunan Fisik
+                        <h6 class="mb-0" style="font-size:0.78rem;">
+                            <i class="mdi mdi-chart-line me-1 text-info"></i>Progres Pembangunan Fisik
                         </h6>
                     </div>
-                    <div class="card-body d-flex align-items-center justify-content-center flex-column p-4">
+                    <div class="card-body d-flex align-items-center justify-content-center flex-column p-3">
                         <div class="position-relative d-flex align-items-center justify-content-center"
-                            style="width: 180px; height: 180px;">
+                            style="width: 130px; height: 130px;">
                             <svg viewBox="0 0 36 36" class="circular-chart"
                                 style="width: 100%; height: 100%; transform: rotate(180deg);">
                                 <path class="circle-bg" d="M18 2.0845
@@ -425,8 +421,8 @@
                             </svg>
                             <div class="position-absolute text-center">
                                 <span
-                                    class="d-block fw-bold text-dark display-6">{{ number_format($stats['progresNasional'], 1) }}%</span>
-                                <span class="d-block text-muted small">Realisasi Fisik</span>
+                                    class="d-block fw-bold text-dark" style="font-size:1.5rem;">{{ number_format($stats['progresNasional'], 1) }}%</span>
+                                <span class="d-block text-muted" style="font-size:0.65rem;">Realisasi Fisik</span>
                             </div>
                         </div>
                     </div>
@@ -443,13 +439,13 @@
                 @endphp
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-0 py-2">
-                        <h6 class="mb-0">
-                            <i class="mdi mdi-chart-pie me-2 text-primary"></i>Distribusi Anggaran per Komponen
+                        <h6 class="mb-0" style="font-size:0.78rem;">
+                            <i class="mdi mdi-chart-pie me-1 text-primary"></i>Distribusi Anggaran per Komponen
                         </h6>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-3">
                         @if($totalBudget > 0)
-                            <div style="height: 250px; position: relative;">
+                            <div style="height: 160px; position: relative;">
                                 <canvas id="budgetPieChart" data-budget-konstruksi="{{ $anggaranKonstruksi }}"
                                     data-budget-sarpras="{{ $anggaranSarpras }}">
                                 </canvas>
@@ -459,38 +455,38 @@
                                     $percentKonstruksi = ($anggaranKonstruksi / $totalBudget) * 100;
                                     $percentSarpras = ($anggaranSarpras / $totalBudget) * 100;
                                 @endphp
-                                <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
+                                <div class="d-flex justify-content-between align-items-center mb-1 border-bottom pb-1">
                                     <div>
-                                        <span class="legend-dot" style="background:#3b82f6;"></span>
-                                        <span class="small fw-semibold">Konstruksi</span>
+                                        <span class="legend-dot" style="background:#3b82f6; width:8px; height:8px;"></span>
+                                        <span class="fw-semibold" style="font-size:0.7rem;">Konstruksi</span>
                                     </div>
                                     <div class="text-end">
-                                        <span class="d-block small fw-bold">{{ number_format($percentKonstruksi, 1) }}%</span>
-                                        <span class="d-block smaller text-muted">Rp
+                                        <span class="d-block fw-bold" style="font-size:0.75rem;">{{ number_format($percentKonstruksi, 1) }}%</span>
+                                        <span class="d-block text-muted" style="font-size:0.65rem;">Rp
                                             {{ number_format($anggaranKonstruksi, 0, ',', '.') }}</span>
                                     </div>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
+                                <div class="d-flex justify-content-between align-items-center mb-1 border-bottom pb-1">
                                     <div>
-                                        <span class="legend-dot" style="background:#10b981;"></span>
-                                        <span class="small fw-semibold">Sarana Prasarana</span>
+                                        <span class="legend-dot" style="background:#10b981; width:8px; height:8px;"></span>
+                                        <span class="fw-semibold" style="font-size:0.7rem;">Sarana Prasarana</span>
                                     </div>
                                     <div class="text-end">
-                                        <span class="d-block small fw-bold">{{ number_format($percentSarpras, 1) }}%</span>
-                                        <span class="d-block smaller text-muted">Rp
+                                        <span class="d-block fw-bold" style="font-size:0.75rem;">{{ number_format($percentSarpras, 1) }}%</span>
+                                        <span class="d-block text-muted" style="font-size:0.65rem;">Rp
                                             {{ number_format($anggaranSarpras, 0, ',', '.') }}</span>
                                     </div>
                                 </div>
-                                <div class="text-center mt-3">
-                                    <span class="badge bg-light text-dark border">
+                                <div class="text-center mt-2">
+                                    <span class="badge bg-light text-dark border" style="font-size:0.65rem;">
                                         Total: Rp {{ number_format($totalBudget, 0, ',', '.') }}
                                     </span>
                                 </div>
                             </div>
                         @else
-                            <div class="d-flex flex-column align-items-center justify-content-center" style="height: 250px;">
-                                <i class="mdi mdi-chart-pie text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
-                                <p class="text-muted mt-2 mb-0">Data anggaran belum tersedia</p>
+                            <div class="d-flex flex-column align-items-center justify-content-center" style="height: 160px;">
+                                <i class="mdi mdi-chart-pie text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
+                                <p class="text-muted mt-2 mb-0" style="font-size:0.75rem;">Data anggaran belum tersedia</p>
                             </div>
                         @endif
                     </div>
@@ -501,9 +497,9 @@
         <!-- Progress Components - 4 Categories with Sub-items -->
         <div class="row mb-4">
             <div class="col-12">
-                <h5 class="section-title mb-3">
+                <h6 class="section-title mb-3">
                     <i class="mdi mdi-chart-timeline-variant me-2"></i>Progres Komponen Pembangunan KNMP
-                </h5>
+                </h6>
             </div>
 
             <div class="col-12">
@@ -620,7 +616,7 @@
                                         <div class="ms-3">
                                             <span class="progress-category-code">{{ $category['code'] }}.</span>
                                             <h5 class="progress-category-title mb-0">{{ $category['name'] }}</h5>
-                                            <small class="text-white-50">{{ $completedCount }}/{{ count($category['items']) }} item
+                                            <small class="text-white-50" style="font-size:0.6rem;">{{ $completedCount }}/{{ count($category['items']) }} item
                                                 dengan progres</small>
                                         </div>
                                     </div>
@@ -681,9 +677,9 @@
         <!-- Row 3: Kesejahteraan, Kepuasan & Kelembagaan -->
         <div class="row mb-4">
             <div class="col-12">
-                <h5 class="section-title mb-3">
-                    <i class="mdi mdi-emoticon-happy me-2"></i>Kesejahteraan, Kepuasan dan Kelembagaan
-                </h5>
+                <h6 class="section-title mb-3">
+                    <i class="mdi mdi-emoticon-happy me-2"></i>Indikator Kesejahteraan & Kelembagaan
+                </h6>
             </div>
         </div>
 
@@ -692,16 +688,16 @@
             <div class="col-lg-4 col-md-6 mb-3">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center py-4">
-                        <h6 class="fw-semibold mb-3">
-                            <i class="mdi mdi-thumb-up-outline me-2 text-primary"></i>Indeks Kesesuaian Kebutuhan
+                        <h6 class="fw-semibold mb-2" style="font-size:0.75rem;">
+                            <i class="mdi mdi-thumb-up-outline me-1 text-primary"></i>Indeks Kesesuaian Kebutuhan
                         </h6>
-                        <div class="gauge-wrapper mx-auto mb-3" style="width: 150px; height: 150px;">
+                        <div class="gauge-wrapper mx-auto mb-2" style="width: 120px; height: 120px;">
                             <div class="gauge-circle"
-                                style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#3b82f6 {{ $stats['indeksKesesuaianKebutuhan'] }}%, #e5e7eb 0); display: flex; align-items: center; justify-content: center;">
+                                style="width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(#3b82f6 {{ $stats['indeksKesesuaianKebutuhan'] }}%, #e5e7eb 0); display: flex; align-items: center; justify-content: center;">
                                 <div
-                                    style="width: 115px; height: 115px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; flex-direction: column;">
-                                    <h1 class="mb-0 fw-bold text-primary">{{ $stats['indeksKesesuaianKebutuhan'] }}%</h1>
-                                    <small style="color: #495057;">Tingkat Kesesuaian</small>
+                                    style="width: 90px; height: 90px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                                    <h3 class="mb-0 fw-bold text-primary" style="font-size:1.1rem;">{{ $stats['indeksKesesuaianKebutuhan'] }}%</h3>
+                                    <small style="color: #495057; font-size:0.6rem;">Tingkat Kesesuaian</small>
                                 </div>
                             </div>
                         </div>
@@ -713,19 +709,19 @@
             <div class="col-lg-4 col-md-6 mb-3">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center py-4">
-                        <h6 class="fw-semibold mb-3">
-                            <i class="mdi mdi-emoticon-happy-outline me-2 text-success"></i>Indeks Kesejahteraan Nelayan
+                        <h6 class="fw-semibold mb-2" style="font-size:0.75rem;">
+                            <i class="mdi mdi-emoticon-happy-outline me-1 text-success"></i>Indeks Kesejahteraan Nelayan
                         </h6>
-                        <div class="gauge-wrapper mx-auto mb-3" style="width: 150px; height: 150px;">
+                        <div class="gauge-wrapper mx-auto mb-2" style="width: 120px; height: 120px;">
                             @php
                                 $percentageKesejahteraan = ($stats['indeksKesejahteraan'] / 5) * 100;
                             @endphp
                             <div class="gauge-circle"
-                                style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#10b981 {{ $percentageKesejahteraan }}%, #e5e7eb 0); display: flex; align-items: center; justify-content: center;">
+                                style="width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(#10b981 {{ $percentageKesejahteraan }}%, #e5e7eb 0); display: flex; align-items: center; justify-content: center;">
                                 <div
-                                    style="width: 115px; height: 115px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; flex-direction: column;">
-                                    <h1 class="mb-0 fw-bold text-success">{{ $stats['indeksKesejahteraan'] }}</h1>
-                                    <small style="color: #495057;">Skala 1-5</small>
+                                    style="width: 90px; height: 90px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                                    <h3 class="mb-0 fw-bold text-success" style="font-size:1.1rem;">{{ $stats['indeksKesejahteraan'] }}</h3>
+                                    <small style="color: #495057; font-size:0.6rem;">Skala 1-5</small>
                                 </div>
                             </div>
                         </div>
@@ -737,16 +733,16 @@
             <div class="col-lg-4 col-md-6 mb-3">
                 <div class="card border-0 shadow-sm h-100">
                     <div class="card-body text-center py-4">
-                        <h6 class="fw-semibold mb-3">
-                            <i class="mdi mdi-account-group-outline me-2 text-warning"></i>Tingkat Kelembagaan Nelayan
+                        <h6 class="fw-semibold mb-2" style="font-size:0.75rem;">
+                            <i class="mdi mdi-account-group-outline me-1 text-warning"></i>Tingkat Kelembagaan Nelayan
                         </h6>
-                        <div class="gauge-wrapper mx-auto mb-3" style="width: 150px; height: 150px;">
+                        <div class="gauge-wrapper mx-auto mb-2" style="width: 120px; height: 120px;">
                             <div class="gauge-circle"
-                                style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#f59e0b {{ $stats['tingkatKelembagaan'] }}%, #e5e7eb 0); display: flex; align-items: center; justify-content: center;">
+                                style="width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(#f59e0b {{ $stats['tingkatKelembagaan'] }}%, #e5e7eb 0); display: flex; align-items: center; justify-content: center;">
                                 <div
-                                    style="width: 115px; height: 115px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; flex-direction: column;">
-                                    <h1 class="mb-0 fw-bold text-warning">{{ $stats['tingkatKelembagaan'] }}%</h1>
-                                    <small style="color: #495057;">Partisipasi Aktif</small>
+                                    style="width: 90px; height: 90px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                                    <h3 class="mb-0 fw-bold text-warning" style="font-size:1.1rem;">{{ $stats['tingkatKelembagaan'] }}%</h3>
+                                    <small style="color: #495057; font-size:0.6rem;">Partisipasi Aktif</small>
                                 </div>
                             </div>
                         </div>
@@ -760,9 +756,9 @@
         <!-- Row 4: Galeri Bukti Pendukung -->
         <div class="row mb-5">
             <div class="col-12">
-                <h5 class="section-title mb-3">
+                <h6 class="section-title mb-3">
                     <i class="mdi mdi-image-multiple me-2"></i>Galeri Bukti Pendukung
-                </h5>
+                </h6>
 
                 @if(isset($monitoringStats['bukti']) && $monitoringStats['bukti']['totalFiles'] > 0)
                     @php
@@ -776,20 +772,18 @@
                         <!-- Kondisi Sebelum -->
                         <div class="col-md-6">
                             <div class="card border-0 shadow-sm h-100" style="border-radius: 12px; overflow: hidden;">
-                                <div class="card-header bg-primary bg-opacity-10 border-0 py-3">
-                                    <h6 class="mb-0 text-primary fw-bold">
-                                        <i class="mdi mdi-image-outline me-2"></i>Kondisi Sebelum (Before)
+                                <div class="card-header border-0 py-2" style="background:linear-gradient(135deg,#fef3c7,#fde68a);">
+                                    <h6 class="mb-0 fw-bold" style="color:#92400e;font-size:0.75rem;">
+                                        <i class="mdi mdi-image-outline me-1"></i>Kondisi Sebelum (Before)
                                     </h6>
                                 </div>
                                 <div class="card-body p-3" style="background-color: #f8f9fa;">
                                     @if($beforeFiles->count() > 0)
-                                        <div class="row g-2">
+                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.5rem;">
                                             @foreach($beforeFiles as $file)
-                                                <div class="col-6 col-sm-4">
-                                                    <div
-                                                        class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
-                                                        <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank"
-                                                            class="d-block h-100 position-relative">
+                                                <div>
+                                                    <div class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
+                                                        <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100 position-relative">
                                                             @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
                                                                 <div class="ratio ratio-1x1">
                                                                     <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid"
@@ -826,20 +820,18 @@
                         <!-- Kondisi Sesudah -->
                         <div class="col-md-6">
                             <div class="card border-0 shadow-sm h-100" style="border-radius: 12px; overflow: hidden;">
-                                <div class="card-header bg-success bg-opacity-10 border-0 py-3">
-                                    <h6 class="mb-0 text-success fw-bold">
-                                        <i class="mdi mdi-image-check-outline me-2"></i>Kondisi Sesudah (After)
+                                <div class="card-header border-0 py-2" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);">
+                                    <h6 class="mb-0 fw-bold" style="color:#065f46;font-size:0.75rem;">
+                                        <i class="mdi mdi-image-check-outline me-1"></i>Kondisi Sesudah (After)
                                     </h6>
                                 </div>
                                 <div class="card-body p-3" style="background-color: #f8f9fa;">
                                     @if($afterFiles->count() > 0)
-                                        <div class="row g-2">
+                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.5rem;">
                                             @foreach($afterFiles as $file)
-                                                <div class="col-6 col-sm-4">
-                                                    <div
-                                                        class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
-                                                        <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank"
-                                                            class="d-block h-100 position-relative">
+                                                <div>
+                                                    <div class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
+                                                        <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100 position-relative">
                                                             @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
                                                                 <div class="ratio ratio-1x1">
                                                                     <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid"
@@ -882,13 +874,11 @@
                                 </h6>
                             </div>
                             <div class="card-body p-3" style="background-color: #f8f9fa;">
-                                <div class="row g-2">
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem;">
                                     @foreach($legacyFiles as $file)
-                                        <div class="col-4 col-md-3 col-lg-2">
-                                            <div
-                                                class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
-                                                <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank"
-                                                    class="d-block h-100 position-relative">
+                                        <div>
+                                            <div class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
+                                                <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100 position-relative">
                                                     @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
                                                         <div class="ratio ratio-1x1">
                                                             <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid" alt="Legacy"
@@ -1125,25 +1115,25 @@
             margin-right: 6px;
         }
 
-        /* ========== WHITE KPI CARD STYLES ========== */
+        /* ========== CLEAN KPI CARD STYLES ========== */
         .kpi-card-white {
-            border-radius: 12px;
+            border-radius: 10px;
             transition: all 0.2s ease;
         }
 
         .kpi-card-white:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
         }
 
         .kpi-card-white .card-body {
-            padding: 1rem;
+            padding: 0.85rem;
         }
 
         .kpi-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 9px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1151,41 +1141,21 @@
         }
 
         .kpi-icon i {
-            font-size: 1.4rem;
+            font-size: 1.15rem;
             color: #fff;
         }
 
-        .kpi-icon-blue {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-        }
+        .kpi-icon-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .kpi-icon-green { background: linear-gradient(135deg, #10b981, #059669); }
+        .kpi-icon-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .kpi-icon-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .kpi-icon-pink { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .kpi-icon-teal { background: linear-gradient(135deg, #14b8a6, #0d9488); }
 
-        .kpi-icon-green {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-
-        .kpi-icon-orange {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-
-        .kpi-icon-purple {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-        }
-
-        .kpi-icon-pink {
-            background: linear-gradient(135deg, #ec4899, #db2777);
-        }
-
-        .kpi-icon-teal {
-            background: linear-gradient(135deg, #14b8a6, #0d9488);
-        }
-
-        .kpi-text {
-            flex: 1;
-            min-width: 0;
-        }
+        .kpi-text { flex: 1; min-width: 0; }
 
         .kpi-label {
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: 500;
             color: #6b7280;
             text-transform: uppercase;
@@ -1193,295 +1163,157 @@
         }
 
         .kpi-value {
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 700;
             color: #1e293b;
             line-height: 1.2;
         }
 
         .kpi-unit {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             font-weight: 500;
             color: #9ca3af;
         }
 
-        /* Responsive for KPI Cards */
-        @media (max-width: 991.98px) {
-            .kpi-icon {
-                width: 42px;
-                height: 42px;
-            }
-
-            .kpi-icon i {
-                font-size: 1.2rem;
-            }
-
-            .kpi-value {
-                font-size: 1.1rem;
-            }
-        }
-
         @media (max-width: 575.98px) {
-            .kpi-card-white .card-body {
-                padding: 0.75rem;
-            }
-
-            .kpi-icon {
-                width: 38px;
-                height: 38px;
-            }
-
-            .kpi-icon i {
-                font-size: 1rem;
-            }
-
-            .kpi-label {
-                font-size: 0.65rem;
-            }
-
-            .kpi-value {
-                font-size: 1rem;
-            }
-
-            .kpi-unit {
-                font-size: 0.6rem;
-            }
+            .kpi-card-white .card-body { padding: 0.65rem; }
+            .kpi-icon { width: 34px; height: 34px; }
+            .kpi-icon i { font-size: 0.95rem; }
+            .kpi-label { font-size: 0.6rem; }
+            .kpi-value { font-size: 0.85rem; }
         }
 
         /* Section Title */
         .section-title {
-            font-size: 1rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: #374151;
             display: flex;
             align-items: center;
         }
 
-        /* Komoditas Card */
-        .komoditas-card {
-            border-radius: 16px;
-            overflow: hidden;
-        }
-
-        .komoditas-header {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            padding: 1.25rem;
-            border: none;
-        }
-
-        .komoditas-icon {
-            width: 48px;
-            height: 48px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 1.5rem;
-        }
-
-        .komoditas-stat {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            background: #f8fafc;
-            border-radius: 10px;
-        }
-
-        .komoditas-stat>i {
-            font-size: 1.25rem;
-            margin-top: 2px;
-        }
-
-        .komoditas-stat-label {
-            font-size: 0.75rem;
-            color: #64748b;
-            display: block;
-        }
-
-        .komoditas-stat-value {
+        .section-title i {
             font-size: 1rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin: 0;
-        }
-
-        .komoditas-stat-value small {
-            font-size: 0.75rem;
-            font-weight: 400;
-            color: #94a3b8;
-        }
-
-        /* Koperasi */
-        .koperasi-badge {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #ec4899, #db2777);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 1.25rem;
-        }
-
-        .koperasi-item {
-            background: #f8fafc;
-            padding: 0.75rem 1rem;
-            border-radius: 10px;
-        }
-
-        .koperasi-label {
-            display: block;
-            font-size: 0.7rem;
-            color: #64748b;
-            text-transform: uppercase;
-            margin-bottom: 0.25rem;
-        }
-
-        .koperasi-value {
-            font-weight: 600;
-            color: #1e293b;
         }
 
         /* Progress Category Card */
         .progress-category-card {
             background: #fff;
-            border-radius: 16px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s ease;
         }
 
         .progress-category-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
         }
 
         .progress-category-header {
-            padding: 1.25rem;
+            padding: 0.9rem 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .progress-category-icon {
-            width: 50px;
-            height: 50px;
+            width: 38px;
+            height: 38px;
             background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
+            border-radius: 9px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-size: 1.5rem;
+            font-size: 1.15rem;
         }
 
         .progress-category-code {
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: rgba(255, 255, 255, 0.8);
         }
 
         .progress-category-title {
-            font-size: 1rem;
+            font-size: 0.78rem;
             font-weight: 600;
             color: #fff;
         }
 
-        .progress-category-percent {
-            text-align: right;
-        }
+        .progress-category-percent { text-align: right; }
 
         .progress-category-percent .percent-value {
             display: block;
-            font-size: 1.75rem;
+            font-size: 1.35rem;
             font-weight: 700;
             color: #fff;
             line-height: 1;
         }
 
         .progress-category-percent .percent-label {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: rgba(255, 255, 255, 0.7);
         }
 
         .progress-category-body {
-            padding: 1.25rem;
-            max-height: 350px;
+            padding: 1rem;
+            max-height: 320px;
             overflow-y: auto;
         }
 
         .progress-lg {
-            height: 10px;
-            border-radius: 5px;
+            height: 6px;
+            border-radius: 3px;
             background: #e2e8f0;
         }
 
-        .progress-lg .progress-bar {
-            border-radius: 5px;
-        }
+        .progress-lg .progress-bar { border-radius: 3px; }
 
         .progress-items-list {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.35rem;
         }
 
         .progress-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.6rem 0.75rem;
+            padding: 0.4rem 0.6rem;
             background: #f8fafc;
-            border-radius: 8px;
-            transition: all 0.2s;
+            border-radius: 6px;
+            transition: all 0.15s;
         }
 
-        .progress-item:hover {
-            background: #f1f5f9;
-        }
+        .progress-item:hover { background: #f1f5f9; }
 
         .progress-item-info {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
             flex: 1;
         }
 
-        .progress-item-check {
-            font-size: 1rem;
-        }
-
-        .progress-item.complete .progress-item-check {
-            color: #10b981;
-        }
-
-        .progress-item.in-progress .progress-item-check {
-            color: #f59e0b;
-        }
-
-        .progress-item.pending .progress-item-check {
-            color: #94a3b8;
-        }
+        .progress-item-check { font-size: 0.85rem; }
+        .progress-item.complete .progress-item-check { color: #10b981; }
+        .progress-item.in-progress .progress-item-check { color: #f59e0b; }
+        .progress-item.pending .progress-item-check { color: #94a3b8; }
 
         .progress-item-name {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: #374151;
         }
 
-        .progress-item.complete .progress-item-name {
-            color: #10b981;
-        }
+        .progress-item.complete .progress-item-name { color: #10b981; }
 
         .progress-item-value .badge {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             font-weight: 600;
-            padding: 0.25rem 0.5rem;
+            padding: 0.2rem 0.4rem;
         }
 
+        /* Map */
         #knmpMap {
             background: #e5e7eb;
             border-radius: 0;
@@ -1489,19 +1321,12 @@
             z-index: 1;
         }
 
-        /* Fix Leaflet map tiles */
-        .leaflet-container {
-            background: #e5e7eb;
-            z-index: 1;
-        }
+        .leaflet-container { background: #e5e7eb; z-index: 1; }
+        .leaflet-tile-pane { z-index: 2; }
+        .leaflet-control-container { z-index: 100; }
 
-        .leaflet-tile-pane {
-            z-index: 2;
-        }
-
-        .leaflet-control-container {
-            z-index: 100;
-        }
+        /* Gauge circles - compact */
+        .gauge-wrapper { margin: 0 auto; }
     </style>
 
     <!-- Select2 CSS -->

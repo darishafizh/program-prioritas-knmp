@@ -64,9 +64,8 @@ class FormsController extends Controller
         $totalComponents = 28;
         $rataRataProgres = 0;
         if ($progresKnmp) {
-            $detailProgres = ProgresKnmpDetail::where('progres_id', $progresKnmp->id)->get();
-            // Sum all persen values and divide by total components (not just filled ones)
-            $sumPersen = $detailProgres->sum('persen') ?? 0;
+            // Use direct SQL sum instead of loading all models into memory
+            $sumPersen = ProgresKnmpDetail::where('progres_id', $progresKnmp->id)->sum('persen') ?? 0;
             $rataRataProgres = round($sumPersen / $totalComponents, 1);
         }
 

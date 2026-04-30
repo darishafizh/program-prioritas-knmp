@@ -220,8 +220,8 @@ class AnalyticsController extends Controller
         // ===================================
         // PROGRES KNMP NASIONAL
         // ===================================
-        $progresNasional = ProgresKnmpNasional::with('knmp')->orderBy('progres', 'desc')->get();
-        $progresNasionalAvg = $progresNasional->avg('progres') ?? 0;
+        $progresNasionalAvg = ProgresKnmpNasional::avg('progres') ?? 0;
+        $progresNasional = ProgresKnmpNasional::with('knmp:id,nama,province_id,regency_id', 'knmp.province:id,name', 'knmp.regency:id,name')->orderBy('progres', 'desc')->get();
 
         return view('analytics.index', compact(
             'period',
