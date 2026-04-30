@@ -146,6 +146,76 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ===================================
+    // Chart 1.5: Tahap Progress (Dual Axis Bar Chart)
+    // ===================================
+    var chartTahapDataArr = data.chartTahapData || [];
+    if (chartTahapDataArr.length > 0) {
+        var tahapLabels = chartTahapDataArr.map(function(item) { return item.tahap; });
+        var tahapJumlah = chartTahapDataArr.map(function(item) { return item.jumlah_knmp; });
+        var tahapProgres = chartTahapDataArr.map(function(item) { return item.rata_progres; });
+
+        var tahapOptions = {
+            chart: {
+                height: 350,
+                type: 'bar',
+                toolbar: { show: false }
+            },
+            plotOptions: {
+                bar: {
+                    columnWidth: '40%',
+                    borderRadius: 4
+                }
+            },
+            dataLabels: { enabled: false },
+            series: [{
+                name: 'Jumlah KNMP',
+                type: 'column',
+                data: tahapJumlah
+            }, {
+                name: 'Rata-Rata Progres',
+                type: 'line',
+                data: tahapProgres
+            }],
+            stroke: {
+                width: [0, 4]
+            },
+            xaxis: {
+                categories: tahapLabels,
+                labels: { style: { colors: '#6c757d' } }
+            },
+            yaxis: [{
+                title: { text: 'Jumlah KNMP', style: { color: '#727cf5' } },
+                labels: { style: { colors: '#727cf5' } }
+            }, {
+                opposite: true,
+                title: { text: 'Rata-Rata Progres (%)', style: { color: '#0acf97' } },
+                labels: { style: { colors: '#0acf97' } },
+                max: 100
+            }],
+            colors: ['#727cf5', '#0acf97'],
+            grid: { borderColor: '#f1f3fa' },
+            tooltip: {
+                shared: true,
+                intersect: false,
+                y: {
+                    formatter: function (y, { seriesIndex }) {
+                        if (typeof y !== "undefined") {
+                            return seriesIndex === 0 ? y + " Lokasi" : y.toFixed(1) + "%";
+                        }
+                        return y;
+                    }
+                }
+            }
+        };
+
+        var tahapEl = document.querySelector("#tahapProgressChart");
+        if (tahapEl) {
+            dashboardCharts.tahap = new ApexCharts(tahapEl, tahapOptions);
+            dashboardCharts.tahap.render();
+        }
+    }
+
+    // ===================================
     // Chart 2: Distribusi Kategori Aset (Donut Chart)
     // ===================================
     var distribusiAsetOptions = {
