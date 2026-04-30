@@ -12,6 +12,7 @@ class BuktiUpload extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'knmp_id',
+        'kondisi',
         'nama_file',
         'path_file',
         'tipe_file',

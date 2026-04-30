@@ -124,7 +124,7 @@ class DashboardController extends Controller
         if ($selectedProgresDate) {
             $progresNasionalQuery->where('tanggal', $selectedProgresDate);
         }
-        $progresNasional = $progresNasionalQuery->get();
+        $progresNasional = $progresNasionalQuery->get()->unique('knmp_id')->values();
         $progresNasionalAvg = $progresNasional->avg('progres') ?? 0;
 
         // ===================================
