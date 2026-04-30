@@ -22,8 +22,8 @@
     </div>
     <!-- end page title -->
 
-    <!-- KNMP Selector with Search - Only for Admin -->
-    @if(Auth::user()->isAdmin())
+    <!-- KNMP Selector with Search - For Admin and Super Admin -->
+    @if(Auth::user()->isAdmin() || Auth::user()->isSuperAdmin())
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card border-0 shadow-sm selector-card">

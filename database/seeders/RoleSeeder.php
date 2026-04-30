@@ -15,11 +15,19 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         // Create roles
+        $superAdminRole = Role::firstOrCreate(
+            ['name' => 'super_admin'],
+            [
+                'display_name' => 'Super Admin',
+                'description' => 'Super Administrator dengan kontrol penuh ke semua fitur dan dapat menginput semua KNMP'
+            ]
+        );
+
         $adminRole = Role::firstOrCreate(
             ['name' => 'admin'],
             [
                 'display_name' => 'Admin',
-                'description' => 'Administrator dengan akses penuh ke semua fitur'
+                'description' => 'Administrator yang dapat memantau dan melihat semua data (read-only)'
             ]
         );
 
@@ -39,7 +47,8 @@ class RoleSeeder extends Seeder
         }
 
         $this->command->info('Roles seeded successfully!');
-        $this->command->info('- Admin: Full access to all features');
+        $this->command->info('- Super Admin: Full control over all features and can input all KNMP');
+        $this->command->info('- Admin: Can monitor and view all data (read-only)');
         $this->command->info('- Enumerator: Can fill surveys and edit respondent data');
     }
 }

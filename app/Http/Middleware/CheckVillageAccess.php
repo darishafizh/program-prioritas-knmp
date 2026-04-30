@@ -23,8 +23,8 @@ class CheckVillageAccess
             return $next($request);
         }
 
-        // Admins can access everything
-        if ($user->isAdmin()) {
+        // Admins and Super Admins can access everything
+        if ($user->isSuperAdmin() || $user->isAdmin()) {
             return $next($request);
         }
 
