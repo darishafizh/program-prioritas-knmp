@@ -415,12 +415,12 @@
                             <svg viewBox="0 0 36 36" class="circular-chart"
                                 style="width: 100%; height: 100%; transform: rotate(180deg);">
                                 <path class="circle-bg" d="M18 2.0845
-                                                a 15.9155 15.9155 0 0 1 0 31.831
-                                                a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#eee"
+                                                                a 15.9155 15.9155 0 0 1 0 31.831
+                                                                a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#eee"
                                     stroke-width="3" />
                                 <path class="circle" stroke-dasharray="{{ $stats['progresNasional'] }}, 100" d="M18 2.0845
-                                                a 15.9155 15.9155 0 0 1 0 31.831
-                                                a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#0ea5e9"
+                                                                a 15.9155 15.9155 0 0 1 0 31.831
+                                                                a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#0ea5e9"
                                     stroke-width="3" stroke-linecap="round" />
                             </svg>
                             <div class="position-absolute text-center">
@@ -673,8 +673,8 @@
         </div>
 
         <!-- ==========================================
-                         STATISTIK KONDISI KNMP (Dashboard Style)
-                    ========================================== -->
+                                         STATISTIK KONDISI KNMP (Dashboard Style)
+                                    ========================================== -->
 
 
 
@@ -786,21 +786,27 @@
                                         <div class="row g-2">
                                             @foreach($beforeFiles as $file)
                                                 <div class="col-6 col-sm-4">
-                                                    <div class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
-                                                        <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100 position-relative">
+                                                    <div
+                                                        class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
+                                                        <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank"
+                                                            class="d-block h-100 position-relative">
                                                             @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
                                                                 <div class="ratio ratio-1x1">
-                                                                    <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid" alt="Before" style="object-fit: cover;">
+                                                                    <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid"
+                                                                        alt="Before" style="object-fit: cover;">
                                                                 </div>
                                                             @else
-                                                                <div class="ratio ratio-1x1 d-flex align-items-center justify-content-center bg-white border-bottom">
+                                                                <div
+                                                                    class="ratio ratio-1x1 d-flex align-items-center justify-content-center bg-white border-bottom">
                                                                     <div class="text-center p-2">
-                                                                        <i class="mdi mdi-file-document-outline text-muted" style="font-size: 2rem;"></i>
+                                                                        <i class="mdi mdi-file-document-outline text-muted"
+                                                                            style="font-size: 2rem;"></i>
                                                                     </div>
                                                                 </div>
                                                             @endif
                                                             <div class="bg-white p-2 text-center border-top">
-                                                                <small class="d-block text-muted text-truncate" style="max-width: 100%; font-size: 0.75rem;">{{ $file->nama_file }}</small>
+                                                                <small class="d-block text-muted text-truncate"
+                                                                    style="max-width: 100%; font-size: 0.75rem;">{{ $file->nama_file }}</small>
                                                             </div>
                                                         </a>
                                                     </div>
@@ -830,21 +836,27 @@
                                         <div class="row g-2">
                                             @foreach($afterFiles as $file)
                                                 <div class="col-6 col-sm-4">
-                                                    <div class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
-                                                        <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100 position-relative">
+                                                    <div
+                                                        class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
+                                                        <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank"
+                                                            class="d-block h-100 position-relative">
                                                             @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
                                                                 <div class="ratio ratio-1x1">
-                                                                    <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid" alt="After" style="object-fit: cover;">
+                                                                    <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid"
+                                                                        alt="After" style="object-fit: cover;">
                                                                 </div>
                                                             @else
-                                                                <div class="ratio ratio-1x1 d-flex align-items-center justify-content-center bg-white border-bottom">
+                                                                <div
+                                                                    class="ratio ratio-1x1 d-flex align-items-center justify-content-center bg-white border-bottom">
                                                                     <div class="text-center p-2">
-                                                                        <i class="mdi mdi-file-document-outline text-muted" style="font-size: 2rem;"></i>
+                                                                        <i class="mdi mdi-file-document-outline text-muted"
+                                                                            style="font-size: 2rem;"></i>
                                                                     </div>
                                                                 </div>
                                                             @endif
                                                             <div class="bg-white p-2 text-center border-top">
-                                                                <small class="d-block text-muted text-truncate" style="max-width: 100%; font-size: 0.75rem;">{{ $file->nama_file }}</small>
+                                                                <small class="d-block text-muted text-truncate"
+                                                                    style="max-width: 100%; font-size: 0.75rem;">{{ $file->nama_file }}</small>
                                                             </div>
                                                         </a>
                                                     </div>
@@ -873,21 +885,27 @@
                                 <div class="row g-2">
                                     @foreach($legacyFiles as $file)
                                         <div class="col-4 col-md-3 col-lg-2">
-                                            <div class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
-                                                <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100 position-relative">
+                                            <div
+                                                class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
+                                                <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank"
+                                                    class="d-block h-100 position-relative">
                                                     @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
                                                         <div class="ratio ratio-1x1">
-                                                            <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid" alt="Legacy" style="object-fit: cover;">
+                                                            <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid" alt="Legacy"
+                                                                style="object-fit: cover;">
                                                         </div>
                                                     @else
-                                                        <div class="ratio ratio-1x1 d-flex align-items-center justify-content-center bg-white border-bottom">
+                                                        <div
+                                                            class="ratio ratio-1x1 d-flex align-items-center justify-content-center bg-white border-bottom">
                                                             <div class="text-center p-2">
-                                                                <i class="mdi mdi-file-document-outline text-muted" style="font-size: 2rem;"></i>
+                                                                <i class="mdi mdi-file-document-outline text-muted"
+                                                                    style="font-size: 2rem;"></i>
                                                             </div>
                                                         </div>
                                                     @endif
                                                     <div class="bg-white p-2 text-center border-top">
-                                                        <small class="d-block text-muted text-truncate" style="max-width: 100%; font-size: 0.75rem;">{{ $file->nama_file }}</small>
+                                                        <small class="d-block text-muted text-truncate"
+                                                            style="max-width: 100%; font-size: 0.75rem;">{{ $file->nama_file }}</small>
                                                     </div>
                                                 </a>
                                             </div>
