@@ -54,7 +54,11 @@ class DashboardController extends Controller
             $greetingIcon = 'mdi-weather-night';
         }
 
-        $desa_knmp = Knmp::with([
+        // Filter tahap
+        $tahap = $request->get('tahap', 'all');
+        $tahapLabel = $tahap !== 'all' ? 'Tahap ' . $tahap : 'Semua Tahap';
+
+        $desa_knmp_query = Knmp::with([
             'province',
             'regency',
             'district',
@@ -63,11 +67,18 @@ class DashboardController extends Controller
             'progresKnmp',
             'latestProgresNasional',
         ])
-            ->withCount('informasiResponden')
-            ->get();
+            ->withCount('informasiResponden');
+
+        if ($tahap !== 'all') {
+            $desa_knmp_query->where('tahap', $tahap);
+        }
+
+        $desa_knmp = $desa_knmp_query->get();
+        $knmpIds = $desa_knmp->pluck('id')->toArray();
 
         // 1. Hitung responden yang telah mengisi survey
         $surveyQuery = InformasiResponden::query()
+            ->whereIn('knmp_id', $knmpIds)
             ->whereExists(function ($query) {
                 $query->select(DB::raw(1))
                     ->from('tingkat_kebahagiaan_nelayan')
@@ -80,8 +91,8 @@ class DashboardController extends Controller
 
         // 2. Hitung Tingkat Kelengkapan Data (Persentase form yang diisi)
         // Setiap responden seharusnya mengisi 10 form (A-J)
-        $totalResponden = InformasiResponden::count();
-        $responden_dengan_data = InformasiResponden::where(function ($query) {
+        $totalResponden = InformasiResponden::whereIn('knmp_id', $knmpIds)->count();
+        $responden_dengan_data = InformasiResponden::whereIn('knmp_id', $knmpIds)->where(function ($query) {
             $query->whereHas('tingkatKebahagiaan')
                 ->orWhereHas('tanggapanMasyarakat')
                 ->orWhereHas('informasiUsaha')
@@ -96,10 +107,15 @@ class DashboardController extends Controller
 
         // 3. Hitung Rata-rata Capaian Indikator (dari progres_knmp_details)
         $capaianIndikator = DB::table('progres_knmp_details')
+            ->whereIn('progres_id', function ($q) use ($knmpIds) {
+                $q->select('id')->from('progres_knmp')->whereIn('knmp_id', $knmpIds);
+            })
             ->avg('persen') ?? 0;
 
         // 4. Hitung Rata-rata Indeks Kebahagiaan Nelayan
-        $rataRataKebahagiaan = TingkatKebahagiaanNelayan::avg('skor_nilai') ?? 0;
+        $rataRataKebahagiaan = TingkatKebahagiaanNelayan::whereHas('responden', function ($q) use ($knmpIds) {
+            $q->whereIn('knmp_id', $knmpIds);
+        })->avg('skor_nilai') ?? 0;
 
         // ===================================
         // DATA UNTUK STATISTIK NASIONAL
@@ -120,11 +136,13 @@ class DashboardController extends Controller
         }
 
         // Query progres data by selected date
-        $progresNasionalQuery = ProgresKnmpNasional::with('knmp')->orderBy('progres', 'desc');
+        $progresNasionalQuery = ProgresKnmpNasional::with('knmp')
+            ->whereIn('knmp_id', $knmpIds)
+            ->orderBy('progres', 'desc');
         if ($selectedProgresDate) {
             $progresNasionalQuery->where('tanggal', $selectedProgresDate);
         }
-        $progresNasional = $progresNasionalQuery->get();
+        $progresNasional = $progresNasionalQuery->get()->unique('knmp_id')->values();
         $progresNasionalAvg = $progresNasional->avg('progres') ?? 0;
 
         // ===================================
@@ -151,7 +169,7 @@ class DashboardController extends Controller
             'infra_waserda'
         ];
 
-        $profiles = ProfileKnmp::select($infraColumns)->get();
+        $profiles = ProfileKnmp::whereIn('knmp_id', $knmpIds)->select($infraColumns)->get();
         $totalPercentage = 0;
         $countProfiles = $profiles->count();
 
@@ -171,22 +189,32 @@ class DashboardController extends Controller
             : 0;
 
         // 3. Indeks Kesesuaian Kebutuhan (%) - persentase responden yang menyatakan sesuai kebutuhan
-        $totalTanggapan = TanggapanMasyarakat::count();
-        $sesuaiKebutuhan = TanggapanMasyarakat::where('kesesuaian_kebutuhan', 1)->count();
+        $totalTanggapan = TanggapanMasyarakat::whereHas('responden', function ($q) use ($knmpIds) {
+            $q->whereIn('knmp_id', $knmpIds);
+        })->count();
+        $sesuaiKebutuhan = TanggapanMasyarakat::where('kesesuaian_kebutuhan', 1)->whereHas('responden', function ($q) use ($knmpIds) {
+            $q->whereIn('knmp_id', $knmpIds);
+        })->count();
         $indeksKesesuaianKebutuhan = $totalTanggapan > 0
             ? round(($sesuaiKebutuhan / $totalTanggapan) * 100, 2)
             : 0;
 
         // 4. Pendapatan RT Nelayan - rata-rata pendapatan total dari informasi_pendapatan_rumah_tangga
-        $pendapatanRtNelayan = InformasiPendapatanRumahTangga::avg('pendapatan_total') ?? 0;
+        $pendapatanRtNelayan = InformasiPendapatanRumahTangga::whereHas('responden', function ($q) use ($knmpIds) {
+            $q->whereIn('knmp_id', $knmpIds);
+        })->avg('pendapatan_total') ?? 0;
 
         // 5. Indeks Kesejahteraan Nelayan - berdasarkan rata-rata skor kebahagiaan (skala 1-10)
         $indeksKesejahteraan = round($rataRataKebahagiaan, 2);
 
         // 6. Tingkat Kelembagaan Nelayan (%) - persentase nelayan yang tergabung dalam kelompok/koperasi
         // Score: 4=Sangat Aktif, 3=Tidak Aktif, 2=Tidak Pernah, 1=Tidak Ada
-        $totalSosial = SosialKelembagaan::count();
-        $anggotaKelompokKoperasi = SosialKelembagaan::where(function ($q) {
+        $totalSosial = SosialKelembagaan::whereHas('responden', function ($q) use ($knmpIds) {
+            $q->whereIn('knmp_id', $knmpIds);
+        })->count();
+        $anggotaKelompokKoperasi = SosialKelembagaan::whereHas('responden', function ($q) use ($knmpIds) {
+            $q->whereIn('knmp_id', $knmpIds);
+        })->where(function ($q) {
             $q->where('anggota_kelompok', '>=', 3)
                 ->orWhere('anggota_koperasi', '>=', 3);
         })->count();
@@ -196,6 +224,7 @@ class DashboardController extends Controller
 
         // Rata-rata Anggota Kopdeskel
         $rataRataAnggotaKopdeskel = DB::table('profile_knmp')
+            ->whereIn('knmp_id', $knmpIds)
             ->selectRaw('AVG(COALESCE(jumlah_anggota_laki, 0) + COALESCE(jumlah_anggota_perempuan, 0)) as avg_anggota')
             ->value('avg_anggota') ?? 0;
 
@@ -205,7 +234,10 @@ class DashboardController extends Controller
         $progressNasional = $targetKnmp > 0 ? min(round(($totalKnmpNasional / $targetKnmp) * 100, 1), 100) : 0;
 
         // Total Tenaga Kerja Terserap
-        $totalTenagaKerja = DB::table('progres_knmp')->sum('tk_total') ?? 0;
+        $totalTenagaKerja = DB::table('progres_knmp')->whereIn('knmp_id', $knmpIds)->sum('tk_total') ?? 0;
+
+        // Available tahap values for filter
+        $availableTahap = Knmp::whereNotNull('tahap')->distinct()->orderBy('tahap')->pluck('tahap')->toArray();
 
 
         return view('dashboard.index', compact(
@@ -213,6 +245,9 @@ class DashboardController extends Controller
             'greetingIcon',
             'period',
             'periodLabel',
+            'tahap',
+            'tahapLabel',
+            'availableTahap',
             'desa_knmp',
             'totalSurveyTerisi',
             'tingkatKelengkapanData',

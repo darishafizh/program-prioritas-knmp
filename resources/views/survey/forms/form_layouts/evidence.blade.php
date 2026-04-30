@@ -88,6 +88,13 @@
                     </div>
 
                     <div class="evidence-info">
+                        <div class="mb-1">
+                            @if($file->kondisi == 'before')
+                                <span class="badge bg-primary"><i class="mdi mdi-image-outline me-1"></i>Before</span>
+                            @elseif($file->kondisi == 'after')
+                                <span class="badge bg-success"><i class="mdi mdi-image-check-outline me-1"></i>After</span>
+                            @endif
+                        </div>
                         <p class="file-name" title="{{ $file->nama_file }}">{{ $file->nama_file }}</p>
                         <p class="file-size">
                             <i
@@ -135,9 +142,9 @@
 
 {{-- CUSTOM DIALOG OVERLAY --}}
 <div id="customDialogOverlay" class="custom-dialog-overlay">
-    <div id="customDialog" class="custom-dialog warning">
+    <div id="customDialog" class="custom-dialog error">
         <div class="custom-dialog-icon-circle">
-            <span id="dialogIcon">⚠</span>
+            <span id="dialogIcon">!</span>
         </div>
         <h3 class="custom-dialog-title" id="dialogTitle">Konfirmasi Penghapusan</h3>
         <p class="custom-dialog-message" id="dialogMessage">Apakah Anda yakin ingin menghapus file?</p>
@@ -178,8 +185,8 @@
         const customDialog = document.getElementById('customDialog');
 
         // Reset state
-        customDialog.className = 'custom-dialog warning';
-        dialogIcon.innerText = '⚠';
+        customDialog.className = 'custom-dialog error';
+        dialogIcon.innerText = '!';
         dialogTitle.innerText = 'Hapus File?';
         dialogMessage.innerText = 'Apakah Anda yakin ingin menghapus file ini secara permanen?';
 

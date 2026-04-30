@@ -139,8 +139,8 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 64px;
-        gap: 2rem;
+        height: 56px;
+        gap: 1.5rem;
     }
 
     /* Brand / Logo */
@@ -153,11 +153,11 @@
     }
 
     .header-logo {
-        height: 40px;
+        height: 34px;
         width: auto;
         background: #fff;
-        border-radius: 8px;
-        padding: 4px;
+        border-radius: 6px;
+        padding: 3px;
     }
 
     .header-brand-text {
@@ -166,7 +166,7 @@
     }
 
     .header-brand-title {
-        font-size: 1rem;
+        font-size: 0.85rem;
         font-weight: 700;
         color: #fff;
         line-height: 1.2;
@@ -203,13 +203,13 @@
     .header-nav-link {
         display: flex;
         align-items: center;
-        gap: 6px;
-        padding: 8px 14px;
+        gap: 5px;
+        padding: 6px 12px;
         color: rgba(255, 255, 255, 0.85);
         text-decoration: none;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         font-weight: 500;
-        border-radius: 8px;
+        border-radius: 6px;
         transition: all 0.2s ease;
         white-space: nowrap;
     }
@@ -221,7 +221,7 @@
     }
 
     .header-nav-link i {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
     .header-nav-link .dropdown-arrow {
@@ -268,10 +268,10 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 10px 14px;
+        padding: 8px 12px;
         color: #333;
         text-decoration: none;
-        font-size: 0.875rem;
+        font-size: 0.8rem;
         border-radius: 6px;
         transition: background 0.15s;
     }
@@ -292,7 +292,7 @@
 
     .dropdown-user-header strong {
         display: block;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         color: #333;
     }
 
@@ -337,8 +337,8 @@
     }
 
     .header-user-avatar-text {
-        width: 36px;
-        height: 36px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         color: #fff;
@@ -346,7 +346,7 @@
         align-items: center;
         justify-content: center;
         font-weight: 700;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         border: 2px solid rgba(255, 255, 255, 0.3);
     }
 
@@ -357,14 +357,14 @@
     }
 
     .header-user-name {
-        font-size: 0.85rem;
+        font-size: 0.78rem;
         font-weight: 600;
         color: #fff;
         line-height: 1.2;
     }
 
     .header-user-role {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         color: rgba(255, 255, 255, 0.7);
     }
 

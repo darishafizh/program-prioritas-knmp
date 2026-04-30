@@ -14,14 +14,15 @@
         .alert-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(2px);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 99999;
             opacity: 0;
             pointer-events: none;
-            transition: opacity .25s ease;
+            transition: opacity .2s ease;
         }
 
         .alert-overlay.show {
@@ -31,90 +32,96 @@
 
         /* Card */
         .alert-card {
-            width: 360px;
+            width: 320px;
             background: #fff;
-            border-radius: 22px;
-            padding: 28px 26px 30px;
+            border-radius: 14px;
+            padding: 28px 24px 22px;
             text-align: center;
-            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.20);
-            transform: scale(.85) translateY(25px);
-            animation: popUp .32s ease forwards;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transform: scale(.9) translateY(16px);
+            animation: alertPopUp .28s ease forwards;
         }
 
-        @keyframes popUp {
+        @keyframes alertPopUp {
             to {
                 transform: scale(1) translateY(0);
             }
         }
 
         .alert-icon-circle {
-            width: 95px;
-            height: 95px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: auto;
-            font-size: 45px;
+            margin: 0 auto 12px;
+        }
+
+        .alert-icon {
+            font-size: 22px;
             color: #fff;
-            font-weight: bold;
-            margin-bottom: 8px;
+            font-weight: 700;
+            line-height: 1;
         }
 
         .alert-card.success .alert-icon-circle {
-            background: radial-gradient(circle at top, #4be7aa, #18b374);
-            box-shadow: 0 8px 25px rgba(24, 179, 116, 0.45);
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3);
         }
 
         .alert-card.error .alert-icon-circle {
-            background: radial-gradient(circle at top, #ff5b5b, #d62828);
-            box-shadow: 0 8px 25px rgba(255, 60, 60, 0.45);
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);
         }
 
         .alert-title {
-            font-size: 25px;
+            font-size: 0.95rem;
             font-weight: 700;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+            font-family: 'Poppins', sans-serif;
         }
 
         .alert-card.success .alert-title {
-            color: #18b374;
+            color: #16a34a;
         }
 
         .alert-card.error .alert-title {
-            color: #d62828;
+            color: #dc2626;
         }
 
         .alert-subtitle {
-            color: #555;
-            font-size: 15px;
-            margin-bottom: 22px;
+            color: #64748b;
+            font-size: 0.72rem;
+            margin-bottom: 14px;
+            line-height: 1.5;
+            font-family: 'Poppins', sans-serif;
         }
 
         .alert-progress {
             width: 100%;
-            height: 6px;
-            background: #eee;
+            height: 3px;
+            background: #f1f5f9;
             border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 22px;
+            margin-bottom: 14px;
         }
 
         .alert-progress-bar {
             height: 100%;
             width: 0%;
-            animation: loadBar 2.5s linear forwards;
+            animation: alertLoadBar 1.5s linear forwards;
         }
 
         .alert-card.success .alert-progress-bar {
-            background: #18b374;
+            background: #16a34a;
         }
 
         .alert-card.error .alert-progress-bar {
-            background: #d62828;
+            background: #dc2626;
         }
 
-        @keyframes loadBar {
+        @keyframes alertLoadBar {
             to {
                 width: 100%;
             }
@@ -122,31 +129,33 @@
 
         .alert-btn {
             width: 100%;
-            padding: 14px 0;
-            border-radius: 12px;
+            padding: 8px 0;
+            border-radius: 8px;
             border: none;
-            font-size: 15px;
-            font-weight: 700;
+            font-size: 0.72rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: .2s;
+            transition: .15s;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.3px;
         }
 
         .alert-card.success .alert-btn {
-            background: #e6fff3;
-            color: #18b374;
+            background: #f0fdf4;
+            color: #16a34a;
         }
 
         .alert-card.success .alert-btn:hover {
-            background: #d1ffe9;
+            background: #dcfce7;
         }
 
         .alert-card.error .alert-btn {
-            background: #ffe6e6;
-            color: #d62828;
+            background: #fef2f2;
+            color: #dc2626;
         }
 
         .alert-card.error .alert-btn:hover {
-            background: #ffd1d1;
+            background: #fee2e2;
         }
 
         .navbar-toggler-icon {
@@ -187,12 +196,60 @@
                 min-height: calc(100% - 3.5rem);
             }
         }
+        /* =============================== */
+        /* GLOBAL PAGE LOADER              */
+        /* =============================== */
+        .page-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 999999;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .page-loader-spinner {
+            width: 38px;
+            height: 38px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #0054A6;
+            border-radius: 50%;
+            animation: loaderSpin 0.7s linear infinite;
+        }
+
+        .page-loader-text {
+            margin-top: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #64748b;
+            letter-spacing: 0.3px;
+        }
+
+        @keyframes loaderSpin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 
 </head>
 
 <body class="loading" data-layout-color="light" data-layout="topnav" data-leftbar-theme="dark" data-layout-mode="fluid"
     data-rightbar-onstart="true">
+
+    {{-- 🌀 GLOBAL PAGE LOADER --}}
+    {{-- Start hidden immediately if there's a CRUD alert to show --}}
+    <div class="page-loader {{ session('success') || session('error') ? 'hidden' : '' }}" id="pageLoader">
+        <div class="page-loader-spinner"></div>
+        <div class="page-loader-text">Memuat...</div>
+    </div>
 
     {{-- 🔔 GLOBAL ALERT --}}
     @if(session('success') || session('error'))
@@ -209,7 +266,7 @@
                         <span class="alert-icon">✕</span>
                     @endif
                 </div>
-                <h3 class="alert-title">{{ session('success') ? 'Success!' : 'Failed!' }}</h3>
+                <h3 class="alert-title">{{ session('success') ? 'Berhasil!' : 'Gagal!' }}</h3>
                 <p class="alert-subtitle">{{ $alertMessage }}</p>
 
                 {{-- Only show progress bar if auto-close is enabled --}}
@@ -219,7 +276,7 @@
                     </div>
                 @endif
 
-                <button class="alert-btn" id="alertCloseBtn">{{ session('success') ? 'DONE' : 'TRY AGAIN' }}</button>
+                <button class="alert-btn" id="alertCloseBtn">{{ session('success') ? 'OKE' : 'COBA LAGI' }}</button>
             </div>
         </div>
     @endif
@@ -236,14 +293,13 @@
 
             function closeAlert() {
                 overlay.classList.remove("show");
-                setTimeout(() => overlay.remove(), 250);
+                setTimeout(() => overlay.remove(), 200);
             }
 
             if (closeBtn) closeBtn.addEventListener("click", closeAlert);
 
-            // Only auto-close if not an import alert
             if (shouldAutoClose) {
-                setTimeout(closeAlert, 2500);
+                setTimeout(closeAlert, 1500);
             }
         });
     </script>
@@ -348,6 +404,66 @@
                 });
             });
         });
+    </script>
+
+    {{-- 🌀 PAGE LOADER CONTROLLER --}}
+    <script>
+        (function() {
+            var loader = document.getElementById('pageLoader');
+            if (!loader) return;
+
+            var hasAlert = !!document.getElementById('customAlert');
+
+            function hideLoader() {
+                loader.classList.add('hidden');
+            }
+
+            function showLoader() {
+                loader.classList.remove('hidden');
+            }
+
+            // If page has CRUD alert, keep loader hidden
+            if (hasAlert) {
+                hideLoader();
+            } else {
+                // Hide on window fully loaded
+                if (document.readyState === 'complete') {
+                    hideLoader();
+                } else {
+                    window.addEventListener('load', hideLoader);
+                }
+            }
+
+            // Show loader on regular link navigation
+            document.addEventListener('click', function(e) {
+                var link = e.target.closest('a[href]');
+                if (!link) return;
+                var href = link.getAttribute('href');
+                if (!href || href === '#' || href.startsWith('#') || href.startsWith('javascript:')
+                    || link.getAttribute('target') === '_blank'
+                    || link.getAttribute('data-bs-toggle')
+                    || link.classList.contains('dropdown-toggle')
+                    || link.closest('.header-dropdown')) return;
+                showLoader();
+            });
+
+            // Show loader on form submissions
+            document.addEventListener('submit', function(e) {
+                var form = e.target;
+                if (form.getAttribute('target') === '_blank') return;
+                showLoader();
+            });
+
+            // Show loader on page refresh (beforeunload)
+            window.addEventListener('beforeunload', function() {
+                showLoader();
+            });
+
+            // Handle browser back/forward (bfcache)
+            window.addEventListener('pageshow', function(e) {
+                if (e.persisted) hideLoader();
+            });
+        })();
     </script>
 
     @stack('scripts')

@@ -65,7 +65,7 @@
             `Anda akan menghapus ${ids.length} file yang dipilih. Tindakan ini tidak dapat dibatalkan!`,
             true,
             () => submitBulkDelete(ids),
-            'warning'
+            'error'
         );
     }
 
@@ -88,7 +88,7 @@
              `Anda akan menghapus SEMUA ${ids.length} file yang ada. Tindakan ini tidak dapat dibatalkan!`,
             true,
             () => submitBulkDelete(ids),
-            'warning'
+            'error'
         );
     }
 

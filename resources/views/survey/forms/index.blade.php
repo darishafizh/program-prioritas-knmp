@@ -577,41 +577,39 @@
                                 @csrf
                                 <input type="hidden" name="knmp_id" value="{{ $knmp->id }}">
 
-                                <div class="upload-zone" id="uploadZone">
-                                    <i class="mdi mdi-cloud-upload upload-icon"></i>
-                                    <h5 class="text-primary fw-bold mb-2">Upload Bukti Pendukung</h5>
-                                    <p class="text-muted mb-3">Drag & drop file atau klik untuk memilih</p>
-                                    <p class="text-muted small mb-0">Format: JPG, PNG, PDF (Maks. 10MB)</p>
-                                    <input type="file" name="file" id="fileInput" class="d-none" accept="image/*,.pdf"
-                                        required>
-                                </div>
-
-                                {{-- PREVIEW FILE (SEBELUM UPLOAD) --}}
-                                <div id="preview-container" class="mt-3 d-none">
-                                    <div class="card border-0 shadow-sm">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <h6 class="mb-0 fw-bold">
-                                                    <i class="mdi mdi-image-multiple me-2 text-primary"></i>Preview File
-                                                </h6>
-                                                <div>
-                                                    <button type="submit" class="btn btn-primary btn-sm px-3">
-                                                        <i class="mdi mdi-upload me-1"></i>Upload
-                                                    </button>
-                                                    <button type="button"
-                                                        class="btn btn-secondary text-white btn-sm ms-2"
-                                                        onclick="clearPreview()">
-                                                        <i class="mdi mdi-close me-1"></i>Batal
-                                                    </button>
-                                                </div>
+                                <div class="card border-0 shadow-sm mb-3">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3 mb-md-0">
+                                                <label class="form-label fw-bold text-primary">
+                                                    <i class="mdi mdi-image-outline me-1"></i>Bukti/Foto Sebelum (Before)
+                                                </label>
+                                                <p class="text-muted small mb-2">Upload kondisi awal sebelum intervensi/pembangunan (Maks. 10MB)</p>
+                                                <input type="file" name="file_before[]" id="input_before" class="form-control" accept="image/*,.pdf" multiple onchange="previewMultipleImages(this, 'before')">
+                                                <div id="preview_before_container" class="mt-2 d-flex flex-wrap gap-2" style="display: none;"></div>
                                             </div>
-                                            <div class="preview-wrapper" id="preview-wrapper">
-                                                {{-- Preview items akan ditambahkan secara dinamis --}}
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-bold text-success">
+                                                    <i class="mdi mdi-image-check-outline me-1"></i>Bukti/Foto Sesudah (After)
+                                                </label>
+                                                <p class="text-muted small mb-2">Upload kondisi akhir sesudah intervensi/pembangunan (Maks. 10MB)</p>
+                                                <input type="file" name="file_after[]" id="input_after" class="form-control" accept="image/*,.pdf" multiple onchange="previewMultipleImages(this, 'after')">
+                                                <div id="preview_after_container" class="mt-2 d-flex flex-wrap gap-2" style="display: none;"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="text-end mb-4">
+                                    <button type="submit" class="btn btn-primary px-4">
+                                        <i class="mdi mdi-upload me-1"></i>Upload File
+                                    </button>
+                                </div>
                             </form>
+
+                            <hr class="my-4">
+                            
+                            {{-- EXISTING UPLOADED FILES --}}
+                            @include('survey.forms.form_layouts.evidence')
                         </div>
                     </div>
                 </div>
@@ -635,6 +633,7 @@
         </script>
     @endif
 
+    <link rel="stylesheet" href="{{ asset('css/evidence-custom.css') }}">
     <style>
         /* ================================================= */
         /* SURVEY HEADER CARD STYLES */
@@ -1201,97 +1200,83 @@
 
     <script>
         // ==================================
-        // UPLOAD ZONE HANDLERS
+        // INLINE IMAGE PREVIEW (MULTIPLE)
         // ==================================
-        const uploadZone = document.getElementById('uploadZone');
-        const fileInput = document.getElementById('fileInput');
+        const selectedFiles = {
+            'before': new DataTransfer(),
+            'after': new DataTransfer()
+        };
 
-        if (uploadZone) {
-            // Drag & Drop
-            uploadZone.addEventListener('click', () => {
-                fileInput.click();
-            });
-            uploadZone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadZone.classList.add('dragover');
-            });
+        function previewMultipleImages(input, type) {
+            const dt = selectedFiles[type];
 
-            uploadZone.addEventListener('dragleave', () => {
-                uploadZone.classList.remove('dragover');
-            });
+            // Add new files to DataTransfer
+            for(let i = 0; i < input.files.length; i++) {
+                dt.items.add(input.files[i]);
+            }
+            
+            // Sync input files with DataTransfer
+            input.files = dt.files;
 
-            uploadZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadZone.classList.remove('dragover');
-                if (e.dataTransfer.files.length) {
-                    fileInput.files = e.dataTransfer.files;
-                    previewFile(fileInput);
+            renderPreviews(type, input);
+        }
+
+        function renderPreviews(type, input) {
+            const container = document.getElementById('preview_' + type + '_container');
+            const dt = selectedFiles[type];
+            container.innerHTML = '';
+
+            if (dt.files.length > 0) {
+                container.style.display = 'flex';
+                for(let i = 0; i < dt.files.length; i++) {
+                    const file = dt.files[i];
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'position-relative d-inline-block';
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'btn btn-danger btn-sm position-absolute rounded-circle p-0 d-flex align-items-center justify-content-center shadow-sm';
+                    removeBtn.style.width = '20px';
+                    removeBtn.style.height = '20px';
+                    removeBtn.style.top = '-8px';
+                    removeBtn.style.right = '-8px';
+                    removeBtn.style.zIndex = '10';
+                    removeBtn.innerHTML = '<i class="mdi mdi-close" style="font-size: 12px;"></i>';
+                    removeBtn.onclick = function(e) {
+                        e.preventDefault();
+                        dt.items.remove(i);
+                        input.files = dt.files; // Update input
+                        renderPreviews(type, input);
+                    };
+
+                    if (file.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.className = 'img-thumbnail shadow-sm';
+                        img.style.height = '80px';
+                        img.style.width = '80px';
+                        img.style.objectFit = 'cover';
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            img.src = e.target.result;
+                        }
+                        reader.readAsDataURL(file);
+                        
+                        wrapper.appendChild(img);
+                    } else {
+                        const fileDiv = document.createElement('div');
+                        fileDiv.className = 'img-thumbnail shadow-sm d-flex align-items-center justify-content-center bg-light';
+                        fileDiv.style.height = '80px';
+                        fileDiv.style.width = '80px';
+                        fileDiv.innerHTML = '<i class="mdi mdi-file-pdf-box text-danger" style="font-size: 32px;"></i>';
+                        wrapper.appendChild(fileDiv);
+                    }
+
+                    wrapper.appendChild(removeBtn);
+                    container.appendChild(wrapper);
                 }
-            });
-
-            fileInput.addEventListener('change', function () {
-                previewFile(this);
-            });
-        }
-
-        // ==================================
-        // PREVIEW FUNCTIONS
-        // ==================================
-        function previewFile(input) {
-            const file = input.files[0];
-            const previewContainer = document.getElementById('preview-container');
-            const previewWrapper = document.getElementById('preview-wrapper');
-
-            if (!file) {
-                previewContainer.classList.add('d-none');
-                return;
+            } else {
+                container.style.display = 'none';
             }
-
-            previewContainer.classList.remove('d-none');
-            previewWrapper.innerHTML = '';
-
-            // Create preview item
-            const previewItem = document.createElement('div');
-            previewItem.className = 'preview-item';
-
-            const fileSize = (file.size / 1024).toFixed(1) + ' KB';
-            const fileName = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
-
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    previewItem.innerHTML = `
-                    <div class="preview-thumb">
-                        <img src="${e.target.result}" alt="${file.name}">
-                    </div>
-                    <div class="preview-details">
-                        <p class="file-name" title="${file.name}">${fileName}</p>
-                        <p class="file-size"><i class="mdi mdi-file-outline me-1"></i>${fileSize}</p>
-                    </div>
-                `;
-                };
-                reader.readAsDataURL(file);
-            } else if (file.type === 'application/pdf') {
-                previewItem.innerHTML = `
-                <div class="preview-thumb">
-                    <div class="pdf-preview">
-                        <i class="mdi mdi-file-pdf-box"></i>
-                    </div>
-                </div>
-                <div class="preview-details">
-                    <p class="file-name" title="${file.name}">${fileName}</p>
-                    <p class="file-size"><i class="mdi mdi-file-outline me-1"></i>${fileSize}</p>
-                </div>
-            `;
-            }
-
-            previewWrapper.appendChild(previewItem);
-        }
-
-        function clearPreview() {
-            document.getElementById('fileInput').value = '';
-            document.getElementById('preview-container').classList.add('d-none');
-            document.getElementById('preview-wrapper').innerHTML = '';
         }
     </script>
 
@@ -1516,4 +1501,5 @@
             }
         });
     </script>
+    <script src="{{ asset('js/evidence-custom.js') }}"></script>
     @endsection

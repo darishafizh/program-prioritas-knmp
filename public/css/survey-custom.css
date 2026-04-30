@@ -1,22 +1,23 @@
 .page-title-box {
     background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
     color: white;
-    padding: 30px 30px;
-    border-radius: 12px;
-    margin-bottom: 30px;
+    padding: 20px 24px;
+    border-radius: 10px;
+    margin-bottom: 20px;
     box-shadow: 0 4px 15px hsla(217, 91%, 60%, 0.3);
 }
 
 .page-title-box h4 {
     color: white;
     font-weight: 700;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
 }
 
 .page-title-box p {
     color: rgba(255, 255, 255, 0.9);
     margin: 0;
-    font-size: 14px;
+    font-size: 0.75rem;
 }
 
 .breadcrumb-nav {
@@ -45,23 +46,24 @@
 /* Header Info */
 .info-card {
     background: white;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     border-left: 4px solid #3b82f6;
 }
 
 .info-card h6 {
-    font-size: 12px;
+    font-size: 0.65rem;
     font-weight: 600;
     color: #999;
     text-transform: uppercase;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
 }
 
 .info-card p {
-    font-size: 16px;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #333;
     margin: 0;
@@ -93,21 +95,21 @@
 .responden-header {
     background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
     color: white;
-    padding: 20px;
+    padding: 14px 16px;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
 }
 
 .avatar {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     background: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 18px;
 }
 
 .responden-header .info {
@@ -115,29 +117,29 @@
 }
 
 .responden-header h5 {
-    margin: 0 0 5px 0;
+    margin: 0 0 3px 0;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 0.8rem;
 }
 
 .responden-header p {
     margin: 0;
-    font-size: 13px;
+    font-size: 0.7rem;
     opacity: 0.9;
 }
 
 /* Responden Body */
 .responden-body {
-    padding: 20px;
+    padding: 14px 16px;
 }
 
 .detail-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
+    padding: 6px 0;
     border-bottom: 1px solid #f5f5f5;
-    font-size: 13px;
+    font-size: 0.75rem;
 }
 
 .detail-row:last-child {
@@ -419,19 +421,19 @@
 }
 
 .custom-dialog {
-    width: 380px;
+    width: 340px;
     max-width: 90vw;
     background: #fff;
-    border-radius: 22px;
-    padding: 30px 28px;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
     text-align: center;
     animation: popUp 0.32s ease forwards;
 }
 
 @keyframes popUp {
     from {
-        transform: scale(0.85) translateY(25px);
+        transform: scale(0.85) translateY(20px);
     }
 
     to {
@@ -440,23 +442,23 @@
 }
 
 .custom-dialog-icon-circle {
-    width: 90px;
-    height: 90px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: auto;
-    font-size: 45px;
+    font-size: 30px;
     color: #fff;
     font-weight: bold;
-    margin-bottom: 12px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    margin-bottom: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
 .custom-dialog.warning .custom-dialog-icon-circle {
     background: radial-gradient(circle at top, #ffc107, #ff9800);
-    box-shadow: 0 8px 25px rgba(255, 152, 0, 0.45);
+    box-shadow: 0 6px 15px rgba(255, 152, 0, 0.35);
 }
 
 .custom-dialog.warning .custom-dialog-title {
@@ -464,16 +466,16 @@
 }
 
 .custom-dialog-title {
-    font-size: 25px;
+    font-size: 18px;
     font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     color: #1a202c;
 }
 
 .custom-dialog-message {
     color: #555;
-    font-size: 15px;
-    margin-bottom: 22px;
+    font-size: 13px;
+    margin-bottom: 16px;
     line-height: 1.5;
 }
 
@@ -485,10 +487,10 @@
 
 .custom-dialog-btn {
     flex: 1;
-    padding: 12px 16px;
+    padding: 10px 14px;
     border: none;
-    border-radius: 10px;
-    font-size: 14px;
+    border-radius: 8px;
+    font-size: 13px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -545,45 +547,45 @@
 }
 
 .questionnaire-header .avatar {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 18px;
     font-weight: bold;
 }
 
 .questionnaire-header .info {
     flex: 1;
-    margin-left: 15px;
+    margin-left: 12px;
 }
 
 .questionnaire-header .info h5 {
     margin: 0;
-    font-size: 16px;
+    font-size: 0.8rem;
     font-weight: 700;
     color: #ffffff;
 }
 
 .questionnaire-header .info p {
-    margin: 3px 0 0 0;
-    font-size: 12px;
+    margin: 2px 0 0 0;
+    font-size: 0.7rem;
     color: rgba(255, 255, 255, 0.9);
 }
 
 .questionnaire-body {
-    padding: 20px;
+    padding: 14px 16px;
 }
 
 .questionnaire-body .detail-row {
     display: flex;
     justify-content: space-between;
-    padding: 10px 0;
+    padding: 6px 0;
     border-bottom: 1px solid #f0f0f0;
-    font-size: 14px;
+    font-size: 0.75rem;
 }
 
 .questionnaire-body .detail-row:last-child {

@@ -38,20 +38,43 @@ class EvidenceController extends Controller
     {
         $request->validate([
             'knmp_id' => 'required|exists:knmp,id',
-            'file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:10240',
+            'file_before' => 'nullable|array',
+            'file_before.*' => 'file|mimes:jpg,jpeg,png,pdf|max:10240',
+            'file_after' => 'nullable|array',
+            'file_after.*' => 'file|mimes:jpg,jpeg,png,pdf|max:10240',
         ]);
 
-        $file = $request->file('file');
+        if (!$request->hasFile('file_before') && !$request->hasFile('file_after')) {
+            return back()->with('error', 'Minimal satu file (Before atau After) harus diupload.');
+        }
 
-        $path = $file->store('bukti_uploads', 'public');
+        if ($request->hasFile('file_before')) {
+            foreach ($request->file('file_before') as $file) {
+                $path = $file->store('bukti_uploads', 'public');
+                BuktiUpload::create([
+                    'knmp_id' => $request->knmp_id,
+                    'kondisi' => 'before',
+                    'nama_file' => $file->getClientOriginalName(),
+                    'path_file' => $path,
+                    'tipe_file' => $file->getClientMimeType(),
+                    'ukuran_file' => $file->getSize(),
+                ]);
+            }
+        }
 
-        BuktiUpload::create([
-            'knmp_id' => $request->knmp_id,
-            'nama_file' => $file->getClientOriginalName(),
-            'path_file' => $path,
-            'tipe_file' => $file->getClientMimeType(),
-            'ukuran_file' => $file->getSize(),
-        ]);
+        if ($request->hasFile('file_after')) {
+            foreach ($request->file('file_after') as $file) {
+                $path = $file->store('bukti_uploads', 'public');
+                BuktiUpload::create([
+                    'knmp_id' => $request->knmp_id,
+                    'kondisi' => 'after',
+                    'nama_file' => $file->getClientOriginalName(),
+                    'path_file' => $path,
+                    'tipe_file' => $file->getClientMimeType(),
+                    'ukuran_file' => $file->getSize(),
+                ]);
+            }
+        }
 
         return back()->with('success', 'File berhasil diupload');
     }

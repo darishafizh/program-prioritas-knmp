@@ -332,10 +332,49 @@
                 padding: 32px 24px;
             }
         }
+
+        /* Page Loader */
+        .page-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 999999;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+        .page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .page-loader-spinner {
+            width: 38px;
+            height: 38px;
+            border: 3px solid #e2e8f0;
+            border-top-color: var(--kkp-primary);
+            border-radius: 50%;
+            animation: loaderSpin 0.7s linear infinite;
+        }
+        .page-loader-text {
+            margin-top: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #64748b;
+        }
+        @keyframes loaderSpin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
 <body>
+    <div class="page-loader" id="pageLoader">
+        <div class="page-loader-spinner"></div>
+        <div class="page-loader-text">Memuat...</div>
+    </div>
     <div class="login-wrapper">
         <!-- Left Panel - Logo -->
         <div class="login-left-panel">
@@ -438,6 +477,19 @@
                 toggleIcon.classList.add('mdi-eye');
             }
         }
+    </script>
+    <script>
+        (function() {
+            var loader = document.getElementById('pageLoader');
+            if (!loader) return;
+            function hideLoader() { loader.classList.add('hidden'); }
+            function showLoader() { loader.classList.remove('hidden'); }
+            if (document.readyState === 'complete') { hideLoader(); }
+            else { window.addEventListener('load', hideLoader); }
+            document.addEventListener('submit', function() { showLoader(); });
+            window.addEventListener('beforeunload', function() { showLoader(); });
+            window.addEventListener('pageshow', function(e) { if (e.persisted) hideLoader(); });
+        })();
     </script>
 </body>
 

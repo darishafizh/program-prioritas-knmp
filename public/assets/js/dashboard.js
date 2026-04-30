@@ -436,114 +436,165 @@ function initDashboardMap() {
     var mapContainer = document.getElementById("map-knmp");
     if (!mapContainer) return;
 
-    var map = L.map("map-knmp").setView([-2.5, 118], 5);
+    var map = L.map("map-knmp", {
+        zoomControl: false
+    }).setView([-2.5, 118], 5);
     window.mapInstance = map;
 
-    L.tileLayer("https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", {
+    // Zoom control at bottom-right
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    // Modern CartoDB Voyager tile (clean, label-friendly)
+    var cartoLight = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/">OSM</a>'
+    });
+
+    // Google Satellite tile
+    var googleSat = L.tileLayer("https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", {
         maxZoom: 20,
         attribution: '&copy; Google Satellite'
-    }).addTo(map);
-
-    // Red icon
-    var redIcon = new L.Icon({
-        iconUrl: "https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-red.png",
-        shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41],
     });
+
+    // Default layer
+    cartoLight.addTo(map);
+
+    // Layer control
+    L.control.layers({
+        "Peta": cartoLight,
+        "Satelit": googleSat
+    }, null, { position: 'topright', collapsed: true }).addTo(map);
+
+    // Custom marker icon (red dot circle)
+    function createMarkerIcon(color) {
+        return L.divIcon({
+            className: 'knmp-marker',
+            html: '<div style="width:14px;height:14px;border-radius:50%;background:' + color + ';border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>',
+            iconSize: [14, 14],
+            iconAnchor: [7, 7]
+        });
+    }
+
+    var defaultIcon = createMarkerIcon('#dc2626');
+    var activeIcon = createMarkerIcon('#2563eb');
+    var activeMarker = null;
+
+    // Info card DOM
+    var infoCard = document.getElementById('map-info-card');
+    var infoName = document.getElementById('map-info-name');
+    var infoLocation = document.getElementById('map-info-location');
+    var infoProgres = document.getElementById('map-info-progres');
+    var infoStats = document.getElementById('map-info-stats');
+    var infoKomoditas = document.getElementById('map-info-komoditas');
+    var infoLink = document.getElementById('map-info-link');
+
+    // Helpers
+    function formatRupiah(num) {
+        if (!num || num == 0) return '-';
+        return 'Rp ' + Number(num).toLocaleString('id-ID');
+    }
+    function formatNum(num) {
+        if (!num && num !== 0) return '-';
+        return Number(num).toLocaleString('id-ID');
+    }
+
+    function showInfoCard(item) {
+        var profile = item.profile_knmp || {};
+        var progres = item.progres_knmp || {};
+        var progresNasional = item.latest_progres_nasional || null;
+        var respondenCount = item.informasi_responden_count || 0;
+        var detailUrl = detailUrlPattern.replace(':id', item.id);
+
+        // Name & Location
+        infoName.textContent = item.nama || 'KNMP #' + item.id;
+        var locParts = [];
+        if (item.village) locParts.push(item.village.name);
+        if (item.district) locParts.push(item.district.name);
+        if (item.regency) locParts.push(item.regency.name);
+        infoLocation.textContent = locParts.join(', ') || '-';
+
+        // Progres
+        if (progresNasional) {
+            var pVal = Number(progresNasional.progres);
+            var pColor = '#ef4444';
+            if (pVal >= 100) pColor = '#22c55e';
+            else if (pVal >= 75) pColor = '#3b82f6';
+            else if (pVal >= 50) pColor = '#f59e0b';
+            infoProgres.innerHTML = '' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+                    '<span style="font-size:0.65rem;font-weight:600;color:#334155;">Progres Pembangunan</span>' +
+                    '<span style="font-size:0.7rem;font-weight:700;color:' + pColor + ';">' + pVal.toFixed(1) + '%</span>' +
+                '</div>' +
+                '<div style="background:#e2e8f0;border-radius:3px;height:5px;overflow:hidden;">' +
+                    '<div style="background:' + pColor + ';height:100%;width:' + Math.min(pVal, 100) + '%;border-radius:3px;transition:width 0.3s;"></div>' +
+                '</div>';
+            infoProgres.style.display = '';
+        } else {
+            infoProgres.style.display = 'none';
+        }
+
+        // Stats grid
+        infoStats.innerHTML = '' +
+            '<div style="background:#fefce8;border-radius:6px;padding:5px 7px;">' +
+                '<div style="font-size:0.6rem;color:#a16207;">Nelayan</div>' +
+                '<div style="font-size:0.75rem;font-weight:700;color:#854d0e;">' + formatNum(profile.jml_nelayan) + '</div>' +
+            '</div>' +
+            '<div style="background:#f0fdf4;border-radius:6px;padding:5px 7px;">' +
+                '<div style="font-size:0.6rem;color:#15803d;">Tenaga Kerja</div>' +
+                '<div style="font-size:0.75rem;font-weight:700;color:#166534;">' + formatNum(progres.tk_total) + '</div>' +
+            '</div>' +
+            '<div style="background:#faf5ff;border-radius:6px;padding:5px 7px;">' +
+                '<div style="font-size:0.6rem;color:#7e22ce;">Pendapatan</div>' +
+                '<div style="font-size:0.68rem;font-weight:700;color:#6b21a8;">' + formatRupiah(profile.pendapatan_rata_rata_nelayan) + '</div>' +
+            '</div>' +
+            '<div style="background:#eff6ff;border-radius:6px;padding:5px 7px;">' +
+                '<div style="font-size:0.6rem;color:#1d4ed8;">Responden</div>' +
+                '<div style="font-size:0.75rem;font-weight:700;color:#1e40af;">' + formatNum(respondenCount) + '</div>' +
+            '</div>';
+
+        // Komoditas
+        var komHtml = '';
+        if (profile.komoditas_utama_1) {
+            komHtml += '<span style="background:#dbeafe;color:#1e40af;border-radius:10px;padding:2px 8px;font-size:0.6rem;font-weight:500;margin-right:4px;">' + profile.komoditas_utama_1 + '</span>';
+        }
+        if (profile.komoditas_utama_2) {
+            komHtml += '<span style="background:#e0e7ff;color:#4338ca;border-radius:10px;padding:2px 8px;font-size:0.6rem;font-weight:500;">' + profile.komoditas_utama_2 + '</span>';
+        }
+        infoKomoditas.innerHTML = komHtml;
+        infoKomoditas.style.display = komHtml ? '' : 'none';
+
+        // Link
+        infoLink.href = detailUrl;
+
+        // Show
+        infoCard.style.display = 'block';
+    }
 
     // Add markers
     desaKNMP.forEach(function (item) {
         if (item.latitude !== null && item.longitude !== null) {
-            var detailUrl = detailUrlPattern.replace(':id', item.id);
-            var profile = item.profile_knmp || {};
-            var progres = item.progres_knmp || {};
-            var progresNasional = item.latest_progres_nasional || null;
-            var respondenCount = item.informasi_responden_count || 0;
+            var marker = L.marker([item.latitude, item.longitude], { icon: defaultIcon });
+            marker.addTo(map);
 
-            // Format currency
-            function formatRupiah(num) {
-                if (!num || num == 0) return '-';
-                return 'Rp ' + Number(num).toLocaleString('id-ID');
-            }
-
-            // Format number
-            function formatNum(num) {
-                if (!num && num !== 0) return '-';
-                return Number(num).toLocaleString('id-ID');
-            }
-
-            // Progres bar color
-            var progresVal = progresNasional ? Number(progresNasional.progres) : 0;
-            var progresColor = '#ef4444';
-            if (progresVal >= 100) progresColor = '#22c55e';
-            else if (progresVal >= 75) progresColor = '#3b82f6';
-            else if (progresVal >= 50) progresColor = '#f59e0b';
-
-            var popupContent = `
-                <div style="min-width: 260px; max-width: 300px; font-family: 'Segoe UI', sans-serif;">
-                    <h6 class="mb-1 fw-bold" style="font-size: 14px; color: #1e40af;">${item.nama ?? "Lokasi KNMP " + item.id}</h6>
-                    <div class="mb-2" style="font-size: 11.5px; color: #6b7280;">
-                        <div class="mb-1"><i class="mdi mdi-map-marker-radius me-1 text-danger"></i>
-                            ${item.village ? item.village.name : '-'}, ${item.district ? item.district.name : '-'}
-                        </div>
-                        <div><i class="mdi mdi-city me-1 text-secondary"></i>
-                            ${item.regency ? item.regency.name : '-'}, ${item.province ? item.province.name : '-'}
-                        </div>
-                    </div>
-
-                    ${progresNasional ? `
-                    <div class="mb-2" style="background: #f0f9ff; border-radius: 6px; padding: 6px 8px;">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <small style="font-weight: 600; color: #1e40af; font-size: 11px;"><i class="mdi mdi-chart-line me-1"></i>Progres Pembangunan</small>
-                            <small style="font-weight: 700; color: ${progresColor}; font-size: 12px;">${progresVal.toFixed(1)}%</small>
-                        </div>
-                        <div style="background: #e2e8f0; border-radius: 4px; height: 6px; overflow: hidden;">
-                            <div style="background: ${progresColor}; height: 100%; width: ${Math.min(progresVal, 100)}%; border-radius: 4px; transition: width 0.3s;"></div>
-                        </div>
-                    </div>` : ''}
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 8px;">
-                        <div style="background: #fefce8; border-radius: 6px; padding: 5px 7px;">
-                            <div style="font-size: 10px; color: #a16207;"><i class="mdi mdi-fish me-1"></i>Nelayan</div>
-                            <div style="font-size: 13px; font-weight: 700; color: #854d0e;">${formatNum(profile.jml_nelayan)}</div>
-                        </div>
-                        <div style="background: #f0fdf4; border-radius: 6px; padding: 5px 7px;">
-                            <div style="font-size: 10px; color: #15803d;"><i class="mdi mdi-account-hard-hat me-1"></i>Tenaga Kerja</div>
-                            <div style="font-size: 13px; font-weight: 700; color: #166534;">${formatNum(progres.tk_total)}</div>
-                        </div>
-                        <div style="background: #faf5ff; border-radius: 6px; padding: 5px 7px;">
-                            <div style="font-size: 10px; color: #7e22ce;"><i class="mdi mdi-cash me-1"></i>Pendapatan</div>
-                            <div style="font-size: 11.5px; font-weight: 700; color: #6b21a8;">${formatRupiah(profile.pendapatan_rata_rata_nelayan)}</div>
-                        </div>
-                        <div style="background: #fff7ed; border-radius: 6px; padding: 5px 7px;">
-                            <div style="font-size: 10px; color: #c2410c;"><i class="mdi mdi-package-variant me-1"></i>Produksi</div>
-                            <div style="font-size: 13px; font-weight: 700; color: #9a3412;">${profile.volume_produksi_ton ? formatNum(profile.volume_produksi_ton) + ' ton' : '-'}</div>
-                        </div>
-                    </div>
-
-                    <div class="d-flex gap-2 mb-2" style="font-size: 11px;">
-                        ${profile.komoditas_utama_1 ? `<span style="background: #dbeafe; color: #1e40af; border-radius: 10px; padding: 2px 8px; font-weight: 500;"><i class="mdi mdi-tag me-1"></i>${profile.komoditas_utama_1}</span>` : ''}
-                        ${profile.komoditas_utama_2 ? `<span style="background: #e0e7ff; color: #4338ca; border-radius: 10px; padding: 2px 8px; font-weight: 500;"><i class="mdi mdi-tag me-1"></i>${profile.komoditas_utama_2}</span>` : ''}
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center mb-2" style="font-size: 11px; color: #6b7280;">
-                        <span><i class="mdi mdi-clipboard-account me-1 text-info"></i>Responden: <b>${respondenCount}</b></span>
-                        ${profile.jml_penduduk_des ? `<span><i class="mdi mdi-account-group me-1"></i>Penduduk: <b>${formatNum(profile.jml_penduduk_des)}</b></span>` : ''}
-                    </div>
-
-                    <a href="${detailUrl}" class="btn btn-sm btn-primary w-100 rounded-pill" style="color: #ffffff !important; font-size: 12px;">
-                        <i class="mdi mdi-information-outline me-1" style="color: #ffffff !important;"></i> Lihat Informasi Umum
-                    </a>
-                </div>
-            `;
-
-            L.marker([item.latitude, item.longitude], { icon: redIcon })
-                .addTo(map)
-                .bindPopup(popupContent, { minWidth: 260, maxWidth: 320 });
+            marker.on('click', function () {
+                // Reset previous active marker
+                if (activeMarker) {
+                    activeMarker.setIcon(defaultIcon);
+                }
+                activeMarker = marker;
+                marker.setIcon(activeIcon);
+                showInfoCard(item);
+            });
         }
+    });
+
+    // Click on map background → hide info card
+    map.on('click', function (e) {
+        if (activeMarker) {
+            activeMarker.setIcon(defaultIcon);
+            activeMarker = null;
+        }
+        if (infoCard) infoCard.style.display = 'none';
     });
 
     // Fix map render

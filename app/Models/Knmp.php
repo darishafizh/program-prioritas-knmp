@@ -18,6 +18,7 @@ class Knmp extends Model
         'village_id',
         'latitude',
         'longitude',
+        'tahap',
     ];
 
     public function province()

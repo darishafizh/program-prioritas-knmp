@@ -22,8 +22,8 @@
     </div>
     <!-- end page title -->
 
-    <!-- KNMP Selector with Search - For Admin and Super Admin -->
-    @if(Auth::user()->isAdmin() || Auth::user()->isSuperAdmin())
+    <!-- KNMP Selector with Search - Only for Admin -->
+    @if(Auth::user()->isAdmin())
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card border-0 shadow-sm selector-card">
@@ -765,49 +765,150 @@
                 </h5>
 
                 @if(isset($monitoringStats['bukti']) && $monitoringStats['bukti']['totalFiles'] > 0)
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <div class="row g-3">
-                                @foreach($monitoringStats['bukti']['files'] as $file)
-                                    <div class="col-6 col-md-4 col-lg-2">
-                                        <div class="card h-100 border-0 shadow-none bg-light">
-                                            <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank"
-                                                class="d-block h-100 position-relative group-hover-overlay">
-                                                @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                                                    <div class="ratio ratio-4x3">
-                                                        <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid rounded"
-                                                            alt="Bukti" style="object-fit: cover;">
+                    @php
+                        $files = collect($monitoringStats['bukti']['files']);
+                        $beforeFiles = $files->where('kondisi', 'before');
+                        $afterFiles = $files->where('kondisi', 'after');
+                        $legacyFiles = $files->whereNull('kondisi');
+                    @endphp
+
+                    <div class="row g-4 mb-4">
+                        <!-- Kondisi Sebelum -->
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm h-100" style="border-radius: 12px; overflow: hidden;">
+                                <div class="card-header bg-primary bg-opacity-10 border-0 py-3">
+                                    <h6 class="mb-0 text-primary fw-bold">
+                                        <i class="mdi mdi-image-outline me-2"></i>Kondisi Sebelum (Before)
+                                    </h6>
+                                </div>
+                                <div class="card-body p-3" style="background-color: #f8f9fa;">
+                                    @if($beforeFiles->count() > 0)
+                                        <div class="row g-2">
+                                            @foreach($beforeFiles as $file)
+                                                <div class="col-6 col-sm-4">
+                                                    <div class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
+                                                        <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100 position-relative">
+                                                            @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                                                <div class="ratio ratio-1x1">
+                                                                    <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid" alt="Before" style="object-fit: cover;">
+                                                                </div>
+                                                            @else
+                                                                <div class="ratio ratio-1x1 d-flex align-items-center justify-content-center bg-white border-bottom">
+                                                                    <div class="text-center p-2">
+                                                                        <i class="mdi mdi-file-document-outline text-muted" style="font-size: 2rem;"></i>
+                                                                    </div>
+                                                                </div>
+                                                            @endif
+                                                            <div class="bg-white p-2 text-center border-top">
+                                                                <small class="d-block text-muted text-truncate" style="max-width: 100%; font-size: 0.75rem;">{{ $file->nama_file }}</small>
+                                                            </div>
+                                                        </a>
                                                     </div>
-                                                @else
-                                                    <div
-                                                        class="ratio ratio-4x3 d-flex align-items-center justify-content-center bg-white rounded border">
-                                                        <div class="text-center p-2">
-                                                            <i class="mdi mdi-file-document-outline text-muted"
-                                                                style="font-size: 2.5rem;"></i>
-                                                            <small class="d-block mt-1 text-muted text-truncate"
-                                                                style="max-width: 100%;">{{ $file->nama_file }}</small>
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            </a>
+                                                </div>
+                                            @endforeach
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @else
+                                        <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5 opacity-50">
+                                            <i class="mdi mdi-image-off-outline text-muted mb-2" style="font-size: 3rem;"></i>
+                                            <small class="text-muted fw-medium">Belum ada foto sebelum</small>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kondisi Sesudah -->
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm h-100" style="border-radius: 12px; overflow: hidden;">
+                                <div class="card-header bg-success bg-opacity-10 border-0 py-3">
+                                    <h6 class="mb-0 text-success fw-bold">
+                                        <i class="mdi mdi-image-check-outline me-2"></i>Kondisi Sesudah (After)
+                                    </h6>
+                                </div>
+                                <div class="card-body p-3" style="background-color: #f8f9fa;">
+                                    @if($afterFiles->count() > 0)
+                                        <div class="row g-2">
+                                            @foreach($afterFiles as $file)
+                                                <div class="col-6 col-sm-4">
+                                                    <div class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
+                                                        <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100 position-relative">
+                                                            @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                                                <div class="ratio ratio-1x1">
+                                                                    <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid" alt="After" style="object-fit: cover;">
+                                                                </div>
+                                                            @else
+                                                                <div class="ratio ratio-1x1 d-flex align-items-center justify-content-center bg-white border-bottom">
+                                                                    <div class="text-center p-2">
+                                                                        <i class="mdi mdi-file-document-outline text-muted" style="font-size: 2rem;"></i>
+                                                                    </div>
+                                                                </div>
+                                                            @endif
+                                                            <div class="bg-white p-2 text-center border-top">
+                                                                <small class="d-block text-muted text-truncate" style="max-width: 100%; font-size: 0.75rem;">{{ $file->nama_file }}</small>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5 opacity-50">
+                                            <i class="mdi mdi-image-off-outline text-muted mb-2" style="font-size: 3rem;"></i>
+                                            <small class="text-muted fw-medium">Belum ada foto sesudah</small>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    @if($legacyFiles->count() > 0)
+                        <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; overflow: hidden;">
+                            <div class="card-header bg-secondary bg-opacity-10 border-0 py-3">
+                                <h6 class="mb-0 text-secondary fw-bold">
+                                    <i class="mdi mdi-folder-multiple-image me-2"></i>Lainnya (Data Lama)
+                                </h6>
+                            </div>
+                            <div class="card-body p-3" style="background-color: #f8f9fa;">
+                                <div class="row g-2">
+                                    @foreach($legacyFiles as $file)
+                                        <div class="col-4 col-md-3 col-lg-2">
+                                            <div class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
+                                                <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100 position-relative">
+                                                    @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                                        <div class="ratio ratio-1x1">
+                                                            <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid" alt="Legacy" style="object-fit: cover;">
+                                                        </div>
+                                                    @else
+                                                        <div class="ratio ratio-1x1 d-flex align-items-center justify-content-center bg-white border-bottom">
+                                                            <div class="text-center p-2">
+                                                                <i class="mdi mdi-file-document-outline text-muted" style="font-size: 2rem;"></i>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                    <div class="bg-white p-2 text-center border-top">
+                                                        <small class="d-block text-muted text-truncate" style="max-width: 100%; font-size: 0.75rem;">{{ $file->nama_file }}</small>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 @else
                     <!-- Empty State -->
-                    <div class="card border-0 shadow-sm">
+                    <div class="card border-0 shadow-sm" style="border-radius: 12px;">
                         <div class="card-body text-center py-5">
                             <div class="mb-3">
-                                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light"
-                                    style="width: 80px; height: 80px;">
+                                <div class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                                    style="width: 80px; height: 80px; background-color: #f8f9fa;">
                                     <i class="mdi mdi-camera-off text-muted" style="font-size: 2.5rem; opacity: 0.5;"></i>
                                 </div>
                             </div>
-                            <h5 class="text-muted fw-normal">Belum Ada Bukti Pendukung</h5>
-                            <p class="text-muted small mb-0">Dokumentasi foto belum tersedia untuk lokasi ini.</p>
+                            <h5 class="text-muted fw-bold">Belum Ada Bukti Pendukung</h5>
+                            <p class="text-muted small mb-0">Dokumentasi foto before/after belum tersedia untuk lokasi ini.</p>
                         </div>
                     </div>
                 @endif
