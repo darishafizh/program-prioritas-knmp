@@ -237,11 +237,11 @@
                             <tbody>
                                 @foreach ($knmps as $knmp)
                                     <tr>
-                                        <td>{{ $knmp->nama ?? 'N/A' }}</td>
-                                        <td>{{ $knmp->village->name ?? 'N/A' }}</td>
-                                        <td>{{ $knmp->district->name ?? 'N/A' }}</td>
-                                        <td>{{ $knmp->regency->name ?? 'N/A' }}</td>
-                                        <td>{{ $knmp->province->name ?? 'N/A' }}</td>
+                                        <td>{{ ucwords(strtolower($knmp->nama ?? 'N/A')) }}</td>
+                                        <td>{{ ucwords(strtolower($knmp->village->name ?? 'N/A')) }}</td>
+                                        <td>{{ ucwords(strtolower($knmp->district->name ?? 'N/A')) }}</td>
+                                        <td>{{ ucwords(strtolower($knmp->regency->name ?? 'N/A')) }}</td>
+                                        <td>{{ ucwords(strtolower($knmp->province->name ?? 'N/A')) }}</td>
                                         <td class="action-buttons">
                                             @if(!Auth::user()->isAdmin())
                                                 <a href="{{ route('forms.index', $knmp->id) }}"

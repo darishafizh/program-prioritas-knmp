@@ -98,31 +98,55 @@
         <div class="col-12">
             <div class="card border-0 shadow-sm mb-0">
                 <div class="card-body py-2 px-3">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center">
-                            <i class="mdi mdi-filter-outline text-muted me-2" style="font-size: 1.2rem;"></i>
-                            <span class="text-muted me-2">Periode:</span>
-                            <form method="GET" action="{{ route('dashboard.index') }}" class="d-inline">
-                                <select name="period" class="form-select form-select-sm border-0 bg-light"
-                                    style="width: auto; font-weight: 500;" onchange="this.form.submit()">
-                                    <option value="all" {{ ($period ?? 'all') == 'all' ? 'selected' : '' }}>Semua Waktu
-                                    </option>
-                                    <option value="week" {{ ($period ?? '') == 'week' ? 'selected' : '' }}>Minggu Ini</option>
-                                    <option value="month" {{ ($period ?? '') == 'month' ? 'selected' : '' }}>Bulan Ini
-                                    </option>
-                                    <option value="year" {{ ($period ?? '') == 'year' ? 'selected' : '' }}>Tahun Ini</option>
-                                </select>
-                            </form>
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div class="d-flex align-items-center flex-wrap gap-3">
+                            <div class="d-flex align-items-center">
+                                <i class="mdi mdi-filter-outline text-muted me-2" style="font-size: 1rem;"></i>
+                                <span class="text-muted me-2" style="font-size: 0.78rem;">Periode:</span>
+                                <form method="GET" action="{{ route('dashboard.index') }}" class="d-inline" id="filterForm">
+                                    <input type="hidden" name="tahap" value="{{ $tahap ?? 'all' }}">
+                                    <input type="hidden" name="progres_date" value="{{ $selectedProgresDate ?? '' }}">
+                                    <select name="period" class="form-select form-select-sm border-0 bg-light"
+                                        style="width: auto; font-weight: 500; font-size: 0.78rem;" onchange="this.form.submit()">
+                                        <option value="all" {{ ($period ?? 'all') == 'all' ? 'selected' : '' }}>Semua Waktu</option>
+                                        <option value="week" {{ ($period ?? '') == 'week' ? 'selected' : '' }}>Minggu Ini</option>
+                                        <option value="month" {{ ($period ?? '') == 'month' ? 'selected' : '' }}>Bulan Ini</option>
+                                        <option value="year" {{ ($period ?? '') == 'year' ? 'selected' : '' }}>Tahun Ini</option>
+                                    </select>
+                                </form>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="text-muted me-2" style="font-size: 0.78rem;">Tahap:</span>
+                                <form method="GET" action="{{ route('dashboard.index') }}" class="d-inline" id="tahapFilterForm">
+                                    <input type="hidden" name="period" value="{{ $period ?? 'all' }}">
+                                    <input type="hidden" name="progres_date" value="{{ $selectedProgresDate ?? '' }}">
+                                    <select name="tahap" class="form-select form-select-sm border-0 bg-light"
+                                        style="width: auto; font-weight: 500; font-size: 0.78rem;" onchange="this.form.submit()">
+                                        <option value="all" {{ ($tahap ?? 'all') == 'all' ? 'selected' : '' }}>Semua Tahap</option>
+                                        @foreach($availableTahap as $t)
+                                            <option value="{{ $t }}" {{ ($tahap ?? '') == (string)$t ? 'selected' : '' }}>Tahap {{ $t }}</option>
+                                        @endforeach
+                                    </select>
+                                </form>
+                            </div>
                         </div>
-                        <!-- <a href="{{ route('dashboard.export-pdf', ['period' => $period ?? 'all']) }}"
-                                        class="btn btn-sm btn-primary" target="_blank">
-                                        <i class="mdi mdi-file-pdf-box me-1"></i>Export PDF
-                                    </a> -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    @if($tahap !== 'all')
+    <div class="row mb-3">
+        <div class="col-12">
+            <h5 class="fw-bold text-dark mb-0" style="font-size: 1rem;">
+                <i class="mdi mdi-flag-variant text-primary me-1"></i>
+                Kampung Nelayan Merah Putih Tahap {{ $tahap == 1 ? 'I' : ($tahap == 2 ? 'II' : ($tahap == 3 ? 'III' : $tahap)) }}
+            </h5>
+            <p class="text-muted mb-0" style="font-size: 0.75rem;">Menampilkan data untuk {{ $totalKnmp }} lokasi KNMP pada tahap ini.</p>
+        </div>
+    </div>
+    @endif
 
     {{-- Statistic Cards - Baris 1 --}}
     <div class="row">
@@ -401,9 +425,48 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-body">
-                    <h4 class="header-title mb-3">Sebaran Lokasi KNMP</h4>
-                    <div id="map-knmp" style="height: 450px; border-radius:10px;"></div>
+                <div class="card-header">
+                    <h5 class="header-title mb-0">
+                        <i class="mdi mdi-map-marker-multiple me-2 text-danger"></i>Sebaran Lokasi KNMP
+                    </h5>
+                    <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size: 0.7rem;">{{ $totalKnmp }} Lokasi</span>
+                </div>
+                <div class="card-body p-0">
+                    <div style="position: relative;">
+                        <div id="map-knmp" style="height: 500px;"></div>
+                        <!-- Fixed info card overlay -->
+                        <div id="map-info-card" style="
+                            position: absolute; top: 12px; right: 12px; z-index: 999;
+                            width: 280px; background: #fff; border-radius: 10px;
+                            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+                            display: none; overflow: hidden; font-family: 'Poppins', sans-serif;
+                        ">
+                            <div id="map-info-header" style="
+                                background: linear-gradient(135deg, #003D7A, #0054A6);
+                                color: #fff; padding: 12px 14px;
+                            ">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 id="map-info-name" class="mb-0" style="font-size: 0.78rem; font-weight: 700; color: #fff;"></h6>
+                                        <small id="map-info-location" style="font-size: 0.65rem; opacity: 0.85;"></small>
+                                    </div>
+                                    <button onclick="document.getElementById('map-info-card').style.display='none'" style="
+                                        background: rgba(255,255,255,0.15); border: none; color: #fff;
+                                        width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
+                                        display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;
+                                    ">&times;</button>
+                                </div>
+                            </div>
+                            <div style="padding: 12px 14px;">
+                                <div id="map-info-progres" style="margin-bottom: 10px;"></div>
+                                <div id="map-info-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px;"></div>
+                                <div id="map-info-komoditas" style="margin-bottom: 10px;"></div>
+                                <a id="map-info-link" href="#" class="btn btn-sm btn-primary w-100" style="font-size: 0.7rem; border-radius: 6px; padding: 6px;">
+                                    <i class="mdi mdi-information-outline me-1"></i> Lihat Detail
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -437,6 +500,9 @@
         function filterByDate(date) {
             const url = new URL(window.location.href);
             url.searchParams.set('progres_date', date);
+            // Preserve existing filters
+            if (!url.searchParams.has('period')) url.searchParams.set('period', '{{ $period ?? "all" }}');
+            if (!url.searchParams.has('tahap')) url.searchParams.set('tahap', '{{ $tahap ?? "all" }}');
             window.location.href = url.toString();
         }
 
