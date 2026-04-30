@@ -240,6 +240,152 @@ class DashboardController extends Controller
     }
 
     /**
+     * API endpoint for real-time dashboard data (AJAX polling)
+     */
+    public function apiData(Request $request)
+    {
+        $period = $request->get('period', 'all');
+        $startDate = match ($period) {
+            'week' => Carbon::now('Asia/Jakarta')->startOfWeek(),
+            'month' => Carbon::now('Asia/Jakarta')->startOfMonth(),
+            'year' => Carbon::now('Asia/Jakarta')->startOfYear(),
+            default => null,
+        };
+
+        $desa_knmp = Knmp::with([
+            'province',
+            'regency',
+            'district',
+            'village',
+            'profileKnmp',
+            'progresKnmp',
+            'latestProgresNasional',
+        ])->withCount('informasiResponden')->get();
+
+        // 1. Responden yang telah mengisi survey
+        $surveyQuery = InformasiResponden::query()
+            ->whereExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('tingkat_kebahagiaan_nelayan')
+                    ->whereColumn('tingkat_kebahagiaan_nelayan.responden_id', 'informasi_responden.id');
+            });
+        if ($startDate) {
+            $surveyQuery->where('created_at', '>=', $startDate);
+        }
+        $totalSurveyTerisi = $surveyQuery->distinct('id')->count();
+
+        // 2. Tingkat Kelengkapan Data
+        $totalResponden = InformasiResponden::count();
+        $responden_dengan_data = InformasiResponden::where(function ($query) {
+            $query->whereHas('tingkatKebahagiaan')
+                ->orWhereHas('tanggapanMasyarakat')
+                ->orWhereHas('informasiUsaha')
+                ->orWhereHas('informasiPemasaran')
+                ->orWhereHas('pendapatanRt')
+                ->orWhereHas('sosialKelembagaan');
+        })->count();
+        $tingkatKelengkapanData = $totalResponden > 0
+            ? round(($responden_dengan_data / $totalResponden) * 100, 2) : 0;
+
+        // 3. Rata-rata Capaian Indikator
+        $capaianIndikator = DB::table('progres_knmp_details')->avg('persen') ?? 0;
+
+        // 4. Rata-rata Indeks Kebahagiaan
+        $rataRataKebahagiaan = TingkatKebahagiaanNelayan::avg('skor_nilai') ?? 0;
+
+        // Progres KNMP Nasional
+        $selectedProgresDate = $request->get('progres_date');
+        if (!$selectedProgresDate) {
+            $selectedProgresDate = ProgresKnmpNasional::selectRaw('DISTINCT tanggal')
+                ->whereNotNull('tanggal')->orderBy('tanggal', 'desc')->value('tanggal');
+        }
+        $progresNasionalQuery = ProgresKnmpNasional::with('knmp')->orderBy('progres', 'desc');
+        if ($selectedProgresDate) {
+            $progresNasionalQuery->where('tanggal', $selectedProgresDate);
+        }
+        $progresNasional = $progresNasionalQuery->get();
+        $progresNasionalAvg = $progresNasional->avg('progres') ?? 0;
+
+        // KPI Calculations
+        $totalKnmp = count($desa_knmp);
+
+        // Ketersediaan Infrastruktur
+        $infraColumns = [
+            'infra_jalan_akses',
+            'infra_listrik',
+            'infra_air_bersih',
+            'infra_internet',
+            'infra_ipal',
+            'infra_dermaga_tambat',
+            'infra_tpi',
+            'infra_cold_storage',
+            'infra_pabrik_es',
+            'infra_kantor_koperasi',
+            'infra_bengkel_nelayan',
+            'infra_waserda'
+        ];
+        $profiles = ProfileKnmp::select($infraColumns)->get();
+        $totalPercentage = 0;
+        $countProfiles = $profiles->count();
+        foreach ($profiles as $profile) {
+            $filledCount = 0;
+            foreach ($infraColumns as $col) {
+                if ($profile->$col)
+                    $filledCount++;
+            }
+            $totalPercentage += ($filledCount / 12) * 100;
+        }
+        $ketersediaanInfrastruktur = $countProfiles > 0 ? round($totalPercentage / $countProfiles, 2) : 0;
+
+        // Indeks Kesesuaian Kebutuhan
+        $totalTanggapan = TanggapanMasyarakat::count();
+        $sesuaiKebutuhan = TanggapanMasyarakat::where('kesesuaian_kebutuhan', 1)->count();
+        $indeksKesesuaianKebutuhan = $totalTanggapan > 0
+            ? round(($sesuaiKebutuhan / $totalTanggapan) * 100, 2) : 0;
+
+        // Pendapatan RT Nelayan
+        $pendapatanRtNelayan = InformasiPendapatanRumahTangga::avg('pendapatan_total') ?? 0;
+
+        // Indeks Kesejahteraan
+        $indeksKesejahteraan = round($rataRataKebahagiaan, 2);
+
+        // Tingkat Kelembagaan
+        $totalSosial = SosialKelembagaan::count();
+        $anggotaKelompokKoperasi = SosialKelembagaan::where(function ($q) {
+            $q->where('anggota_kelompok', '>=', 3)->orWhere('anggota_koperasi', '>=', 3);
+        })->count();
+        $tingkatKelembagaan = $totalSosial > 0
+            ? round(($anggotaKelompokKoperasi / $totalSosial) * 100, 2) : 0;
+
+        // Total Tenaga Kerja
+        $totalTenagaKerja = DB::table('progres_knmp')->sum('tk_total') ?? 0;
+
+        // Progres Nasional table data
+        $progresNasionalData = $progresNasional->map(function ($item) {
+            return [
+                'nama' => $item->knmp ? $item->knmp->nama : 'KNMP #' . $item->knmp_id,
+                'progres' => round($item->progres, 2),
+            ];
+        })->values();
+
+        return response()->json([
+            'totalKnmp' => number_format($totalKnmp, 0, ',', '.'),
+            'ketersediaanInfrastruktur' => number_format($ketersediaanInfrastruktur, 2, ',', '.') . '%',
+            'pendapatanRtNelayan' => 'Rp ' . number_format($pendapatanRtNelayan, 0, ',', '.'),
+            'indeksKesesuaianKebutuhan' => number_format($indeksKesesuaianKebutuhan, 2, ',', '.') . '%',
+            'indeksKesejahteraan' => number_format($indeksKesejahteraan, 2, ',', '.'),
+            'tingkatKelembagaan' => number_format($tingkatKelembagaan, 2, ',', '.') . '%',
+            'progresNasionalAvg' => number_format($progresNasionalAvg, 2),
+            'progresNasionalCount' => count($progresNasional),
+            'progresNasionalSelesai' => $progresNasional->where('progres', 100)->count(),
+            'progresNasionalData' => $progresNasionalData,
+            'totalSurveyTerisi' => $totalSurveyTerisi,
+            'tingkatKelengkapanData' => $tingkatKelengkapanData,
+            'timestamp' => now()->format('H:i:s'),
+        ]);
+    }
+
+    /**
      * Export Dashboard to PDF
      */
     public function exportPdf(Request $request)

@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
     // ==============================
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::get('/dashboard/export-pdf', [DashboardController::class, 'exportPdf'])->name('dashboard.export-pdf');
+    Route::get('/dashboard/api/data', [DashboardController::class, 'apiData'])->name('dashboard.api-data');
 
     // ==============================
     // ANALYTICS ROUTES (Admin Only)

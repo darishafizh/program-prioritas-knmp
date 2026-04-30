@@ -115,9 +115,9 @@
                             </form>
                         </div>
                         <!-- <a href="{{ route('dashboard.export-pdf', ['period' => $period ?? 'all']) }}"
-                                        class="btn btn-sm btn-primary" target="_blank">
-                                        <i class="mdi mdi-file-pdf-box me-1"></i>Export PDF
-                                    </a> -->
+                                            class="btn btn-sm btn-primary" target="_blank">
+                                            <i class="mdi mdi-file-pdf-box me-1"></i>Export PDF
+                                        </a> -->
                     </div>
                 </div>
             </div>
@@ -133,7 +133,7 @@
                         <i class="mdi mdi-home-city"></i>
                     </div>
                     <h5>Total KNMP</h5>
-                    <h3>{{ number_format($totalKnmp ?? 0, 0, ',', '.') }}</h3>
+                    <h3 id="kpi-totalKnmp">{{ number_format($totalKnmp ?? 0, 0, ',', '.') }}</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.8rem;">
                         <i class="mdi mdi-map-marker-radius text-primary me-1"></i>
                         Lokasi KNMP aktif
@@ -150,7 +150,8 @@
                         <i class="mdi mdi-domain"></i>
                     </div>
                     <h5>Ketersediaan Infrastruktur</h5>
-                    <h3>{{ number_format($ketersediaanInfrastruktur ?? 0, 2, ',', '.') }}%</h3>
+                    <h3 id="kpi-ketersediaanInfrastruktur">
+                        {{ number_format($ketersediaanInfrastruktur ?? 0, 2, ',', '.') }}%</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.8rem;">
                         <i class="mdi mdi-check-circle text-success me-1"></i>
                         Komponen infrastruktur tersedia
@@ -167,7 +168,7 @@
                         <i class="mdi mdi-cash-multiple"></i>
                     </div>
                     <h5>Pendapatan RT Nelayan</h5>
-                    <h3>Rp {{ number_format($pendapatanRtNelayan ?? 0, 0, ',', '.') }}</h3>
+                    <h3 id="kpi-pendapatanRtNelayan">Rp {{ number_format($pendapatanRtNelayan ?? 0, 0, ',', '.') }}</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.8rem;">
                         <i class="mdi mdi-trending-up text-success me-1"></i>
                         Rata-rata pendapatan/orang/bulan
@@ -187,7 +188,8 @@
                         <i class="mdi mdi-clipboard-check-outline"></i>
                     </div>
                     <h5>Indeks Kesesuaian Kebutuhan</h5>
-                    <h3>{{ number_format($indeksKesesuaianKebutuhan ?? 0, 2, ',', '.') }}%</h3>
+                    <h3 id="kpi-indeksKesesuaianKebutuhan">
+                        {{ number_format($indeksKesesuaianKebutuhan ?? 0, 2, ',', '.') }}%</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.8rem;">
                         <i class="mdi mdi-check-decagram text-warning me-1"></i>
                         Responden menyatakan sesuai
@@ -204,7 +206,7 @@
                         <i class="mdi mdi-emoticon-happy"></i>
                     </div>
                     <h5>Indeks Kesejahteraan Nelayan</h5>
-                    <h3>{{ number_format($indeksKesejahteraan ?? 0, 2, ',', '.') }}</h3>
+                    <h3 id="kpi-indeksKesejahteraan">{{ number_format($indeksKesejahteraan ?? 0, 2, ',', '.') }}</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.8rem;">
                         <i class="mdi mdi-thumb-up text-success me-1"></i>
                         Skala 1-10
@@ -221,7 +223,7 @@
                         <i class="mdi mdi-account-group"></i>
                     </div>
                     <h5>Tingkat Kelembagaan Nelayan</h5>
-                    <h3>{{ number_format($tingkatKelembagaan ?? 0, 2, ',', '.') }}%</h3>
+                    <h3 id="kpi-tingkatKelembagaan">{{ number_format($tingkatKelembagaan ?? 0, 2, ',', '.') }}%</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.8rem;">
                         <i class="mdi mdi-account-multiple text-info me-1"></i>
                         Nelayan dalam kelompok/koperasi
@@ -283,16 +285,17 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-4">
                         <div class="bg-light p-3 rounded me-3">
-                            <h2 class="mb-0 text-primary">{{ number_format($progresNasionalAvg, 2) }}%</h2>
+                            <h2 class="mb-0 text-primary" id="kpi-progresNasionalAvg">
+                                {{ number_format($progresNasionalAvg, 2) }}%</h2>
                             <small class="text-muted">Rata-rata Nasional</small>
                         </div>
                         <div class="flex-grow-1">
                             <p class="mb-1 text-muted">Statistik Import Data:</p>
                             <div class="d-flex gap-3">
-                                <span class="badge bg-soft-info text-info p-2">
+                                <span class="badge bg-soft-info text-info p-2" id="kpi-progresCount">
                                     <i class="mdi mdi-map-marker me-1"></i> {{ count($progresNasional) }} Lokasi
                                 </span>
-                                <span class="badge bg-soft-success text-success p-2">
+                                <span class="badge bg-soft-success text-success p-2" id="kpi-progresSelesai">
                                     <i class="mdi mdi-check-circle me-1"></i>
                                     {{ $progresNasional->where('progres', 100)->count() }} Selesai (100%)
                                 </span>
@@ -316,7 +319,7 @@
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="progres-nasional-tbody">
                                     @foreach($progresNasional as $index => $item)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
@@ -405,6 +408,20 @@
                     <h4 class="header-title mb-3">Sebaran Lokasi KNMP</h4>
                     <div id="map-knmp" style="height: 450px; border-radius:10px;"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Real-time update indicator --}}
+    <div id="realtime-indicator" style="position: fixed; bottom: 20px; right: 20px; z-index: 1050; display: none;">
+        <div class="card border-0 shadow-lg mb-0" style="border-radius: 12px; overflow: hidden;">
+            <div class="card-body py-2 px-3 d-flex align-items-center gap-2">
+                <div class="spinner-grow spinner-grow-sm text-success" role="status" id="realtime-spinner">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <i class="mdi mdi-check-circle text-success" id="realtime-check"
+                    style="display: none; font-size: 1.1rem;"></i>
+                <small class="text-muted" id="realtime-text">Memperbarui data...</small>
             </div>
         </div>
     </div>
@@ -541,4 +558,10 @@
         };
     </script>
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
+    <script>
+        window.dashboardApiUrl = "{{ route('dashboard.api-data') }}";
+        window.dashboardPeriod = "{{ $period ?? 'all' }}";
+        window.dashboardProgresDate = "{{ $selectedProgresDate ?? '' }}";
+    </script>
+    <script src="{{ asset('assets/js/dashboard-realtime.js') }}"></script>
 @endpush
