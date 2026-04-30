@@ -15,11 +15,19 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Ensure roles exist first
+        $superAdminRole = Role::firstOrCreate(
+            ['name' => 'super_admin'],
+            [
+                'display_name' => 'Super Admin',
+                'description' => 'Super Administrator dengan kontrol penuh ke semua fitur dan dapat menginput semua KNMP'
+            ]
+        );
+
         $adminRole = Role::firstOrCreate(
             ['name' => 'admin'],
             [
                 'display_name' => 'Admin',
-                'description' => 'Administrator dengan akses penuh ke semua fitur'
+                'description' => 'Administrator yang dapat memantau dan melihat semua data (read-only)'
             ]
         );
 
@@ -30,6 +38,20 @@ class UserSeeder extends Seeder
                 'description' => 'Dapat mengisi survey dan mengedit data responden'
             ]
         );
+
+        // Create Super Admin user
+        $superAdmin = User::firstOrCreate(
+            ['email' => 'superadmin@kkp.go.id'],
+            [
+                'name' => 'Super Admin',
+                'username' => 'SuperAdmin',
+                'password' => Hash::make('MonevKKP65'),
+            ]
+        );
+        if (!$superAdmin->hasRole('super_admin')) {
+            $superAdmin->assignRole('super_admin');
+        }
+        $this->command->info("Created Super Admin user: SuperAdmin (MonevKKP65)");
 
         // Create Admin user
         $admin = User::firstOrCreate(
@@ -89,13 +111,14 @@ class UserSeeder extends Seeder
 
         $this->command->info('');
         $this->command->info('Users seeded successfully!');
-        $this->command->info('========================================');
-        $this->command->info('| Username     | Password     | Role       |');
-        $this->command->info('|--------------|--------------|------------|');
-        $this->command->info('| Admin        | MonevKKP65   | Admin      |');
-        $this->command->info('| Enumerator1  | EnumPertama  | Enumerator |');
-        $this->command->info('| Enumerator2  | EnumKedua    | Enumerator |');
-        $this->command->info('| Enumerator3  | EnumKetiga   | Enumerator |');
-        $this->command->info('========================================');
+        $this->command->info('=============================================');
+        $this->command->info('| Username     | Password     | Role        |');
+        $this->command->info('|--------------|--------------|-------------|');
+        $this->command->info('| SuperAdmin   | MonevKKP65   | Super Admin |');
+        $this->command->info('| Admin        | MonevKKP65   | Admin       |');
+        $this->command->info('| Enumerator1  | EnumPertama  | Enumerator  |');
+        $this->command->info('| Enumerator2  | EnumKedua    | Enumerator  |');
+        $this->command->info('| Enumerator3  | EnumKetiga   | Enumerator  |');
+        $this->command->info('=============================================');
     }
 }

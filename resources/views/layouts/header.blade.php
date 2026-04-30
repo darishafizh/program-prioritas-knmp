@@ -54,8 +54,8 @@
                         </a>
                     </li>
 
-                    <!-- Manajemen User - hanya untuk admin -->
-                    @if(Auth::user()->isAdmin())
+                    <!-- Manajemen User - hanya untuk super admin -->
+                    @if(Auth::user()->isSuperAdmin())
                         <li class="header-nav-item">
                             <a class="header-nav-link {{ request()->routeIs('user_management.*') ? 'active' : '' }}"
                                 href="{{ route('user_management.index') }}">
@@ -76,7 +76,9 @@
                             <span
                                 class="header-user-name">{{ Auth::user()->username ?? Auth::user()->name ?? 'User' }}</span>
                             <span class="header-user-role">
-                                @if(Auth::user()->hasRole('admin'))
+                                @if(Auth::user()->hasRole('super_admin'))
+                                    Super Admin
+                                @elseif(Auth::user()->hasRole('admin'))
                                     Admin
                                 @elseif(Auth::user()->hasRole('enumerator'))
                                     Enumerator
@@ -91,7 +93,9 @@
                         <li class="dropdown-user-header">
                             <strong>{{ Auth::user()->username ?? Auth::user()->name ?? 'User' }}</strong>
                             <small>
-                                @if(Auth::user()->hasRole('admin'))
+                                @if(Auth::user()->hasRole('super_admin'))
+                                    <span class="badge" style="background-color: #8b5cf6;">Super Admin</span>
+                                @elseif(Auth::user()->hasRole('admin'))
                                     <span class="badge bg-danger">Admin</span>
                                 @elseif(Auth::user()->hasRole('enumerator'))
                                     <span class="badge bg-success">Enumerator</span>

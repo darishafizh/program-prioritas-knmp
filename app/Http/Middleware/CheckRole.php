@@ -25,6 +25,11 @@ class CheckRole
             return $next($request);
         }
 
+        // Super Admin has access to all roles
+        if ($request->user()->isSuperAdmin()) {
+            return $next($request);
+        }
+
         // Check if user has any of the required roles
         if ($request->user()->hasAnyRole($roles)) {
             return $next($request);

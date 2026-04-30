@@ -79,7 +79,7 @@
 
     <!-- Stats Cards -->
     <div class="row mb-4">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -94,7 +94,22 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon-sm" style="background-color: #8b5cf6; color: white;">
+                            <i class="mdi mdi-shield-crown"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-0 text-muted">Super Admin</h6>
+                            <h3 class="mb-0 fw-bold">{{ $users->filter(fn($u) => $u->hasRole('super_admin'))->count() }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -109,7 +124,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -165,7 +180,11 @@
                                     <td>{{ $user->name }}</td>
                                     <td><a href="mailto:{{ $user->email }}" class="text-muted">{{ $user->email }}</a></td>
                                     <td>
-                                        @if($user->hasRole('admin'))
+                                        @if($user->hasRole('super_admin'))
+                                            <span class="badge" style="background-color: #ede9fe; color: #8b5cf6;">
+                                                <i class="mdi mdi-shield-crown me-1"></i>Super Admin
+                                            </span>
+                                        @elseif($user->hasRole('admin'))
                                             <span class="badge bg-danger-subtle text-danger">
                                                 <i class="mdi mdi-shield-account me-1"></i>Admin
                                             </span>

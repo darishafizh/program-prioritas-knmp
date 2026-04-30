@@ -22,6 +22,14 @@ class Role extends Model
     }
 
     /**
+     * Check if this is the super admin role.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->name === 'super_admin';
+    }
+
+    /**
      * Check if this is the admin role.
      */
     public function isAdmin(): bool

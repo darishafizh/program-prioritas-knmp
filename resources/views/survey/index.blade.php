@@ -314,7 +314,7 @@
                                 Kelola data detail kuesioner untuk setiap Kampung Nelayan.
                             </p>
                         </div>
-                        @if(Auth::user()->isAdmin())
+                        @if(Auth::user()->isSuperAdmin())
                             <div class="col-sm-6 text-end">
                                 <button type="button" class="btn btn-success me-2" data-bs-toggle="modal"
                                     data-bs-target="#importKnmpModal">
@@ -350,7 +350,7 @@
                                         <td>{{ ucwords(strtolower($knmp->regency->name ?? 'N/A')) }}</td>
                                         <td>{{ ucwords(strtolower($knmp->province->name ?? 'N/A')) }}</td>
                                         <td class="action-buttons">
-                                            @if(!Auth::user()->isAdmin())
+                                            @if(Auth::user()->canInputData())
                                                 <a href="{{ route('forms.index', $knmp->id) }}"
                                                     class="btn btn-action btn-action-primary" data-bs-toggle="tooltip"
                                                     data-bs-placement="top" title="Input Survey">
@@ -372,7 +372,7 @@
                                                 title="Image">
                                                 <i class="mdi mdi-image"></i>
                                             </button>
-                                            @if(Auth::user()->isAdmin())
+                                            @if(Auth::user()->isSuperAdmin())
                                                 <form action="{{ route('survey.destroy', $knmp->id) }}" method="POST"
                                                     class="d-inline delete-knmp-form">
                                                     @csrf
@@ -398,7 +398,7 @@
     </div> <!-- end row-->
 
     <!-- Add KNMP Modal (Admin Only) -->
-    @if(Auth::user()->isAdmin())
+    @if(Auth::user()->isSuperAdmin())
         <div class="modal fade" id="addKnmpModal" tabindex="-1" aria-labelledby="addKnmpModalLabel" aria-hidden="true"
             style="z-index: 1055;">
             <div class="modal-dialog modal-dialog-centered" style="display: flex; justify-content: center; margin: auto;">
@@ -484,7 +484,7 @@
     @endif
 
     <!-- Import KNMP Modal (Admin Only) -->
-    @if(Auth::user()->isAdmin())
+    @if(Auth::user()->isSuperAdmin())
         <div class="modal fade" id="importKnmpModal" tabindex="-1" aria-labelledby="importKnmpModalLabel" aria-hidden="true"
             style="z-index: 1055;">
             <div class="modal-dialog modal-dialog-centered" style="display: flex; justify-content: center; margin: auto;">
@@ -604,7 +604,7 @@
                         @endif
                     </div>
                     <div class="modal-footer evidence-modal-footer">
-                        @if(!Auth::user()->isAdmin())
+                        @if(Auth::user()->canInputData())
                             <a href="{{ route('survey.evidence', $knmp->id) }}" class="btn btn-evidence-primary">
                                 <i class="mdi mdi-open-in-new me-1"></i>Kelola Evidence
                             </a>

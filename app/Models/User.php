@@ -74,6 +74,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user is a super admin.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->hasRole('super_admin');
+    }
+
+    /**
      * Check if user is an admin.
      */
     public function isAdmin(): bool
@@ -87,6 +95,22 @@ class User extends Authenticatable
     public function isEnumerator(): bool
     {
         return $this->hasRole('enumerator');
+    }
+
+    /**
+     * Check if user has system management privileges.
+     */
+    public function canManageSystem(): bool
+    {
+        return $this->isSuperAdmin();
+    }
+
+    /**
+     * Check if user can input and edit data.
+     */
+    public function canInputData(): bool
+    {
+        return $this->isSuperAdmin() || $this->isEnumerator();
     }
 
     /**

@@ -46,16 +46,17 @@ Route::middleware('auth')->group(function () {
     // ==============================
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::get('/dashboard/export-pdf', [DashboardController::class, 'exportPdf'])->name('dashboard.export-pdf');
+    Route::get('/dashboard/api/data', [DashboardController::class, 'apiData'])->name('dashboard.api-data');
 
     // ==============================
-    // ANALYTICS ROUTES (Admin Only)
+    // ANALYTICS ROUTES (Super Admin Only)
     // ==============================
     Route::post('/analytics/import-progres-nasional', [\App\Http\Controllers\ImportController::class, 'importProgresKnmpNasional'])
-        ->middleware('role:admin')
+        ->middleware('role:super_admin')
         ->name('analytics.import_progres_nasional');
 
     Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class, 'index'])
-        ->middleware('role:admin')
+        ->middleware('role:super_admin')
         ->name('analytics.index');
 
 
@@ -66,11 +67,11 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'survey'], function () {
         Route::get('/', [SurveyController::class, 'index'])->name('survey.index');
 
-        // Admin only: Add and Delete KNMP
-        Route::post('/', [SurveyController::class, 'store'])->middleware('role:admin')->name('survey.store');
-        Route::post('/import', [SurveyController::class, 'import'])->middleware('role:admin')->name('survey.import');
-        Route::get('/template', [SurveyController::class, 'downloadTemplate'])->middleware('role:admin')->name('survey.template');
-        Route::delete('/{id}', [SurveyController::class, 'destroy'])->middleware('role:admin')->name('survey.destroy');
+        // Super Admin only: Add and Delete KNMP
+        Route::post('/', [SurveyController::class, 'store'])->middleware('role:super_admin')->name('survey.store');
+        Route::post('/import', [SurveyController::class, 'import'])->middleware('role:super_admin')->name('survey.import');
+        Route::get('/template', [SurveyController::class, 'downloadTemplate'])->middleware('role:super_admin')->name('survey.template');
+        Route::delete('/{id}', [SurveyController::class, 'destroy'])->middleware('role:super_admin')->name('survey.destroy');
 
         // AJAX endpoints for cascade dropdown
         Route::get('/locations/regencies/{province_id}', [SurveyController::class, 'getRegencies'])->name('survey.regencies');
@@ -83,31 +84,55 @@ Route::middleware('auth')->group(function () {
         Route::group(['prefix' => 'forms', 'middleware' => 'village_access'], function () {
             Route::get('/{knmp}', [FormsController::class, 'index'])->name('forms.index');
             Route::get('/{knmp}/edit-responden', [RespondenController::class, 'editRespondenList'])->name('forms.edit-responden');
-            Route::delete('/delete-responden', [RespondenController::class, 'delete_responden'])->name('forms.delete_responden');
+            Route::group(['middleware' => 'role:enumerator'], function () {
+                Route::delete('/delete-responden', [RespondenController::class, 'delete_responden'])->name('forms.delete_responden');
 
-            // Store routes (using new specialized controllers)
-            Route::post('/store_profile_knmp/{knmp}', [ProfileKnmpController::class, 'store'])->name('forms.store_profile_knmp');
-            Route::post('/store_progres_knmp/{knmp}', [ProgresController::class, 'store'])->name('forms.store_progres_knmp');
-            Route::post('/store_tanggapan_masyarakat/{knmp}', [TanggapanController::class, 'store'])->name('forms.store_tanggapan_masyarakat');
-            Route::post('/store_tingkat_kebahagiaan/{knmp}', [KebahagiaanController::class, 'store'])->name('forms.store_tingkat_kebahagiaan');
-            Route::post('/store_informasi_responden/{knmp}', [RespondenController::class, 'store_informasi_responden'])->name('forms.store_informasi_responden');
-            Route::post('/store_informasi_usaha/{knmp}', [UsahaController::class, 'store'])->name('forms.store_informasi_usaha');
-            Route::post('/store_pemasaran_perikanan/{knmp}', [PemasaranController::class, 'store'])->name('forms.store_pemasaran_perikanan');
-            Route::post('/store_pendapatan_rt/{knmp}', [PendapatanRtController::class, 'store'])->name('forms.store_pendapatan_rt');
-            Route::post('/store_sosial_kelembagaan/{knmp}', [SosialController::class, 'store'])->name('forms.store_sosial_kelembagaan');
+                // Store routes (using new specialized controllers)
+                Route::post('/store_profile_knmp/{knmp}', [ProfileKnmpController::class, 'store'])->name('forms.store_profile_knmp');
+                Route::post('/store_progres_knmp/{knmp}', [ProgresController::class, 'store'])->name('forms.store_progres_knmp');
+                Route::post('/store_tanggapan_masyarakat/{knmp}', [TanggapanController::class, 'store'])->name('forms.store_tanggapan_masyarakat');
+                Route::post('/store_tingkat_kebahagiaan/{knmp}', [KebahagiaanController::class, 'store'])->name('forms.store_tingkat_kebahagiaan');
+                Route::post('/store_informasi_responden/{knmp}', [RespondenController::class, 'store_informasi_responden'])->name('forms.store_informasi_responden');
+                Route::post('/store_informasi_usaha/{knmp}', [UsahaController::class, 'store'])->name('forms.store_informasi_usaha');
+                Route::post('/store_pemasaran_perikanan/{knmp}', [PemasaranController::class, 'store'])->name('forms.store_pemasaran_perikanan');
+                Route::post('/store_pendapatan_rt/{knmp}', [PendapatanRtController::class, 'store'])->name('forms.store_pendapatan_rt');
+                Route::post('/store_sosial_kelembagaan/{knmp}', [SosialController::class, 'store'])->name('forms.store_sosial_kelembagaan');
 
-            // Edit/Update routes (using new specialized controllers)
-            Route::post('/update_profile_knmp/{knmp}', [ProfileKnmpController::class, 'update'])->name('forms.update_profile_knmp');
-            Route::post('/update_progres_knmp/{knmp}', [ProgresController::class, 'update'])->name('forms.update_progres_knmp');
-            Route::post('/update_tanggapan_masyarakat/{knmp}', [TanggapanController::class, 'update'])->name('forms.update_tanggapan_masyarakat');
+                // Edit/Update routes (using new specialized controllers)
+                Route::post('/update_profile_knmp/{knmp}', [ProfileKnmpController::class, 'update'])->name('forms.update_profile_knmp');
+                Route::post('/update_progres_knmp/{knmp}', [ProgresController::class, 'update'])->name('forms.update_progres_knmp');
+                Route::post('/update_tanggapan_masyarakat/{knmp}', [TanggapanController::class, 'update'])->name('forms.update_tanggapan_masyarakat');
 
-            // File upload routes
-            Route::post('/bukti-upload', [EvidenceController::class, 'store_bukti_upload'])
-                ->name('forms.store_bukti_upload');
-            Route::delete('/bukti-upload', [EvidenceController::class, 'delete_bukti_upload'])
-                ->name('forms.delete_bukti_upload');
-            Route::delete('/bukti-upload/{id}', [EvidenceController::class, 'delete_bukti_single'])
-                ->name('forms.delete_bukti_single');
+                // File upload routes
+                Route::post('/bukti-upload', [EvidenceController::class, 'store_bukti_upload'])
+                    ->name('forms.store_bukti_upload');
+                Route::delete('/bukti-upload', [EvidenceController::class, 'delete_bukti_upload'])
+                    ->name('forms.delete_bukti_upload');
+                Route::delete('/bukti-upload/{id}', [EvidenceController::class, 'delete_bukti_single'])
+                    ->name('forms.delete_bukti_single');
+
+                // ==============================
+                // IMPORT EXCEL ROUTES
+                // ==============================
+                Route::post('/import-responden/{knmp}', [\App\Http\Controllers\ImportController::class, 'importResponden'])
+                    ->name('forms.import_responden');
+                Route::post('/import-profile-knmp/{knmp}', [\App\Http\Controllers\ImportController::class, 'importProfileKnmp'])
+                    ->name('forms.import_profile_knmp');
+                Route::post('/import-progres-knmp/{knmp}', [\App\Http\Controllers\ImportController::class, 'importProgresKnmp'])
+                    ->name('forms.import_progres_knmp');
+                Route::post('/import-tanggapan-masyarakat/{knmp}', [\App\Http\Controllers\ImportController::class, 'importTanggapanMasyarakat'])
+                    ->name('forms.import_tanggapan_masyarakat');
+                Route::post('/import-tingkat-kebahagiaan/{knmp}', [\App\Http\Controllers\ImportController::class, 'importTingkatKebahagiaan'])
+                    ->name('forms.import_tingkat_kebahagiaan');
+                Route::post('/import-informasi-usaha/{knmp}', [\App\Http\Controllers\ImportController::class, 'importInformasiUsaha'])
+                    ->name('forms.import_informasi_usaha');
+                Route::post('/import-informasi-pemasaran/{knmp}', [\App\Http\Controllers\ImportController::class, 'importInformasiPemasaran'])
+                    ->name('forms.import_informasi_pemasaran');
+                Route::post('/import-pendapatan-rt/{knmp}', [\App\Http\Controllers\ImportController::class, 'importPendapatanRt'])
+                    ->name('forms.import_pendapatan_rt');
+                Route::post('/import-sosial-kelembagaan/{knmp}', [\App\Http\Controllers\ImportController::class, 'importSosialKelembagaan'])
+                    ->name('forms.import_sosial_kelembagaan');
+            });
 
             // Evidence & PDF routes
             Route::get('/evidence/{knmp}', [EvidenceController::class, 'evidence'])
@@ -121,27 +146,6 @@ Route::middleware('auth')->group(function () {
             Route::get('/export-excel/{knmp?}', [RespondenController::class, 'exportExcel'])
                 ->name('forms.export-excel');
 
-            // ==============================
-            // IMPORT EXCEL ROUTES
-            // ==============================
-            Route::post('/import-responden/{knmp}', [\App\Http\Controllers\ImportController::class, 'importResponden'])
-                ->name('forms.import_responden');
-            Route::post('/import-profile-knmp/{knmp}', [\App\Http\Controllers\ImportController::class, 'importProfileKnmp'])
-                ->name('forms.import_profile_knmp');
-            Route::post('/import-progres-knmp/{knmp}', [\App\Http\Controllers\ImportController::class, 'importProgresKnmp'])
-                ->name('forms.import_progres_knmp');
-            Route::post('/import-tanggapan-masyarakat/{knmp}', [\App\Http\Controllers\ImportController::class, 'importTanggapanMasyarakat'])
-                ->name('forms.import_tanggapan_masyarakat');
-            Route::post('/import-tingkat-kebahagiaan/{knmp}', [\App\Http\Controllers\ImportController::class, 'importTingkatKebahagiaan'])
-                ->name('forms.import_tingkat_kebahagiaan');
-            Route::post('/import-informasi-usaha/{knmp}', [\App\Http\Controllers\ImportController::class, 'importInformasiUsaha'])
-                ->name('forms.import_informasi_usaha');
-            Route::post('/import-informasi-pemasaran/{knmp}', [\App\Http\Controllers\ImportController::class, 'importInformasiPemasaran'])
-                ->name('forms.import_informasi_pemasaran');
-            Route::post('/import-pendapatan-rt/{knmp}', [\App\Http\Controllers\ImportController::class, 'importPendapatanRt'])
-                ->name('forms.import_pendapatan_rt');
-            Route::post('/import-sosial-kelembagaan/{knmp}', [\App\Http\Controllers\ImportController::class, 'importSosialKelembagaan'])
-                ->name('forms.import_sosial_kelembagaan');
             Route::get('/download-template/{section}', [\App\Http\Controllers\ImportController::class, 'downloadTemplate'])
                 ->name('forms.download_template');
         });
@@ -156,9 +160,9 @@ Route::middleware('auth')->group(function () {
     });
 
     // ==============================
-    // ACTIVITY LOG ROUTES (Admin Only)
+    // ACTIVITY LOG ROUTES (Super Admin Only)
     // ==============================
-    Route::group(['prefix' => 'activity-log', 'middleware' => 'role:admin'], function () {
+    Route::group(['prefix' => 'activity-log', 'middleware' => 'role:super_admin'], function () {
         Route::get('/', [App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-log.index');
     });
 
@@ -167,9 +171,9 @@ Route::middleware('auth')->group(function () {
 
 
     // ==============================
-    // USER MANAGEMENT ROUTES (Admin Only)
+    // USER MANAGEMENT ROUTES (Super Admin Only)
     // ==============================
-    Route::group(['prefix' => 'user_management', 'middleware' => 'role:admin'], function () {
+    Route::group(['prefix' => 'user_management', 'middleware' => 'role:super_admin'], function () {
         Route::get('/', [UserManagementController::class, 'index'])->name('user_management.index');
         Route::post('/', [UserManagementController::class, 'store'])->name('user_management.store');
         Route::put('/{id}', [UserManagementController::class, 'update'])->name('user_management.update');
