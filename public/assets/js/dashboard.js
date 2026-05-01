@@ -145,73 +145,63 @@ document.addEventListener('DOMContentLoaded', function () {
         dashboardCharts.capaian.render();
     }
 
-    // ===================================
-    // Chart 1.5: Tahap Progress (Dual Axis Bar Chart)
-    // ===================================
-    var chartTahapDataArr = data.chartTahapData || [];
-    if (chartTahapDataArr.length > 0) {
-        var tahapLabels = chartTahapDataArr.map(function(item) { return item.tahap; });
-        var tahapJumlah = chartTahapDataArr.map(function(item) { return item.jumlah_knmp; });
-        var tahapProgres = chartTahapDataArr.map(function(item) { return item.rata_progres; });
 
-        var tahapOptions = {
+    // ===================================
+    // Chart 1.5: Tren Progres KNMP Nasional (Line Chart)
+    // ===================================
+    var trendDatesArr = data.trendDates || [];
+    var trendAveragesArr = data.trendAverages || [];
+
+    if (trendDatesArr.length > 0) {
+        var trendOptions = {
             chart: {
-                height: 350,
-                type: 'bar',
+                height: 50,
+                width: 140,
+                type: 'area',
+                sparkline: { enabled: true },
                 toolbar: { show: false }
             },
-            plotOptions: {
-                bar: {
-                    columnWidth: '40%',
-                    borderRadius: 4
-                }
-            },
-            dataLabels: { enabled: false },
-            series: [{
-                name: 'Jumlah KNMP',
-                type: 'column',
-                data: tahapJumlah
-            }, {
-                name: 'Rata-Rata Progres',
-                type: 'line',
-                data: tahapProgres
-            }],
             stroke: {
-                width: [0, 4]
+                curve: 'smooth',
+                width: 2
             },
-            xaxis: {
-                categories: tahapLabels,
-                labels: { style: { colors: '#6c757d' } }
-            },
-            yaxis: [{
-                title: { text: 'Jumlah KNMP', style: { color: '#727cf5' } },
-                labels: { style: { colors: '#727cf5' } }
-            }, {
-                opposite: true,
-                title: { text: 'Rata-Rata Progres (%)', style: { color: '#0acf97' } },
-                labels: { style: { colors: '#0acf97' } },
-                max: 100
+            series: [{
+                name: 'Rata-rata Progres',
+                data: trendAveragesArr
             }],
-            colors: ['#727cf5', '#0acf97'],
-            grid: { borderColor: '#f1f3fa' },
-            tooltip: {
-                shared: true,
-                intersect: false,
-                y: {
-                    formatter: function (y, { seriesIndex }) {
-                        if (typeof y !== "undefined") {
-                            return seriesIndex === 0 ? y + " Lokasi" : y.toFixed(1) + "%";
-                        }
-                        return y;
-                    }
+            colors: ['#0acf97'],
+            xaxis: {
+                categories: trendDatesArr,
+                crosshairs: { width: 1 }
+            },
+            yaxis: {
+                min: 0,
+                max: 100
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.4,
+                    opacityTo: 0.0,
+                    stops: [0, 100]
                 }
+            },
+            tooltip: {
+                fixed: { enabled: false },
+                x: { show: false },
+                y: {
+                    title: { formatter: function (seriesName) { return '' } },
+                    formatter: function (val) { return val.toFixed(2) + "%" }
+                },
+                marker: { show: false }
             }
         };
 
-        var tahapEl = document.querySelector("#tahapProgressChart");
-        if (tahapEl) {
-            dashboardCharts.tahap = new ApexCharts(tahapEl, tahapOptions);
-            dashboardCharts.tahap.render();
+        var trendEl = document.querySelector("#trendNasionalChart");
+        if (trendEl) {
+            dashboardCharts.trend = new ApexCharts(trendEl, trendOptions);
+            dashboardCharts.trend.render();
         }
     }
 

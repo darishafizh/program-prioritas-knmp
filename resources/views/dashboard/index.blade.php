@@ -61,7 +61,8 @@
         }
 
         /* Fix modal centering - override app.css margin */
-        #importProgresNasionalModal .modal-dialog {
+        #importProgresNasionalModal .modal-dialog,
+        #exportPdfModal .modal-dialog {
             margin: auto !important;
         }
     </style>
@@ -94,9 +95,9 @@
     <!-- end page title -->
 
     <!-- Filter Bar -->
-    <div class="row mb-3">
+    <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm mb-0">
+            <div class="card mb-0 shadow-sm">
                 <div class="card-body py-2 px-3">
                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                         <div class="d-flex align-items-center flex-wrap gap-3">
@@ -130,6 +131,13 @@
                                 </form>
                             </div>
                         </div>
+                        <div>
+                            <button type="button" class="btn btn-sm btn-danger d-flex align-items-center gap-1 shadow-sm"
+                                data-bs-toggle="modal" data-bs-target="#exportPdfModal"
+                                style="font-size: 0.78rem; font-weight: 500; border-radius: 4px;">
+                                <i class="mdi mdi-file-pdf-box"></i> Ekspor PDF
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -148,31 +156,8 @@
     </div>
     @endif
 
-
-
-
-
-
-
-
-    {{-- Tahap Progress Chart --}}
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 fw-bold text-dark">
-                        <i class="mdi mdi-chart-bar text-primary me-1"></i>Analisis Rata-Rata Progres per Tahap
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div id="tahapProgressChart" style="height: 350px;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     {{-- Progres KNMP Nasional --}}
-    <div class="row">
+    <div class="row mt-4">
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -181,6 +166,15 @@
                         Progres Pembangunan KNMP Nasional
                     </h5>
                     <div class="d-flex align-items-center flex-wrap gap-2">
+                        <!-- Delta Period Filter -->
+                        <div class="input-group input-group-sm me-2" style="width: auto;">
+                            <span class="input-group-text"><i class="mdi mdi-swap-vertical"></i> Delta</span>
+                            <select class="form-select" id="deltaPeriodFilter" onchange="filterByDate(document.getElementById('progresDateFilter')?.value)">
+                                <option value="latest" {{ ($deltaPeriod ?? 'latest') == 'latest' ? 'selected' : '' }}>Terakhir Diupdate</option>
+                                <option value="weekly" {{ ($deltaPeriod ?? 'latest') == 'weekly' ? 'selected' : '' }}>Mingguan</option>
+                            </select>
+                        </div>
+                        
                         <!-- Date Filter Dropdown -->
                         @if(count($availableProgressDates ?? []) > 0)
                             <div class="input-group input-group-sm me-2" style="width: auto;">
@@ -196,14 +190,42 @@
                         @endif
 
                         <!-- Search Input -->
-                        <div class="input-group input-group-sm me-2 search-field-enhanced" style="width: 180px;">
+                        <div class="input-group input-group-sm search-field-enhanced" style="width: 180px;">
                             <span class="input-group-text"><i class="mdi mdi-magnify"></i></span>
                             <input type="text" id="paramsSearch" class="form-control" placeholder="Cari KNMP..."
                                 onkeyup="filterTable()">
                         </div>
-
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light p-3 rounded me-3">
+                                <h2 class="mb-0 text-primary" id="kpi-progresNasionalAvg">
+                                    {{ number_format($progresNasionalAvg, 2) }}%</h2>
+                                <small class="text-muted">Rata-rata Nasional</small>
+                            </div>
+                            <div>
+                                <p class="mb-1 text-muted">Statistik Import Data:</p>
+                                <div class="d-flex gap-3">
+                                    <span class="badge bg-soft-info text-info p-2" id="kpi-progresCount">
+                                        <i class="mdi mdi-map-marker me-1"></i> {{ count($progresNasional) }} Lokasi
+                                    </span>
+                                    <span class="badge bg-soft-success text-success p-2" id="kpi-progresSelesai">
+                                        <i class="mdi mdi-check-circle me-1"></i>
+                                        {{ $progresNasional->where('progres', 100)->count() }} Selesai (100%)
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Sparkline Chart -->
+                            <div class="ms-4 px-2 pt-1" style="width: 150px; height: 60px; overflow: hidden;">
+                                <div id="trendNasionalChart"></div>
+                            </div>
+                        </div>
+                        
                         <!-- Action Buttons -->
-                        <div class="btn-group btn-group-sm">
+                        <div class="btn-group">
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#importProgresNasionalModal">
                                 <i class="mdi mdi-upload me-1"></i> Import/Update
@@ -212,27 +234,6 @@
                                 class="btn btn-outline-secondary">
                                 <i class="mdi mdi-download me-1"></i> Template
                             </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex align-items-center mb-4">
-                        <div class="bg-light p-3 rounded me-3">
-                            <h2 class="mb-0 text-primary" id="kpi-progresNasionalAvg">
-                                {{ number_format($progresNasionalAvg, 2) }}%</h2>
-                            <small class="text-muted">Rata-rata Nasional</small>
-                        </div>
-                        <div class="flex-grow-1">
-                            <p class="mb-1 text-muted">Statistik Import Data:</p>
-                            <div class="d-flex gap-3">
-                                <span class="badge bg-soft-info text-info p-2" id="kpi-progresCount">
-                                    <i class="mdi mdi-map-marker me-1"></i> {{ count($progresNasional) }} Lokasi
-                                </span>
-                                <span class="badge bg-soft-success text-success p-2" id="kpi-progresSelesai">
-                                    <i class="mdi mdi-check-circle me-1"></i>
-                                    {{ $progresNasional->where('progres', 100)->count() }} Selesai (100%)
-                                </span>
-                            </div>
                         </div>
                     </div>
 
@@ -249,6 +250,10 @@
                                         <th style="width: 140px; white-space: nowrap;" class="text-end sortable"
                                             onclick="sortTable(3)">
                                             Persentase <i class="mdi mdi-sort ms-1 text-muted"></i>
+                                        </th>
+                                        <th style="width: 140px; white-space: nowrap;" class="text-end sortable"
+                                            onclick="sortTable(4)">
+                                            Delta <i class="mdi mdi-sort ms-1 text-muted"></i>
                                         </th>
                                     </tr>
                                 </thead>
@@ -280,6 +285,15 @@
                                                     {{ number_format($item->progres, 2) }}%
                                                 </span>
                                             </td>
+                                            <td class="text-end fw-bold">
+                                                @if($item->delta > 0)
+                                                    <span class="text-success"><i class="mdi mdi-arrow-up"></i> +{{ number_format($item->delta, 2) }}%</span>
+                                                @elseif($item->delta < 0)
+                                                    <span class="text-danger"><i class="mdi mdi-arrow-down"></i> {{ number_format($item->delta, 2) }}%</span>
+                                                @else
+                                                    <span class="text-muted"><i class="mdi mdi-minus"></i> 0.00%</span>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -296,6 +310,52 @@
                         </div>
                     @endif
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Export PDF -->
+    <div class="modal fade" id="exportPdfModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+                <form action="{{ route('dashboard.export-pdf') }}" method="GET" target="_blank">
+                    <div class="modal-header bg-light border-bottom-0 pb-0 pt-3 px-4">
+                        <h5 class="modal-title fw-bold" style="color: #1e293b;">
+                            <i class="mdi mdi-file-pdf-box text-danger me-1"></i> Ekspor Laporan PDF
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body px-4 pt-3 pb-4">
+                        <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 20px;">
+                            Pilih tahap dan tanggal progres untuk menentukan data yang akan ditampilkan pada laporan PDF.
+                        </p>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" style="font-size: 0.85rem;">Pilih Tahap</label>
+                            <select name="tahap" class="form-select" style="border-radius: 8px;">
+                                <option value="all" {{ ($tahap ?? 'all') == 'all' ? 'selected' : '' }}>Semua Tahap</option>
+                                @foreach($availableTahap as $t)
+                                    <option value="{{ $t }}" {{ ($tahap ?? '') == (string)$t ? 'selected' : '' }}>Tahap {{ $t }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold" style="font-size: 0.85rem;">Tanggal Progres <span class="text-danger">*</span></label>
+                            <input type="date" name="progres_date" class="form-control" style="border-radius: 8px;"
+                                value="{{ $selectedProgresDate ?? date('Y-m-d') }}" required>
+                            <small class="text-muted mt-1 d-block" style="font-size: 0.75rem;">
+                                Data progres fisik dan dokumentasi akan diambil berdasarkan tanggal yang dipilih.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top-0 bg-light px-4 py-3">
+                        <button type="button" class="btn btn-light" style="border-radius: 6px; font-weight: 500;" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger d-flex align-items-center gap-1" style="border-radius: 6px; font-weight: 500;" onclick="setTimeout(() => { $('#exportPdfModal').modal('hide'); }, 500)">
+                            <i class="mdi mdi-download"></i> Download PDF
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -425,14 +485,18 @@
 
         function filterByDate(date) {
             const url = new URL(window.location.href);
-            url.searchParams.set('progres_date', date);
+            if (date) url.searchParams.set('progres_date', date);
+            
+            const deltaPeriod = document.getElementById('deltaPeriodFilter')?.value || 'latest';
+            url.searchParams.set('delta_period', deltaPeriod);
+
             // Preserve existing filters
             if (!url.searchParams.has('period')) url.searchParams.set('period', '{{ $period ?? "all" }}');
             if (!url.searchParams.has('tahap')) url.searchParams.set('tahap', '{{ $tahap ?? "all" }}');
             window.location.href = url.toString();
         }
 
-        let sortDirections = [true, true, true, true];
+        let sortDirections = [true, true, true, true, true];
 
         function sortTable(n) {
             var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
@@ -452,13 +516,9 @@
             });
 
             // 2. Highlight active header
-            const headerIndexRef = n === 1 ? 1 : 3; // Mapped because HTML collection might differ
             const headersAll = table.querySelectorAll("th");
             // Find the header corresponding to column n
             let currentHeader = null;
-            // Simple mapping: 
-            // n=1 (Nama KNMP) is headersAll[1]
-            // n=3 (Persentase) is headersAll[3]
             if (headersAll.length > n) currentHeader = headersAll[n];
 
             if (currentHeader) {
@@ -484,9 +544,9 @@
 
                     let xVal = x.textContent || x.innerText;
                     let yVal = y.textContent || y.innerText;
-                    if (n === 3) {
-                        xVal = parseFloat(xVal.replace('%', '').replace(',', '.'));
-                        yVal = parseFloat(yVal.replace('%', '').replace(',', '.'));
+                    if (n === 3 || n === 4) {
+                        xVal = parseFloat(xVal.replace('%', '').replace('+', '').replace(',', '.'));
+                        yVal = parseFloat(yVal.replace('%', '').replace('+', '').replace(',', '.'));
                     } else {
                         xVal = xVal.toLowerCase();
                         yVal = yVal.toLowerCase();
@@ -529,15 +589,10 @@
             tingkatKesejahteraanData: {!! json_encode($tingkatKesejahteraanData ?? [0, 0, 0, 0]) !!},
             tingkatKesejahteraanLabels: {!! json_encode($tingkatKesejahteraanLabels ?? ['Sangat Sejahtera', 'Sejahtera', 'Cukup Sejahtera', 'Kurang Sejahtera']) !!},
             desaKnmp: @json($desa_knmp ?? []),
-            chartTahapData: @json($chartTahapData ?? []),
+            trendDates: @json($trendDates ?? []),
+            trendAverages: @json($trendAverages ?? []),
             detailUrlPattern: "{{ route('informasi_umum.index') }}?knmp_id=:id"
         };
     </script>
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
-    <script>
-        window.dashboardApiUrl = "{{ route('dashboard.api-data') }}";
-        window.dashboardPeriod = "{{ $period ?? 'all' }}";
-        window.dashboardProgresDate = "{{ $selectedProgresDate ?? '' }}";
-    </script>
-    <script src="{{ asset('assets/js/dashboard-realtime.js') }}"></script>
 @endpush

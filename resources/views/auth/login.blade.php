@@ -289,6 +289,51 @@
             height: 20px;
         }
 
+        .invalid-feedback {
+            display: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #dc3545;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-top: 8px;
+            animation: shakeIn 0.35s ease;
+        }
+
+        .is-invalid ~ .invalid-feedback,
+        .has-validation .is-invalid ~ .invalid-feedback,
+        .has-validation .invalid-feedback {
+            display: flex;
+        }
+
+        .has-validation .invalid-feedback {
+            width: 100%;
+        }
+
+        @keyframes shakeIn {
+            0% { transform: translateX(-6px); opacity: 0; }
+            40% { transform: translateX(4px); opacity: 0.7; }
+            70% { transform: translateX(-2px); opacity: 1; }
+            100% { transform: translateX(0); }
+        }
+
+        .form-control.is-invalid {
+            border-color: #ef4444;
+            background-image: none;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08);
+        }
+
+        .form-control.is-invalid:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+        }
+
+        .input-group-text.border-danger {
+            border-color: #ef4444;
+        }
+
         @media (max-width: 991.98px) {
             .login-wrapper {
                 flex-direction: column;
@@ -411,41 +456,47 @@
                         </div>
                     @endif
 
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul class="mb-0 ps-3">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
                     <form method="POST" action="{{ route('login.perform') }}">
                         @csrf
 
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
-                            <input class="form-control" type="text" id="username" name="username"
+                            <input class="form-control @error('username') is-invalid @enderror" type="text" id="username" name="username"
                                 value="{{ old('username') }}" required autofocus placeholder="Masukan username anda">
+                            @error('username')
+                                <div class="invalid-feedback d-flex align-items-center mt-2">
+                                    <i class="mdi mdi-alert-circle-outline me-1 fs-6"></i>
+                                    <span>{{ $message }}</span>
+                                </div>
+                            @enderror
                         </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <div class="input-group">
-                                <input type="password" id="password" class="form-control" name="password" required
+                            <div class="input-group has-validation">
+                                <input type="password" id="password" class="form-control @error('password') is-invalid @enderror" name="password" required
                                     placeholder="Masukan password anda" style="border-radius: 12px 0 0 12px;">
-                                <span class="input-group-text" onclick="togglePassword()">
+                                <span class="input-group-text @error('password') border-danger @enderror" onclick="togglePassword()">
                                     <i class="mdi mdi-eye" id="toggleIcon"></i>
                                 </span>
+                                @error('password')
+                                    <div class="invalid-feedback d-flex align-items-center mt-2">
+                                        <i class="mdi mdi-alert-circle-outline me-1 fs-6"></i>
+                                        <span>{{ $message }}</span>
+                                    </div>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="checkbox-signin" checked>
-                                <label class="form-check-label" for="checkbox-signin">Ingat saya</label>
-                            </div>
+                            <label for="captcha" class="form-label">Berapa hasil dari: <strong>{{ $captcha_question ?? '' }}</strong></label>
+                            <input type="number" id="captcha" class="form-control @error('captcha') is-invalid @enderror" name="captcha" required placeholder="Masukkan jawaban">
+                            @error('captcha')
+                                <div class="invalid-feedback d-flex align-items-center mt-2">
+                                    <i class="mdi mdi-alert-circle-outline me-1 fs-6"></i>
+                                    <span>{{ $message }}</span>
+                                </div>
+                            @enderror
                         </div>
 
                         <div class="mb-0">

@@ -24,15 +24,31 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-        return view('auth.login');
+        $num1 = rand(1, 10);
+        $num2 = rand(1, 10);
+        session(['captcha_answer' => $num1 + $num2]);
+        $captcha_question = "$num1 + $num2 = ?";
+        return view('auth.login', compact('captcha_question'));
     }
 
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'username' => ['required', 'string'],
-            'password' => ['required'],
+            'username' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9_.-]+$/'],
+            'password' => ['required', 'string', 'min:6'],
+            'captcha'  => ['required', 'numeric'],
+        ], [
+            'username.required' => 'Username wajib diisi.',
+            'username.regex' => 'Format username tidak valid. Gunakan huruf, angka, titik, atau underscore.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal terdiri dari 6 karakter.',
+            'captcha.required' => 'Jawaban CAPTCHA wajib diisi.',
+            'captcha.numeric' => 'Jawaban CAPTCHA harus berupa angka.',
         ]);
+
+        if ($request->input('captcha') != session('captcha_answer')) {
+            return back()->withErrors(['captcha' => 'Jawaban CAPTCHA salah.'])->onlyInput('username');
+        }
 
         // Rate limiting: check if too many attempts
         $throttleKey = $this->throttleKey($request);
@@ -45,26 +61,33 @@ class LoginController extends Controller
             ])->onlyInput('username');
         }
 
-        $remember = $request->boolean('remember');
-
         // Cari user dengan username yang case-sensitive (menggunakan BINARY comparison)
         $user = User::whereRaw('BINARY username = ?', [$credentials['username']])->first();
 
-        // Verifikasi user ditemukan dan password cocok
-        if ($user && Hash::check($credentials['password'], $user->password)) {
+        // Jika username tidak ditemukan
+        if (!$user) {
+            RateLimiter::hit($throttleKey, $this->decaySeconds);
+            $attemptsLeft = RateLimiter::remaining($throttleKey, $this->maxAttempts);
+
+            return back()->withErrors([
+                'username' => "Username tidak ditemukan. Sisa percobaan: {$attemptsLeft}.",
+            ])->onlyInput('username');
+        }
+
+        // Verifikasi password cocok
+        if (Hash::check($credentials['password'], $user->password)) {
             RateLimiter::clear($throttleKey);
-            Auth::login($user, $remember);
+            Auth::login($user);
             $request->session()->regenerate();
             return redirect()->intended(route('dashboard.index'));
         }
 
-        // Increment failed attempts
+        // Password salah
         RateLimiter::hit($throttleKey, $this->decaySeconds);
-
         $attemptsLeft = RateLimiter::remaining($throttleKey, $this->maxAttempts);
 
         return back()->withErrors([
-            'username' => "Username atau password salah. Sisa percobaan: {$attemptsLeft}.",
+            'password' => "Password yang Anda masukkan salah. Sisa percobaan: {$attemptsLeft}.",
         ])->onlyInput('username');
     }
 

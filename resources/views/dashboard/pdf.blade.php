@@ -1,311 +1,315 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard KNMP - Laporan</title>
+    <title>Progres KNMP Tahap {{ $tahapLabel }}</title>
     <style>
-        * {
+        @font-face {
+            font-family: 'Lexend';
+            font-style: normal;
+            font-weight: 300;
+            src: url('{{ storage_path("fonts/lexend/Lexend-Light.ttf") }}') format('truetype');
+        }
+        @font-face {
+            font-family: 'Lexend';
+            font-style: normal;
+            font-weight: 400;
+            src: url('{{ storage_path("fonts/lexend/Lexend-Regular.ttf") }}') format('truetype');
+        }
+        @font-face {
+            font-family: 'Lexend';
+            font-style: normal;
+            font-weight: 500;
+            src: url('{{ storage_path("fonts/lexend/Lexend-Medium.ttf") }}') format('truetype');
+        }
+        @font-face {
+            font-family: 'Lexend';
+            font-style: normal;
+            font-weight: 600;
+            src: url('{{ storage_path("fonts/lexend/Lexend-SemiBold.ttf") }}') format('truetype');
+        }
+        @font-face {
+            font-family: 'Lexend';
+            font-style: normal;
+            font-weight: 700;
+            src: url('{{ storage_path("fonts/lexend/Lexend-Bold.ttf") }}') format('truetype');
+        }
+
+        @page {
+            margin: 40px 50px;
+        }
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            font-family: 'Lexend', Arial, sans-serif;
+            font-size: 10px;
+            color: #1e293b;
+            line-height: 1.5;
         }
 
-        body {
-            font-family: 'DejaVu Sans', Arial, sans-serif;
-            font-size: 11px;
-            color: #333;
-            line-height: 1.4;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #1e3a5f 0%, #0891b2 100%);
-            color: white;
-            padding: 20px;
+        .header-formal {
             text-align: center;
             margin-bottom: 20px;
+            padding-top: 10px;
         }
-
-        .header h1 {
-            font-size: 20px;
+        .header-formal h3 {
+            font-size: 14px;
+            font-weight: bold;
             margin-bottom: 5px;
+            text-transform: uppercase;
+            color: #000;
+        }
+        .header-formal h1 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #000;
+        }
+        .header-formal .subtitle {
+            font-size: 12px;
+            color: #000;
+        }
+        .header-formal .date {
+            font-size: 10px;
+            margin-top: 5px;
+            color: #000;
+        }
+        .header-formal hr.thick {
+            border: 0;
+            border-bottom: 3px solid #000;
+            margin-top: 15px;
+        }
+        .header-formal hr.thin {
+            border: 0;
+            border-bottom: 1px solid #000;
+            margin-top: 2px;
         }
 
-        .header p {
-            font-size: 11px;
-            opacity: 0.9;
-        }
+        .content { padding: 0; }
 
         .section {
-            margin-bottom: 20px;
-            page-break-inside: avoid;
+            margin-bottom: 18px;
         }
-
         .section-title {
-            background: #f1f5f9;
-            padding: 8px 15px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #1e3a5f;
-            border-left: 4px solid #0891b2;
+            font-size: 11px;
+            font-weight: 700;
+            color: #000;
+            border-bottom: 2px solid #000;
+            padding-bottom: 5px;
             margin-bottom: 10px;
-        }
-
-        .stats-grid {
-            display: table;
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .stat-card {
-            display: table-cell;
-            width: 33.33%;
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #e5e7eb;
-        }
-
-        .stat-value {
-            font-size: 22px;
-            font-weight: bold;
-            color: #0891b2;
-        }
-
-        .stat-label {
-            font-size: 10px;
-            color: #6b7280;
-            margin-top: 3px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
         }
-
-        th,
-        td {
-            border: 1px solid #e5e7eb;
-            padding: 8px;
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 6px 8px;
             text-align: left;
+            font-size: 9px;
         }
-
         th {
+            background: #e2e8f0;
+            color: #000;
+            font-weight: 600;
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        tbody tr:nth-child(even) {
             background: #f8fafc;
-            font-weight: bold;
-            color: #374151;
         }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .fw-bold { font-weight: 700; }
 
-        .progress-bar {
-            background: #e5e7eb;
+
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 8px;
+            font-weight: 600;
+        }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-primary { background: #dbeafe; color: #1e40af; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-gray { background: #f1f5f9; color: #475569; }
+
+        .page-break { page-break-before: always; }
+
+        .photo-island-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #000;
+            border-left: 4px solid #000;
+            padding-left: 10px;
+            margin-bottom: 12px;
+            margin-top: 6px;
+        }
+        .photo-grid {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .photo-card {
+            width: 23%;
+            display: inline-block;
+            vertical-align: top;
+            margin: 0 1% 10px 0;
+            border: 1px solid #e2e8f0;
             border-radius: 4px;
-            height: 12px;
             overflow: hidden;
+            page-break-inside: avoid;
+            text-align: center;
         }
-
-        .progress-fill {
-            height: 100%;
-            background: #0891b2;
+        .photo-card-header {
+            background: #f1f5f9;
+            padding: 4px;
+            border-bottom: 1px solid #e2e8f0;
+            height: 35px;
         }
-
-        .rank-1 {
-            color: #f59e0b;
-            font-weight: bold;
+        .photo-card-header h4 {
+            font-size: 8px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+            line-height: 1.2;
         }
-
-        .rank-2 {
-            color: #6b7280;
-            font-weight: bold;
+        .photo-card-header small {
+            font-size: 6px;
+            color: #64748b;
         }
-
-        .rank-3 {
-            color: #b45309;
-            font-weight: bold;
+        .photo-card-body {
+            padding: 4px;
         }
-
-        .text-success {
-            color: #10b981;
-        }
-
-        .text-danger {
-            color: #ef4444;
+        .photo-card-body img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 2px;
         }
 
         .footer {
             position: fixed;
-            bottom: 0;
+            bottom: -40px;
             left: 0;
             right: 0;
-            padding: 10px 20px;
-            font-size: 9px;
-            color: #9ca3af;
+            padding: 8px 0;
+            font-size: 7px;
+            color: #94a3b8;
             text-align: center;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        .page-break {
-            page-break-before: always;
+            border-top: 1px solid #e2e8f0;
+            background: #fff;
         }
     </style>
 </head>
-
 <body>
-    <div class="header">
-        <h1>📊 Dashboard Monitoring KNMP</h1>
-        <p>Kementerian Kelautan dan Perikanan Republik Indonesia</p>
-        <p style="margin-top: 5px;">Periode: {{ $periodLabel }} | Diekspor: {{ $exportDate }}</p>
+    {{-- HEADER FORMAL --}}
+    <div class="header-formal">
+        <h3>KEMENTERIAN KELAUTAN DAN PERIKANAN REPUBLIK INDONESIA</h3>
+        <h1>LAPORAN PROGRES PEMBANGUNAN KAMPUNG NELAYAN MERAH PUTIH (KNMP)</h1>
+        <div class="subtitle">TAHAP {{ strtoupper($tahapLabel) }}</div>
+        <div class="date">Tanggal Laporan: {{ $exportDate }}</div>
+        <hr class="thick">
+        <hr class="thin">
     </div>
 
-    <!-- Ringkasan Statistik -->
-    <div class="section">
-        <div class="section-title">Ringkasan Statistik Nasional</div>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value">{{ number_format(count($desa_knmp)) }}</div>
-                <div class="stat-label">Total Lokasi KNMP</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">{{ number_format($totalSurveyTerisi) }}</div>
-                <div class="stat-label">Survey Terisi</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">{{ number_format($tingkatKelengkapanData, 1) }}%</div>
-                <div class="stat-label">Kelengkapan Data</div>
-            </div>
+    <div class="content">
+        {{-- DATA TABLE --}}
+        <div class="section">
+            <div class="section-title">Data Progres Pembangunan KNMP</div>
+
+            @if($selectedProgresDate)
+                <p style="font-size: 8px; color: #64748b; margin-bottom: 8px;">
+                    Data per tanggal: <strong>{{ \Carbon\Carbon::parse($selectedProgresDate)->format('d F Y') }}</strong>
+                </p>
+            @endif
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30px;" class="text-center">No</th>
+                        <th style="width: 140px;">Lokasi</th>
+                        <th>Nama Penyedia</th>
+                        <th style="width: 100px;" class="text-center">% Progres Fisik</th>
+                        <th style="width: 80px;" class="text-center">Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($tableData as $index => $row)
+                        <tr>
+                            <td class="text-center">{{ $index + 1 }}</td>
+                            <td>
+                                <div class="fw-bold" style="font-size: 9px; color: #000; margin-bottom: 2px;">{{ $row['lokasi_1'] }}</div>
+                                <div style="font-size: 7px; color: #64748b;">{{ $row['lokasi_2'] }}</div>
+                            </td>
+                            <td class="text-center" style="color: #94a3b8; font-style: italic;">
+                                {{ $row['nama_penyedia'] ?: '-' }}
+                            </td>
+                            <td class="text-center">
+                                <span class="fw-bold">{{ number_format($row['progres'], 2) }}%</span>
+                            </td>
+                            <td class="text-center" style="color: #94a3b8; font-style: italic;">
+                                {{ $row['keterangan'] ?: '-' }}
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center" style="padding: 20px; color: #94a3b8;">Belum ada data progres.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-        <div class="stats-grid" style="margin-top: 5px;">
-            <div class="stat-card">
-                <div class="stat-value">{{ number_format($capaianIndikator, 1) }}%</div>
-                <div class="stat-label">Capaian Indikator</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">{{ number_format($rataRataKebahagiaan, 2) }}</div>
-                <div class="stat-label">Indeks Kebahagiaan</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">{{ number_format($totalTenagaKerja) }}</div>
-                <div class="stat-label">Tenaga Kerja Terserap</div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Progress Nasional -->
-    <div class="section">
-        <div class="section-title">Progress Pembangunan Nasional</div>
-        <table>
-            <tr>
-                <td style="width: 40%;">Target KNMP Nasional</td>
-                <td>{{ $targetKnmp }} lokasi</td>
-            </tr>
-            <tr>
-                <td>KNMP Terimplementasi</td>
-                <td>{{ $totalKnmpNasional }} lokasi</td>
-            </tr>
-            <tr>
-                <td>Persentase Tercapai</td>
-                <td>
-                    <div class="progress-bar" style="display: inline-block; width: 200px; vertical-align: middle;">
-                        <div class="progress-fill" style="width: {{ $progressNasional }}%;"></div>
-                    </div>
-                    <strong>{{ $progressNasional }}%</strong>
-                </td>
-            </tr>
-        </table>
-    </div>
+        {{-- PHOTO ATTACHMENTS --}}
+        @if(count($photosByIsland) > 0)
+            <div class="page-break"></div>
+            <div class="section">
+                <div class="section-title">Lampiran Foto Pembangunan KNMP</div>
+                <p style="font-size: 8px; color: #64748b; margin-bottom: 12px;">
+                    Dokumentasi foto dikelompokkan berdasarkan wilayah pulau.
+                </p>
 
-    <!-- Top 5 Provinsi -->
-    <div class="section">
-        <div class="section-title">🏆 Top 5 Provinsi Terbaik</div>
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 50px;">Rank</th>
-                    <th>Provinsi</th>
-                    <th style="width: 80px;">KNMP</th>
-                    <th style="width: 120px;">Capaian</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($topProvinsi as $index => $prov)
-                    <tr>
-                        <td class="rank-{{ $index + 1 }}">{{ $index + 1 }}</td>
-                        <td>{{ $prov->province_name }}</td>
-                        <td>{{ $prov->total_knmp }}</td>
-                        <td class="text-success">{{ number_format($prov->avg_capaian, 1) }}%</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" style="text-align: center;">Belum ada data</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+                @foreach($photosByIsland as $island => $knmpPhotos)
+                    <div class="photo-island-title">{{ $island }}</div>
 
-    <!-- Provinsi Perlu Perhatian -->
-    <div class="section">
-        <div class="section-title">⚠️ Provinsi Perlu Perhatian</div>
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 50px;">#</th>
-                    <th>Provinsi</th>
-                    <th style="width: 80px;">KNMP</th>
-                    <th style="width: 120px;">Capaian</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($bottomProvinsi as $index => $prov)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $prov->province_name }}</td>
-                        <td>{{ $prov->total_knmp }}</td>
-                        <td class="text-danger">{{ number_format($prov->avg_capaian, 1) }}%</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" style="text-align: center;">Semua provinsi berkinerja baik!</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Capaian per KNMP -->
-    <div class="section">
-        <div class="section-title">📈 Capaian per KNMP</div>
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 50px;">No</th>
-                    <th>Nama KNMP</th>
-                    <th style="width: 150px;">Capaian</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($capaianPerKnmpData as $index => $knmp)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $knmp->nama }}</td>
-                        <td>
-                            <div class="progress-bar" style="display: inline-block; width: 80px; vertical-align: middle;">
-                                <div class="progress-fill" style="width: {{ min($knmp->avg_persen, 100) }}%;"></div>
+                    <div class="photo-grid">
+                        @foreach($knmpPhotos as $knmpPhoto)
+                            <div class="photo-card">
+                                <div class="photo-card-header">
+                                    <h4>{{ $knmpPhoto['nama'] }}</h4>
+                                    <small>{{ $knmpPhoto['lokasi'] }}</small>
+                                </div>
+                                <div class="photo-card-body">
+                                    @foreach($knmpPhoto['photos'] as $photo)
+                                        @php
+                                            $imagePath = storage_path('app/public/' . $photo->path_file);
+                                            $src = '';
+                                            if (file_exists($imagePath)) {
+                                                $type = pathinfo($imagePath, PATHINFO_EXTENSION);
+                                                $data = file_get_contents($imagePath);
+                                                $src = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                                            }
+                                        @endphp
+                                        @if($src)
+                                            <img src="{{ $src }}" alt="{{ $photo->nama_file }}">
+                                        @endif
+                                    @endforeach
+                                </div>
                             </div>
-                            {{ number_format($knmp->avg_persen, 1) }}%
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="3" style="text-align: center;">Belum ada data KNMP</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+                        @endforeach
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     <div class="footer">
-        Dashboard KNMP - Kementerian Kelautan dan Perikanan © {{ date('Y') }} | Diekspor pada {{ $exportDate }}
+        Laporan Progres KNMP Tahap {{ $tahapLabel }} &mdash; Biro Perencanaan, Kementerian Kelautan dan Perikanan &copy; {{ date('Y') }} &mdash; Dicetak: {{ $exportDate }}
     </div>
 </body>
-
 </html>
