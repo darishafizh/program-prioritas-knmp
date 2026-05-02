@@ -15,6 +15,7 @@ class ProgresKnmpNasional extends Model
         'knmp_id',
         'progres',
         'tanggal',
+        'nama_jasa_konstruksi',
     ];
 
     protected $casts = [

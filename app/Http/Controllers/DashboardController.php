@@ -190,6 +190,73 @@ class DashboardController extends Controller
         }
 
         // ===================================
+        // ANALISIS PROGRES KNMP
+        // ===================================
+
+        // 1. Sebaran persentase progres (5 kriteria)
+        $sebaranProgres = [
+            '0-20%' => 0,
+            '21-40%' => 0,
+            '41-60%' => 0,
+            '61-80%' => 0,
+            '81-100%' => 0,
+        ];
+        foreach ($progresNasional as $item) {
+            $p = $item->progres;
+            if ($p <= 20) $sebaranProgres['0-20%']++;
+            elseif ($p <= 40) $sebaranProgres['21-40%']++;
+            elseif ($p <= 60) $sebaranProgres['41-60%']++;
+            elseif ($p <= 80) $sebaranProgres['61-80%']++;
+            else $sebaranProgres['81-100%']++;
+        }
+
+        // 2. Performa 10 KNMP tertinggi (kecuali 100%)
+        $top10Knmp = $progresNasional->where('progres', '<', 100)
+            ->sortByDesc('progres')
+            ->take(10)
+            ->values();
+
+        // 3. Performa 10 KNMP terendah & cek stagnan 5 hari
+        $bottom10Knmp = $progresNasional->where('progres', '<', 100)
+            ->sortBy('progres')
+            ->take(10)
+            ->values();
+        
+        $fiveDaysAgo = \Carbon\Carbon::parse($selectedProgresDate)->subDays(5)->format('Y-m-d');
+        
+        $top10Ids = $top10Knmp->pluck('knmp_id')->toArray();
+        $bottom10Ids = $bottom10Knmp->pluck('knmp_id')->toArray();
+        $allCheckIds = array_unique(array_merge($top10Ids, $bottom10Ids));
+
+        $pastProgresData = [];
+        if (count($allCheckIds) > 0) {
+            $pastProgresData = ProgresKnmpNasional::whereIn('knmp_id', $allCheckIds)
+                ->where('tanggal', '<=', $fiveDaysAgo)
+                ->orderBy('tanggal', 'desc')
+                ->get()
+                ->groupBy('knmp_id')
+                ->map(function ($items) {
+                    return $items->first()->progres;
+                });
+        }
+
+        foreach ($top10Knmp as $item) {
+            $item->is_stagnan = false;
+            $pastProgres = $pastProgresData[$item->knmp_id] ?? null;
+            if ($pastProgres !== null && $item->progres == $pastProgres && $item->progres < 100) {
+                $item->is_stagnan = true;
+            }
+        }
+
+        foreach ($bottom10Knmp as $item) {
+            $item->is_stagnan = false;
+            $pastProgres = $pastProgresData[$item->knmp_id] ?? null;
+            if ($pastProgres !== null && $item->progres == $pastProgres && $item->progres < 100) {
+                $item->is_stagnan = true;
+            }
+        }
+
+        // ===================================
         // NEW KPI CALCULATIONS
         // ===================================
 
@@ -235,7 +302,11 @@ class DashboardController extends Controller
             'trendDates',
             'trendAverages',
             // New KPI data
-            'totalKnmp'
+            'totalKnmp',
+            // Analisis Progres
+            'sebaranProgres',
+            'top10Knmp',
+            'bottom10Knmp'
         ));
     }
 

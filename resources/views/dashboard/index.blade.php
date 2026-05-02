@@ -38,20 +38,23 @@
             background: #f8f9fa;
             border: none;
             border-right: 1px solid #e5e7eb;
-            padding: 0.5rem 0.75rem;
+            padding: 0.25rem 0.6rem;
         }
 
         .search-field-enhanced .input-group-text i {
             color: #6b7280;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
-        .search-field-enhanced .form-control {
+        .search-field-enhanced .form-control,
+        .search-field-enhanced .form-select {
             border: none;
-            padding: 0.5rem 0.75rem;
+            padding: 0.25rem 0.6rem;
+            font-size: 0.875rem;
         }
 
-        .search-field-enhanced .form-control:focus {
+        .search-field-enhanced .form-control:focus,
+        .search-field-enhanced .form-select:focus {
             box-shadow: none;
         }
 
@@ -60,10 +63,62 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
 
+        /* Menyembunyikan ikon kalender native browser sepenuhnya */
+        .search-field-enhanced input[type="date"]::-webkit-calendar-picker-indicator {
+            display: none !important;
+            -webkit-appearance: none !important;
+        }
+
+        /* Menyembunyikan ikon kalender native untuk Firefox */
+        .search-field-enhanced input[type="date"] {
+            -moz-appearance: textfield;
+        }
+
         /* Fix modal centering - override app.css margin */
         #importProgresNasionalModal .modal-dialog,
         #exportPdfModal .modal-dialog {
             margin: auto !important;
+        }
+
+        /* Flatpickr Modern & Compact Styling */
+        .flatpickr-calendar {
+            font-family: 'Poppins', sans-serif !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 12px !important;
+            padding-bottom: 8px !important;
+        }
+
+        .flatpickr-calendar.arrowTop:before,
+        .flatpickr-calendar.arrowTop:after,
+        .flatpickr-calendar.arrowBottom:before,
+        .flatpickr-calendar.arrowBottom:after {
+            display: none !important; /* Menghilangkan segitiga panah popup */
+        }
+
+        .flatpickr-current-month {
+            font-size: 0.95rem !important;
+            padding-top: 2px !important;
+        }
+
+        span.flatpickr-weekday {
+            font-size: 0.72rem !important;
+            font-weight: 600 !important;
+            color: #64748b !important;
+        }
+
+        .flatpickr-day {
+            font-size: 0.82rem !important;
+            height: 34px !important;
+            line-height: 34px !important;
+            border-radius: 8px !important;
+        }
+
+        .flatpickr-day.selected {
+            background-color: #3b82f6 !important;
+            border-color: #3b82f6 !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3) !important;
         }
     </style>
 @endpush
@@ -156,6 +211,115 @@
     </div>
     @endif
 
+    {{-- ANALISIS PROGRES --}}
+    <div class="row mb-4">
+        
+        <!-- Sebaran Progres -->
+        <div class="col-xl-4 col-md-12 mb-xl-0 mb-3">
+            <div class="card h-100 shadow-sm border-0" style="border-radius: 12px; overflow: hidden;">
+                <div class="card-header bg-white border-bottom pb-2 pt-3 px-4" style="min-height: 48px;">
+                    <h5 class="header-title mb-0">
+                        <i class="mdi mdi-chart-bar me-2 text-info"></i>
+                        Sebaran Persentase Progres
+                    </h5>
+                </div>
+                <div class="card-body px-4 pb-4 pt-2 d-flex align-items-center justify-content-center" style="height: 300px;">
+                    <div id="sebaranProgresChart" class="w-100"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 10 Performa -->
+        <div class="col-xl-4 col-md-6 mb-md-0 mb-3">
+            <div class="card h-100 shadow-sm border-0" style="border-radius: 12px; overflow: hidden;">
+                <div class="card-header bg-white border-bottom pb-2 pt-3 px-4" style="min-height: 48px;">
+                    <h5 class="header-title mb-0">
+                        <i class="mdi mdi-chart-bar me-2 text-info"></i>
+                        10 KNMP Progres Tertinggi
+                    </h5>
+                </div>
+                <div class="card-body p-0" style="height: 300px;">
+                    <div class="table-responsive" style="height: 300px; overflow-y: auto;">
+                        <table class="table table-sm table-centered table-hover mb-0">
+                            <thead class="table-light fade-sticky-header">
+                                <tr>
+                                    <th class="ps-4" style="font-size: 0.75rem; text-transform: uppercase;">KNMP</th>
+                                    <th class="text-end pe-4" style="font-size: 0.75rem; text-transform: uppercase;">Progres</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($top10Knmp ?? [] as $item)
+                                    <tr>
+                                        <td class="ps-4 align-middle" style="font-size: 0.8rem;" title="{{ $item->knmp->nama ?? 'KNMP #'.$item->knmp_id }}">
+                                            <div class="d-flex align-items-center">
+                                                @if($item->is_stagnan)
+                                                    <i class="mdi mdi-alert text-danger me-1" title="Stagnan selama 5 hari!"></i>
+                                                @endif
+                                                <span class="fw-medium text-truncate d-inline-block {{ $item->is_stagnan ? 'text-danger' : 'text-dark' }}" style="max-width: 140px;">
+                                                    {{ $item->knmp->nama ?? 'KNMP #'.$item->knmp_id }}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td class="text-end fw-bold pe-4 align-middle {{ $item->is_stagnan ? 'text-danger' : 'text-success' }}" style="font-size: 0.8rem;">
+                                            {{ round($item->progres, 2) }}%
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="2" class="text-center text-muted py-4 align-middle" style="font-size: 0.8rem;">Tidak ada data</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom 10 Performa -->
+        <div class="col-xl-4 col-md-6 mb-md-0 mb-3">
+            <div class="card h-100 shadow-sm border-0" style="border-radius: 12px; overflow: hidden;">
+                <div class="card-header bg-white border-bottom pb-2 pt-3 px-4" style="min-height: 48px;">
+                    <h5 class="header-title mb-0">
+                        <i class="mdi mdi-chart-bar me-2 text-info"></i>
+                        10 KNMP Progres Terendah
+                    </h5>
+                </div>
+                <div class="card-body p-0" style="height: 300px;">
+                    <div class="table-responsive" style="height: 300px; overflow-y: auto;">
+                        <table class="table table-sm table-centered table-hover mb-0">
+                            <thead class="table-light fade-sticky-header">
+                                <tr>
+                                    <th class="ps-4" style="font-size: 0.75rem; text-transform: uppercase;">KNMP</th>
+                                    <th class="text-end pe-4" style="font-size: 0.75rem; text-transform: uppercase;">Progres</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($bottom10Knmp ?? [] as $item)
+                                    <tr class="{{ $item->is_stagnan ? 'bg-danger bg-opacity-10' : '' }}">
+                                        <td class="ps-4 align-middle" style="font-size: 0.8rem;" title="{{ $item->knmp->nama ?? 'KNMP #'.$item->knmp_id }}">
+                                            <div class="d-flex align-items-center">
+                                                @if($item->is_stagnan)
+                                                    <i class="mdi mdi-alert text-danger me-1" title="Stagnan selama 5 hari!"></i>
+                                                @endif
+                                                <span class="fw-medium text-truncate d-inline-block {{ $item->is_stagnan ? 'text-danger' : 'text-dark' }}" style="max-width: 140px;">
+                                                    {{ $item->knmp->nama ?? 'KNMP #'.$item->knmp_id }}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td class="text-end fw-bold pe-4 align-middle {{ $item->is_stagnan ? 'text-danger' : 'text-warning' }}" style="font-size: 0.8rem;">
+                                            {{ round($item->progres, 2) }}%
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr><td colspan="2" class="text-center text-muted py-4 align-middle" style="font-size: 0.8rem;">Tidak ada data</td></tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Progres KNMP Nasional --}}
     <div class="row mt-4">
         <div class="col-12">
@@ -167,30 +331,24 @@
                     </h5>
                     <div class="d-flex align-items-center flex-wrap gap-2">
                         <!-- Delta Period Filter -->
-                        <div class="input-group input-group-sm me-2" style="width: auto;">
-                            <span class="input-group-text"><i class="mdi mdi-swap-vertical"></i> Delta</span>
-                            <select class="form-select" id="deltaPeriodFilter" onchange="filterByDate(document.getElementById('progresDateFilter')?.value)">
+                        <div class="input-group input-group-sm me-2 search-field-enhanced flex-nowrap" style="width: 240px;">
+                            <span class="input-group-text"><i class="mdi mdi-swap-vertical text-info"></i> Delta</span>
+                            <select class="form-select" id="deltaPeriodFilter" onchange="filterByDate(document.getElementById('progresDateFilter')?.value)" style="cursor: pointer; font-weight: 500; color: #4b5563;">
                                 <option value="latest" {{ ($deltaPeriod ?? 'latest') == 'latest' ? 'selected' : '' }}>Terakhir Diupdate</option>
                                 <option value="weekly" {{ ($deltaPeriod ?? 'latest') == 'weekly' ? 'selected' : '' }}>Mingguan</option>
                             </select>
                         </div>
                         
-                        <!-- Date Filter Dropdown -->
-                        @if(count($availableProgressDates ?? []) > 0)
-                            <div class="input-group input-group-sm me-2" style="width: auto;">
-                                <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
-                                <select class="form-select" id="progresDateFilter" onchange="filterByDate(this.value)">
-                                    @foreach($availableProgressDates as $date)
-                                        <option value="{{ $date }}" {{ $selectedProgresDate == $date ? 'selected' : '' }}>
-                                            {{ \Carbon\Carbon::parse($date)->format('d M Y') }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        @endif
+                        <!-- Date Filter Calendar -->
+                        <div class="input-group input-group-sm me-2 search-field-enhanced flex-nowrap" style="width: 200px;" title="Pilih Tanggal Progres">
+                            <span class="input-group-text"><i class="mdi mdi-calendar-month text-primary"></i></span>
+                            <input type="text" class="form-control flatpickr-dashboard" id="progresDateFilter" 
+                                value="{{ $selectedProgresDate ?? date('Y-m-d') }}" 
+                                style="cursor: pointer; font-weight: 500; color: #4b5563; min-width: 130px; background: transparent;">
+                        </div>
 
                         <!-- Search Input -->
-                        <div class="input-group input-group-sm search-field-enhanced" style="width: 180px;">
+                        <div class="input-group input-group-sm search-field-enhanced" style="width: 220px;">
                             <span class="input-group-text"><i class="mdi mdi-magnify"></i></span>
                             <input type="text" id="paramsSearch" class="form-control" placeholder="Cari KNMP..."
                                 onkeyup="filterTable()">
@@ -242,14 +400,13 @@
                             <table class="table table-centered table-nowrap mb-0">
                                 <thead class="table-light fade-sticky-header">
                                     <tr>
-                                        <th style="width: 50px;">#</th>
+                                        <th style="width: 30px;">#</th>
                                         <th onclick="sortTable(1)" style="cursor: pointer;" class="sortable">
                                             Nama KNMP <i class="mdi mdi-sort ms-1 text-muted"></i>
                                         </th>
-                                        <th style="width: 250px;">Status Progres</th>
-                                        <th style="width: 140px; white-space: nowrap;" class="text-end sortable"
-                                            onclick="sortTable(3)">
-                                            Persentase <i class="mdi mdi-sort ms-1 text-muted"></i>
+                                        <th style="width: 400px;">Penyedia Jasa Konstruksi</th>
+                                        <th style="width: 200px; cursor: pointer;" class="sortable" onclick="sortTable(3)">
+                                            Progres <i class="mdi mdi-sort ms-1 text-muted"></i>
                                         </th>
                                         <th style="width: 140px; white-space: nowrap;" class="text-end sortable"
                                             onclick="sortTable(4)">
@@ -265,7 +422,15 @@
                                                 {{ $item->knmp ? $item->knmp->nama : 'KNMP #' . $item->knmp_id }}
                                             </td>
                                             <td>
-                                                <div class="progress" style="height: 8px;">
+                                                <span class="text-muted fst-italic">{{ $item->nama_jasa_konstruksi ?? '-' }}</span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <span class="fw-bold {{ $item->progres >= 100 ? 'text-success' : 'text-dark' }}" style="font-size: 0.85rem;">
+                                                        {{ number_format($item->progres, 2) }}%
+                                                    </span>
+                                                </div>
+                                                <div class="progress" style="height: 6px; background-color: #f1f3fa; border-radius: 3px;">
                                                     @php
                                                         $colorClass = 'bg-danger';
                                                         if ($item->progres >= 100)
@@ -276,14 +441,9 @@
                                                             $colorClass = 'bg-warning';
                                                     @endphp
                                                     <div class="progress-bar {{ $colorClass }}" role="progressbar"
-                                                        style="width: {{ $item->progres }}%" aria-valuenow="{{ $item->progres }}"
+                                                        style="width: {{ $item->progres }}%; border-radius: 3px;" aria-valuenow="{{ $item->progres }}"
                                                         aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
-                                            </td>
-                                            <td class="text-end fw-bold">
-                                                <span class="{{ $item->progres >= 100 ? 'text-success' : '' }}">
-                                                    {{ number_format($item->progres, 2) }}%
-                                                </span>
                                             </td>
                                             <td class="text-end fw-bold">
                                                 @if($item->delta > 0)
@@ -595,4 +755,64 @@
         };
     </script>
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof flatpickr !== 'undefined') {
+                flatpickr('.flatpickr-dashboard', {
+                    dateFormat: 'Y-m-d',
+                    altInput: true,
+                    altFormat: 'd M Y',
+                    allowInput: false,
+                    onChange: function(selectedDates, dateStr, instance) {
+                        filterByDate(dateStr);
+                    }
+                });
+            }
+
+            // Render Sebaran Progres Pie Chart
+            if (document.getElementById('sebaranProgresChart') && typeof ApexCharts !== 'undefined') {
+                var sebaranData = @json(array_values($sebaranProgres ?? []));
+                var sebaranLabels = @json(array_keys($sebaranProgres ?? []));
+                
+                // Cek apakah ada data sama sekali
+                var hasData = sebaranData.some(function(val) { return val > 0; });
+                
+                if (hasData) {
+                    var sebaranOptions = {
+                        chart: {
+                            type: 'pie',
+                            height: 250,
+                            toolbar: { show: false }
+                        },
+                        series: sebaranData,
+                        labels: sebaranLabels,
+                        colors: ['#fa5c7c', '#ffbc00', '#39afd1', '#727cf5', '#0acf97'], // danger, warning, info, primary, success
+                        legend: {
+                            position: 'bottom',
+                            horizontalAlign: 'center',
+                            fontSize: '12px',
+                            markers: { radius: 12 }
+                        },
+                        dataLabels: {
+                            enabled: true,
+                            dropShadow: { enabled: false }
+                        },
+                        tooltip: {
+                            y: {
+                                formatter: function (val) {
+                                    return val + " Lokasi";
+                                }
+                            }
+                        },
+                        stroke: { width: 1, colors: ['#fff'] }
+                    };
+
+                    var sebaranChart = new ApexCharts(document.querySelector("#sebaranProgresChart"), sebaranOptions);
+                    sebaranChart.render();
+                } else {
+                    document.getElementById('sebaranProgresChart').innerHTML = '<div class="d-flex h-100 justify-content-center align-items-center text-muted"><p class="mb-0">Tidak ada data</p></div>';
+                }
+            }
+        });
+    </script>
 @endpush
