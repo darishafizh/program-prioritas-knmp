@@ -210,25 +210,26 @@ class DashboardController extends Controller
             else $sebaranProgres['81-100%']++;
         }
 
-        // 2. Performa 10 KNMP tertinggi (kecuali 100%)
-        $top10Knmp = $progresNasional->where('progres', '<', 100)
+        // 2. Performa 10 KNMP tertinggi (termasuk yang sudah 100%)
+        $top10Knmp = $progresNasional
             ->sortByDesc('progres')
             ->take(10)
             ->values();
 
-        // 3. Performa 10 KNMP terendah & cek stagnan 5 hari
-        $bottom10Knmp = $progresNasional->where('progres', '<', 100)
+        // 3. Performa 10 KNMP terendah (termasuk yang sudah 100%)
+        $bottom10Knmp = $progresNasional
             ->sortBy('progres')
             ->take(10)
             ->values();
-        
+
+        // Critical alert (stagnan 5 hari) — hanya berlaku untuk progres < 100
         $fiveDaysAgo = \Carbon\Carbon::parse($selectedProgresDate)->subDays(5)->format('Y-m-d');
-        
+
         $top10Ids = $top10Knmp->pluck('knmp_id')->toArray();
         $bottom10Ids = $bottom10Knmp->pluck('knmp_id')->toArray();
         $allCheckIds = array_unique(array_merge($top10Ids, $bottom10Ids));
 
-        $pastProgresData = [];
+        $pastProgresData = collect();
         if (count($allCheckIds) > 0) {
             $pastProgresData = ProgresKnmpNasional::whereIn('knmp_id', $allCheckIds)
                 ->where('tanggal', '<=', $fiveDaysAgo)
@@ -236,25 +237,29 @@ class DashboardController extends Controller
                 ->get()
                 ->groupBy('knmp_id')
                 ->map(function ($items) {
-                    return $items->first()->progres;
+                    return $items->first();
                 });
         }
 
-        foreach ($top10Knmp as $item) {
-            $item->is_stagnan = false;
-            $pastProgres = $pastProgresData[$item->knmp_id] ?? null;
-            if ($pastProgres !== null && $item->progres == $pastProgres && $item->progres < 100) {
-                $item->is_stagnan = true;
-            }
-        }
+        $applyStagnanFlag = function ($collection) use ($pastProgresData) {
+            foreach ($collection as $item) {
+                $item->is_stagnan = false;
+                $item->past_progres = null;
+                $item->past_progres_date = null;
+                $item->is_complete = ((float) $item->progres) >= 100;
 
-        foreach ($bottom10Knmp as $item) {
-            $item->is_stagnan = false;
-            $pastProgres = $pastProgresData[$item->knmp_id] ?? null;
-            if ($pastProgres !== null && $item->progres == $pastProgres && $item->progres < 100) {
-                $item->is_stagnan = true;
+                $past = $pastProgresData[$item->knmp_id] ?? null;
+                if ($past !== null) {
+                    $item->past_progres = $past->progres;
+                    $item->past_progres_date = $past->tanggal;
+                    if (! $item->is_complete && (float) $item->progres == (float) $past->progres) {
+                        $item->is_stagnan = true;
+                    }
+                }
             }
-        }
+        };
+        $applyStagnanFlag($top10Knmp);
+        $applyStagnanFlag($bottom10Knmp);
 
         // ===================================
         // NEW KPI CALCULATIONS
