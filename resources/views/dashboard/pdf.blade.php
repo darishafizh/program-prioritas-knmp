@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Progres KNMP Tahap {{ $tahapLabel }}</title>
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="https://kampungnelayanmerahputih.kkp.go.id/img/favicon.ico">
     <style>
         @font-face {
             font-family: 'Lexend';
