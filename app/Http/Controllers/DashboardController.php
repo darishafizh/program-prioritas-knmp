@@ -522,37 +522,38 @@ class DashboardController extends Controller
             ];
         }
 
-        // Group photos by island
-        $islandMapping = [
-            'Sumatera' => ['ACEH','SUMATERA UTARA','SUMATERA BARAT','RIAU','JAMBI','SUMATERA SELATAN','BENGKULU','LAMPUNG','KEPULAUAN BANGKA BELITUNG','KEPULAUAN RIAU'],
-            'Jawa' => ['DKI JAKARTA','JAWA BARAT','JAWA TENGAH','DAERAH ISTIMEWA YOGYAKARTA','JAWA TIMUR','BANTEN'],
-            'Kalimantan' => ['KALIMANTAN BARAT','KALIMANTAN TENGAH','KALIMANTAN SELATAN','KALIMANTAN TIMUR','KALIMANTAN UTARA'],
-            'Sulawesi' => ['SULAWESI UTARA','SULAWESI TENGAH','SULAWESI SELATAN','SULAWESI TENGGARA','GORONTALO','SULAWESI BARAT'],
-            'Bali & Nusa Tenggara' => ['BALI','NUSA TENGGARA BARAT','NUSA TENGGARA TIMUR'],
-            'Maluku' => ['MALUKU','MALUKU UTARA'],
-            'Papua' => ['PAPUA','PAPUA BARAT','PAPUA SELATAN','PAPUA TENGAH','PAPUA PEGUNUNGAN','PAPUA BARAT DAYA'],
-        ];
-
-        $photosByIsland = [];
+        // Group photos by province (1 location = 1 photo, condition "after")
+        $photosByProvince = [];
         foreach ($desa_knmp as $knmp) {
-            if ($knmp->buktiUploads->isEmpty()) continue;
-            $provinceName = strtoupper(optional($knmp->province)->name ?? '');
-            $island = 'Lainnya';
-            foreach ($islandMapping as $pulau => $provinces) {
-                if (in_array($provinceName, $provinces)) { $island = $pulau; break; }
+            if ($knmp->buktiUploads->isEmpty()) {
+                continue;
             }
             $photos = $knmp->buktiUploads->filter(function ($b) {
-                return str_contains(strtolower($b->tipe_file ?? ''), 'image/') && strtolower($b->kondisi ?? '') === 'after';
+                return str_contains(strtolower($b->tipe_file ?? ''), 'image/')
+                    && strtolower($b->kondisi ?? '') === 'after';
             })->take(1);
-            if ($photos->isNotEmpty()) {
-                $photosByIsland[$island][] = [
-                    'nama' => $knmp->nama,
-                    'lokasi' => optional($knmp->regency)->name . ', ' . optional($knmp->province)->name,
-                    'photos' => $photos,
-                ];
+            if ($photos->isEmpty()) {
+                continue;
             }
+
+            $provinceName = ucwords(strtolower(optional($knmp->province)->name ?? 'Lainnya'));
+
+            $lokasi_parts = [];
+            if ($knmp->district) {
+                $lokasi_parts[] = 'Kec. ' . ucwords(strtolower($knmp->district->name));
+            }
+            if ($knmp->regency) {
+                $lokasi_parts[] = ucwords(strtolower($knmp->regency->name));
+            }
+            $lokasi = implode(', ', $lokasi_parts);
+
+            $photosByProvince[$provinceName][] = [
+                'nama' => $knmp->nama,
+                'lokasi' => $lokasi,
+                'photos' => $photos,
+            ];
         }
-        ksort($photosByIsland);
+        ksort($photosByProvince);
 
         $tahapLabel = $tahap !== 'all' ? ($tahap == 1 ? 'I' : ($tahap == 2 ? 'II' : ($tahap == 3 ? 'III' : $tahap))) : 'Semua';
         $exportDate = Carbon::now('Asia/Jakarta')->format('d F Y');
@@ -560,7 +561,7 @@ class DashboardController extends Controller
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('dashboard.pdf', compact(
             'tahap', 'tahapLabel', 'exportDate', 'totalLokasi', 'avgProgres',
-            'tableData', 'photosByIsland', 'selectedProgresDate'
+            'tableData', 'photosByProvince', 'selectedProgresDate'
         ))
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
