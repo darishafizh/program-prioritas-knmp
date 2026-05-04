@@ -19,7 +19,7 @@ class DecodeHashIds
         $hashService = app(HashIdService::class);
 
         // Define which route parameters should be decoded
-        $parametersToDecode = ['id', 'knmp', 'responden', 'keterangan_enumerator'];
+        $parametersToDecode = ['id', 'responden', 'keterangan_enumerator'];
 
         foreach ($parametersToDecode as $param) {
             $value = $request->route($param);

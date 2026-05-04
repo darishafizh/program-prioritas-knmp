@@ -21,6 +21,11 @@ class Knmp extends Model
         'tahap',
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'nama';
+    }
+
     public function province()
     {
         return $this->belongsTo(KnmpProvinces::class, 'province_id');

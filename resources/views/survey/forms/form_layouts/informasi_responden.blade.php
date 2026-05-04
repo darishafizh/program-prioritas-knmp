@@ -10,11 +10,11 @@
 </div>
 @endif
 
-<form method="POST" action="{{ route('forms.store_informasi_responden', ['knmp' => hashid($knmp->id)]) }}">
+<form method="POST" action="{{ route('forms.store_informasi_responden', ['knmp' => $knmp->nama]) }}">
     @csrf
     <input type="hidden" name="active_section" value="collapseC">
     {{-- Hidden field untuk knmp_id (asumsi) --}}
-    <input type="hidden" name="knmp_id" value="{{ hashid($knmp->id) ?? '' }}">
+    <input type="hidden" name="knmp_id" value="{{ $knmp->id }}">
 
     <div class="row">
         <div class="col-md-6">

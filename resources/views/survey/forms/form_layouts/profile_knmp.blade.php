@@ -184,9 +184,9 @@
 
 {{-- Edit/Create Mode --}}
 <div id="profileKnmpEditMode" class="{{ $hasData ? 'd-none' : '' }}">
-    <form method="POST" action="{{ $hasData ? route('forms.update_profile_knmp', ['knmp' => hashid($knmp->id)]) : route('forms.store_profile_knmp', ['knmp' => hashid($knmp->id)]) }}" id="formProfileKnmp">
+    <form method="POST" action="{{ $hasData ? route('forms.update_profile_knmp', ['knmp' => $knmp->nama]) : route('forms.store_profile_knmp', ['knmp' => $knmp->nama]) }}" id="formProfileKnmp">
         @csrf
-        <input type="hidden" name="knmp_id" value="{{ hashid($knmp->id) ?? 0 }}">
+        <input type="hidden" name="knmp_id" value="{{ $knmp->id }}">
 
         <div class="row">
             <div class="col-6">

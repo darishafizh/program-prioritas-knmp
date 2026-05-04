@@ -1,7 +1,7 @@
-<form method="POST" action="{{ route('forms.store_tingkat_kebahagiaan', ['knmp' => hashid($knmp->id)]) }}">
+<form method="POST" action="{{ route('forms.store_tingkat_kebahagiaan', ['knmp' => $knmp->nama]) }}">
     @csrf
 
-    <input type="hidden" name="knmp_id" value="{{ hashid($knmp->id) }}">
+    <input type="hidden" name="knmp_id" value="{{ $knmp->id }}">
     <input type="hidden" name="active_section" value="collapseFour">
 
 

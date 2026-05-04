@@ -193,7 +193,7 @@
                             </div>
 
                             <!-- Action Button -->
-                            <a href="{{ route('forms.index', hashid($knmp->id)) }}?responden={{ hashid($item['id']) }}"
+                            <a href="{{ route('forms.index', $knmp->nama) }}?responden={{ hashid($item['id']) }}"
                                 class="btn btn-primary btn-sm w-100">
                                 <i class="mdi mdi-pencil-outline me-1"></i>Edit Data
                             </a>

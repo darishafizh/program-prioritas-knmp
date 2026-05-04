@@ -26,10 +26,10 @@ class FormsController extends Controller
     /**
      * Display the survey form
      */
-    public function index($knmpId, Request $request)
+    public function index($knmpName, Request $request)
     {
         $knmp = ModelsKnmp::with(['province', 'regency', 'district', 'village'])
-            ->findOrFail($knmpId);
+            ->where('nama', $knmpName)->firstOrFail();
 
         // Get all respondents for this KNMP
         $respondenList = InformasiResponden::where('knmp_id', $knmp->id)

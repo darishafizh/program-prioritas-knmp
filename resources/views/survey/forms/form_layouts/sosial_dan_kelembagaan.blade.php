@@ -1,8 +1,8 @@
-<form method="POST" action="{{ route('forms.store_sosial_kelembagaan', ['knmp' => hashid($knmp->id)]) }}">
+<form method="POST" action="{{ route('forms.store_sosial_kelembagaan', ['knmp' => $knmp->nama]) }}">
         @csrf
         <input type="hidden" name="active_section" value="collapseI">
         <div id="sosialKelembagaanApp">
-                <input type="hidden" name="knmp_id" value="{{ hashid($knmp->id) }}">
+                <input type="hidden" name="knmp_id" value="{{ $knmp->id }}">
 
         {{-- ========================= --}}
         {{-- PILIH RESPONDEN --}}
