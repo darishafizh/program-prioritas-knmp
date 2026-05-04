@@ -1,0 +1,9 @@
+{
+    "poppins": {
+        "normal": "C:\\laragon\\www\\program-prioritas-knmp\\storage\\fonts\/poppins_normal_807cb3c953b810cfb2f8cd453db3b62e",
+        "italic": "C:\\laragon\\www\\program-prioritas-knmp\\storage\\fonts\/poppins_italic_e02b2bf64bbaa3b868b1d5b1c6d91203",
+        "500": "C:\\laragon\\www\\program-prioritas-knmp\\storage\\fonts\/poppins_500_053286deee582c80f15dd95ac8910f08",
+        "600": "C:\\laragon\\www\\program-prioritas-knmp\\storage\\fonts\/poppins_600_d7edabf2e17e1ab3b42e3af5cd90cf88",
+        "bold": "poppins_bold_fec1ca3059ecf9c081de7d82a369d006"
+    }
+}

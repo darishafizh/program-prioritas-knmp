@@ -36,7 +36,7 @@
         }
 
         @page {
-            margin: 22mm 16mm 22mm 16mm;
+            margin: 8mm 12mm 8mm 12mm;
         }
         * { box-sizing: border-box; }
         body {
@@ -56,13 +56,13 @@
         .kop p {
             margin: 0;
             padding: 0;
-            line-height: 1.18;
+            line-height: 0.75;
             color: #000;
             text-transform: uppercase;
         }
-        .kop .l1 { font-size: 11px; font-weight: 600; letter-spacing: 0.2px; }
-        .kop .l2 { font-size: 12px; font-weight: 600; letter-spacing: 0.2px; }
-        .kop .l3 { font-size: 15px; font-weight: 700; letter-spacing: 0.5px; margin-top: 1px; }
+        .kop .l1 { font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
+        .kop .l2 { font-size: 14px; font-weight: 600; letter-spacing: 0.2px; }
+        .kop .l3 { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; margin-top: 1px; }
 
         .kop-rule-wrap {
             margin: 6px 0 0 0;
@@ -88,20 +88,20 @@
             margin: 14px 0 12px 0;
         }
         .doc-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: #000;
             text-transform: uppercase;
             letter-spacing: 0.6px;
-            margin: 0 0 2px 0;
-            line-height: 1.25;
+            margin: 8 0 2px 0;
+            line-height: 0.75;
         }
         .doc-subtitle {
-            font-size: 9.5px;
+            font-size: 10px;
             font-weight: 500;
             color: #374151;
-            margin: 0;
-            line-height: 1.3;
+            margin: 0 0 16px 0;
+            line-height: 0.75;
         }
         .doc-subtitle strong { font-weight: 600; color: #000; }
 
@@ -114,9 +114,9 @@
         table.progres-table th,
         table.progres-table td {
             border: 0.6px solid #94a3b8;
-            padding: 4px 6px;
-            font-size: 8.5px;
-            line-height: 1.3;
+            padding: 6px 6px;
+            font-size: 10px;
+            line-height: 0.75;
             vertical-align: middle;
         }
         table.progres-table thead th {
@@ -125,9 +125,9 @@
             font-weight: 600;
             text-align: center;
             text-transform: uppercase;
-            font-size: 8px;
+            font-size: 10px;
             letter-spacing: 0.4px;
-            padding: 6px 6px;
+            padding: 8px 4px;
         }
         table.progres-table tbody tr:nth-child(even) td {
             background: #f6f8fb;
@@ -142,17 +142,17 @@
             color: #4b5563;
         }
         td.col-lokasi .nama {
-            font-size: 8.5px;
+            font-size: 10px;
             font-weight: 600;
             color: #0f172a;
-            line-height: 1.3;
+            line-height: 0.75;
             margin: 0 0 1px 0;
         }
         td.col-lokasi .alamat {
-            font-size: 7.6px;
+            font-size: 8px;
             font-weight: 400;
             color: #4b5563;
-            line-height: 1.3;
+            line-height: 0.75;
             margin: 0;
         }
         td.col-progres {
@@ -167,7 +167,7 @@
             margin-top: 6px;
         }
         .doc-section-title {
-            font-size: 11.5px;
+            font-size: 10px;
             font-weight: 700;
             color: #000;
             text-transform: uppercase;
@@ -202,9 +202,9 @@
             width: 31.5%;
             display: inline-block;
             vertical-align: top;
-            margin: 0 1.6% 10px 0;
+            margin: 0 1.42% 10px 0;
             border: 0.6px solid #d1d5db;
-            border-radius: 3px;
+            border-radius: 10px;
             overflow: hidden;
             page-break-inside: avoid;
             text-align: center;
@@ -216,27 +216,28 @@
         }
         .photo-card-body img {
             width: 100%;
-            height: 105px;
+            height: 115px;
+            margin: 0;
+            padding: 0;
             object-fit: cover;
             display: block;
         }
         .photo-card-caption {
-            padding: 5px 6px 6px 6px;
+            padding: 6px 6px 6px 6px;
             text-align: center;
-            border-top: 0.6px solid #e5e7eb;
         }
         .photo-card-caption .nama {
-            font-size: 8px;
+            font-size: 10px;
             font-weight: 600;
             color: #0f172a;
             margin: 0 0 1px 0;
-            line-height: 1.25;
+            line-height: 0.75;
         }
         .photo-card-caption .lokasi {
-            font-size: 7px;
+            font-size: 8px;
             color: #6b7280;
             margin: 0;
-            line-height: 1.25;
+            line-height: 0.75;
         }
         .photo-empty {
             padding: 28px 12px;
@@ -296,10 +297,10 @@
     <table class="progres-table">
         <thead>
             <tr>
-                <th style="width: 24px;">No</th>
+                <th style="width: 20px;">No</th>
                 <th>Nama KNMP dan Lokasi</th>
-                <th style="width: 22%;">Penyedia Jasa Konstruksi</th>
-                <th style="width: 58px;">Progres Fisik (%)</th>
+                <th style="width: 30%;">Penyedia Jasa Konstruksi</th>
+                <th style="width: 40px;">Progres</th>
                 <th style="width: 18%;">Keterangan</th>
             </tr>
         </thead>
