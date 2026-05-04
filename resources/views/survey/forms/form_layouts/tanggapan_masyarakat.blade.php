@@ -1,6 +1,7 @@
 <form method="POST"
     action="{{ route('forms.store_tanggapan_masyarakat', [
-        'knmp' => $knmp->id,
+        'knmp' => hashid($knmp->id),
+        'responden' => request('responden')
     ]) }}">
     @csrf
 

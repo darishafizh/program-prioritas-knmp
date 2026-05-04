@@ -222,7 +222,7 @@
 
 {{-- Edit/Create Mode --}}
 <div id="progresKnmpEditMode" class="{{ $hasData ? 'd-none' : '' }}">
-    <form action="{{ $hasData ? route('forms.update_progres_knmp', ['knmp' => $knmp->id]) : route('forms.store_progres_knmp', ['knmp' => $knmp->id]) }}" method="POST" id="formProgresKnmp">
+    <form action="{{ $hasData ? route('forms.update_progres_knmp', ['knmp' => hashid($knmp->id)]) : route('forms.store_progres_knmp', ['knmp' => hashid($knmp->id)]) }}" method="POST" id="formProgresKnmp">
         @csrf
 
         {{-- BAGIAN 1: PROFIL PROYEK --}}

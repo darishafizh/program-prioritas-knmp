@@ -73,8 +73,8 @@ class FormsController extends Controller
         $profileKnmp = ProfileKnmp::where('knmp_id', $knmp->id)->first();
         $tanggapanMasyarakat = TanggapanMasyarakat::where('knmp_id', $knmp->id)->first();
 
-        // Get selected responden ID from query string
-        $selectedRespondenId = $request->query('responden');
+        // Get selected responden ID from input (so decoded values from middleware are caught)
+        $selectedRespondenId = $request->input('responden');
 
         // If responden is selected, get their data
         $selectedResponden = null;

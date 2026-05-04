@@ -1,7 +1,7 @@
-<form method="POST" action="{{ route('forms.store_pemasaran_perikanan', ['knmp' => $knmp->id]) }}">
+<form method="POST" action="{{ route('forms.store_pemasaran_perikanan', ['knmp' => hashid($knmp->id)]) }}">
     @csrf
-
-    <input type="hidden" name="knmp_id" value="{{ $knmp->id }}">
+    <input type="hidden" name="active_section" value="collapseG">
+    <input type="hidden" name="knmp_id" value="{{ hashid($knmp->id) }}">
 
     {{-- ========================= --}}
     {{-- PILIH RESPONDEN --}}

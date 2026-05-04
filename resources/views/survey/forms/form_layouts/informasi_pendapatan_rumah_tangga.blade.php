@@ -1,7 +1,7 @@
-<form method="POST" action="{{ route('forms.store_pendapatan_rt', ['knmp' => $knmp->id]) }}">
+<form method="POST" action="{{ route('forms.store_pendapatan_rt', ['knmp' => hashid($knmp->id)]) }}">
         @csrf
-
-        <input type="hidden" name="knmp_id" value="{{ $knmp->id }}">
+        <div id="pendapatanRtApp">
+        <input type="hidden" name="knmp_id" value="{{ hashid($knmp->id) }}">
 
         {{-- ========================= --}}
         {{-- PILIH RESPONDEN --}}
