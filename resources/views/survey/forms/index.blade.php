@@ -203,7 +203,7 @@
                             <div class="import-action-bar mb-3">
                                 <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="profile-knmp"
-                                    data-route="{{ route('forms.import_profile_knmp', $knmp->id) }}">
+                                    data-route="{{ route('forms.import_profile_knmp', $knmp->nama) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <a href="{{ route('forms.download_template', 'profile-knmp') }}"
@@ -243,7 +243,7 @@
                             <div class="import-action-bar mb-3">
                                 <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="progres-knmp"
-                                    data-route="{{ route('forms.import_progres_knmp', $knmp->id) }}">
+                                    data-route="{{ route('forms.import_progres_knmp', $knmp->nama) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <a href="{{ route('forms.download_template', 'progres-knmp') }}"
@@ -283,7 +283,7 @@
                             <div class="import-action-bar mb-3">
                                 <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="responden"
-                                    data-route="{{ route('forms.import_responden', $knmp->id) }}">
+                                    data-route="{{ route('forms.import_responden', $knmp->nama) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <a href="{{ route('forms.download_template', 'responden') }}"
@@ -323,7 +323,7 @@
                             <div class="import-action-bar mb-3">
                                 <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="tanggapan-masyarakat"
-                                    data-route="{{ route('forms.import_tanggapan_masyarakat', $knmp->id) }}">
+                                    data-route="{{ route('forms.import_tanggapan_masyarakat', $knmp->nama) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <button type="button"
@@ -365,7 +365,7 @@
                             <div class="import-action-bar mb-3">
                                 <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="tingkat-kebahagiaan"
-                                    data-route="{{ route('forms.import_tingkat_kebahagiaan', $knmp->id) }}">
+                                    data-route="{{ route('forms.import_tingkat_kebahagiaan', $knmp->nama) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <button type="button"
@@ -407,7 +407,7 @@
                             <div class="import-action-bar mb-3">
                                 <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="informasi-usaha"
-                                    data-route="{{ route('forms.import_informasi_usaha', $knmp->id) }}">
+                                    data-route="{{ route('forms.import_informasi_usaha', $knmp->nama) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <button type="button"
@@ -449,7 +449,7 @@
                             <div class="import-action-bar mb-3">
                                 <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="informasi-pemasaran"
-                                    data-route="{{ route('forms.import_informasi_pemasaran', $knmp->id) }}">
+                                    data-route="{{ route('forms.import_informasi_pemasaran', $knmp->nama) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <button type="button"
@@ -491,7 +491,7 @@
                             <div class="import-action-bar mb-3">
                                 <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="pendapatan-rt"
-                                    data-route="{{ route('forms.import_pendapatan_rt', $knmp->id) }}">
+                                    data-route="{{ route('forms.import_pendapatan_rt', $knmp->nama) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <button type="button"
@@ -533,7 +533,7 @@
                             <div class="import-action-bar mb-3">
                                 <button type="button" class="btn btn-success text-white btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#importModal" data-section="sosial-kelembagaan"
-                                    data-route="{{ route('forms.import_sosial_kelembagaan', $knmp->id) }}">
+                                    data-route="{{ route('forms.import_sosial_kelembagaan', $knmp->nama) }}">
                                     <i class="mdi mdi-file-excel me-1"></i>Import Excel
                                 </button>
                                 <button type="button"

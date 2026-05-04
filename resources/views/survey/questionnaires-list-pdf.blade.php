@@ -126,7 +126,7 @@
                     <!-- Footer -->
                     <div class="questionnaire-footer">
                         @if($item['is_complete'])
-                            <a href="{{ route('survey.questionnaire-pdf', ['knmp' => $knmp->id, 'responden' => $item['id']]) }}"
+                            <a href="{{ route('survey.questionnaire-pdf', ['knmp' => $knmp->nama, 'responden' => hashid($item['id'])]) }}"
                                 class="btn-view-pdf" target="_blank">
                                 <i class="mdi mdi-file-pdf-box"></i>
                                 Lihat PDF

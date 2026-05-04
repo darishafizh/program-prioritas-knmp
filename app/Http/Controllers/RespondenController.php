@@ -111,10 +111,10 @@ class RespondenController extends Controller
      * @param  int  $knmpId
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store_informasi_responden(StoreRespondenRequest $request, $knmpId)
+    public function store_informasi_responden(StoreRespondenRequest $request, Knmp $knmp)
     {
         $validated = $request->validated();
-        $validated['knmp_id'] = $knmpId;
+        $validated['knmp_id'] = $knmp->id;
 
         DB::beginTransaction();
         try {
@@ -124,7 +124,7 @@ class RespondenController extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Gagal menyimpan Informasi Responden: ' . $e->getMessage(), [
-                'knmp_id' => $knmpId,
+                'knmp_id' => $knmp->id,
                 'trace' => $e->getTraceAsString(),
             ]);
             return back()->withInput()->with('error', 'Gagal menyimpan data responden: ' . $e->getMessage());
@@ -179,12 +179,14 @@ class RespondenController extends Controller
      * @param  int|null  $knmpId
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function exportExcel($knmpId = null)
+    public function exportExcel($knmpName = null)
     {
         $filename = 'data-responden';
-        if ($knmpId) {
-            $knmp = Knmp::find($knmpId);
-            $filename .= '-' . ($knmp ? str_replace(' ', '-', strtolower($knmp->nama)) : $knmpId);
+        $knmpId = null;
+        if ($knmpName) {
+            $knmp = Knmp::where('nama', $knmpName)->first();
+            $knmpId = $knmp ? $knmp->id : null;
+            $filename .= '-' . ($knmp ? str_replace(' ', '-', strtolower($knmp->nama)) : $knmpName);
         }
         $filename .= '-' . date('Y-m-d') . '.xlsx';
 

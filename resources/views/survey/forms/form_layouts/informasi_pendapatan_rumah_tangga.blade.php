@@ -1,6 +1,6 @@
-<form method="POST" action="{{ route('forms.store_pendapatan_rt', ['knmp' => $knmp->id]) }}">
+<form method="POST" action="{{ route('forms.store_pendapatan_rt', ['knmp' => $knmp->nama]) }}">
         @csrf
-
+        <div id="pendapatanRtApp">
         <input type="hidden" name="knmp_id" value="{{ $knmp->id }}">
 
         {{-- ========================= --}}

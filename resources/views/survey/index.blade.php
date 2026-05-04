@@ -351,18 +351,18 @@
                                         <td>{{ ucwords(strtolower($knmp->province->name ?? 'N/A')) }}</td>
                                         <td class="action-buttons">
                                             @if(Auth::user()->canInputData())
-                                                <a href="{{ route('forms.index', $knmp->id) }}"
+                                                <a href="{{ route('forms.index', $knmp->nama) }}"
                                                     class="btn btn-action btn-action-primary" data-bs-toggle="tooltip"
                                                     data-bs-placement="top" title="Input Survey">
                                                     <i class="mdi mdi-pencil-box"></i>
                                                 </a>
-                                                <a href="{{ route('forms.edit-responden', $knmp->id) }}"
+                                                <a href="{{ route('forms.edit-responden', $knmp->nama) }}"
                                                     class="btn btn-action btn-action-outline-success" data-bs-toggle="tooltip"
                                                     data-bs-placement="top" title="Edit Responden">
                                                     <i class="mdi mdi-account-edit"></i>
                                                 </a>
                                             @endif
-                                            <a href="{{ route('survey.questionnaires-pdf', $knmp->id) }}"
+                                            <a href="{{ route('survey.questionnaires-pdf', $knmp->nama) }}"
                                                 class="btn btn-action btn-action-outline-danger" data-bs-toggle="tooltip"
                                                 data-bs-placement="top" title="Lihat PDF">
                                                 <i class="mdi mdi-file-pdf-box"></i>
@@ -373,7 +373,7 @@
                                                 <i class="mdi mdi-image"></i>
                                             </button>
                                             @if(Auth::user()->isSuperAdmin())
-                                                <form action="{{ route('survey.destroy', $knmp->id) }}" method="POST"
+                                                <form action="{{ route('survey.destroy', hashid($knmp->id)) }}" method="POST"
                                                     class="d-inline delete-knmp-form">
                                                     @csrf
                                                     @method('DELETE')
@@ -605,7 +605,7 @@
                     </div>
                     <div class="modal-footer evidence-modal-footer">
                         @if(Auth::user()->canInputData())
-                            <a href="{{ route('survey.evidence', $knmp->id) }}" class="btn btn-evidence-primary">
+                            <a href="{{ route('survey.evidence', $knmp->nama) }}" class="btn btn-evidence-primary">
                                 <i class="mdi mdi-open-in-new me-1"></i>Kelola Evidence
                             </a>
                         @endif

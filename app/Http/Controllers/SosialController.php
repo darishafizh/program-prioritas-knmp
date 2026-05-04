@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Knmp;
 use App\Models\SosialKelembagaan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,7 @@ class SosialController extends Controller
     /**
      * Store Sosial & Kelembagaan
      */
-    public function store(Request $request, $knmp)
+    public function store(Request $request, Knmp $knmp)
     {
         // Validation: allow string because input might come as text from form
         $request->validate([
@@ -38,7 +39,7 @@ class SosialController extends Controller
         try {
             SosialKelembagaan::updateOrCreate(
                 [
-                    'knmp_id' => $knmp,
+                    'knmp_id' => $knmp->id,
                     'responden_id' => $request->responden_id,
                 ],
                 [

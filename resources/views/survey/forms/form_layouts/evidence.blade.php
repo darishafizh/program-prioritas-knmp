@@ -68,7 +68,7 @@
                 <div class="evidence-card" data-file-id="{{ $file->id }}">
                     <div class="evidence-thumbnail">
                         <label class="evidence-checkbox">
-                            <input type="checkbox" class="file-checkbox" value="{{ $file->id }}"
+                            <input type="checkbox" class="file-checkbox" value="{{ hashid($file->id) }}"
                                 onchange="updateSelection()">
                         </label>
 
@@ -116,7 +116,7 @@
                             @endif
 
                             <button type="button" class="btn btn-sm btn-outline-danger flex-fill"
-                                onclick="confirmDeleteSingle({{ $file->id }})">
+                                onclick="confirmDeleteSingle('{{ hashid($file->id) }}')">
                                 <i class="mdi mdi-trash-can-outline me-1"></i>Hapus
                             </button>
                         </div>

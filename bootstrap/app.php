@@ -19,12 +19,19 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register global middleware
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
 
+        // Register web middleware
+        $middleware->web(prepend: [
+            \App\Http\Middleware\DecodeHashIds::class,
+        ]);
+
         // Register role middleware alias
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
             'village_access' => \App\Http\Middleware\CheckVillageAccess::class,
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        //
+    ->withExceptions(function (Exceptions $exceptions) {
+        $exceptions->reportable(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e) {
+            \Illuminate\Support\Facades\Log::warning('404 URL: ' . request()->fullUrl());
+        });
     })->create();

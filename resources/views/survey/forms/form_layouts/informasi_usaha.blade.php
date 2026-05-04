@@ -1,6 +1,6 @@
-<form method="POST" action="{{ route('forms.store_informasi_usaha', ['knmp' => $knmp->id]) }}">
+<form method="POST" action="{{ route('forms.store_informasi_usaha', ['knmp' => $knmp->nama]) }}">
     @csrf
-    <input type="hidden" name="knmp_id" value="{{ $knmp->id ?? 0 }}">
+    <input type="hidden" name="knmp_id" value="{{ $knmp->id }}">
 
     {{-- ========================= --}}
     {{-- PILIH RESPONDEN --}}

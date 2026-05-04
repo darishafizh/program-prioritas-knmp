@@ -82,8 +82,7 @@ Route::middleware('auth')->group(function () {
         // FORMS ROUTES
         // ==============================
         Route::group(['prefix' => 'forms', 'middleware' => 'village_access'], function () {
-            Route::get('/{knmp}', [FormsController::class, 'index'])->name('forms.index');
-            Route::get('/{knmp}/edit-responden', [RespondenController::class, 'editRespondenList'])->name('forms.edit-responden');
+            // Note: /{knmp} routes moved to the bottom of the group to prevent shadowing
             Route::group(['middleware' => 'role:enumerator'], function () {
                 Route::delete('/delete-responden', [RespondenController::class, 'delete_responden'])->name('forms.delete_responden');
 
@@ -148,6 +147,10 @@ Route::middleware('auth')->group(function () {
 
             Route::get('/download-template/{section}', [\App\Http\Controllers\ImportController::class, 'downloadTemplate'])
                 ->name('forms.download_template');
+
+            // Route with parameters should be at the bottom to prevent shadowing
+            Route::get('/{knmp}', [FormsController::class, 'index'])->name('forms.index');
+            Route::get('/{knmp}/edit-responden', [RespondenController::class, 'editRespondenList'])->name('forms.edit-responden');
         });
     });
 
@@ -196,11 +199,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/informasi-umum', [FormsController::class, 'informasiUmumStore'])
             ->name('informasi_umum.store');
         Route::get('/informasi-umum/{id}/edit', [FormsController::class, 'informasiUmumEdit'])
-            ->whereNumber('id')->name('informasi_umum.edit');
+            ->name('informasi_umum.edit');
         Route::put('/informasi-umum/{id}', [FormsController::class, 'informasiUmumUpdate'])
-            ->whereNumber('id')->name('informasi_umum.update');
+            ->name('informasi_umum.update');
         Route::delete('/informasi-umum/{id}', [FormsController::class, 'informasiUmumDelete'])
-            ->whereNumber('id')->name('informasi_umum.delete');
+            ->name('informasi_umum.delete');
 
         // -----------------------------------------
         // KETERANGAN ENUMERATOR (RESOURCE)
@@ -220,13 +223,13 @@ Route::middleware('auth')->group(function () {
             ->name('target_realisasi.store');
 
         Route::get('/target-realisasi/{id}/edit', [FormsController::class, 'targetRealisasiEdit'])
-            ->whereNumber('id')->name('target_realisasi.edit');
+            ->name('target_realisasi.edit');
 
         Route::put('/target-realisasi/{id}', [FormsController::class, 'targetRealisasiUpdate'])
-            ->whereNumber('id')->name('target_realisasi.update');
+            ->name('target_realisasi.update');
 
         Route::delete('/target-realisasi/{id}', [FormsController::class, 'targetRealisasiDelete'])
-            ->whereNumber('id')->name('target_realisasi.delete');
+            ->name('target_realisasi.delete');
 
         // -----------------------------------------
         // PROGRES PER KOMPONEN

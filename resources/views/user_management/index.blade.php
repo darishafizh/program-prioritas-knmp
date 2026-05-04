@@ -206,7 +206,7 @@
                                         </button>
                                         @if($user->id !== auth()->id())
                                         <button type="button" class="btn btn-sm btn-outline-danger" 
-                                                onclick="showDeleteModal({{ $user->id }}, '{{ $user->name }}')"
+                                                onclick="showDeleteModal('{{ hashid($user->id) }}', '{{ $user->name }}')"
                                                 title="Hapus">
                                             <i class="mdi mdi-trash-can"></i>
                                         </button>
@@ -307,7 +307,7 @@
     <div class="modal fade user-modal" id="editUserModal{{ $user->id }}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content user-modal-content">
-                <form action="{{ route('user_management.update', $user->id) }}" method="POST">
+                <form action="{{ route('user_management.update', hashid($user->id)) }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="modal-header user-modal-header" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
