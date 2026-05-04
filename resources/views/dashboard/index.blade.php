@@ -120,6 +120,113 @@
             font-weight: 600 !important;
             box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3) !important;
         }
+
+        /* ============ KNMP Rank Row (Top/Bottom 10) ============ */
+        .knmp-rank-row__alert,
+        .knmp-rank-row__check {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            margin-right: 6px;
+            border-radius: 50%;
+            font-size: 13px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .knmp-rank-row__alert {
+            color: #b91c1c;
+            background: rgba(220, 38, 38, 0.12);
+        }
+        .knmp-rank-row__alert i { font-size: 13px; line-height: 1; }
+        .knmp-rank-row__check {
+            color: #047857;
+            background: rgba(16, 185, 129, 0.12);
+        }
+        .knmp-rank-row__check i { font-size: 13px; line-height: 1; }
+
+        .knmp-rank-row--alert {
+            background: linear-gradient(90deg, rgba(254, 226, 226, 0.55) 0%, rgba(254, 226, 226, 0) 70%) !important;
+        }
+        .knmp-rank-row--alert td { border-color: rgba(220, 38, 38, 0.12) !important; }
+
+        /* ============ Custom Tooltip Skin ============ */
+        .knmp-rank-tooltip { --bs-tooltip-max-width: 240px; }
+        .knmp-rank-tooltip .tooltip-inner {
+            max-width: 240px;
+            padding: 0;
+            background: #ffffff;
+            color: #1f2937;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14), 0 2px 6px rgba(15, 23, 42, 0.06);
+            text-align: left;
+            font-size: 0.78rem;
+            line-height: 1.35;
+            overflow: hidden;
+        }
+        .knmp-rank-tooltip .tooltip-arrow::before { border-right-color: #ffffff !important; }
+        .knmp-rank-tooltip.bs-tooltip-start .tooltip-arrow::before,
+        .knmp-rank-tooltip.bs-tooltip-auto[data-popper-placement^="left"] .tooltip-arrow::before { border-left-color: #ffffff !important; border-right-color: transparent !important; }
+        .knmp-rank-tooltip.bs-tooltip-top .tooltip-arrow::before,
+        .knmp-rank-tooltip.bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow::before { border-top-color: #ffffff !important; border-right-color: transparent !important; }
+        .knmp-rank-tooltip.bs-tooltip-bottom .tooltip-arrow::before,
+        .knmp-rank-tooltip.bs-tooltip-auto[data-popper-placement^="bottom"] .tooltip-arrow::before { border-bottom-color: #ffffff !important; border-right-color: transparent !important; }
+
+        .knmp-tt { padding: 10px 12px 11px; }
+        .knmp-tt__title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #b91c1c;
+            margin-bottom: 4px;
+            letter-spacing: 0.2px;
+        }
+        .knmp-tt__title i { font-size: 1rem; }
+        .knmp-tt--ok .knmp-tt__title { color: #047857; }
+        .knmp-tt__name {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 8px;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+        .knmp-tt__rows {
+            border-top: 1px dashed #e5e7eb;
+            padding-top: 6px;
+            margin-bottom: 6px;
+        }
+        .knmp-tt__row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 0.74rem;
+            padding: 2px 0;
+            color: #4b5563;
+            gap: 10px;
+        }
+        .knmp-tt__row strong {
+            color: #0f172a;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+        .knmp-tt__row--delta strong { color: #b91c1c; }
+        .knmp-tt__hint {
+            font-size: 0.7rem;
+            color: #6b7280;
+            font-style: italic;
+            line-height: 1.3;
+        }
+        .knmp-tt--plain {
+            padding: 8px 11px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #0f172a;
+        }
     </style>
 @endpush
 
@@ -249,21 +356,7 @@
                             </thead>
                             <tbody>
                                 @forelse($top10Knmp ?? [] as $item)
-                                    <tr>
-                                        <td class="ps-4 align-middle" style="font-size: 0.8rem;" title="{{ $item->knmp->nama ?? 'KNMP #'.$item->knmp_id }}">
-                                            <div class="d-flex align-items-center">
-                                                @if($item->is_stagnan)
-                                                    <i class="mdi mdi-alert text-danger me-1" title="Stagnan selama 5 hari!"></i>
-                                                @endif
-                                                <span class="fw-medium text-truncate d-inline-block {{ $item->is_stagnan ? 'text-danger' : 'text-dark' }}" style="max-width: 140px;">
-                                                    {{ $item->knmp->nama ?? 'KNMP #'.$item->knmp_id }}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td class="text-end fw-bold pe-4 align-middle {{ $item->is_stagnan ? 'text-danger' : 'text-success' }}" style="font-size: 0.8rem;">
-                                            {{ round($item->progres, 2) }}%
-                                        </td>
-                                    </tr>
+                                    @include('dashboard._knmp_rank_row', ['item' => $item, 'context' => 'top'])
                                 @empty
                                     <tr><td colspan="2" class="text-center text-muted py-4 align-middle" style="font-size: 0.8rem;">Tidak ada data</td></tr>
                                 @endforelse
@@ -294,21 +387,7 @@
                             </thead>
                             <tbody>
                                 @forelse($bottom10Knmp ?? [] as $item)
-                                    <tr class="{{ $item->is_stagnan ? 'bg-danger bg-opacity-10' : '' }}">
-                                        <td class="ps-4 align-middle" style="font-size: 0.8rem;" title="{{ $item->knmp->nama ?? 'KNMP #'.$item->knmp_id }}">
-                                            <div class="d-flex align-items-center">
-                                                @if($item->is_stagnan)
-                                                    <i class="mdi mdi-alert text-danger me-1" title="Stagnan selama 5 hari!"></i>
-                                                @endif
-                                                <span class="fw-medium text-truncate d-inline-block {{ $item->is_stagnan ? 'text-danger' : 'text-dark' }}" style="max-width: 140px;">
-                                                    {{ $item->knmp->nama ?? 'KNMP #'.$item->knmp_id }}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td class="text-end fw-bold pe-4 align-middle {{ $item->is_stagnan ? 'text-danger' : 'text-warning' }}" style="font-size: 0.8rem;">
-                                            {{ round($item->progres, 2) }}%
-                                        </td>
-                                    </tr>
+                                    @include('dashboard._knmp_rank_row', ['item' => $item, 'context' => 'bottom'])
                                 @empty
                                     <tr><td colspan="2" class="text-center text-muted py-4 align-middle" style="font-size: 0.8rem;">Tidak ada data</td></tr>
                                 @endforelse
