@@ -143,45 +143,77 @@
         <!-- ROW 2: Koperasi & Map Combined -->
         <div class="row mb-4 align-items-stretch">
             <!-- Left Col: Koperasi Detail -->
-            <div class="col-lg-6 mb-3 mb-lg-0">
+            <div class="col-lg-8 mb-3 mb-lg-0">
                 <div class="card border-0 shadow-sm h-100 kpi-card-white">
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-3 border-bottom pb-2">
-                            <div class="kpi-icon kpi-icon-teal me-3" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                            <div class="kpi-icon kpi-icon-teal me-3" style="width: 40px; height: 40px; font-size: 0.8rem;">
                                 <i class="mdi mdi-handshake"></i>
                             </div>
-                            <h6 class="mb-0 fw-bold text-dark" style="font-size:0.9rem;">Koperasi Desa Merah Putih</h6>
+                            <h6 class="mb-0 fw-bold text-dark" style="font-size:0.8rem;">Produksi, Komoditas, dan KDKMP</h6>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <div class="d-flex flex-column gap-3">
+                                    <div>
+                                        <small class="text-muted d-block" style="font-size:0.65rem;">Volume Produksi</small>
+                                                <h5 class="mb-0 fw-bold text-dark" style="font-size:0.95rem;">
+                                                    {{ number_format($stats['volumeKomoditas1'], 2, ',', '.') }} <small
+                                                        class="text-muted fw-normal" style="font-size:0.7rem;">Ton</small>
+                                                </h5>
+                                    </div>
+
+                                    <div>
+                                        <small class="text-muted d-block" style="font-size:0.65rem;">Nilai Produksi</small>
+                                                <h5 class="mb-0 fw-bold text-success" style="font-size:0.95rem;">Rp
+                                                    {{ number_format($stats['nilaiKomoditas1'], 0, ',', '.') }}
+                                                </h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                
+                            </div>
                         </div>
 
                         @if($stats['koperasiDesaMerahPutih'])
-                            <div class="d-flex flex-column gap-3">
-                                <div class="d-flex">
-                                    <i class="mdi mdi-office-building-outline text-muted me-2 mt-1"></i>
-                                    <div>
-                                        <small class="d-block text-muted" style="font-size: 0.65rem;letter-spacing:0.5px;">NAMA KOPERASI</small>
-                                        <span class="fw-semibold text-dark" style="font-size:0.85rem;">{{ $stats['koperasiDesaMerahPutih']['nama'] }}</span>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="d-flex flex-column gap-2">
+                                    <div class="d-flex">
+                                        <i class="mdi mdi-office-building-outline text-muted me-2 mt-1"></i>
+                                        <div>
+                                            <small class="d-block text-muted" style="font-size: 0.55rem;letter-spacing:0.5px;">NAMA KOPERASI</small>
+                                            <span class="fw-semibold text-dark" style="font-size:0.75rem;">{{ $stats['koperasiDesaMerahPutih']['nama'] }}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="d-flex">
-                                    <i class="mdi mdi-account-tie text-muted me-2 mt-1"></i>
+                                    <div class="d-flex">
+                                    <i class="mdi mdi-file-document-outline text-muted me-2 mt-1"></i>
                                     <div>
-                                        <small class="d-block text-muted" style="font-size: 0.65rem;letter-spacing:0.5px;">KETUA</small>
-                                        <span class="text-dark" style="font-size:0.85rem;">{{ $stats['koperasiDesaMerahPutih']['ketua'] }}</span>
+                                        <small class="d-block text-muted" style="font-size: 0.55rem;letter-spacing:0.5px;">NO. SK</small>
+                                        <span class="text-dark" style="font-size:0.75rem;">{{ $stats['koperasiDesaMerahPutih']['sk'] ?? '-' }}</span>
                                     </div>
+                                </div> 
                                 </div>
+
+                                <div class="col-md-6">
+<div class="d-flex flex-column gap-2">
+                                    <div class="d-flex">
+                                        <i class="mdi mdi-account-tie text-muted me-2 mt-1"></i>
+                                        <div>
+                                            <small class="d-block text-muted" style="font-size: 0.55rem;letter-spacing:0.5px;">KETUA</small>
+                                            <span class="text-dark" style="font-size:0.75rem;">{{ $stats['koperasiDesaMerahPutih']['ketua'] }}</span>
+                                        </div>
+                                    </div>
                                 <div class="d-flex">
                                     <i class="mdi mdi-account-group text-muted me-2 mt-1"></i>
                                     <div>
-                                        <small class="d-block text-muted" style="font-size: 0.65rem;letter-spacing:0.5px;">ANGGOTA</small>
-                                        <span class="text-dark" style="font-size:0.85rem;">{{ $stats['koperasiDesaMerahPutih']['anggotaLaki'] + $stats['koperasiDesaMerahPutih']['anggotaPerempuan'] }} Orang</span>
+                                        <small class="d-block text-muted" style="font-size: 0.55rem;letter-spacing:0.5px;">ANGGOTA</small>
+                                        <span class="text-dark" style="font-size:0.75rem;">{{ $stats['koperasiDesaMerahPutih']['anggotaLaki'] + $stats['koperasiDesaMerahPutih']['anggotaPerempuan'] }} Orang</span>
                                     </div>
                                 </div>
-                                <div class="d-flex">
-                                    <i class="mdi mdi-file-document-outline text-muted me-2 mt-1"></i>
-                                    <div>
-                                        <small class="d-block text-muted" style="font-size: 0.65rem;letter-spacing:0.5px;">NO. SK</small>
-                                        <span class="text-dark" style="font-size:0.85rem;">{{ $stats['koperasiDesaMerahPutih']['sk'] ?? '-' }}</span>
-                                    </div>
+                                </div>
                                 </div>
                             </div>
                         @else
@@ -194,7 +226,7 @@
             </div>
 
             <!-- Right Col: Map -->
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <div class="card border-0 shadow-sm h-100 overflow-hidden" style="min-height: 280px;">
                     <div class="card-body p-0 h-100 position-relative">
                         <div id="knmpMap"
