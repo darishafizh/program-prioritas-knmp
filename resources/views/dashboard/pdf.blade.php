@@ -2,316 +2,391 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Progres KNMP Tahap {{ $tahapLabel }}</title>
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="https://kampungnelayanmerahputih.kkp.go.id/img/favicon.ico">
+    <title>Progres Pembangunan KNMP Tahap {{ $tahapLabel }}</title>
     <style>
         @font-face {
-            font-family: 'Lexend';
-            font-style: normal;
-            font-weight: 300;
-            src: url('{{ storage_path("fonts/lexend/Lexend-Light.ttf") }}') format('truetype');
-        }
-        @font-face {
-            font-family: 'Lexend';
+            font-family: 'Poppins';
             font-style: normal;
             font-weight: 400;
-            src: url('{{ storage_path("fonts/lexend/Lexend-Regular.ttf") }}') format('truetype');
+            src: url('{{ storage_path("fonts/poppins/Poppins-Regular.ttf") }}') format('truetype');
         }
         @font-face {
-            font-family: 'Lexend';
+            font-family: 'Poppins';
+            font-style: italic;
+            font-weight: 400;
+            src: url('{{ storage_path("fonts/poppins/Poppins-Italic.ttf") }}') format('truetype');
+        }
+        @font-face {
+            font-family: 'Poppins';
             font-style: normal;
             font-weight: 500;
-            src: url('{{ storage_path("fonts/lexend/Lexend-Medium.ttf") }}') format('truetype');
+            src: url('{{ storage_path("fonts/poppins/Poppins-Medium.ttf") }}') format('truetype');
         }
         @font-face {
-            font-family: 'Lexend';
+            font-family: 'Poppins';
             font-style: normal;
             font-weight: 600;
-            src: url('{{ storage_path("fonts/lexend/Lexend-SemiBold.ttf") }}') format('truetype');
+            src: url('{{ storage_path("fonts/poppins/Poppins-SemiBold.ttf") }}') format('truetype');
         }
         @font-face {
-            font-family: 'Lexend';
+            font-family: 'Poppins';
             font-style: normal;
             font-weight: 700;
-            src: url('{{ storage_path("fonts/lexend/Lexend-Bold.ttf") }}') format('truetype');
+            src: url('{{ storage_path("fonts/poppins/Poppins-Bold.ttf") }}') format('truetype');
         }
 
         @page {
-            margin: 40px 50px;
+            margin: 22mm 16mm 22mm 16mm;
         }
+        * { box-sizing: border-box; }
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Lexend', Arial, sans-serif;
-            font-size: 10px;
-            color: #1e293b;
-            line-height: 1.5;
+            font-family: 'Poppins', Arial, sans-serif;
+            font-size: 9.5px;
+            color: #1f2937;
+            line-height: 1.35;
         }
 
-        .header-formal {
+        /* ============ KOP / HEADER ============ */
+        .kop {
             text-align: center;
-            margin-bottom: 20px;
-            padding-top: 10px;
+            margin: 0 0 4px 0;
         }
-        .header-formal h3 {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 5px;
+        .kop p {
+            margin: 0;
+            padding: 0;
+            line-height: 1.18;
+            color: #000;
             text-transform: uppercase;
-            color: #000;
         }
-        .header-formal h1 {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #000;
+        .kop .l1 { font-size: 11px; font-weight: 600; letter-spacing: 0.2px; }
+        .kop .l2 { font-size: 12px; font-weight: 600; letter-spacing: 0.2px; }
+        .kop .l3 { font-size: 15px; font-weight: 700; letter-spacing: 0.5px; margin-top: 1px; }
+
+        .kop-rule-wrap {
+            margin: 6px 0 0 0;
+            padding: 0;
+            line-height: 0;
         }
-        .header-formal .subtitle {
-            font-size: 12px;
-            color: #000;
-        }
-        .header-formal .date {
-            font-size: 10px;
-            margin-top: 5px;
-            color: #000;
-        }
-        .header-formal hr.thick {
+        .kop-rule-thick {
             border: 0;
-            border-bottom: 3px solid #000;
-            margin-top: 15px;
+            border-top: 2.4px solid #000;
+            margin: 0;
+            padding: 0;
         }
-        .header-formal hr.thin {
+        .kop-rule-thin {
             border: 0;
-            border-bottom: 1px solid #000;
-            margin-top: 2px;
+            border-top: 0.6px solid #000;
+            margin: 1.6px 0 0 0;
+            padding: 0;
         }
 
-        .content { padding: 0; }
-
-        .section {
-            margin-bottom: 18px;
+        /* ============ DOC TITLE ============ */
+        .doc-title-block {
+            text-align: center;
+            margin: 14px 0 12px 0;
         }
-        .section-title {
-            font-size: 11px;
+        .doc-title {
+            font-size: 13px;
             font-weight: 700;
             color: #000;
-            border-bottom: 2px solid #000;
-            padding-bottom: 5px;
-            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin: 0 0 2px 0;
+            line-height: 1.25;
         }
+        .doc-subtitle {
+            font-size: 9.5px;
+            font-weight: 500;
+            color: #374151;
+            margin: 0;
+            line-height: 1.3;
+        }
+        .doc-subtitle strong { font-weight: 600; color: #000; }
 
-        table {
+        /* ============ TABLE ============ */
+        table.progres-table {
             width: 100%;
             border-collapse: collapse;
+            margin: 0 0 14px 0;
         }
-        th, td {
-            border: 1px solid #cbd5e1;
-            padding: 6px 8px;
-            text-align: left;
-            font-size: 9px;
+        table.progres-table th,
+        table.progres-table td {
+            border: 0.6px solid #94a3b8;
+            padding: 4px 6px;
+            font-size: 8.5px;
+            line-height: 1.3;
+            vertical-align: middle;
         }
-        th {
-            background: #e2e8f0;
+        table.progres-table thead th {
+            background: #d8dee7;
             color: #000;
             font-weight: 600;
-            font-size: 8px;
+            text-align: center;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-size: 8px;
+            letter-spacing: 0.4px;
+            padding: 6px 6px;
         }
-        tbody tr:nth-child(even) {
-            background: #f8fafc;
+        table.progres-table tbody tr:nth-child(even) td {
+            background: #f6f8fb;
         }
         .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .fw-bold { font-weight: 700; }
+        .fw-semibold { font-weight: 600; }
+        .muted       { color: #94a3b8; }
 
-
-
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 8px;
-            font-weight: 600;
+        td.col-no {
+            text-align: center;
+            font-weight: 500;
+            color: #4b5563;
         }
-        .badge-success { background: #d1fae5; color: #065f46; }
-        .badge-primary { background: #dbeafe; color: #1e40af; }
-        .badge-warning { background: #fef3c7; color: #92400e; }
-        .badge-danger { background: #fee2e2; color: #991b1b; }
-        .badge-gray { background: #f1f5f9; color: #475569; }
+        td.col-lokasi .nama {
+            font-size: 8.5px;
+            font-weight: 600;
+            color: #0f172a;
+            line-height: 1.3;
+            margin: 0 0 1px 0;
+        }
+        td.col-lokasi .alamat {
+            font-size: 7.6px;
+            font-weight: 400;
+            color: #4b5563;
+            line-height: 1.3;
+            margin: 0;
+        }
+        td.col-progres {
+            text-align: center;
+            font-weight: 600;
+            color: #0f172a;
+            white-space: nowrap;
+        }
 
-        .page-break { page-break-before: always; }
-
-        .photo-island-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: #000;
-            border-left: 4px solid #000;
-            padding-left: 10px;
-            margin-bottom: 12px;
+        /* ============ DOCUMENTATION ============ */
+        .doc-section {
             margin-top: 6px;
         }
+        .doc-section-title {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            margin: 0 0 12px 0;
+            padding: 6px 0;
+            border-top: 1.6px solid #000;
+            border-bottom: 1.6px solid #000;
+        }
+        .province-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 8px 0 6px 0;
+            padding: 3px 0 4px 0;
+            border-bottom: 0.6px solid #cbd5e1;
+            letter-spacing: 0.2px;
+        }
+        .province-title .count {
+            font-size: 8.5px;
+            font-weight: 500;
+            color: #6b7280;
+            margin-left: 4px;
+        }
+
         .photo-grid {
             width: 100%;
-            margin-bottom: 15px;
+            margin: 0 0 4px 0;
         }
         .photo-card {
-            width: 23%;
+            width: 31.5%;
             display: inline-block;
             vertical-align: top;
-            margin: 0 1% 10px 0;
-            border: 1px solid #e2e8f0;
-            border-radius: 4px;
+            margin: 0 1.6% 10px 0;
+            border: 0.6px solid #d1d5db;
+            border-radius: 3px;
             overflow: hidden;
             page-break-inside: avoid;
             text-align: center;
-        }
-        .photo-card-header {
-            background: #f1f5f9;
-            padding: 4px;
-            border-bottom: 1px solid #e2e8f0;
-            height: 35px;
-        }
-        .photo-card-header h4 {
-            font-size: 8px;
-            font-weight: 700;
-            color: #1e293b;
-            margin: 0;
-            line-height: 1.2;
-        }
-        .photo-card-header small {
-            font-size: 6px;
-            color: #64748b;
+            background: #ffffff;
         }
         .photo-card-body {
-            padding: 4px;
+            padding: 0;
+            background: #f1f5f9;
         }
         .photo-card-body img {
             width: 100%;
-            height: 80px;
+            height: 105px;
             object-fit: cover;
-            border-radius: 2px;
+            display: block;
+        }
+        .photo-card-caption {
+            padding: 5px 6px 6px 6px;
+            text-align: center;
+            border-top: 0.6px solid #e5e7eb;
+        }
+        .photo-card-caption .nama {
+            font-size: 8px;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 0 0 1px 0;
+            line-height: 1.25;
+        }
+        .photo-card-caption .lokasi {
+            font-size: 7px;
+            color: #6b7280;
+            margin: 0;
+            line-height: 1.25;
+        }
+        .photo-empty {
+            padding: 28px 12px;
+            text-align: center;
+            font-size: 9px;
+            color: #6b7280;
+            font-style: italic;
+            border: 1px dashed #cbd5e1;
+            background: #f8fafc;
+            border-radius: 3px;
         }
 
+        .page-break { page-break-before: always; }
+
+        /* ============ FOOTER ============ */
         .footer {
             position: fixed;
-            bottom: -40px;
+            bottom: -14mm;
             left: 0;
             right: 0;
-            padding: 8px 0;
+            padding-top: 4mm;
             font-size: 7px;
-            color: #94a3b8;
+            color: #6b7280;
             text-align: center;
-            border-top: 1px solid #e2e8f0;
-            background: #fff;
+            border-top: 0.4px solid #cbd5e1;
+        }
+        .footer .pn:before {
+            content: "Halaman " counter(page) " dari " counter(pages);
         }
     </style>
 </head>
 <body>
-    {{-- HEADER FORMAL --}}
-    <div class="header-formal">
-        <h3>KEMENTERIAN KELAUTAN DAN PERIKANAN REPUBLIK INDONESIA</h3>
-        <h1>LAPORAN PROGRES PEMBANGUNAN KAMPUNG NELAYAN MERAH PUTIH (KNMP)</h1>
-        <div class="subtitle">TAHAP {{ strtoupper($tahapLabel) }}</div>
-        <div class="date">Tanggal Laporan: {{ $exportDate }}</div>
-        <hr class="thick">
-        <hr class="thin">
+    {{-- KOP / HEADER --}}
+    <div class="kop">
+        <p class="l1">Biro Perencanaan</p>
+        <p class="l2">Sekretariat Jenderal</p>
+        <p class="l3">Kementerian Kelautan dan Perikanan</p>
+    </div>
+    <div class="kop-rule-wrap">
+        <hr class="kop-rule-thick">
+        <hr class="kop-rule-thin">
     </div>
 
-    <div class="content">
-        {{-- DATA TABLE --}}
-        <div class="section">
-            <div class="section-title">Data Progres Pembangunan KNMP</div>
-
+    {{-- DOC TITLE --}}
+    <div class="doc-title-block">
+        <p class="doc-title">Progres Pembangunan KNMP Tahap {{ $tahapLabel }}</p>
+        <p class="doc-subtitle">
             @if($selectedProgresDate)
-                <p style="font-size: 8px; color: #64748b; margin-bottom: 8px;">
-                    Data per tanggal: <strong>{{ \Carbon\Carbon::parse($selectedProgresDate)->format('d F Y') }}</strong>
-                </p>
+                Data per tanggal <strong>{{ \Carbon\Carbon::parse($selectedProgresDate)->translatedFormat('d F Y') }}</strong>
+            @else
+                Data per tanggal <strong>{{ $exportDate }}</strong>
             @endif
+        </p>
+    </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 30px;" class="text-center">No</th>
-                        <th style="width: 140px;">Lokasi</th>
-                        <th>Nama Penyedia</th>
-                        <th style="width: 100px;" class="text-center">% Progres Fisik</th>
-                        <th style="width: 80px;" class="text-center">Keterangan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($tableData as $index => $row)
-                        <tr>
-                            <td class="text-center">{{ $index + 1 }}</td>
-                            <td>
-                                <div class="fw-bold" style="font-size: 9px; color: #000; margin-bottom: 2px;">{{ $row['lokasi_1'] }}</div>
-                                <div style="font-size: 7px; color: #64748b;">{{ $row['lokasi_2'] }}</div>
-                            </td>
-                            <td class="text-center" style="color: #94a3b8; font-style: italic;">
-                                {{ $row['nama_penyedia'] ?: '-' }}
-                            </td>
-                            <td class="text-center">
-                                <span class="fw-bold">{{ number_format($row['progres'], 2) }}%</span>
-                            </td>
-                            <td class="text-center" style="color: #94a3b8; font-style: italic;">
-                                {{ $row['keterangan'] ?: '-' }}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center" style="padding: 20px; color: #94a3b8;">Belum ada data progres.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    {{-- TABLE --}}
+    <table class="progres-table">
+        <thead>
+            <tr>
+                <th style="width: 24px;">No</th>
+                <th>Nama KNMP dan Lokasi</th>
+                <th style="width: 22%;">Penyedia Jasa Konstruksi</th>
+                <th style="width: 58px;">Progres Fisik (%)</th>
+                <th style="width: 18%;">Keterangan</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($tableData as $index => $row)
+                <tr>
+                    <td class="col-no">{{ $index + 1 }}</td>
+                    <td class="col-lokasi">
+                        <p class="nama">{{ $row['lokasi_1'] }}</p>
+                        <p class="alamat">{{ $row['lokasi_2'] }}</p>
+                    </td>
+                    <td class="text-center {{ $row['nama_penyedia'] ? '' : 'muted' }}">
+                        {{ $row['nama_penyedia'] ?: '—' }}
+                    </td>
+                    <td class="col-progres">
+                        {{ number_format($row['progres'], 2, ',', '.') }}
+                    </td>
+                    <td class="text-center {{ $row['keterangan'] ? '' : 'muted' }}">
+                        {{ $row['keterangan'] ?: '—' }}
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="5" class="text-center muted" style="padding: 18px; font-style: italic;">
+                        Belum ada data progres untuk filter yang dipilih.
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
 
-        {{-- PHOTO ATTACHMENTS --}}
-        @if(count($photosByIsland) > 0)
-            <div class="page-break"></div>
-            <div class="section">
-                <div class="section-title">Lampiran Foto Pembangunan KNMP</div>
-                <p style="font-size: 8px; color: #64748b; margin-bottom: 12px;">
-                    Dokumentasi foto dikelompokkan berdasarkan wilayah pulau.
+    {{-- DOCUMENTATION SECTION --}}
+    <div class="doc-section">
+        <p class="doc-section-title">Dokumentasi Progres Pembangunan KNMP</p>
+
+        @if(count($photosByProvince) > 0)
+            @foreach($photosByProvince as $province => $items)
+                <p class="province-title">
+                    {{ $province }}<span class="count">({{ count($items) }} lokasi)</span>
                 </p>
-
-                @foreach($photosByIsland as $island => $knmpPhotos)
-                    <div class="photo-island-title">{{ $island }}</div>
-
-                    <div class="photo-grid">
-                        @foreach($knmpPhotos as $knmpPhoto)
-                            <div class="photo-card">
-                                <div class="photo-card-header">
-                                    <h4>{{ $knmpPhoto['nama'] }}</h4>
-                                    <small>{{ $knmpPhoto['lokasi'] }}</small>
-                                </div>
-                                <div class="photo-card-body">
-                                    @foreach($knmpPhoto['photos'] as $photo)
-                                        @php
-                                            $imagePath = storage_path('app/public/' . $photo->path_file);
-                                            $src = '';
-                                            if (file_exists($imagePath)) {
-                                                $type = pathinfo($imagePath, PATHINFO_EXTENSION);
-                                                $data = file_get_contents($imagePath);
-                                                $src = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                <div class="photo-grid">
+                    @foreach($items as $item)
+                        <div class="photo-card">
+                            <div class="photo-card-body">
+                                @foreach($item['photos'] as $photo)
+                                    @php
+                                        $imagePath = storage_path('app/public/' . $photo->path_file);
+                                        $src = '';
+                                        if (file_exists($imagePath)) {
+                                            $type = strtolower(pathinfo($imagePath, PATHINFO_EXTENSION));
+                                            if ($type === 'jpg') {
+                                                $type = 'jpeg';
                                             }
-                                        @endphp
-                                        @if($src)
-                                            <img src="{{ $src }}" alt="{{ $photo->nama_file }}">
-                                        @endif
-                                    @endforeach
-                                </div>
+                                            $data = file_get_contents($imagePath);
+                                            $src = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                                        }
+                                    @endphp
+                                    @if($src)
+                                        <img src="{{ $src }}" alt="{{ $photo->nama_file ?? $item['nama'] }}">
+                                    @else
+                                        <div style="height: 105px; line-height: 105px; color: #9ca3af; font-size: 8px; background: #f1f5f9;">
+                                            (Foto tidak tersedia)
+                                        </div>
+                                    @endif
+                                @endforeach
                             </div>
-                        @endforeach
-                    </div>
-                @endforeach
+                            <div class="photo-card-caption">
+                                <p class="nama">{{ $item['nama'] }}</p>
+                                @if(!empty($item['lokasi']))
+                                    <p class="lokasi">{{ $item['lokasi'] }}</p>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endforeach
+        @else
+            <div class="photo-empty">
+                Belum ada dokumentasi foto pembangunan yang tersedia.
             </div>
         @endif
     </div>
 
     <div class="footer">
-        Laporan Progres KNMP Tahap {{ $tahapLabel }} &mdash; Biro Perencanaan, Kementerian Kelautan dan Perikanan &copy; {{ date('Y') }} &mdash; Dicetak: {{ $exportDate }}
+        <span>Biro Perencanaan &middot; Sekretariat Jenderal &middot; Kementerian Kelautan dan Perikanan</span>
+        &nbsp;&middot;&nbsp;
+        <span class="pn"></span>
     </div>
 </body>
 </html>
