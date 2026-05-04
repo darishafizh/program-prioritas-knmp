@@ -22,8 +22,8 @@
     </div>
     <!-- end page title -->
 
-    <!-- KNMP Selector with Search - Only for Admin -->
-    @if(Auth::user()->isAdmin())
+    <!-- KNMP Selector with Search - For Admin & SuperAdmin -->
+    @if(Auth::user()->isAdmin() || Auth::user()->isSuperAdmin())
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card border-0 shadow-sm selector-card">
@@ -763,106 +763,109 @@
                 @if(isset($monitoringStats['bukti']) && $monitoringStats['bukti']['totalFiles'] > 0)
                     @php
                         $files = collect($monitoringStats['bukti']['files']);
-                        $beforeFiles = $files->where('kondisi', 'before');
-                        $afterFiles = $files->where('kondisi', 'after');
+                        $beforeFiles = $files->where('kondisi', 'before')->values();
+                        $afterFiles = $files->where('kondisi', 'after')->values();
                         $legacyFiles = $files->whereNull('kondisi');
+                        $maxPairs = max($beforeFiles->count(), $afterFiles->count());
                     @endphp
 
-                    <div class="row g-4 mb-4">
-                        <!-- Kondisi Sebelum -->
-                        <div class="col-md-6">
-                            <div class="card border-0 shadow-sm h-100" style="border-radius: 12px; overflow: hidden;">
-                                <div class="card-header border-0 py-2" style="background:linear-gradient(135deg,#fef3c7,#fde68a);">
-                                    <h6 class="mb-0 fw-bold" style="color:#92400e;font-size:0.75rem;">
-                                        <i class="mdi mdi-image-outline me-1"></i>Kondisi Sebelum (Before)
+                    <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; overflow: hidden;">
+                        {{-- Column Headers --}}
+                        <div class="row g-0 justify-content-center">
+                            <div class="col-4">
+                                <div class="py-2 px-3" style="background:linear-gradient(135deg,#fef3c7,#fde68a);">
+                                    <h6 class="mb-0 fw-bold text-center" style="color:#92400e;font-size:0.7rem;">
+                                        <i class="mdi mdi-image-outline me-1"></i>Sebelum (Before)
                                     </h6>
                                 </div>
-                                <div class="card-body p-3" style="background-color: #f8f9fa;">
-                                    @if($beforeFiles->count() > 0)
-                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.5rem;">
-                                            @foreach($beforeFiles as $file)
-                                                <div>
-                                                    <div class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
-                                                        <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100 position-relative">
-                                                            @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                                                                <div class="ratio ratio-1x1">
-                                                                    <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid"
-                                                                        alt="Before" style="object-fit: cover;">
-                                                                </div>
-                                                            @else
-                                                                <div
-                                                                    class="ratio ratio-1x1 d-flex align-items-center justify-content-center bg-white border-bottom">
-                                                                    <div class="text-center p-2">
-                                                                        <i class="mdi mdi-file-document-outline text-muted"
-                                                                            style="font-size: 2rem;"></i>
-                                                                    </div>
-                                                                </div>
-                                                            @endif
-                                                            <div class="bg-white p-2 text-center border-top">
-                                                                <small class="d-block text-muted text-truncate"
-                                                                    style="max-width: 100%; font-size: 0.75rem;">{{ $file->nama_file }}</small>
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    @else
-                                        <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5 opacity-50">
-                                            <i class="mdi mdi-image-off-outline text-muted mb-2" style="font-size: 3rem;"></i>
-                                            <small class="text-muted fw-medium">Belum ada foto sebelum</small>
-                                        </div>
-                                    @endif
+                            </div>
+                            <div class="col-4">
+                                <div class="py-2 px-3" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);">
+                                    <h6 class="mb-0 fw-bold text-center" style="color:#065f46;font-size:0.7rem;">
+                                        <i class="mdi mdi-image-check-outline me-1"></i>Sesudah (After)
+                                    </h6>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Kondisi Sesudah -->
-                        <div class="col-md-6">
-                            <div class="card border-0 shadow-sm h-100" style="border-radius: 12px; overflow: hidden;">
-                                <div class="card-header border-0 py-2" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);">
-                                    <h6 class="mb-0 fw-bold" style="color:#065f46;font-size:0.75rem;">
-                                        <i class="mdi mdi-image-check-outline me-1"></i>Kondisi Sesudah (After)
-                                    </h6>
-                                </div>
-                                <div class="card-body p-3" style="background-color: #f8f9fa;">
-                                    @if($afterFiles->count() > 0)
-                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.5rem;">
-                                            @foreach($afterFiles as $file)
-                                                <div>
-                                                    <div class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
-                                                        <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100 position-relative">
-                                                            @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                                                                <div class="ratio ratio-1x1">
-                                                                    <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid"
-                                                                        alt="After" style="object-fit: cover;">
-                                                                </div>
-                                                            @else
-                                                                <div
-                                                                    class="ratio ratio-1x1 d-flex align-items-center justify-content-center bg-white border-bottom">
-                                                                    <div class="text-center p-2">
-                                                                        <i class="mdi mdi-file-document-outline text-muted"
-                                                                            style="font-size: 2rem;"></i>
-                                                                    </div>
-                                                                </div>
-                                                            @endif
-                                                            <div class="bg-white p-2 text-center border-top">
-                                                                <small class="d-block text-muted text-truncate"
-                                                                    style="max-width: 100%; font-size: 0.75rem;">{{ $file->nama_file }}</small>
+                        {{-- Photo Pairs --}}
+                        <div class="card-body p-2" style="background-color: #f8f9fa;">
+                            @if($maxPairs > 0)
+                                @for($i = 0; $i < $maxPairs; $i++)
+                                    <div class="row g-2 justify-content-center {{ $i > 0 ? 'mt-1' : '' }}">
+                                        {{-- Before Photo --}}
+                                        <div class="col-4">
+                                            @if(isset($beforeFiles[$i]))
+                                                @php $file = $beforeFiles[$i]; @endphp
+                                                <div class="card border-0 shadow-sm bg-white rounded-2 overflow-hidden transition-all hover-card">
+                                                    <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block position-relative">
+                                                        @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                                            <div class="ratio ratio-16x9">
+                                                                <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid"
+                                                                    alt="Before" style="object-fit: cover;">
                                                             </div>
-                                                        </a>
+                                                        @else
+                                                            <div class="ratio ratio-16x9 d-flex align-items-center justify-content-center bg-white border-bottom">
+                                                                <div class="text-center p-1">
+                                                                    <i class="mdi mdi-file-document-outline text-muted" style="font-size: 1.5rem;"></i>
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                        <div class="bg-white px-2 py-1 text-center border-top">
+                                                            <small class="d-block text-muted text-truncate" style="max-width: 100%; font-size: 0.65rem;">{{ $file->nama_file }}</small>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            @else
+                                                <div class="card border-0 bg-white rounded-2 overflow-hidden h-100" style="border: 2px dashed #e5e7eb !important;">
+                                                    <div class="d-flex flex-column align-items-center justify-content-center h-100 py-3 opacity-40">
+                                                        <i class="mdi mdi-image-off-outline text-muted" style="font-size: 1.5rem;"></i>
+                                                        <small class="text-muted mt-1" style="font-size:0.6rem;">Tidak ada foto</small>
                                                     </div>
                                                 </div>
-                                            @endforeach
+                                            @endif
                                         </div>
-                                    @else
-                                        <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5 opacity-50">
-                                            <i class="mdi mdi-image-off-outline text-muted mb-2" style="font-size: 3rem;"></i>
-                                            <small class="text-muted fw-medium">Belum ada foto sesudah</small>
+
+                                        {{-- After Photo --}}
+                                        <div class="col-4">
+                                            @if(isset($afterFiles[$i]))
+                                                @php $file = $afterFiles[$i]; @endphp
+                                                <div class="card border-0 shadow-sm bg-white rounded-2 overflow-hidden transition-all hover-card">
+                                                    <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block position-relative">
+                                                        @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                                            <div class="ratio ratio-16x9">
+                                                                <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid"
+                                                                    alt="After" style="object-fit: cover;">
+                                                            </div>
+                                                        @else
+                                                            <div class="ratio ratio-16x9 d-flex align-items-center justify-content-center bg-white border-bottom">
+                                                                <div class="text-center p-1">
+                                                                    <i class="mdi mdi-file-document-outline text-muted" style="font-size: 1.5rem;"></i>
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                        <div class="bg-white px-2 py-1 text-center border-top">
+                                                            <small class="d-block text-muted text-truncate" style="max-width: 100%; font-size: 0.65rem;">{{ $file->nama_file }}</small>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            @else
+                                                <div class="card border-0 bg-white rounded-2 overflow-hidden h-100" style="border: 2px dashed #e5e7eb !important;">
+                                                    <div class="d-flex flex-column align-items-center justify-content-center h-100 py-3 opacity-40">
+                                                        <i class="mdi mdi-image-off-outline text-muted" style="font-size: 1.5rem;"></i>
+                                                        <small class="text-muted mt-1" style="font-size:0.6rem;">Tidak ada foto</small>
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
-                                    @endif
+                                    </div>
+                                @endfor
+                            @else
+                                <div class="text-center py-4 opacity-50">
+                                    <i class="mdi mdi-image-off-outline text-muted mb-2" style="font-size: 3rem;"></i>
+                                    <p class="text-muted small mb-0">Belum ada foto before/after</p>
                                 </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
 
@@ -874,22 +877,20 @@
                                 </h6>
                             </div>
                             <div class="card-body p-3" style="background-color: #f8f9fa;">
-                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem;">
+                                <div class="row g-3">
                                     @foreach($legacyFiles as $file)
-                                        <div>
+                                        <div class="col-6 col-md-4 col-lg-3">
                                             <div class="card h-100 border-0 shadow-sm bg-white rounded-3 overflow-hidden transition-all hover-card">
                                                 <a href="{{ asset('storage/' . $file->path_file) }}" target="_blank" class="d-block h-100 position-relative">
                                                     @if(in_array(strtolower(pathinfo($file->path_file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                                                        <div class="ratio ratio-1x1">
+                                                        <div class="ratio ratio-4x3">
                                                             <img src="{{ asset('storage/' . $file->path_file) }}" class="img-fluid" alt="Legacy"
                                                                 style="object-fit: cover;">
                                                         </div>
                                                     @else
-                                                        <div
-                                                            class="ratio ratio-1x1 d-flex align-items-center justify-content-center bg-white border-bottom">
+                                                        <div class="ratio ratio-4x3 d-flex align-items-center justify-content-center bg-white border-bottom">
                                                             <div class="text-center p-2">
-                                                                <i class="mdi mdi-file-document-outline text-muted"
-                                                                    style="font-size: 2rem;"></i>
+                                                                <i class="mdi mdi-file-document-outline text-muted" style="font-size: 2rem;"></i>
                                                             </div>
                                                         </div>
                                                     @endif
