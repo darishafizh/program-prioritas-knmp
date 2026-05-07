@@ -152,18 +152,19 @@
         .knmp-rank-row--alert td { border-color: rgba(220, 38, 38, 0.12) !important; }
 
         /* ============ Custom Tooltip Skin ============ */
-        .knmp-rank-tooltip { --bs-tooltip-max-width: 240px; }
+        .knmp-rank-tooltip { --bs-tooltip-max-width: 260px; }
         .knmp-rank-tooltip .tooltip-inner {
-            max-width: 240px;
+            font-family: 'Poppins', sans-serif !important;
+            max-width: 260px;
             padding: 0;
             background: #ffffff;
             color: #1f2937;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14), 0 2px 6px rgba(15, 23, 42, 0.06);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             text-align: left;
-            font-size: 0.78rem;
-            line-height: 1.35;
+            font-size: 0.8rem;
+            line-height: 1.4;
             overflow: hidden;
         }
         .knmp-rank-tooltip .tooltip-arrow::before { border-right-color: #ffffff !important; }
@@ -174,52 +175,61 @@
         .knmp-rank-tooltip.bs-tooltip-bottom .tooltip-arrow::before,
         .knmp-rank-tooltip.bs-tooltip-auto[data-popper-placement^="bottom"] .tooltip-arrow::before { border-bottom-color: #ffffff !important; border-right-color: transparent !important; }
 
-        .knmp-tt { padding: 10px 12px 11px; }
+        .knmp-tt { padding: 14px 16px; }
         .knmp-tt__title {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.78rem;
+            gap: 8px;
+            font-size: 0.7rem;
             font-weight: 700;
-            color: #b91c1c;
-            margin-bottom: 4px;
-            letter-spacing: 0.2px;
-        }
-        .knmp-tt__title i { font-size: 1rem; }
-        .knmp-tt--ok .knmp-tt__title { color: #047857; }
-        .knmp-tt__name {
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #dc2626;
             margin-bottom: 8px;
-            line-height: 1.3;
+        }
+        .knmp-tt__title i { font-size: 1.1rem; }
+        .knmp-tt--ok .knmp-tt__title { color: #059669; }
+        .knmp-tt__name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 12px;
+            line-height: 1.25;
             word-break: break-word;
         }
         .knmp-tt__rows {
-            border-top: 1px dashed #e5e7eb;
-            padding-top: 6px;
-            margin-bottom: 6px;
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            border: 1px solid #f1f5f9;
         }
         .knmp-tt__row {
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
-            font-size: 0.74rem;
-            padding: 2px 0;
-            color: #4b5563;
-            gap: 10px;
+            align-items: center;
+            font-size: 0.75rem;
+            padding: 3px 0;
+            color: #64748b;
         }
         .knmp-tt__row strong {
-            color: #0f172a;
+            color: #334155;
             font-weight: 600;
-            font-variant-numeric: tabular-nums;
+            font-family: 'Poppins', sans-serif;
         }
-        .knmp-tt__row--delta strong { color: #b91c1c; }
+        .knmp-tt__row--delta strong { color: #dc2626; font-weight: 700; }
         .knmp-tt__hint {
-            font-size: 0.7rem;
-            color: #6b7280;
-            font-style: italic;
-            line-height: 1.3;
+            font-size: 0.725rem;
+            color: #64748b;
+            line-height: 1.4;
+            display: flex;
+            align-items: start;
+            gap: 6px;
+        }
+        .knmp-tt__hint::before {
+            content: '•';
+            color: #cbd5e1;
+            font-weight: bold;
         }
         .knmp-tt--plain {
             padding: 8px 11px;
@@ -501,7 +511,7 @@
                                                 {{ $item->knmp ? $item->knmp->nama : 'KNMP #' . $item->knmp_id }}
                                             </td>
                                             <td>
-                                                <span class="text-muted fst-italic">{{ $item->nama_jasa_konstruksi ?? '-' }}</span>
+                                                <span class="text-muted fst-italic">{{ $item->knmp->penyedia_jasa_konstruksi ?? '-' }}</span>
                                             </td>
                                             <td>
                                                 <div class="d-flex justify-content-between align-items-center mb-1">
@@ -861,19 +871,27 @@
                         chart: {
                             type: 'pie',
                             height: 250,
-                            toolbar: { show: false }
+                            toolbar: { show: false },
+                            fontFamily: 'Poppins, sans-serif'
                         },
                         series: sebaranData,
                         labels: sebaranLabels,
-                        colors: ['#fa5c7c', '#ffbc00', '#39afd1', '#727cf5', '#0acf97'], // danger, warning, info, primary, success
+                        colors: ['#ef4444', '#f59e0b', '#0ea5e9', '#6366f1', '#10b981'], // modern red, amber, sky, indigo, emerald
                         legend: {
                             position: 'bottom',
                             horizontalAlign: 'center',
                             fontSize: '12px',
-                            markers: { radius: 12 }
+                            fontFamily: 'Poppins, sans-serif',
+                            markers: { radius: 12, offsetX: -4 },
+                            itemMargin: { horizontal: 8, vertical: 4 }
                         },
                         dataLabels: {
                             enabled: true,
+                            style: {
+                                fontFamily: 'Poppins, sans-serif',
+                                fontWeight: 600,
+                                fontSize: '11px'
+                            },
                             dropShadow: { enabled: false }
                         },
                         tooltip: {

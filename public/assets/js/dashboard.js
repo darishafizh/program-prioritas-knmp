@@ -87,6 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
             height: 309,
             type: 'bar',
             toolbar: { show: false },
+            fontFamily: 'Poppins, sans-serif',
             events: {
                 // Feature: Click background to reset
                 click: function(event, chartContext, config) {
@@ -113,14 +114,29 @@ document.addEventListener('DOMContentLoaded', function () {
         xaxis: {
             categories: labelKnmpData,
             labels: {
-                style: { colors: '#6c757d' },
+                style: { 
+                    colors: '#6c757d',
+                    fontFamily: 'Poppins, sans-serif'
+                },
                 rotate: -45,
                 rotateAlways: true
             }
         },
         yaxis: {
-            title: { text: 'Persentase (%)', style: { color: '#6c757d' } },
-            labels: { style: { colors: '#6c757d' } },
+            title: { 
+                text: 'Persentase (%)', 
+                style: { 
+                    color: '#6c757d',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontWeight: 500
+                } 
+            },
+            labels: { 
+                style: { 
+                    colors: '#6c757d',
+                    fontFamily: 'Poppins, sans-serif'
+                } 
+            },
             max: 100
         },
         fill: { opacity: 1 },
@@ -212,6 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
         chart: {
             height: 350,
             type: 'donut',
+            fontFamily: 'Poppins, sans-serif',
             events: {
                 dataPointSelection: function(event, chartContext, config) {
                     // Start of data point selection
@@ -252,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         value: {
                             show: true,
                             fontSize: '24px',
-                            fontFamily: 'Helvetica, Arial, sans-serif',
+                            fontFamily: 'Poppins, sans-serif',
                             fontWeight: 600,
                             color: '#374151',
                             offsetY: 10,
@@ -319,7 +336,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     intersect: false,
                 },
                 plugins: {
-                    legend: { display: true, position: 'top' },
+                    legend: { 
+                        display: true, 
+                        position: 'top',
+                        labels: {
+                            font: {
+                                family: 'Poppins'
+                            }
+                        }
+                    },
                     tooltip: {
                         enabled: true,
                         mode: 'index',
@@ -330,11 +355,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     y: {
                         beginAtZero: true,
                         grid: { color: '#f1f3fa' },
-                        ticks: { color: '#6c757d' }
+                        ticks: { 
+                            color: '#6c757d',
+                            font: { family: 'Poppins' }
+                        }
                     },
                     x: {
                         grid: { display: false },
-                        ticks: { color: '#6c757d' }
+                        ticks: { 
+                            color: '#6c757d',
+                            font: { family: 'Poppins' }
+                        }
                     }
                 },
                 onClick: (e) => {
@@ -352,7 +383,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var tingkatKesejahteraanOptions = {
         chart: {
             height: 350,
-            type: 'donut'
+            type: 'donut',
+            fontFamily: 'Poppins, sans-serif'
         },
         series: tingkatKesejahteraanDataArr,
         labels: tingkatKesejahteraanLabelsArr,

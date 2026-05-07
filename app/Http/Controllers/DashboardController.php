@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use App\Models\Knmp;
 use App\Models\ProgresKnmpNasional;
 use App\Models\TanggapanMasyarakat;
+use App\Models\TimelinePengerjaan;
 
 class DashboardController extends Controller
 {
@@ -164,23 +165,24 @@ class DashboardController extends Controller
         $trendDates = $trendDataQuery->pluck('tanggal')->map(fn($date) => \Carbon\Carbon::parse($date)->format('d M y'))->toArray();
         $trendAverages = $trendDataQuery->pluck('avg_progres')->map(fn($val) => round($val, 2))->toArray();
 
-        // Query progres data by selected date
+        // Query progres data up to selected date
         $progresNasionalQuery = ProgresKnmpNasional::with('knmp')
-            ->whereIn('knmp_id', $knmpIds)
-            ->orderBy('progres', 'desc');
+            ->whereIn('knmp_id', $knmpIds);
+            
         if ($selectedProgresDate) {
-            $progresNasionalQuery->where('tanggal', $selectedProgresDate);
+            $progresNasionalQuery->where('tanggal', '<=', $selectedProgresDate);
         }
-        $progresNasional = $progresNasionalQuery->get()->unique('knmp_id')->values();
+        $progresNasional = $progresNasionalQuery->orderBy('tanggal', 'desc')->get()->unique('knmp_id')->sortByDesc('progres')->values();
         $progresNasionalAvg = $progresNasional->avg('progres') ?? 0;
 
         // Fetch previous progress data to calculate delta
         $previousProgresData = [];
         if ($previousDate) {
-            $previousProgresData = ProgresKnmpNasional::whereIn('knmp_id', $knmpIds)
-                ->where('tanggal', $previousDate)
-                ->pluck('progres', 'knmp_id')
-                ->toArray();
+            $prevQuery = ProgresKnmpNasional::whereIn('knmp_id', $knmpIds)
+                ->where('tanggal', '<=', $previousDate)
+                ->orderBy('tanggal', 'desc')
+                ->get(['knmp_id', 'progres']);
+            $previousProgresData = $prevQuery->unique('knmp_id')->pluck('progres', 'knmp_id')->toArray();
         }
 
         // Attach delta to each KNMP
@@ -383,12 +385,12 @@ class DashboardController extends Controller
             $selectedProgresDate = ProgresKnmpNasional::selectRaw('DISTINCT tanggal')
                 ->whereNotNull('tanggal')->orderBy('tanggal', 'desc')->value('tanggal');
         }
-        $progresNasionalQuery = ProgresKnmpNasional::with('knmp')->orderBy('progres', 'desc');
+        $progresNasionalQuery = ProgresKnmpNasional::with('knmp');
         if ($selectedProgresDate) {
-            $progresNasionalQuery->where('tanggal', $selectedProgresDate);
+            $progresNasionalQuery->where('tanggal', '<=', $selectedProgresDate);
         }
-        $progresNasional = $progresNasionalQuery->get();
-        $progresNasionalAvg = $progresNasional->avg('progres') ?? 0;
+        $progresNasional = $progresNasionalQuery->orderBy('tanggal', 'desc')->get()->unique('knmp_id')->sortByDesc('progres')->values();
+        $progresNasionalAvg = count($progresNasional) > 0 ? $progresNasional->avg('progres') : 0;
 
         // KPI Calculations
         $totalKnmp = count($desa_knmp);
@@ -496,11 +498,30 @@ class DashboardController extends Controller
                 ->whereNotNull('tanggal')->orderBy('tanggal', 'desc')->value('tanggal');
         }
         if ($selectedProgresDate) {
-            $progresData = ProgresKnmpNasional::whereIn('knmp_id', $knmpIds)
-                ->where('tanggal', $selectedProgresDate)->pluck('progres', 'knmp_id')->toArray();
+            $progresDataRaw = ProgresKnmpNasional::whereIn('knmp_id', $knmpIds)
+                ->where('tanggal', '<=', $selectedProgresDate)
+                ->orderBy('tanggal', 'desc')
+                ->get(['knmp_id', 'progres']);
+            $progresData = $progresDataRaw->unique('knmp_id')->pluck('progres', 'knmp_id')->toArray();
         }
 
         $avgProgres = count($progresData) > 0 ? round(array_sum($progresData) / count($progresData), 2) : 0;
+
+        // Fetch latest deviasi per KNMP from timeline_pengerjaan
+        $deviasiData = [];
+        if (!empty($knmpIds)) {
+            $latestTimelines = TimelinePengerjaan::whereIn('knmp_id', $knmpIds)
+                ->whereNotNull('bobot_realisasi_kumulatif')
+                ->orderBy('periode_mingguan', 'desc')
+                ->get()
+                ->unique('knmp_id');
+
+            foreach ($latestTimelines as $tl) {
+                $maxVal = max(abs($tl->bobot_rencana_kumulatif), abs($tl->bobot_realisasi_kumulatif), 1);
+                $scale = $maxVal > 100 ? $maxVal / 100 : 1;
+                $deviasiData[$tl->knmp_id] = round(($tl->bobot_realisasi_kumulatif - $tl->bobot_rencana_kumulatif) / $scale, 2);
+            }
+        }
 
         // Build table data
         $tableData = [];
@@ -517,18 +538,64 @@ class DashboardController extends Controller
             if ($knmp->province) $lokasi_parts[] = ucwords(strtolower($knmp->province->name));
             $lokasi_baris_2 = implode(', ', $lokasi_parts);
 
+            $deviasi = $deviasiData[$knmp->id] ?? null;
+
+            $status_text = 'On Progres';
+            $status_color = '#64748b'; // Gray
+            $deviasi_formatted = null;
+            $deviasi_color = '#64748b';
+
+            if ($progres >= 100) {
+                $status_text = 'Selesai';
+                $status_color = '#3b82f6'; // Blue
+            } elseif ($deviasi !== null) {
+                if ($deviasi >= 0) {
+                    $status_text = 'On Track';
+                    $status_color = '#10b981'; // Green
+                } else {
+                    $status_text = 'Underperform';
+                    $status_color = '#ef4444'; // Red
+                }
+            }
+
+            if ($deviasi !== null) {
+                $deviasi_formatted = ($deviasi >= 0 ? '+ ' : '- ') . number_format(abs($deviasi), 2, ',', '.') . '%';
+                $deviasi_color = $deviasi >= 0 ? '#10b981' : '#ef4444';
+            }
+
             $tableData[] = [
-                'nama_knmp' => $knmp->nama, // Used for photos
+                'nama_knmp' => $knmp->nama,
                 'lokasi_1' => $lokasi_baris_1,
                 'lokasi_2' => $lokasi_baris_2,
-                'nama_penyedia' => '', // Dikososngkan untuk saat ini
+                'nama_penyedia' => $knmp->penyedia_jasa_konstruksi ?? '',
                 'progres' => round($progres, 2),
-                'keterangan' => '', // Dikosongkan untuk saat ini
+                'status_text' => $status_text,
+                'status_color' => $status_color,
+                'deviasi_formatted' => $deviasi_formatted,
+                'deviasi_color' => $deviasi_color,
+                'tahap' => $knmp->tahap,
             ];
         }
 
-        // Group photos by province (1 location = 1 photo, condition "after")
+        // Urutkan berdasarkan progres terbesar ke terkecil
+        usort($tableData, function ($a, $b) {
+            return $b['progres'] <=> $a['progres'];
+        });
+
+        // Group by tahap
+        $tableDataByTahap = [];
+        foreach ($tableData as $row) {
+            $tahapKey = $row['tahap'] ?: 'Lainnya';
+            if (!isset($tableDataByTahap[$tahapKey])) {
+                $tableDataByTahap[$tahapKey] = [];
+            }
+            $tableDataByTahap[$tahapKey][] = $row;
+        }
+        ksort($tableDataByTahap);
+
+        // Group photos by tahap then province (1 location = 1 photo, condition "after")
         $photosByProvince = [];
+        $photosByTahap = [];
         foreach ($desa_knmp as $knmp) {
             if ($knmp->buktiUploads->isEmpty()) {
                 continue;
@@ -542,6 +609,7 @@ class DashboardController extends Controller
             }
 
             $provinceName = ucwords(strtolower(optional($knmp->province)->name ?? 'Lainnya'));
+            $tahapKey = $knmp->tahap ?: 'Lainnya';
 
             $lokasi_parts = [];
             if ($knmp->district) {
@@ -552,21 +620,47 @@ class DashboardController extends Controller
             }
             $lokasi = implode(', ', $lokasi_parts);
 
-            $photosByProvince[$provinceName][] = [
+            $photoItem = [
                 'nama' => $knmp->nama,
                 'lokasi' => $lokasi,
                 'photos' => $photos,
             ];
+
+            $photosByProvince[$provinceName][] = $photoItem;
+            $photosByTahap[$tahapKey][$provinceName][] = $photoItem;
         }
         ksort($photosByProvince);
+        ksort($photosByTahap);
+        foreach ($photosByTahap as &$provinces) {
+            ksort($provinces);
+        }
+        unset($provinces);
 
-        $tahapLabel = $tahap !== 'all' ? ($tahap == 1 ? 'I' : ($tahap == 2 ? 'II' : ($tahap == 3 ? 'III' : $tahap))) : 'Semua';
-        $exportDate = Carbon::now('Asia/Jakarta')->format('d F Y');
+        if ($tahap !== 'all') {
+            $tahapLabel = $tahap == 1 ? 'I' : ($tahap == 2 ? 'II' : ($tahap == 3 ? 'III' : $tahap));
+        } else {
+            $availableTahaps = \App\Models\Knmp::whereNotNull('tahap')->distinct()->orderBy('tahap')->pluck('tahap')->toArray();
+            $romanTahaps = array_map(function($t) {
+                return $t == 1 ? 'I' : ($t == 2 ? 'II' : ($t == 3 ? 'III' : $t));
+            }, $availableTahaps);
+            
+            if (count($romanTahaps) == 0) {
+                $tahapLabel = 'Semua';
+            } elseif (count($romanTahaps) == 1) {
+                $tahapLabel = $romanTahaps[0];
+            } elseif (count($romanTahaps) == 2) {
+                $tahapLabel = $romanTahaps[0] . ' dan ' . $romanTahaps[1];
+            } else {
+                $tahapLabel = implode(', ', $romanTahaps);
+            }
+        }
+
+        $exportDate = Carbon::now('Asia/Jakarta')->locale('id')->translatedFormat('d F Y');
         $totalLokasi = count($desa_knmp);
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('dashboard.pdf', compact(
             'tahap', 'tahapLabel', 'exportDate', 'totalLokasi', 'avgProgres',
-            'tableData', 'photosByProvince', 'selectedProgresDate'
+            'tableData', 'tableDataByTahap', 'photosByProvince', 'photosByTahap', 'selectedProgresDate'
         ))
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)

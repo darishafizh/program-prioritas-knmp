@@ -10,6 +10,7 @@ use App\Models\ProgresKnmpDetail;
 use App\Models\BuktiUpload;
 use App\Models\TanggapanMasyarakat;
 use App\Models\TingkatKebahagiaanNelayan;
+use App\Models\TimelinePengerjaan;
 use Illuminate\Http\Request;
 
 class InformasiUmumController extends Controller
@@ -220,7 +221,15 @@ class InformasiUmumController extends Controller
             $monitoringStats['bukti']['files'] = BuktiUpload::where('knmp_id', $selectedKnmp->id)->latest()->take(6)->get();
         }
 
-        return view('informasi_umum.index', compact('knmpList', 'selectedKnmp', 'selectedKnmpId', 'stats', 'monitoringStats'));
+        // Fetch timeline data for S-Curve chart
+        $timelineData = collect();
+        if ($selectedKnmp) {
+            $timelineData = TimelinePengerjaan::where('knmp_id', $selectedKnmp->id)
+                ->orderBy('periode_mingguan', 'asc')
+                ->get();
+        }
+
+        return view('informasi_umum.index', compact('knmpList', 'selectedKnmp', 'selectedKnmpId', 'stats', 'monitoringStats', 'timelineData'));
     }
 
     public function create()

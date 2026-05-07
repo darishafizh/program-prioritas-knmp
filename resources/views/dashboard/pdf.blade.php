@@ -271,11 +271,30 @@
 </head>
 <body>
     {{-- KOP / HEADER --}}
-    <div class="kop">
-        <p class="l1">Biro Perencanaan</p>
-        <p class="l2">Sekretariat Jenderal</p>
-        <p class="l3">Kementerian Kelautan dan Perikanan</p>
-    </div>
+    <table style="width: 100%; border: none; margin: 0 0 4px 0;">
+        <tr>
+            <td style="width: 70px; text-align: left; vertical-align: middle; padding: 0;">
+                @php
+                    $logoPath = public_path('assets/images/logo-kkp.png');
+                    $logoSrc = '';
+                    if (file_exists($logoPath)) {
+                        $logoData = file_get_contents($logoPath);
+                        $logoSrc = 'data:image/png;base64,' . base64_encode($logoData);
+                    }
+                @endphp
+                @if($logoSrc)
+                    <img src="{{ $logoSrc }}" alt="Logo KKP" style="height: 55px; width: auto; margin-left: 8px;">
+                @endif
+            </td>
+            <td style="text-align: center; vertical-align: middle; padding: 0;">
+                <div class="kop" style="margin: 0;">
+                    <p class="l2">Sekretariat Jenderal</p>
+                    <p class="l3">Kementerian Kelautan dan Perikanan</p>
+                </div>
+            </td>
+            <td style="width: 70px; padding: 0;"></td>
+        </tr>
+    </table>
     <div class="kop-rule-wrap">
         <hr class="kop-rule-thick">
         <hr class="kop-rule-thin">
@@ -286,106 +305,238 @@
         <p class="doc-title">Progres Pembangunan KNMP Tahap {{ $tahapLabel }}</p>
         <p class="doc-subtitle">
             @if($selectedProgresDate)
-                Data per tanggal <strong>{{ \Carbon\Carbon::parse($selectedProgresDate)->translatedFormat('d F Y') }}</strong>
+                Data per tanggal <strong>{{ \Carbon\Carbon::parse($selectedProgresDate)->locale('id')->translatedFormat('d F Y') }}</strong>
             @else
                 Data per tanggal <strong>{{ $exportDate }}</strong>
             @endif
         </p>
     </div>
 
-    {{-- TABLE --}}
-    <table class="progres-table">
-        <thead>
-            <tr>
-                <th style="width: 20px;">No</th>
-                <th>Nama KNMP dan Lokasi</th>
-                <th style="width: 30%;">Penyedia Jasa Konstruksi</th>
-                <th style="width: 40px;">Progres</th>
-                <th style="width: 18%;">Keterangan</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($tableData as $index => $row)
-                <tr>
-                    <td class="col-no">{{ $index + 1 }}</td>
-                    <td class="col-lokasi">
-                        <p class="nama">{{ $row['lokasi_1'] }}</p>
-                        <p class="alamat">{{ $row['lokasi_2'] }}</p>
-                    </td>
-                    <td class="text-center {{ $row['nama_penyedia'] ? '' : 'muted' }}">
-                        {{ $row['nama_penyedia'] ?: '—' }}
-                    </td>
-                    <td class="col-progres">
-                        {{ number_format($row['progres'], 2, ',', '.') }}
-                    </td>
-                    <td class="text-center {{ $row['keterangan'] ? '' : 'muted' }}">
-                        {{ $row['keterangan'] ?: '—' }}
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="5" class="text-center muted" style="padding: 18px; font-style: italic;">
-                        Belum ada data progres untuk filter yang dipilih.
-                    </td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+    @if($tahap === 'all' && isset($tableDataByTahap) && count($tableDataByTahap) > 1)
+        {{-- ============================================================ --}}
+        {{-- MULTI-TAHAP: Each tahap = Table + Dokumentasi + Page Break    --}}
+        {{-- ============================================================ --}}
+        @foreach($tableDataByTahap as $tahapKey => $rows)
+            @if(!$loop->first)
+                <div style="page-break-before: always;"></div>
+            @endif
 
-    {{-- DOCUMENTATION SECTION --}}
-    <div class="doc-section">
-        <p class="doc-section-title">Dokumentasi Progres Pembangunan KNMP</p>
+            {{-- Tahap Section Title --}}
+            <div style="margin-top: 15px; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid #003D7A;">
+                <span style="font-weight: 700; font-size: 12pt; color: #003D7A;">
+                    Tahap {{ $tahapKey == 1 ? 'I' : ($tahapKey == 2 ? 'II' : ($tahapKey == 3 ? 'III' : $tahapKey)) }}
+                </span>
+                <span style="font-size: 9pt; color: #64748b; margin-left: 8px;">
+                    ({{ count($rows) }} Lokasi)
+                </span>
+            </div>
 
-        @if(count($photosByProvince) > 0)
-            @foreach($photosByProvince as $province => $items)
-                <p class="province-title">
-                    {{ $province }}<span class="count">({{ count($items) }} lokasi)</span>
-                </p>
-                <div class="photo-grid">
-                    @foreach($items as $item)
-                        <div class="photo-card">
-                            <div class="photo-card-body">
-                                @foreach($item['photos'] as $photo)
-                                    @php
-                                        $imagePath = storage_path('app/public/' . $photo->path_file);
-                                        $src = '';
-                                        if (file_exists($imagePath)) {
-                                            $type = strtolower(pathinfo($imagePath, PATHINFO_EXTENSION));
-                                            if ($type === 'jpg') {
-                                                $type = 'jpeg';
-                                            }
-                                            $data = file_get_contents($imagePath);
-                                            $src = 'data:image/' . $type . ';base64,' . base64_encode($data);
-                                        }
-                                    @endphp
-                                    @if($src)
-                                        <img src="{{ $src }}" alt="{{ $photo->nama_file ?? $item['nama'] }}">
-                                    @else
-                                        <div style="height: 105px; line-height: 105px; color: #9ca3af; font-size: 8px; background: #f1f5f9;">
-                                            (Foto tidak tersedia)
-                                        </div>
-                                    @endif
-                                @endforeach
-                            </div>
-                            <div class="photo-card-caption">
-                                <p class="nama">{{ $item['nama'] }}</p>
-                                @if(!empty($item['lokasi']))
-                                    <p class="lokasi">{{ $item['lokasi'] }}</p>
+            {{-- Table for this tahap --}}
+            <table class="progres-table" style="margin-bottom: 15px;">
+                <thead>
+                    <tr>
+                        <th style="width: 20px;">No</th>
+                        <th>Nama KNMP dan Lokasi</th>
+                        <th style="width: 30%;">Penyedia Jasa Konstruksi</th>
+                        <th style="width: 40px;">Progres Konstruksi (%)</th>
+                        <th style="width: 18%;">Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($rows as $index => $row)
+                        <tr>
+                            <td class="col-no">{{ $index + 1 }}</td>
+                            <td class="col-lokasi">
+                                <p class="nama">{{ $row['lokasi_1'] }}</p>
+                                <p class="alamat">{{ $row['lokasi_2'] }}</p>
+                            </td>
+                            <td class="text-start {{ $row['nama_penyedia'] ? '' : 'muted' }}">
+                                {{ $row['nama_penyedia'] ?: '—' }}
+                            </td>
+                            <td class="col-progres">
+                                {{ number_format($row['progres'], 2, ',', '.') }}
+                            </td>
+                            <td class="text-center" style="vertical-align: middle;">
+                                <div style="font-weight: 700; color: {{ $row['status_color'] }}; font-size: 10px; text-transform: capitalize; line-height: 0.75; margin: 0 0 1px 0;">{{ $row['status_text'] }}</div>
+                                @if($row['deviasi_formatted'])
+                                    <div style="font-size: 8px; font-weight: 500; color: {{ $row['deviasi_color'] }}; line-height: 0.75; margin: 0;">
+                                        {{ $row['deviasi_formatted'] }}
+                                    </div>
                                 @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center muted" style="padding: 18px; font-style: italic;">
+                                Belum ada data progres untuk tahap ini.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            {{-- Documentation for this tahap --}}
+            @php
+                $tahapPhotos = $photosByTahap[$tahapKey] ?? [];
+            @endphp
+            @if(count($tahapPhotos) > 0)
+                <div style="page-break-before: always;"></div>
+                <div class="doc-section">
+                    <p class="doc-section-title">Dokumentasi Progres Pembangunan KNMP Tahap {{ $tahapKey == 1 ? 'I' : ($tahapKey == 2 ? 'II' : ($tahapKey == 3 ? 'III' : $tahapKey)) }}</p>
+
+                    @foreach($tahapPhotos as $province => $items)
+                        <div style="page-break-inside: avoid; margin-bottom: 20px;">
+                            <p class="province-title">
+                                <span style="color: #003D7A; font-weight: 700;">PROVINSI {{ strtoupper($province) }}</span>
+                                <span class="count">| {{ count($items) }} Lokasi Terdata</span>
+                            </p>
+
+                            <div class="photo-grid">
+                                @foreach($items as $item)
+                                    <div class="photo-card">
+                                        <div class="photo-card-body">
+                                            @foreach($item['photos'] as $photo)
+                                                @php
+                                                    $imagePath = storage_path('app/public/' . $photo->path_file);
+                                                    $src = '';
+                                                    if (file_exists($imagePath)) {
+                                                        $type = strtolower(pathinfo($imagePath, PATHINFO_EXTENSION));
+                                                        if ($type === 'jpg') $type = 'jpeg';
+                                                        $data = file_get_contents($imagePath);
+                                                        $src = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                                                    }
+                                                @endphp
+                                                @if($src)
+                                                    <img src="{{ $src }}" alt="{{ $photo->nama_file ?? $item['nama'] }}">
+                                                @else
+                                                    <div style="height: 115px; line-height: 115px; color: #9ca3af; font-size: 8px; background: #f8fafc; text-align: center; border-bottom: 0.6px solid #e5e7eb;">
+                                                        (Foto tidak tersedia)
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                        <div class="photo-card-caption">
+                                            <p class="nama">{{ $item['nama'] }}</p>
+                                            @if(!empty($item['lokasi']))
+                                                <p class="lokasi">{{ $item['lokasi'] }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
                     @endforeach
                 </div>
+            @endif
+        @endforeach
+    @else
+        {{-- ============================================================ --}}
+        {{-- SINGLE TAHAP: flat layout (table then documentation)         --}}
+        {{-- ============================================================ --}}
+        @if(isset($tableDataByTahap) && count($tableDataByTahap) > 0)
+            @foreach($tableDataByTahap as $tahapKey => $rows)
+                <table class="progres-table" style="margin-bottom: 20px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 20px;">No</th>
+                            <th>Nama KNMP dan Lokasi</th>
+                            <th style="width: 30%;">Penyedia Jasa Konstruksi</th>
+                            <th style="width: 40px;">Progres Konstruksi (%)</th>
+                            <th style="width: 18%;">Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($rows as $index => $row)
+                            <tr>
+                                <td class="col-no">{{ $index + 1 }}</td>
+                                <td class="col-lokasi">
+                                    <p class="nama">{{ $row['lokasi_1'] }}</p>
+                                    <p class="alamat">{{ $row['lokasi_2'] }}</p>
+                                </td>
+                                <td class="text-start {{ $row['nama_penyedia'] ? '' : 'muted' }}">
+                                    {{ $row['nama_penyedia'] ?: '—' }}
+                                </td>
+                                <td class="col-progres">
+                                    {{ number_format($row['progres'], 2, ',', '.') }}
+                                </td>
+                                <td class="text-center" style="vertical-align: middle;">
+                                    <div style="font-weight: 700; color: {{ $row['status_color'] }}; font-size: 10px; text-transform: capitalize; line-height: 0.75; margin: 0 0 1px 0;">{{ $row['status_text'] }}</div>
+                                    @if($row['deviasi_formatted'])
+                                        <div style="font-size: 8px; font-weight: 500; color: {{ $row['deviasi_color'] }}; line-height: 0.75; margin: 0;">
+                                            {{ $row['deviasi_formatted'] }}
+                                        </div>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center muted" style="padding: 18px; font-style: italic;">
+                                    Belum ada data progres untuk tahap ini.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             @endforeach
-        @else
-            <div class="photo-empty">
-                Belum ada dokumentasi foto pembangunan yang tersedia.
-            </div>
         @endif
-    </div>
+
+        {{-- Documentation Section --}}
+        <div class="doc-section page-break">
+            <p class="doc-section-title">Dokumentasi Progres Pembangunan KNMP</p>
+
+            @if(count($photosByProvince) > 0)
+                @foreach($photosByProvince as $province => $items)
+                    <div style="page-break-inside: avoid; margin-bottom: 20px;">
+                        <p class="province-title">
+                            <span style="color: #003D7A; font-weight: 700;">PROVINSI {{ strtoupper($province) }}</span>
+                            <span class="count">| {{ count($items) }} Lokasi Terdata</span>
+                        </p>
+
+                        <div class="photo-grid">
+                            @foreach($items as $item)
+                                <div class="photo-card">
+                                    <div class="photo-card-body">
+                                        @foreach($item['photos'] as $photo)
+                                            @php
+                                                $imagePath = storage_path('app/public/' . $photo->path_file);
+                                                $src = '';
+                                                if (file_exists($imagePath)) {
+                                                    $type = strtolower(pathinfo($imagePath, PATHINFO_EXTENSION));
+                                                    if ($type === 'jpg') $type = 'jpeg';
+                                                    $data = file_get_contents($imagePath);
+                                                    $src = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                                                }
+                                            @endphp
+                                            @if($src)
+                                                <img src="{{ $src }}" alt="{{ $photo->nama_file ?? $item['nama'] }}">
+                                            @else
+                                                <div style="height: 115px; line-height: 115px; color: #9ca3af; font-size: 8px; background: #f8fafc; text-align: center; border-bottom: 0.6px solid #e5e7eb;">
+                                                    (Foto tidak tersedia)
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                    <div class="photo-card-caption">
+                                        <p class="nama">{{ $item['nama'] }}</p>
+                                        @if(!empty($item['lokasi']))
+                                            <p class="lokasi">{{ $item['lokasi'] }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
+            @else
+                <div class="photo-empty">
+                    Belum ada dokumentasi foto pembangunan yang tersedia untuk periode ini.
+                </div>
+            @endif
+        </div>
+    @endif
 
     <div class="footer">
-        <span>Biro Perencanaan &middot; Sekretariat Jenderal &middot; Kementerian Kelautan dan Perikanan</span>
+        <span>Sekretariat Jenderal &middot; Kementerian Kelautan dan Perikanan</span>
         &nbsp;&middot;&nbsp;
         <span class="pn"></span>
     </div>

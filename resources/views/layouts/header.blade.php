@@ -36,13 +36,36 @@
                         </li>
                     @endif -->
 
-                    <!-- Survey - untuk semua user -->
-                    <li class="header-nav-item">
-                        <a class="header-nav-link {{ request()->routeIs('survey.*') ? 'active' : '' }}"
-                            href="{{ route('survey.index') }}">
-                            <i class="mdi mdi-clipboard-text-outline"></i>
-                            <span>Survey</span>
+                    <!-- KNMP - untuk semua user -->
+                    <li class="header-nav-item header-dropdown">
+                        <a class="header-nav-link {{ request()->routeIs('survey.*') || request()->routeIs('ded.*') || request()->routeIs('lelang.*') || request()->routeIs('konstruksi.*') ? 'active' : '' }}"
+                            href="#" id="knmpDropdown">
+                            <i class="mdi mdi-domain"></i>
+                            <span>KNMP</span>
+                            <i class="mdi mdi-chevron-down dropdown-arrow"></i>
                         </a>
+                        <ul class="header-dropdown-menu">
+                            <li>
+                                <a href="{{ route('survey.index') }}" class="{{ request()->routeIs('survey.*') ? 'text-primary fw-bold' : '' }}">
+                                    <i class="mdi mdi-clipboard-text-outline"></i> Survey
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="{{ request()->routeIs('ded.*') ? 'text-primary fw-bold' : '' }}">
+                                    <i class="mdi mdi-drawing"></i> DED
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="{{ request()->routeIs('lelang.*') ? 'text-primary fw-bold' : '' }}">
+                                    <i class="mdi mdi-gavel"></i> Lelang
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="{{ request()->routeIs('konstruksi.*') ? 'text-primary fw-bold' : '' }}">
+                                    <i class="mdi mdi-office-building"></i> Konstruksi
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
                     <!-- Informasi Umum - untuk semua user -->

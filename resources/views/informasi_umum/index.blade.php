@@ -140,104 +140,118 @@
             </div>
         </div>
 
-        <!-- ROW 2: Koperasi & Map Combined -->
+        <!-- ROW 2: Produksi, Komoditas, KDKMP & Map Combined -->
         <div class="row mb-4 align-items-stretch">
-            <!-- Left Col: Koperasi Detail -->
-            <div class="col-lg-8 mb-3 mb-lg-0">
-                <div class="card border-0 shadow-sm h-100 kpi-card-white">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3 border-bottom pb-2">
-                            <div class="kpi-icon kpi-icon-teal me-3" style="width: 40px; height: 40px; font-size: 0.8rem;">
-                                <i class="mdi mdi-handshake"></i>
-                            </div>
-                            <h6 class="mb-0 fw-bold text-dark" style="font-size:0.8rem;">Produksi, Komoditas, dan KDKMP</h6>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-2">
-                                <div class="d-flex flex-column gap-3">
-                                    <div>
-                                        <small class="text-muted d-block" style="font-size:0.65rem;">Volume Produksi</small>
-                                                <h5 class="mb-0 fw-bold text-dark" style="font-size:0.95rem;">
-                                                    {{ number_format($stats['volumeKomoditas1'], 2, ',', '.') }} <small
-                                                        class="text-muted fw-normal" style="font-size:0.7rem;">Ton</small>
-                                                </h5>
-                                    </div>
-
-                                    <div>
-                                        <small class="text-muted d-block" style="font-size:0.65rem;">Nilai Produksi</small>
-                                                <h5 class="mb-0 fw-bold text-success" style="font-size:0.95rem;">Rp
-                                                    {{ number_format($stats['nilaiKomoditas1'], 0, ',', '.') }}
-                                                </h5>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                
+            <!-- Left Col: Data Summary (Produksi, Komoditas, KDKMP) -->
+            <div class="col-lg-7 mb-3 mb-lg-0">
+                <div class="card border-0 shadow-sm h-100 overflow-hidden">
+                    <div class="card-header bg-white border-bottom py-3">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <h6 class="mb-0 fw-bold text-dark" style="font-size: 0.85rem;">Ringkasan Sektor Kelautan & Perikanan</h6>
+                                <small class="text-muted" style="font-size: 0.7rem;">Produksi, Komoditas, & Kelembagaan KDKMP</small>
                             </div>
                         </div>
-
-                        @if($stats['koperasiDesaMerahPutih'])
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="d-flex flex-column gap-2">
-                                    <div class="d-flex">
-                                        <i class="mdi mdi-office-building-outline text-muted me-2 mt-1"></i>
-                                        <div>
-                                            <small class="d-block text-muted" style="font-size: 0.55rem;letter-spacing:0.5px;">NAMA KOPERASI</small>
-                                            <span class="fw-semibold text-dark" style="font-size:0.75rem;">{{ $stats['koperasiDesaMerahPutih']['nama'] }}</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="row g-0 h-100">
+                            <div class="col-md-4 border-end border-light">
+                                <div class="p-3 h-100 bg-light bg-opacity-25">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="mdi mdi-chart-box-outline text-primary me-2"></i>
+                                        <span class="fw-bold text-uppercase ls-1" style="font-size:0.6rem;">Sektor Produksi</span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block mb-1" style="font-size: 0.65rem;">Volume Produksi</small>
+                                        <div class="d-flex align-items-baseline">
+                                            <h5 class="mb-0 fw-bold text-dark" style="font-size: 1rem;">{{ number_format($stats['volumeKomoditas1'], 2, ',', '.') }}</h5>
+                                            <span class="ms-1 text-muted small" style="font-size: 0.65rem;">Ton</span>
                                         </div>
                                     </div>
-                                    <div class="d-flex">
-                                    <i class="mdi mdi-file-document-outline text-muted me-2 mt-1"></i>
                                     <div>
-                                        <small class="d-block text-muted" style="font-size: 0.55rem;letter-spacing:0.5px;">NO. SK</small>
-                                        <span class="text-dark" style="font-size:0.75rem;">{{ $stats['koperasiDesaMerahPutih']['sk'] ?? '-' }}</span>
+                                        <small class="text-muted d-block mb-1" style="font-size: 0.65rem;">Estimasi Nilai</small>
+                                        <h5 class="mb-0 fw-bold text-success" style="font-size: 1rem;">Rp {{ number_format($stats['nilaiKomoditas1'], 0, ',', '.') }}</h5>
                                     </div>
-                                </div> 
                                 </div>
+                            </div>
 
-                                <div class="col-md-6">
-<div class="d-flex flex-column gap-2">
-                                    <div class="d-flex">
-                                        <i class="mdi mdi-account-tie text-muted me-2 mt-1"></i>
-                                        <div>
-                                            <small class="d-block text-muted" style="font-size: 0.55rem;letter-spacing:0.5px;">KETUA</small>
-                                            <span class="text-dark" style="font-size:0.75rem;">{{ $stats['koperasiDesaMerahPutih']['ketua'] }}</span>
+                            <div class="col-md-4 border-end border-light">
+                                <div class="p-3 h-100">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="mdi mdi-fish text-info me-2"></i>
+                                        <span class="fw-bold text-uppercase ls-1" style="font-size:0.6rem;">Komoditas Unggulan</span>
+                                    </div>
+                                    
+                                    @if($stats['komoditas1'] && $stats['komoditas1'] != '-')
+                                        <div class="d-flex align-items-center mb-2 p-2">
+                                            <div class="overflow-hidden">
+                                                <h6 class="mb-0 text-truncate fw-bold" style="font-size:0.75rem;">{{ $stats['komoditas1'] }}</h6>
+                                                <small class="text-muted" style="font-size:0.65rem;">Rp {{ number_format($stats['hargaKomoditas1'], 0, ',', '.') }}/Kg</small>
+                                            </div>
                                         </div>
-                                    </div>
-                                <div class="d-flex">
-                                    <i class="mdi mdi-account-group text-muted me-2 mt-1"></i>
-                                    <div>
-                                        <small class="d-block text-muted" style="font-size: 0.55rem;letter-spacing:0.5px;">ANGGOTA</small>
-                                        <span class="text-dark" style="font-size:0.75rem;">{{ $stats['koperasiDesaMerahPutih']['anggotaLaki'] + $stats['koperasiDesaMerahPutih']['anggotaPerempuan'] }} Orang</span>
-                                    </div>
-                                </div>
-                                </div>
+                                    @endif
+
+                                    @if($stats['komoditas2'] && $stats['komoditas2'] != '-')
+                                        <div class="d-flex align-items-center p-2">
+                                            <div class="overflow-hidden">
+                                                <h6 class="mb-0 text-truncate fw-bold" style="font-size:0.75rem;">{{ $stats['komoditas2'] }}</h6>
+                                                <small class="text-muted" style="font-size:0.65rem;">Rp {{ number_format($stats['hargaKomoditas2'], 0, ',', '.') }}/Kg</small>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
-                        @else
-                            <div class="text-center py-4">
-                                <span class="text-muted small"><i class="mdi mdi-information-outline me-1"></i>Data Koperasi belum tersedia</span>
+
+                            <div class="col-md-4">
+                                <div class="p-3 h-100 bg-light bg-opacity-25">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="mdi mdi-account-group-outline text-warning me-2"></i>
+                                        <span class="fw-bold text-uppercase ls-1" style="font-size:0.6rem;">Kelembagaan KDKMP</span>
+                                    </div>
+
+                                    @if($stats['koperasiDesaMerahPutih'])
+                                        <div class="mb-2">
+                                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                                <small class="text-muted" style="font-size:0.55rem; letter-spacing: 0.5px;">KOPERASI</small>
+                                            </div>
+                                            <h6 class="mb-0 fw-bold text-dark" style="font-size:0.75rem; line-height: 1.3;">{{ $stats['koperasiDesaMerahPutih']['nama'] }}</h6>
+                                            @if($stats['koperasiDesaMerahPutih']['sk'] && $stats['koperasiDesaMerahPutih']['sk'] != '-')
+                                                    <span class="badge bg-light text-muted border fw-normal" style="font-size:0.5rem; padding: 2px 4px;">SK: {{ $stats['koperasiDesaMerahPutih']['sk'] }}</span>
+                                                @endif
+                                        </div>
+                                        <div class="row g-1">
+                                            <div class="col-6">
+                                                <div class="p-1 px-2 rounded-2 bg-white border border-light shadow-xs">
+                                                    <small class="text-muted d-block" style="font-size:0.5rem;">KETUA</small>
+                                                    <span class="fw-semibold text-dark d-block" style="font-size:0.65rem;">{{ $stats['koperasiDesaMerahPutih']['ketua'] }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="p-1 px-2 rounded-2 bg-white border border-light shadow-xs">
+                                                    <small class="text-muted d-block" style="font-size:0.5rem;">ANGGOTA</small>
+                                                    <span class="fw-semibold text-dark d-block" style="font-size:0.65rem;">{{ $stats['koperasiDesaMerahPutih']['anggotaLaki'] + $stats['koperasiDesaMerahPutih']['anggotaPerempuan'] }} Orang</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
-                        @endif
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Col: Map -->
-            <div class="col-lg-4">
+            <!-- Right Col: Map (Wider) -->
+            <div class="col-lg-5">
                 <div class="card border-0 shadow-sm h-100 overflow-hidden" style="min-height: 280px;">
                     <div class="card-body p-0 h-100 position-relative">
                         <div id="knmpMap"
                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; min-height: 0;"></div>
-                        <div class="position-absolute bottom-0 start-0 end-0 bg-white bg-opacity-90 p-3 m-3 rounded shadow-sm"
+                        <div class="position-absolute bottom-0 start-0 end-0 bg-white bg-opacity-90 p-2 m-2 rounded shadow-sm"
                             style="z-index: 400;">
-                            <h6 class="mb-1 fw-bold text-dark"><i class="mdi mdi-map-marker-radius text-danger me-2"></i>Lokasi
-                                KNMP</h6>
-                            <p class="mb-0 small text-muted">
-                                {{ $selectedKnmp->village->name ?? '' }}, {{ $selectedKnmp->district->name ?? '' }},
-                                {{ $selectedKnmp->regency->name ?? '' }}
+                            <h6 class="mb-1 fw-bold text-dark" style="font-size:0.75rem;"><i class="mdi mdi-map-marker text-danger me-1"></i>Lokasi</h6>
+                            <p class="mb-0 text-muted" style="font-size:0.65rem; line-height:1.2;">
+                                {{ $selectedKnmp->village->name ?? '' }}, {{ $selectedKnmp->district->name ?? '' }}
                             </p>
                         </div>
 
@@ -262,141 +276,6 @@
                                 else window.addEventListener('load', initMap);
                             })();
                         </script>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ROW 3: Produksi & Komoditas Unified Card -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm overflow-hidden mb-4 rounded-3 h-100">
-                    <div class="card-header bg-white border-bottom py-2 d-flex align-items-center justify-content-between">
-                        <h6 class="mb-0 fw-bold text-dark d-flex align-items-center" style="font-size:0.8rem;">
-                            <i class="mdi mdi-chart-areaspline me-2 text-primary" style="font-size:1rem;"></i>
-                            <span>Data Produksi & Komoditas</span>
-                        </h6>
-                        <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1 rounded-pill" style="font-size:0.65rem;">Tahun
-                            {{ date('Y') }}</span>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="row g-0">
-                            <!-- Left Side: Production Stats -->
-                            <div class="col-lg-5 border-end-lg border-bottom border-bottom-lg-0 bg-white">
-                                <div class="p-4 h-100 d-flex flex-column justify-content-center">
-                                    <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size:0.65rem;letter-spacing:1px;">Ikhtisar Produksi Tahunan</h6>
-
-                                    <div class="mb-4">
-                                        <div class="d-flex align-items-center mb-2">
-                                            <div class="rounded-circle p-2 bg-primary bg-opacity-10 text-primary me-2 d-flex align-items-center justify-content-center"
-                                                style="width: 36px; height: 36px;">
-                                                <i class="mdi mdi-weight-kilogram" style="font-size:1.1rem;"></i>
-                                            </div>
-                                            <div>
-                                                <small class="text-muted d-block" style="font-size:0.65rem;">Volume Produksi</small>
-                                                <h5 class="mb-0 fw-bold text-dark" style="font-size:0.95rem;">
-                                                    {{ number_format($stats['volumeKomoditas1'], 2, ',', '.') }} <small
-                                                        class="text-muted fw-normal" style="font-size:0.7rem;">Ton</small>
-                                                </h5>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <div class="d-flex align-items-center">
-                                            <div class="rounded-circle p-2 bg-success bg-opacity-10 text-success me-2 d-flex align-items-center justify-content-center"
-                                                style="width: 36px; height: 36px;">
-                                                <i class="mdi mdi-cash-multiple" style="font-size:1.1rem;"></i>
-                                            </div>
-                                            <div>
-                                                <small class="text-muted d-block" style="font-size:0.65rem;">Nilai Produksi</small>
-                                                <h5 class="mb-0 fw-bold text-success" style="font-size:0.95rem;">Rp
-                                                    {{ number_format($stats['nilaiKomoditas1'], 0, ',', '.') }}
-                                                </h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Right Side: Commodities -->
-                            <div class="col-lg-7 bg-light bg-opacity-50">
-                                <div class="p-4 h-100">
-                                    <h6 class="text-uppercase text-muted fw-bold mb-2" style="font-size:0.65rem;letter-spacing:1px;">Komoditas Unggulan</h6>
-
-                                    <div class="row g-3">
-                                        <!-- Komoditas 1 -->
-                                        @if($stats['komoditas1'] && $stats['komoditas1'] != '-')
-                                            <div class="col-md-6">
-                                                <div class="card border-0 shadow-sm h-100 hover-card transition-all">
-                                                    <div class="card-body p-3">
-                                                        <div class="d-flex align-items-center mb-3">
-                                                            <div class="rounded-3 bg-primary text-white p-2 me-3 d-flex align-items-center justify-content-center shadow-sm"
-                                                                style="width: 42px; height: 42px;">
-                                                                <i class="mdi mdi-fish fs-4"></i>
-                                                            </div>
-                                                            <div>
-                                                                <h6 class="mb-0 fw-bold text-dark">{{ $stats['komoditas1'] }}</h6>
-                                                                <small class="text-primary fw-medium">Utama 1</small>
-                                                            </div>
-                                                        </div>
-                                                        <div
-                                                            class="d-flex justify-content-between align-items-end border-top pt-2 mt-1">
-                                                            <small class="text-muted">Harga Rata-rata</small>
-                                                            <div class="text-end">
-                                                                <h6 class="mb-0 fw-bold text-dark">Rp
-                                                                    {{ number_format($stats['hargaKomoditas1'], 0, ',', '.') }}
-                                                                </h6>
-                                                                <small class="text-muted" style="font-size: 0.75rem;">per Kg</small>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
-
-                                        <!-- Komoditas 2 -->
-                                        @if($stats['komoditas2'] && $stats['komoditas2'] != '-')
-                                            <div class="col-md-6">
-                                                <div class="card border-0 shadow-sm h-100 hover-card transition-all">
-                                                    <div class="card-body p-3">
-                                                        <div class="d-flex align-items-center mb-3">
-                                                            <div class="rounded-3 bg-success text-white p-2 me-3 d-flex align-items-center justify-content-center shadow-sm"
-                                                                style="width: 42px; height: 42px;">
-                                                                <i class="mdi mdi-fish fs-4"></i>
-                                                            </div>
-                                                            <div>
-                                                                <h6 class="mb-0 fw-bold text-dark">{{ $stats['komoditas2'] }}</h6>
-                                                                <small class="text-success fw-medium">Utama 2</small>
-                                                            </div>
-                                                        </div>
-                                                        <div
-                                                            class="d-flex justify-content-between align-items-end border-top pt-2 mt-1">
-                                                            <small class="text-muted">Harga Rata-rata</small>
-                                                            <div class="text-end">
-                                                                <h6 class="mb-0 fw-bold text-dark">Rp
-                                                                    {{ number_format($stats['hargaKomoditas2'], 0, ',', '.') }}
-                                                                </h6>
-                                                                <small class="text-muted" style="font-size: 0.75rem;">per Kg</small>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
-
-                                        @if((!$stats['komoditas1'] || $stats['komoditas1'] == '-') && (!$stats['komoditas2'] || $stats['komoditas2'] == '-'))
-                                            <div class="col-12">
-                                                <div class="text-center py-5 text-muted bg-white rounded-3 border border-dashed">
-                                                    <i class="mdi mdi-fish-off fs-1 mb-2 opacity-50"></i>
-                                                    <p class="mb-0 fw-medium">Data komoditas belum tersedia</p>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -522,6 +401,122 @@
                             </div>
                         @endif
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- S-Curve (Curva-S) Timeline Chart -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h6 class="section-title mb-3">
+                    <i class="mdi mdi-chart-bell-curve-cumulative me-2"></i>Curva-S Timeline Pengerjaan
+                </h6>
+            </div>
+            <div class="col-12">
+                <div class="card border-0 shadow-sm scurve-card">
+                    <!-- Accent gradient strip -->
+                    <div class="scurve-accent"></div>
+
+                    @if(isset($timelineData) && $timelineData->count() > 0)
+                        @php
+                            // Detect if data is in per-mille (max > 100) and normalize
+                            $maxVal = max($timelineData->max('bobot_rencana_kumulatif'), $timelineData->max('bobot_realisasi_kumulatif') ?? 0);
+                            $scaleFactor = $maxVal > 100 ? $maxVal / 100 : 1;
+
+                            $tlWithRealisasi = $timelineData->whereNotNull('bobot_realisasi_kumulatif');
+                            $lastRealisasi = $tlWithRealisasi->last();
+                            $lastRencana = $lastRealisasi ? round($lastRealisasi->bobot_rencana_kumulatif / $scaleFactor, 2) : 0;
+                            $lastReal = $lastRealisasi ? round($lastRealisasi->bobot_realisasi_kumulatif / $scaleFactor, 2) : 0;
+                            $lastDeviasi = round($lastReal - $lastRencana, 2);
+                            $totalPeriode = $timelineData->count();
+                            $periodeRealisasi = $tlWithRealisasi->count();
+                        @endphp
+
+                        <!-- Summary Stats Row -->
+                        <div class="card-body pb-0 pt-3 px-4">
+                            <div class="row g-3">
+                                <!-- Rencana Terakhir -->
+                                <div class="col-6 col-md-3">
+                                    <div class="scurve-stat-card">
+                                        <div class="scurve-stat-icon" style="background: rgba(59,130,246,0.1); color: #3b82f6;">
+                                            <i class="mdi mdi-target"></i>
+                                        </div>
+                                        <div>
+                                            <span class="scurve-stat-label">Rencana</span>
+                                            <span class="scurve-stat-value" style="color: #3b82f6;">{{ number_format($lastRencana, 2) }}%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Realisasi Terakhir -->
+                                <div class="col-6 col-md-3">
+                                    <div class="scurve-stat-card">
+                                        <div class="scurve-stat-icon" style="background: rgba(16,185,129,0.1); color: #10b981;">
+                                            <i class="mdi mdi-check-circle-outline"></i>
+                                        </div>
+                                        <div>
+                                            <span class="scurve-stat-label">Realisasi</span>
+                                            <span class="scurve-stat-value" style="color: #10b981;">{{ number_format($lastReal, 2) }}%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Deviasi -->
+                                <div class="col-6 col-md-3">
+                                    <div class="scurve-stat-card">
+                                        <div class="scurve-stat-icon" style="background: {{ $lastDeviasi >= 0 ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)' }}; color: {{ $lastDeviasi >= 0 ? '#10b981' : '#ef4444' }};">
+                                            <i class="mdi {{ $lastDeviasi >= 0 ? 'mdi-trending-up' : 'mdi-trending-down' }}"></i>
+                                        </div>
+                                        <div>
+                                            <span class="scurve-stat-label">Deviasi</span>
+                                            <span class="scurve-stat-value" style="color: {{ $lastDeviasi >= 0 ? '#10b981' : '#ef4444' }};">
+                                                {{ $lastDeviasi >= 0 ? '+' : '' }}{{ number_format($lastDeviasi, 2) }}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Periode -->
+                                <div class="col-6 col-md-3">
+                                    <div class="scurve-stat-card">
+                                        <div class="scurve-stat-icon" style="background: rgba(139,92,246,0.1); color: #8b5cf6;">
+                                            <i class="mdi mdi-calendar-clock"></i>
+                                        </div>
+                                        <div>
+                                            <span class="scurve-stat-label">Periode</span>
+                                            <span class="scurve-stat-value" style="color: #8b5cf6;">{{ $periodeRealisasi }}<span style="font-size: 0.65rem; font-weight: 400; color: #94a3b8;">/{{ $totalPeriode }} Minggu</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chart Area -->
+                        <div class="card-body px-3 pt-2 pb-2">
+                            <div class="scurve-chart-wrap">
+                                <canvas id="scurveChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Legend Footer -->
+                        <div class="card-footer bg-transparent border-top-0 px-4 pb-3 pt-0">
+                            <div class="d-flex justify-content-center flex-wrap gap-3">
+                                <div class="scurve-legend-pill">
+                                    <span class="scurve-legend-line" style="background: #3b82f6;"></span>
+                                    Rencana Kumulatif
+                                </div>
+                                <div class="scurve-legend-pill">
+                                    <span class="scurve-legend-line" style="background: #10b981;"></span>
+                                    Realisasi Kumulatif
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center" style="min-height: 280px;">
+                            <div class="scurve-empty-icon">
+                                <i class="mdi mdi-chart-bell-curve-cumulative"></i>
+                            </div>
+                            <p class="text-muted mt-3 mb-1 fw-semibold" style="font-size: 0.8rem;">Data Belum Tersedia</p>
+                            <small class="text-muted" style="font-size: 0.7rem;">Timeline pengerjaan untuk KNMP ini belum diinput</small>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -1485,6 +1480,130 @@
         .gauge-circle {
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
         }
+
+        /* ========== S-CURVE STYLES ========== */
+        .scurve-card {
+            border-radius: 14px;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+        }
+        .scurve-card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
+        }
+        .scurve-accent {
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6 0%, #10b981 50%, #8b5cf6 100%);
+        }
+
+        /* Stat mini-cards */
+        .scurve-stat-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            transition: all 0.2s ease;
+        }
+        .scurve-stat-card:hover {
+            background: #fff;
+            border-color: #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .scurve-stat-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .scurve-stat-icon i {
+            font-size: 1.1rem;
+        }
+        .scurve-stat-label {
+            display: block;
+            font-size: 0.6rem;
+            font-weight: 500;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+        .scurve-stat-value {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        /* Chart wrapper */
+        .scurve-chart-wrap {
+            height: 340px;
+            position: relative;
+            padding: 8px 4px 0 4px;
+        }
+
+        /* Legend pills */
+        .scurve-legend-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            font-size: 0.68rem;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.15s ease;
+        }
+        .scurve-legend-pill:hover {
+            background: #fff;
+            border-color: #e2e8f0;
+            color: #334155;
+        }
+        .scurve-legend-line {
+            display: inline-block;
+            width: 18px;
+            height: 3px;
+            border-radius: 2px;
+        }
+        .scurve-legend-bar {
+            display: inline-block;
+            width: 14px;
+            height: 10px;
+            border-radius: 2px;
+            background: linear-gradient(180deg, rgba(16,185,129,0.2) 0%, rgba(239,68,68,0.2) 100%);
+            border: 1px solid rgba(100,116,139,0.2);
+        }
+
+        /* Empty state */
+        .scurve-empty-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .scurve-empty-icon i {
+            font-size: 2rem;
+            color: #cbd5e1;
+        }
+
+        @media (max-width: 575.98px) {
+            .scurve-stat-card { padding: 8px 10px; }
+            .scurve-stat-icon { width: 28px; height: 28px; }
+            .scurve-stat-icon i { font-size: 0.9rem; }
+            .scurve-stat-value { font-size: 0.8rem; }
+            .scurve-chart-wrap { height: 260px; }
+            .scurve-legend-pill { font-size: 0.6rem; padding: 4px 8px; }
+        }
     </style>
 @endsection
 
@@ -1656,6 +1775,159 @@
                                     label: function (context) {
                                         return context.label + ': ' + context.parsed.toFixed(1) + '%';
                                     }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // ==========================================
+            // S-CURVE (CURVA-S) CHART
+            // ==========================================
+            var scurveCtx = document.getElementById('scurveChart');
+            if (scurveCtx) {
+                var timelineRaw = @json($timelineData ?? []);
+                var labels = timelineRaw.map(function(item) { return 'M-' + item.periode_mingguan; });
+
+                // Detect if values exceed 100 (per-mille data) and normalize to 0-100 scale
+                var allVals = timelineRaw.map(function(item) {
+                    return Math.max(
+                        parseFloat(item.bobot_rencana_kumulatif) || 0,
+                        parseFloat(item.bobot_realisasi_kumulatif) || 0
+                    );
+                });
+                var maxVal = Math.max.apply(null, allVals);
+                var scaleFactor = maxVal > 100 ? maxVal / 100 : 1;
+
+                var rencanaData = timelineRaw.map(function(item) {
+                    return parseFloat(((parseFloat(item.bobot_rencana_kumulatif) || 0) / scaleFactor).toFixed(2));
+                });
+                var realisasiData = timelineRaw.map(function(item) {
+                    if (item.bobot_realisasi_kumulatif === null) return null;
+                    return parseFloat((parseFloat(item.bobot_realisasi_kumulatif) / scaleFactor).toFixed(2));
+                });
+
+                // Create gradient fills
+                var ctx2d = scurveCtx.getContext('2d');
+                var gradRencana = ctx2d.createLinearGradient(0, 0, 0, 340);
+                gradRencana.addColorStop(0, 'rgba(59, 130, 246, 0.12)');
+                gradRencana.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+                var gradRealisasi = ctx2d.createLinearGradient(0, 0, 0, 340);
+                gradRealisasi.addColorStop(0, 'rgba(16, 185, 129, 0.12)');
+                gradRealisasi.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
+                new Chart(scurveCtx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Rencana Kumulatif',
+                                data: rencanaData,
+                                borderColor: '#3b82f6',
+                                backgroundColor: gradRencana,
+                                borderWidth: 2,
+                                pointBackgroundColor: '#3b82f6',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 1.5,
+                                pointRadius: 3,
+                                pointHoverRadius: 6,
+                                pointHoverBorderWidth: 2,
+                                tension: 0.35,
+                                fill: true
+                            },
+                            {
+                                label: 'Realisasi Kumulatif',
+                                data: realisasiData,
+                                borderColor: '#10b981',
+                                backgroundColor: gradRealisasi,
+                                borderWidth: 2,
+                                pointBackgroundColor: '#10b981',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 1.5,
+                                pointRadius: 3,
+                                pointHoverRadius: 6,
+                                pointHoverBorderWidth: 2,
+                                tension: 0.35,
+                                fill: true,
+                                spanGaps: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(255,255,255,0.96)',
+                                titleColor: '#1e293b',
+                                bodyColor: '#475569',
+                                borderColor: '#e2e8f0',
+                                borderWidth: 1,
+                                cornerRadius: 10,
+                                padding: { top: 10, bottom: 10, left: 14, right: 14 },
+                                boxPadding: 4,
+                                usePointStyle: true,
+                                bodyFont: { size: 12 },
+                                titleFont: { size: 12, weight: '600' },
+                                callbacks: {
+                                    title: function(tooltipItems) {
+                                        return 'Minggu ke-' + timelineRaw[tooltipItems[0].dataIndex].periode_mingguan;
+                                    },
+                                    label: function(context) {
+                                        if (context.parsed.y === null) return null;
+                                        var value = context.parsed.y;
+                                        if (context.datasetIndex === 0) return ' Rencana: ' + value.toFixed(2) + '%';
+                                        return ' Realisasi: ' + value.toFixed(2) + '%';
+                                    },
+                                    labelColor: function(context) {
+                                        var colors = ['#3b82f6', '#10b981'];
+                                        return {
+                                            borderColor: colors[context.datasetIndex],
+                                            backgroundColor: colors[context.datasetIndex],
+                                            borderRadius: 3
+                                        };
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                border: { display: false },
+                                grid: { display: false },
+                                ticks: {
+                                    font: { size: 10, weight: '500' },
+                                    color: '#94a3b8',
+                                    padding: 6
+                                }
+                            },
+                            y: {
+                                min: 0,
+                                max: 100,
+                                border: { display: false },
+                                title: {
+                                    display: true,
+                                    text: 'Bobot Kumulatif (%)',
+                                    font: { size: 10, weight: '500' },
+                                    color: '#94a3b8',
+                                    padding: { bottom: 8 }
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.04)',
+                                    drawTicks: false
+                                },
+                                ticks: {
+                                    font: { size: 10 },
+                                    color: '#b0b8c4',
+                                    padding: 8,
+                                    stepSize: 20,
+                                    callback: function(value) { return value + '%'; }
                                 }
                             }
                         }
