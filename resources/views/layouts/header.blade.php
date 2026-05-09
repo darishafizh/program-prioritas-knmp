@@ -25,16 +25,7 @@
                         </a>
                     </li>
 
-                    <!-- Analytics - hanya untuk admin -->
-                    <!-- @if(Auth::user()->isAdmin())
-                        <li class="header-nav-item">
-                            <a class="header-nav-link {{ request()->routeIs('analytics.*') ? 'active' : '' }}"
-                                href="{{ route('analytics.index') }}">
-                                <i class="mdi mdi-chart-timeline-variant"></i>
-                                <span>Analytics</span>
-                            </a>
-                        </li>
-                    @endif -->
+
 
                     <!-- KNMP - untuk semua user -->
                     <li class="header-nav-item header-dropdown">

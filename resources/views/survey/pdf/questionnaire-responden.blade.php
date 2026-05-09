@@ -375,8 +375,8 @@
         <div class="knmp-box">
             <div class="knmp-name">{{ $knmp->nama ?? 'Kampung Nelayan' }}</div>
             <div class="knmp-location">
-                Desa {{ $knmp->village->name ?? 'N/A' }}, Kec. {{ $knmp->district->name ?? 'N/A' }},
-                Kab. {{ $knmp->regency->name ?? 'N/A' }}, Prov. {{ $knmp->province->name ?? 'N/A' }}
+                Desa {{ $knmp->desa_kelurahan ?? 'N/A' }}, Kec. {{ $knmp->kecamatan ?? 'N/A' }},
+                Kab. {{ $knmp->kabupaten_kota ?? 'N/A' }}, Prov. {{ $knmp->provinsi ?? 'N/A' }}
             </div>
         </div>
 

@@ -60,10 +60,6 @@ class DashboardController extends Controller
         $tahapLabel = $tahap !== 'all' ? 'Tahap ' . $tahap : 'Semua Tahap';
 
         $desa_knmp_query = Knmp::with([
-            'province:id,name',
-            'regency:id,name',
-            'district:id,name',
-            'village:id,name',
             'profileKnmp',
             'progresKnmp',
             'latestProgresNasional',
@@ -165,24 +161,33 @@ class DashboardController extends Controller
         $trendDates = $trendDataQuery->pluck('tanggal')->map(fn($date) => \Carbon\Carbon::parse($date)->format('d M y'))->toArray();
         $trendAverages = $trendDataQuery->pluck('avg_progres')->map(fn($val) => round($val, 2))->toArray();
 
-        // Query progres data up to selected date
-        $progresNasionalQuery = ProgresKnmpNasional::with('knmp')
-            ->whereIn('knmp_id', $knmpIds);
-            
+        // Query progres data up to selected date (OPTIMIZED)
+        $latestIdsQuery = ProgresKnmpNasional::whereIn('knmp_id', $knmpIds);
         if ($selectedProgresDate) {
-            $progresNasionalQuery->where('tanggal', '<=', $selectedProgresDate);
+            $latestIdsQuery->where('tanggal', '<=', $selectedProgresDate);
         }
-        $progresNasional = $progresNasionalQuery->orderBy('tanggal', 'desc')->get()->unique('knmp_id')->sortByDesc('progres')->values();
+        $latestIds = $latestIdsQuery->selectRaw('MAX(id) as id')->groupBy('knmp_id')->pluck('id');
+
+        $progresNasional = ProgresKnmpNasional::with(['knmp.timeline'])
+            ->whereIn('id', $latestIds)
+            ->get()
+            ->sortByDesc('progres')
+            ->values();
+            
         $progresNasionalAvg = $progresNasional->avg('progres') ?? 0;
 
-        // Fetch previous progress data to calculate delta
+        // Fetch previous progress data to calculate delta (OPTIMIZED)
         $previousProgresData = [];
         if ($previousDate) {
-            $prevQuery = ProgresKnmpNasional::whereIn('knmp_id', $knmpIds)
+            $prevIds = ProgresKnmpNasional::whereIn('knmp_id', $knmpIds)
                 ->where('tanggal', '<=', $previousDate)
-                ->orderBy('tanggal', 'desc')
-                ->get(['knmp_id', 'progres']);
-            $previousProgresData = $prevQuery->unique('knmp_id')->pluck('progres', 'knmp_id')->toArray();
+                ->selectRaw('MAX(id) as id')
+                ->groupBy('knmp_id')
+                ->pluck('id');
+            
+            $previousProgresData = ProgresKnmpNasional::whereIn('id', $prevIds)
+                ->pluck('progres', 'knmp_id')
+                ->toArray();
         }
 
         // Attach delta to each KNMP
@@ -212,15 +217,71 @@ class DashboardController extends Controller
             else $sebaranProgres['81-100%']++;
         }
 
-        // 2. Performa 10 KNMP tertinggi (termasuk yang sudah 100%)
+        // Hitung deviasi (OPTIMIZED - Data timeline sudah ada di memori via eager loading)
+        $deviasiData = [];
+        if (!empty($knmpIds)) {
+            foreach ($progresNasional as $item) {
+                $kId = $item->knmp_id;
+                $progresAktual = $item->progres;
+                $tanggalProgres = \Carbon\Carbon::parse($item->tanggal);
+                $knmp = $item->knmp;
+                $timeline = $knmp ? $knmp->timeline : collect();
+
+                $deviasi = 0;
+                if ($timeline->count() > 0) {
+                    // Cari minggu terakhir yang sudah diisi realisasinya di tabel timeline
+                    $lastReportedTl = $timeline->whereNotNull('bobot_realisasi_kumulatif')
+                        ->sortByDesc('periode_mingguan')
+                        ->first();
+                    
+                    if ($lastReportedTl) {
+                        $week = $lastReportedTl->periode_mingguan;
+                        $rencanaRaw = $lastReportedTl->bobot_rencana_kumulatif;
+                    } else {
+                        // Fallback: Gunakan tanggal_mulai dari database jika ada, jika tidak pakai fallback dinamis
+                        if ($knmp && $knmp->tanggal_mulai) {
+                            $startDate = \Carbon\Carbon::parse($knmp->tanggal_mulai);
+                        } else {
+                            $startDate = \Carbon\Carbon::parse('2025-12-28');
+                        }
+                        
+                        $diffDays = $startDate->diffInDays($tanggalProgres, false); 
+                        $week = $diffDays >= 0 ? ceil(($diffDays + 1) / 7) : 1;
+                        if ($week < 1) $week = 1;
+
+                        $tl = $timeline->where('periode_mingguan', $week)->first();
+                        if (!$tl) {
+                            $tl = $timeline->sortByDesc('periode_mingguan')->first();
+                        }
+                        $rencanaRaw = $tl ? $tl->bobot_rencana_kumulatif : 0;
+                    }
+
+                    if (isset($rencanaRaw)) {
+                        // Normalisasi jika data rencana menggunakan skala permil (max > 100)
+                        $maxPlan = $timeline->max('bobot_rencana_kumulatif');
+                        $scale = $maxPlan > 100 ? $maxPlan / 100 : 1;
+                        $rencanaPersen = $rencanaRaw / $scale;
+                        
+                        $deviasi = $progresAktual - $rencanaPersen;
+                    }
+                }
+                $deviasiData[$kId] = round($deviasi, 2);
+            }
+        }
+
+        foreach ($progresNasional as $item) {
+            $item->deviasi = $deviasiData[$item->knmp_id] ?? 0;
+        }
+
+        // 2. Performa 10 KNMP tertinggi deviasinya
         $top10Knmp = $progresNasional
-            ->sortByDesc('progres')
+            ->sortByDesc('deviasi')
             ->take(10)
             ->values();
 
-        // 3. Performa 10 KNMP terendah (termasuk yang sudah 100%)
+        // 3. Performa 10 KNMP terendah deviasinya
         $bottom10Knmp = $progresNasional
-            ->sortBy('progres')
+            ->sortBy('deviasi')
             ->take(10)
             ->values();
 
@@ -332,10 +393,6 @@ class DashboardController extends Controller
 
         $tahap = $request->get('tahap', 'all');
         $desa_knmp_query = Knmp::with([
-            'province',
-            'regency',
-            'district',
-            'village',
             'profileKnmp',
             'progresKnmp',
             'latestProgresNasional',
@@ -377,7 +434,9 @@ class DashboardController extends Controller
         $capaianIndikator = DB::table('progres_knmp_details')->avg('persen') ?? 0;
 
         // 4. Rata-rata Indeks Kebahagiaan
-        $rataRataKebahagiaan = TingkatKebahagiaanNelayan::avg('skor_nilai') ?? 0;
+        $rataRataKebahagiaan = TingkatKebahagiaanNelayan::whereHas('responden', function ($q) use ($knmpIds) {
+            $q->whereIn('knmp_id', $knmpIds);
+        })->avg('skor_nilai') ?? 0;
 
         // Progres KNMP Nasional
         $selectedProgresDate = $request->get('progres_date');
@@ -410,7 +469,7 @@ class DashboardController extends Controller
             'infra_bengkel_nelayan',
             'infra_waserda'
         ];
-        $profiles = ProfileKnmp::select($infraColumns)->get();
+        $profiles = ProfileKnmp::select($infraColumns)->whereIn('knmp_id', $knmpIds)->get();
         $totalPercentage = 0;
         $countProfiles = $profiles->count();
         foreach ($profiles as $profile) {
@@ -424,27 +483,28 @@ class DashboardController extends Controller
         $ketersediaanInfrastruktur = $countProfiles > 0 ? round($totalPercentage / $countProfiles, 2) : 0;
 
         // Indeks Kesesuaian Kebutuhan
-        $totalTanggapan = TanggapanMasyarakat::count();
-        $sesuaiKebutuhan = TanggapanMasyarakat::where('kesesuaian_kebutuhan', 1)->count();
+        $respondenIds = InformasiResponden::whereIn('knmp_id', $knmpIds)->pluck('id');
+        $totalTanggapan = TanggapanMasyarakat::whereIn('responden_id', $respondenIds)->count();
+        $sesuaiKebutuhan = TanggapanMasyarakat::whereIn('responden_id', $respondenIds)->where('kesesuaian_kebutuhan', 1)->count();
         $indeksKesesuaianKebutuhan = $totalTanggapan > 0
             ? round(($sesuaiKebutuhan / $totalTanggapan) * 100, 2) : 0;
 
         // Pendapatan RT Nelayan
-        $pendapatanRtNelayan = InformasiPendapatanRumahTangga::avg('pendapatan_total') ?? 0;
+        $pendapatanRtNelayan = InformasiPendapatanRumahTangga::whereIn('responden_id', $respondenIds)->avg('pendapatan_total') ?? 0;
 
         // Indeks Kesejahteraan
         $indeksKesejahteraan = round($rataRataKebahagiaan, 2);
 
         // Tingkat Kelembagaan
-        $totalSosial = SosialKelembagaan::count();
-        $anggotaKelompokKoperasi = SosialKelembagaan::where(function ($q) {
+        $totalSosial = SosialKelembagaan::whereIn('responden_id', $respondenIds)->count();
+        $anggotaKelompokKoperasi = SosialKelembagaan::whereIn('responden_id', $respondenIds)->where(function ($q) {
             $q->where('anggota_kelompok', '>=', 3)->orWhere('anggota_koperasi', '>=', 3);
         })->count();
         $tingkatKelembagaan = $totalSosial > 0
             ? round(($anggotaKelompokKoperasi / $totalSosial) * 100, 2) : 0;
 
         // Total Tenaga Kerja
-        $totalTenagaKerja = DB::table('progres_knmp')->sum('tk_total') ?? 0;
+        $totalTenagaKerja = DB::table('progres_knmp')->whereIn('knmp_id', $knmpIds)->sum('tk_total') ?? 0;
 
         // Progres Nasional table data
         $progresNasionalData = $progresNasional->map(function ($item) {
@@ -480,8 +540,7 @@ class DashboardController extends Controller
         $selectedProgresDate = $request->get('progres_date');
 
         $desa_knmp_query = Knmp::with([
-            'province:id,name', 'regency:id,name', 'district:id,name', 'village:id,name',
-            'progresKnmp', 'latestProgresNasional', 'buktiUploads',
+            'latestProgresNasional', 'timeline', 'buktiUploads'
         ]);
 
         if ($tahap !== 'all') {
@@ -498,28 +557,68 @@ class DashboardController extends Controller
                 ->whereNotNull('tanggal')->orderBy('tanggal', 'desc')->value('tanggal');
         }
         if ($selectedProgresDate) {
-            $progresDataRaw = ProgresKnmpNasional::whereIn('knmp_id', $knmpIds)
+            $latestIds = ProgresKnmpNasional::whereIn('knmp_id', $knmpIds)
                 ->where('tanggal', '<=', $selectedProgresDate)
-                ->orderBy('tanggal', 'desc')
-                ->get(['knmp_id', 'progres']);
-            $progresData = $progresDataRaw->unique('knmp_id')->pluck('progres', 'knmp_id')->toArray();
+                ->selectRaw('MAX(id) as id')
+                ->groupBy('knmp_id')
+                ->pluck('id');
+            
+            $progresData = ProgresKnmpNasional::whereIn('id', $latestIds)
+                ->pluck('progres', 'knmp_id')
+                ->toArray();
         }
 
         $avgProgres = count($progresData) > 0 ? round(array_sum($progresData) / count($progresData), 2) : 0;
 
-        // Fetch latest deviasi per KNMP from timeline_pengerjaan
+        // Hitung deviasi (OPTIMIZED)
         $deviasiData = [];
         if (!empty($knmpIds)) {
-            $latestTimelines = TimelinePengerjaan::whereIn('knmp_id', $knmpIds)
-                ->whereNotNull('bobot_realisasi_kumulatif')
-                ->orderBy('periode_mingguan', 'desc')
-                ->get()
-                ->unique('knmp_id');
+            foreach ($desa_knmp as $knmp) {
+                $kId = $knmp->id;
+                $progresAktual = $progresData[$kId] ?? 0;
+                $tanggalProgresStr = $selectedProgresDate ?: date('Y-m-d');
+                $tanggalProgres = \Carbon\Carbon::parse($tanggalProgresStr);
+                $timeline = $knmp->timeline;
 
-            foreach ($latestTimelines as $tl) {
-                $maxVal = max(abs($tl->bobot_rencana_kumulatif), abs($tl->bobot_realisasi_kumulatif), 1);
-                $scale = $maxVal > 100 ? $maxVal / 100 : 1;
-                $deviasiData[$tl->knmp_id] = round(($tl->bobot_realisasi_kumulatif - $tl->bobot_rencana_kumulatif) / $scale, 2);
+                $deviasi = 0;
+                if ($timeline->count() > 0) {
+                    // Cari minggu terakhir yang sudah diisi realisasinya di tabel timeline
+                    $lastReportedTl = $timeline->whereNotNull('bobot_realisasi_kumulatif')
+                        ->sortByDesc('periode_mingguan')
+                        ->first();
+                    
+                    if ($lastReportedTl) {
+                        $week = $lastReportedTl->periode_mingguan;
+                        $rencanaRaw = $lastReportedTl->bobot_rencana_kumulatif;
+                    } else {
+                        // Fallback: Gunakan tanggal_mulai dari database jika ada, jika tidak pakai fallback dinamis
+                        if ($knmp && $knmp->tanggal_mulai) {
+                            $startDate = \Carbon\Carbon::parse($knmp->tanggal_mulai);
+                        } else {
+                            $startDate = \Carbon\Carbon::parse('2025-12-28');
+                        }
+                        
+                        $diffDays = $startDate->diffInDays($tanggalProgres, false); 
+                        $week = $diffDays >= 0 ? ceil(($diffDays + 1) / 7) : 1;
+                        if ($week < 1) $week = 1;
+
+                        $tl = $timeline->where('periode_mingguan', $week)->first();
+                        if (!$tl) {
+                            $tl = $timeline->sortByDesc('periode_mingguan')->first();
+                        }
+                        $rencanaRaw = $tl ? $tl->bobot_rencana_kumulatif : 0;
+                    }
+
+                    if (isset($rencanaRaw)) {
+                        // Normalisasi jika data rencana menggunakan skala permil (max > 100)
+                        $maxPlan = $timeline->max('bobot_rencana_kumulatif');
+                        $scale = $maxPlan > 100 ? $maxPlan / 100 : 1;
+                        $rencanaPersen = $rencanaRaw / $scale;
+                        
+                        $deviasi = $progresAktual - $rencanaPersen;
+                    }
+                }
+                $deviasiData[$kId] = round($deviasi, 2);
             }
         }
 
@@ -533,9 +632,9 @@ class DashboardController extends Controller
             
             // Format baris 2: Kecamatan, Kabupaten, Provinsi
             $lokasi_parts = [];
-            if ($knmp->district) $lokasi_parts[] = 'Kec. ' . ucwords(strtolower($knmp->district->name));
-            if ($knmp->regency) $lokasi_parts[] = ucwords(strtolower($knmp->regency->name));
-            if ($knmp->province) $lokasi_parts[] = ucwords(strtolower($knmp->province->name));
+            if ($knmp->kecamatan) $lokasi_parts[] = 'Kec. ' . ucwords(strtolower($knmp->kecamatan));
+            if ($knmp->kabupaten_kota) $lokasi_parts[] = ucwords(strtolower($knmp->kabupaten_kota));
+            if ($knmp->provinsi) $lokasi_parts[] = ucwords(strtolower($knmp->provinsi));
             $lokasi_baris_2 = implode(', ', $lokasi_parts);
 
             $deviasi = $deviasiData[$knmp->id] ?? null;
@@ -608,15 +707,15 @@ class DashboardController extends Controller
                 continue;
             }
 
-            $provinceName = ucwords(strtolower(optional($knmp->province)->name ?? 'Lainnya'));
+            $provinceName = ucwords(strtolower($knmp->provinsi ?? 'Lainnya'));
             $tahapKey = $knmp->tahap ?: 'Lainnya';
 
             $lokasi_parts = [];
-            if ($knmp->district) {
-                $lokasi_parts[] = 'Kec. ' . ucwords(strtolower($knmp->district->name));
+            if ($knmp->kecamatan) {
+                $lokasi_parts[] = 'Kec. ' . ucwords(strtolower($knmp->kecamatan));
             }
-            if ($knmp->regency) {
-                $lokasi_parts[] = ucwords(strtolower($knmp->regency->name));
+            if ($knmp->kabupaten_kota) {
+                $lokasi_parts[] = ucwords(strtolower($knmp->kabupaten_kota));
             }
             $lokasi = implode(', ', $lokasi_parts);
 

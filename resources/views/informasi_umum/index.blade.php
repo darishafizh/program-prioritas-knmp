@@ -39,7 +39,7 @@
                                     <option value="">-- Pilih KNMP --</option>
                                     @foreach ($knmpList as $item)
                                         <option value="{{ $item->id }}" {{ $selectedKnmpId == $item->id ? 'selected' : '' }}>
-                                            {{ $item->nama }} — {{ $item->regency->name ?? '' }}, {{ $item->province->name ?? '' }}
+                                            {{ $item->nama }} — {{ $item->kabupaten_kota ?? '' }}, {{ $item->provinsi ?? '' }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -58,7 +58,7 @@
                 <i class="mdi mdi-map-marker-check text-primary me-1" style="font-size:0.9rem;"></i>
                 {{ ucwords(strtolower($selectedKnmp->nama)) }}
             </h6>
-            <p class="mb-0 text-muted" style="font-size:0.7rem;">Kec. {{ ucwords(strtolower($selectedKnmp->district->name ?? '-')) }}, Kab. {{ ucwords(strtolower($selectedKnmp->regency->name ?? '-')) }}, Prov. {{ ucwords(strtolower($selectedKnmp->province->name ?? '-')) }}</p>
+            <p class="mb-0 text-muted" style="font-size:0.7rem;">Kec. {{ ucwords(strtolower($selectedKnmp->kecamatan ?? '-')) }}, Kab. {{ ucwords(strtolower($selectedKnmp->kabupaten_kota ?? '-')) }}, Prov. {{ ucwords(strtolower($selectedKnmp->provinsi ?? '-')) }}</p>
         </div>
 
         <!-- ROW 1: KPI Cards (5 cards) -->
@@ -251,7 +251,7 @@
                             style="z-index: 400;">
                             <h6 class="mb-1 fw-bold text-dark" style="font-size:0.75rem;"><i class="mdi mdi-map-marker text-danger me-1"></i>Lokasi</h6>
                             <p class="mb-0 text-muted" style="font-size:0.65rem; line-height:1.2;">
-                                {{ $selectedKnmp->village->name ?? '' }}, {{ $selectedKnmp->district->name ?? '' }}
+                                {{ $selectedKnmp->village->nama ?? '' }}, {{ $selectedKnmp->district->nama ?? '' }}
                             </p>
                         </div>
 
@@ -428,8 +428,18 @@
                             $lastRencana = $lastRealisasi ? round($lastRealisasi->bobot_rencana_kumulatif / $scaleFactor, 2) : 0;
                             $lastReal = $lastRealisasi ? round($lastRealisasi->bobot_realisasi_kumulatif / $scaleFactor, 2) : 0;
                             $lastDeviasi = round($lastReal - $lastRencana, 2);
+                            $currentWeek = $tlWithRealisasi->count();
+
+                            // OVERRIDE dengan data deviasi real-time dari ProgresKnmpNasional jika tersedia
+                            if (isset($latestDeviasiData)) {
+                                $lastRencana = $latestDeviasiData['rencana'];
+                                $lastReal = $latestDeviasiData['realisasi'];
+                                $lastDeviasi = $latestDeviasiData['deviasi'];
+                                $currentWeek = $latestDeviasiData['minggu'];
+                            }
+
                             $totalPeriode = $timelineData->count();
-                            $periodeRealisasi = $tlWithRealisasi->count();
+                            $periodeRealisasi = $currentWeek;
                         @endphp
 
                         <!-- Summary Stats Row -->
@@ -1800,12 +1810,16 @@
                 var maxVal = Math.max.apply(null, allVals);
                 var scaleFactor = maxVal > 100 ? maxVal / 100 : 1;
 
+                var physicalData = @json($progresFisikMingguan ?? []);
+
                 var rencanaData = timelineRaw.map(function(item) {
                     return parseFloat(((parseFloat(item.bobot_rencana_kumulatif) || 0) / scaleFactor).toFixed(2));
                 });
+                
                 var realisasiData = timelineRaw.map(function(item) {
-                    if (item.bobot_realisasi_kumulatif === null) return null;
-                    return parseFloat((parseFloat(item.bobot_realisasi_kumulatif) / scaleFactor).toFixed(2));
+                    var val = item.bobot_realisasi_kumulatif;
+                    if (val === null) return null; // Biarkan null agar garis hanya muncul sampai data terakhir yang diisi
+                    return parseFloat((parseFloat(val) / scaleFactor).toFixed(2));
                 });
 
                 // Create gradient fills

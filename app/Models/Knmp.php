@@ -12,13 +12,14 @@ class Knmp extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'nama',
-        'province_id',
-        'regency_id',
-        'district_id',
-        'village_id',
+        'provinsi',
+        'kabupaten_kota',
+        'kecamatan',
+        'desa_kelurahan',
         'latitude',
         'longitude',
         'tahap',
+        'tanggal_mulai',
     ];
 
     public function getRouteKeyName()
@@ -28,22 +29,22 @@ class Knmp extends Model
 
     public function province()
     {
-        return $this->belongsTo(KnmpProvinces::class, 'province_id');
+        return $this->belongsTo(Province::class, 'provinsi');
     }
 
     public function regency()
     {
-        return $this->belongsTo(KnmpRegencies::class, 'regency_id');
+        return $this->belongsTo(Regency::class, 'kabupaten_kota');
     }
 
     public function district()
     {
-        return $this->belongsTo(KnmpDistricts::class, 'district_id');
+        return $this->belongsTo(District::class, 'kecamatan');
     }
 
     public function village()
     {
-        return $this->belongsTo(KnmpVillages::class, 'village_id');
+        return $this->belongsTo(Village::class, 'desa_kelurahan');
     }
 
     public function buktiUploads()
@@ -74,5 +75,10 @@ class Knmp extends Model
     public function latestProgresNasional()
     {
         return $this->hasOne(ProgresKnmpNasional::class, 'knmp_id')->latestOfMany('tanggal');
+    }
+
+    public function timeline()
+    {
+        return $this->hasMany(TimelinePengerjaan::class, 'knmp_id');
     }
 }

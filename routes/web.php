@@ -49,15 +49,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/api/data', [DashboardController::class, 'apiData'])->name('dashboard.api-data');
 
     // ==============================
-    // ANALYTICS ROUTES (Super Admin Only)
+    // DASHBOARD IMPORT (Super Admin Only)
     // ==============================
-    Route::post('/analytics/import-progres-nasional', [\App\Http\Controllers\ImportController::class, 'importProgresKnmpNasional'])
+    Route::post('/dashboard/import-progres-nasional', [\App\Http\Controllers\ImportController::class, 'importProgresKnmpNasional'])
         ->middleware('role:super_admin')
-        ->name('analytics.import_progres_nasional');
-
-    Route::get('/analytics', [\App\Http\Controllers\AnalyticsController::class, 'index'])
-        ->middleware('role:super_admin')
-        ->name('analytics.index');
+        ->name('dashboard.import_progres_nasional');
 
 
 
@@ -71,6 +67,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [SurveyController::class, 'store'])->middleware('role:super_admin')->name('survey.store');
         Route::post('/import', [SurveyController::class, 'import'])->middleware('role:super_admin')->name('survey.import');
         Route::get('/template', [SurveyController::class, 'downloadTemplate'])->middleware('role:super_admin')->name('survey.template');
+        Route::put('/{id}', [SurveyController::class, 'update'])->middleware('role:super_admin')->name('survey.update');
         Route::delete('/{id}', [SurveyController::class, 'destroy'])->middleware('role:super_admin')->name('survey.destroy');
 
         // AJAX endpoints for cascade dropdown

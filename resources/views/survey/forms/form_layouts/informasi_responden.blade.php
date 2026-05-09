@@ -126,10 +126,11 @@
 
             <div class="mb-3">
                 <label class="form-label">Provinsi</label>
-                <select class="form-control select2" name="province_id" id="province_id" data-toggle="select2">
+                <select class="form-control select2-search" name="province_id" id="province_id">
+                    <option value="">-- Pilih Provinsi --</option>
                     @foreach ($provinces as $prov)
                         <option value="{{ $prov->id }}" {{ $knmp->province_id == $prov->id ? 'selected' : '' }}>
-                            {{ $prov->name }}
+                            {{ $prov->nama }}
                         </option>
                     @endforeach
                 </select>
@@ -137,10 +138,10 @@
 
             <div class="mb-3">
                 <label class="form-label">Kabupaten</label>
-                <select class="form-control select2" name="regency_id" id="regency_id" data-toggle="select2">
+                <select class="form-control select2-search" name="regency_id" id="regency_id">
                     @foreach ($regencies as $kab)
                         <option value="{{ $kab->id }}" {{ $knmp->regency_id == $kab->id ? 'selected' : '' }}>
-                            {{ $kab->name }}
+                            {{ $kab->nama }}
                         </option>
                     @endforeach
                 </select>
@@ -148,10 +149,10 @@
 
             <div class="mb-3">
                 <label class="form-label">Kecamatan</label>
-                <select class="form-control select2" name="district_id" id="district_id" data-toggle="select2">
+                <select class="form-control select2-search" name="district_id" id="district_id">
                     @foreach ($districts as $kec)
                         <option value="{{ $kec->id }}" {{ $knmp->district_id == $kec->id ? 'selected' : '' }}>
-                            {{ $kec->name }}
+                            {{ $kec->nama }}
                         </option>
                     @endforeach
                 </select>
@@ -159,10 +160,10 @@
 
             <div class="mb-3">
                 <label class="form-label">Desa</label>
-                <select class="form-control select2" name="village_id" id="village_id" data-toggle="select2">
+                <select class="form-control select2-search" name="village_id" id="village_id">
                     @foreach ($villages as $desa)
                         <option value="{{ $desa->id }}" {{ $knmp->village_id == $desa->id ? 'selected' : '' }}>
-                            {{ $desa->name }}
+                            {{ $desa->nama }}
                         </option>
                     @endforeach
                 </select>
@@ -209,16 +210,22 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Initialize Select2
+        if (typeof $ !== 'undefined' && $.fn.select2) {
+            $('.select2-search').select2({
+                width: '100%',
+                placeholder: 'Cari atau pilih...'
+            });
+        }
+
         // Hitung umur otomatis
         const tanggalLahirInput = document.getElementById('tanggal_lahir');
         const umurInput = document.getElementById('umur');
 
         if (tanggalLahirInput) {
-            // Memanggil fungsi kalkulasi saat DOM dimuat (untuk kasus edit)
             if (tanggalLahirInput.value) {
                 hitungUmur();
             }
-
             tanggalLahirInput.addEventListener('change', hitungUmur);
         }
 
@@ -237,35 +244,61 @@
             if (umurInput) umurInput.value = age >= 0 ? age : '';
         }
 
-        // Cascading dropdown
-        const provinsi = document.getElementById('province_id');
-        const kabupaten = document.getElementById('regency_id');
-        const kecamatan = document.getElementById('district_id');
-        const desa = document.getElementById('village_id');
+        // Cascading dropdown using jQuery (as Select2 depends on it)
+        if (typeof $ !== 'undefined') {
+            $('#province_id').on('change', function () {
+                var provinceId = $(this).val();
+                var regencySelect = $('#regency_id');
+                var districtSelect = $('#district_id');
+                var villageSelect = $('#village_id');
 
-        if (provinsi && kabupaten && kecamatan && desa) {
-            provinsi.addEventListener('change', function () {
-                kabupaten.innerHTML = '<option value="">-- Pilih Kabupaten --</option>';
-                kecamatan.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
-                desa.innerHTML = '<option value="">-- Pilih Desa --</option>';
+                regencySelect.html('<option value="">-- Pilih Kabupaten --</option>');
+                districtSelect.html('<option value="">-- Pilih Kecamatan --</option>');
+                villageSelect.html('<option value="">-- Pilih Desa --</option>');
+
+                if (provinceId) {
+                    $.get('/survey/locations/regencies/' + provinceId, function (data) {
+                        data.forEach(function (regency) {
+                            regencySelect.append('<option value="' + regency.id + '">' + regency.nama + '</option>');
+                        });
+                        regencySelect.trigger('change');
+                    });
+                }
             });
 
-            kabupaten.addEventListener('change', function () {
-                kecamatan.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
-                desa.innerHTML = '<option value="">-- Pilih Desa --</option>';
+            $('#regency_id').on('change', function () {
+                var regencyId = $(this).val();
+                var districtSelect = $('#district_id');
+                var villageSelect = $('#village_id');
+
+                districtSelect.html('<option value="">-- Pilih Kecamatan --</option>');
+                villageSelect.html('<option value="">-- Pilih Desa --</option>');
+
+                if (regencyId) {
+                    $.get('/survey/locations/districts/' + regencyId, function (data) {
+                        data.forEach(function (district) {
+                            districtSelect.append('<option value="' + district.id + '">' + district.nama + '</option>');
+                        });
+                        districtSelect.trigger('change');
+                    });
+                }
             });
 
-            kecamatan.addEventListener('change', function () {
-                desa.innerHTML = '<option value="">-- Pilih Desa --</option>';
+            $('#district_id').on('change', function () {
+                var districtId = $(this).val();
+                var villageSelect = $('#village_id');
+
+                villageSelect.html('<option value="">-- Pilih Desa --</option>');
+
+                if (districtId) {
+                    $.get('/survey/locations/villages/' + districtId, function (data) {
+                        data.forEach(function (village) {
+                            villageSelect.append('<option value="' + village.id + '">' + village.nama + '</option>');
+                        });
+                        villageSelect.trigger('change');
+                    });
+                }
             });
         }
     });
 </script>
-
-@push('styles')
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-@endpush
-
-@push('script')
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-@endpush

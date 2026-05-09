@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class KnmpProvinces extends Model
+class Village extends Model
 {
     use HasFactory;
-    protected $table = 'knmp_provinces';
+    protected $table = 'villages';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'name'
+        'kecamatan_id',
+        'nama'
     ];
 }

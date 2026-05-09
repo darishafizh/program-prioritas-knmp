@@ -58,22 +58,22 @@ class InformasiResponden extends Model
 
     public function province()
     {
-        return $this->belongsTo(KnmpProvinces::class, 'province_id');
+        return $this->belongsTo(Province::class, 'province_id');
     }
 
     public function regency()
     {
-        return $this->belongsTo(KnmpRegencies::class, 'regency_id');
+        return $this->belongsTo(Regency::class, 'regency_id');
     }
 
     public function district()
     {
-        return $this->belongsTo(KnmpDistricts::class, 'district_id');
+        return $this->belongsTo(District::class, 'district_id');
     }
 
     public function village()
     {
-        return $this->belongsTo(KnmpVillages::class, 'village_id');
+        return $this->belongsTo(Village::class, 'village_id');
     }
 
     public function tingkatKebahagiaan()

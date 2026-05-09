@@ -28,10 +28,10 @@ class KnmpReferenceSheet implements FromArray, WithHeadings, WithStyles, ShouldA
                 return [
                     $knmp->id,
                     $knmp->nama,
-                    $knmp->province->name ?? '-',
-                    $knmp->regency->name ?? '-',
-                    $knmp->district->name ?? '-',
-                    $knmp->village->name ?? '-',
+                    $knmp->province->nama ?? '-',
+                    $knmp->regency->nama ?? '-',
+                    $knmp->district->nama ?? '-',
+                    $knmp->village->nama ?? '-',
                 ];
             })
             ->toArray();

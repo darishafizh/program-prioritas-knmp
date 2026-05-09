@@ -20,7 +20,7 @@ class InformasiUmumController extends Controller
         $user = auth()->user();
 
         // Filter KNMP list based on user access, only select needed columns and relationships for dropdown
-        $knmpQuery = Knmp::with(['province:id,name', 'regency:id,name'])->select('id', 'nama', 'province_id', 'regency_id');
+        $knmpQuery = Knmp::select('id', 'nama', 'provinsi', 'kabupaten_kota');
 
         // If user is a village user (not admin/super_admin), only show their assigned KNMP
         if ($user->isVillageUser() && !$user->isAdmin() && !$user->isSuperAdmin()) {
@@ -48,7 +48,7 @@ class InformasiUmumController extends Controller
             }
         }
 
-        $selectedKnmp = Knmp::with(['province', 'regency', 'district', 'village'])->find($selectedKnmpId);
+        $selectedKnmp = Knmp::find($selectedKnmpId);
 
         // Initialize statistics
         $stats = [
@@ -182,31 +182,22 @@ class InformasiUmumController extends Controller
             // Checking TanggapanMasyarakat model...
             // It usually has responden_id. InformasiResponden has knmp_id.
             
-            $totalTanggapan = \App\Models\TanggapanMasyarakat::whereHas('responden', function($q) use ($selectedKnmp) {
-                $q->where('knmp_id', $selectedKnmp->id);
-            })->count();
+            // OPTIMASI: Ambil ID responden sekali saja untuk menghindari subquery berulang
+            $respondenIds = \App\Models\InformasiResponden::where('knmp_id', $selectedKnmp->id)->pluck('id');
 
-            $sesuaiKebutuhan = \App\Models\TanggapanMasyarakat::whereHas('responden', function($q) use ($selectedKnmp) {
-                $q->where('knmp_id', $selectedKnmp->id);
-            })->where('kesesuaian_kebutuhan', 1)->count();
+            // 1. Indeks Kesesuaian Kebutuhan
+            $totalTanggapan = \App\Models\TanggapanMasyarakat::whereIn('responden_id', $respondenIds)->count();
+            $sesuaiKebutuhan = \App\Models\TanggapanMasyarakat::whereIn('responden_id', $respondenIds)->where('kesesuaian_kebutuhan', 1)->count();
             
             $stats['indeksKesesuaianKebutuhan'] = $totalTanggapan > 0 ? round(($sesuaiKebutuhan / $totalTanggapan) * 100, 2) : 0;
 
             // 2. Indeks Kesejahteraan Nelayan (Rata-rata Skor Kebahagiaan)
-             $stats['indeksKesejahteraan'] = \App\Models\TingkatKebahagiaanNelayan::whereHas('responden', function($q) use ($selectedKnmp) {
-                $q->where('knmp_id', $selectedKnmp->id);
-            })->avg('skor_nilai') ?? 0;
+            $stats['indeksKesejahteraan'] = \App\Models\TingkatKebahagiaanNelayan::whereIn('responden_id', $respondenIds)->avg('skor_nilai') ?? 0;
             $stats['indeksKesejahteraan'] = round($stats['indeksKesejahteraan'], 2);
 
             // 3. Tingkat Kelembagaan Nelayan
-            // Formula: % Anggota Kelompok/Koperasi >= 3 (Aktif)
-            $totalSosial = \App\Models\SosialKelembagaan::whereHas('responden', function($q) use ($selectedKnmp) {
-                $q->where('knmp_id', $selectedKnmp->id);
-            })->count();
-
-            $anggotaAktif = \App\Models\SosialKelembagaan::whereHas('responden', function($q) use ($selectedKnmp) {
-                $q->where('knmp_id', $selectedKnmp->id);
-            })->where(function ($q) {
+            $totalSosial = \App\Models\SosialKelembagaan::whereIn('responden_id', $respondenIds)->count();
+            $anggotaAktif = \App\Models\SosialKelembagaan::whereIn('responden_id', $respondenIds)->where(function ($q) {
                 $q->where('anggota_kelompok', '>=', 3)
                   ->orWhere('anggota_koperasi', '>=', 3);
             })->count();
@@ -223,13 +214,90 @@ class InformasiUmumController extends Controller
 
         // Fetch timeline data for S-Curve chart
         $timelineData = collect();
+        $latestDeviasiData = null;
         if ($selectedKnmp) {
             $timelineData = TimelinePengerjaan::where('knmp_id', $selectedKnmp->id)
                 ->orderBy('periode_mingguan', 'asc')
                 ->get();
+            
+            // Dapatkan progres terbaru dari ProgresKnmpNasional untuk real-time deviasi
+            $latestProgres = \App\Models\ProgresKnmpNasional::where('knmp_id', $selectedKnmp->id)
+                ->whereNotNull('tanggal')
+                ->orderBy('tanggal', 'desc')
+                ->first();
+            
+            if ($latestProgres && $timelineData->count() > 0) {
+                // Logika Baru: Ambil minggu terakhir yang memiliki realisasi di timeline
+                $lastReportedTl = $timelineData->whereNotNull('bobot_realisasi_kumulatif')
+                    ->sortByDesc('periode_mingguan')
+                    ->first();
+                
+                if ($lastReportedTl) {
+                    $week = $lastReportedTl->periode_mingguan;
+                    $rencanaRaw = $lastReportedTl->bobot_rencana_kumulatif;
+                    
+                    // Kita tetap butuh startDate untuk mapping progres fisik di grafik
+                    if ($selectedKnmp->tanggal_mulai) {
+                        $startDate = \Carbon\Carbon::parse($selectedKnmp->tanggal_mulai);
+                    } else {
+                        $startDate = \Carbon\Carbon::parse('2025-12-28');
+                    }
+                } else {
+                    // Fallback: Gunakan tanggal_mulai dari database jika ada, jika tidak pakai fallback dinamis
+                    if ($selectedKnmp->tanggal_mulai) {
+                        $startDate = \Carbon\Carbon::parse($selectedKnmp->tanggal_mulai);
+                    } else {
+                        // Fallback: Hitung tanggal mulai dinamis: 28 Des 2025
+                        $totalWeeks = $timelineData->count();
+                        $startDate = \Carbon\Carbon::parse('2025-12-28');
+                    }
+                    $tanggalSekarang = \Carbon\Carbon::parse($latestProgres->tanggal);
+                    $diffDays = $startDate->diffInDays($tanggalSekarang, false);
+                    $week = $diffDays >= 0 ? ceil(($diffDays + 1) / 7) : 1;
+                    
+                    $tlRencana = $timelineData->where('periode_mingguan', $week)->first();
+                    if (!$tlRencana) {
+                        $tlRencana = $timelineData->sortByDesc('periode_mingguan')->first();
+                    }
+                    $rencanaRaw = $tlRencana ? $tlRencana->bobot_rencana_kumulatif : 0;
+                }
+
+                $realisasi = (float)$latestProgres->progres;
+                
+                // Normalisasi jika data rencana menggunakan skala permil (max > 100)
+                $maxPlan = $timelineData->max('bobot_rencana_kumulatif');
+                $scale = $maxPlan > 100 ? $maxPlan / 100 : 1;
+                
+                $rencanaPersen = round($rencanaRaw / $scale, 2);
+                
+                $latestDeviasiData = [
+                    'rencana' => $rencanaPersen,
+                    'realisasi' => $realisasi,
+                    'deviasi' => round($realisasi - $rencanaPersen, 2),
+                    'minggu' => $week,
+                    'total_minggu' => $timelineData->count(),
+                ];
+
+                // Data Progres Fisik untuk Grafik (ProgresKnmpNasional mapped to Weeks)
+                $allProgresFisik = \App\Models\ProgresKnmpNasional::where('knmp_id', $selectedKnmp->id)
+                    ->orderBy('tanggal', 'asc')
+                    ->get();
+                
+                $progresFisikMingguan = [];
+                foreach ($allProgresFisik as $p) {
+                    $tgl = \Carbon\Carbon::parse($p->tanggal);
+                    $d = $startDate->diffInDays($tgl, false);
+                    $w = $d >= 0 ? ceil(($d + 1) / 7) : 1;
+                    // Ambil yang paling tinggi (kumulatif) per minggu
+                    $progresFisikMingguan[$w] = (float)$p->progres;
+                }
+            }
         }
 
-        return view('informasi_umum.index', compact('knmpList', 'selectedKnmp', 'selectedKnmpId', 'stats', 'monitoringStats', 'timelineData'));
+        return view('informasi_umum.index', compact(
+            'knmpList', 'selectedKnmp', 'selectedKnmpId', 'stats', 
+            'monitoringStats', 'timelineData', 'latestDeviasiData', 'progresFisikMingguan'
+        ));
     }
 
     public function create()

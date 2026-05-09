@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Knmp as ModelsKnmp;
 use App\Models\BuktiUpload;
-use App\Models\KnmpProvinces;
-use App\Models\KnmpRegencies;
-use App\Models\KnmpDistricts;
-use App\Models\KnmpVillages;
+use App\Models\Province;
+use App\Models\Regency;
+use App\Models\District;
+use App\Models\Village;
 use App\Imports\KnmpImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
@@ -20,10 +20,7 @@ class SurveyController extends Controller
         $user = Auth::user();
 
         $query = ModelsKnmp::with([
-            'province',
-            'regency',
-            'district',
-            'village',
+
             'buktiUploads' => function ($query) {
                 $query->orderBy('created_at', 'desc')->take(10);
             }
@@ -37,7 +34,7 @@ class SurveyController extends Controller
         $knmps = $query->orderBy('id', 'asc')->get();
 
         // Get provinces for dropdown (Admin only)
-        $provinces = KnmpProvinces::orderBy('name', 'asc')->get();
+        $provinces = Province::orderBy('nama', 'asc')->get();
 
         // Calculate KPI Stats for the 6 Cards
         $knmpIds = $knmps->pluck('id')->toArray();
@@ -107,18 +104,18 @@ class SurveyController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:255',
-            'province_id' => 'required|exists:knmp_provinces,id',
-            'regency_id' => 'required|exists:knmp_regencies,id',
-            'district_id' => 'required|exists:knmp_districts,id',
-            'village_id' => 'required|exists:knmp_villages,id',
+            'provinsi' => 'required|exists:provinces,id',
+            'kabupaten_kota' => 'required|exists:regencies,id',
+            'kecamatan' => 'required|exists:districts,id',
+            'desa_kelurahan' => 'required|exists:villages,id',
         ]);
 
         ModelsKnmp::create([
             'nama' => $request->nama,
-            'province_id' => $request->province_id,
-            'regency_id' => $request->regency_id,
-            'district_id' => $request->district_id,
-            'village_id' => $request->village_id,
+            'provinsi' => $request->provinsi,
+            'kabupaten_kota' => $request->kabupaten_kota,
+            'kecamatan' => $request->kecamatan,
+            'desa_kelurahan' => $request->desa_kelurahan,
         ]);
 
         return redirect()->route('survey.index')->with('success', 'KNMP berhasil ditambahkan!');
@@ -157,6 +154,32 @@ class SurveyController extends Controller
     }
 
     /**
+     * Update a KNMP (Admin only)
+     */
+    public function update(Request $request, $id)
+    {
+        $knmp = ModelsKnmp::findOrFail($id);
+
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'provinsi' => 'required|exists:provinces,id',
+            'kabupaten_kota' => 'required|exists:regencies,id',
+            'kecamatan' => 'required|exists:districts,id',
+            'desa_kelurahan' => 'required|exists:villages,id',
+        ]);
+
+        $knmp->update([
+            'nama' => $request->nama,
+            'provinsi' => $request->provinsi,
+            'kabupaten_kota' => $request->kabupaten_kota,
+            'kecamatan' => $request->kecamatan,
+            'desa_kelurahan' => $request->desa_kelurahan,
+        ]);
+
+        return redirect()->route('survey.index')->with('success', 'KNMP berhasil diperbarui!');
+    }
+
+    /**
      * Delete a KNMP (Admin only)
      */
     public function destroy($id)
@@ -172,7 +195,7 @@ class SurveyController extends Controller
      */
     public function getRegencies($provinceId)
     {
-        $regencies = KnmpRegencies::where('knmp_province_id', $provinceId)->orderBy('name', 'asc')->get();
+        $regencies = Regency::where('provinsi_id', $provinceId)->orderBy('nama', 'asc')->get();
         return response()->json($regencies);
     }
 
@@ -181,7 +204,7 @@ class SurveyController extends Controller
      */
     public function getDistricts($regencyId)
     {
-        $districts = KnmpDistricts::where('knmp_regency_id', $regencyId)->orderBy('name', 'asc')->get();
+        $districts = District::where('kabupaten_kota_id', $regencyId)->orderBy('nama', 'asc')->get();
         return response()->json($districts);
     }
 
@@ -190,7 +213,7 @@ class SurveyController extends Controller
      */
     public function getVillages($districtId)
     {
-        $villages = KnmpVillages::where('knmp_district_id', $districtId)->orderBy('name', 'asc')->get();
+        $villages = Village::where('kecamatan_id', $districtId)->orderBy('nama', 'asc')->get();
         return response()->json($villages);
     }
 }

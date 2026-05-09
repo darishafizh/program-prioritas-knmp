@@ -3,10 +3,10 @@
 namespace App\Imports;
 
 use App\Models\Knmp;
-use App\Models\KnmpProvinces;
-use App\Models\KnmpRegencies;
-use App\Models\KnmpDistricts;
-use App\Models\KnmpVillages;
+use App\Models\Province;
+use App\Models\Regency;
+use App\Models\District;
+use App\Models\Village;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
@@ -59,79 +59,67 @@ class KnmpImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyR
         ];
     }
 
-    /**
-     * Find or create province by name
-     */
-    private function findOrCreateProvince(string $name): KnmpProvinces
+    private function findOrCreateProvince(string $name): Province
     {
         $name = strtoupper(trim($name));
         
-        $province = KnmpProvinces::where('name', 'LIKE', '%' . $name . '%')->first();
+        $province = Province::where('nama', 'LIKE', '%' . $name . '%')->first();
         
         if (!$province) {
-            $province = KnmpProvinces::create(['name' => $name]);
+            $province = Province::create(['nama' => $name]);
         }
         
         return $province;
     }
 
-    /**
-     * Find or create regency by name within province
-     */
-    private function findOrCreateRegency(string $name, int $provinceId): KnmpRegencies
+    private function findOrCreateRegency(string $name, $provinceId): Regency
     {
         $name = strtoupper(trim($name));
         
-        $regency = KnmpRegencies::where('knmp_province_id', $provinceId)
-            ->where('name', 'LIKE', '%' . $name . '%')
+        $regency = Regency::where('provinsi_id', $provinceId)
+            ->where('nama', 'LIKE', '%' . $name . '%')
             ->first();
         
         if (!$regency) {
-            $regency = KnmpRegencies::create([
-                'knmp_province_id' => $provinceId,
-                'name' => $name
+            $regency = Regency::create([
+                'provinsi_id' => $provinceId,
+                'nama' => $name
             ]);
         }
         
         return $regency;
     }
 
-    /**
-     * Find or create district by name within regency
-     */
-    private function findOrCreateDistrict(string $name, int $regencyId): KnmpDistricts
+    private function findOrCreateDistrict(string $name, $regencyId): District
     {
         $name = strtoupper(trim($name));
         
-        $district = KnmpDistricts::where('knmp_regency_id', $regencyId)
-            ->where('name', 'LIKE', '%' . $name . '%')
+        $district = District::where('kabupaten_kota_id', $regencyId)
+            ->where('nama', 'LIKE', '%' . $name . '%')
             ->first();
         
         if (!$district) {
-            $district = KnmpDistricts::create([
-                'knmp_regency_id' => $regencyId,
-                'name' => $name
+            $district = District::create([
+                'kabupaten_kota_id' => $regencyId,
+                'nama' => $name
             ]);
         }
         
         return $district;
     }
 
-    /**
-     * Find or create village by name within district
-     */
-    private function findOrCreateVillage(string $name, int $districtId): KnmpVillages
+    private function findOrCreateVillage(string $name, $districtId): Village
     {
         $name = strtoupper(trim($name));
         
-        $village = KnmpVillages::where('knmp_district_id', $districtId)
-            ->where('name', 'LIKE', '%' . $name . '%')
+        $village = Village::where('kecamatan_id', $districtId)
+            ->where('nama', 'LIKE', '%' . $name . '%')
             ->first();
         
         if (!$village) {
-            $village = KnmpVillages::create([
-                'knmp_district_id' => $districtId,
-                'name' => $name
+            $village = Village::create([
+                'kecamatan_id' => $districtId,
+                'nama' => $name
             ]);
         }
         
@@ -160,7 +148,7 @@ class KnmpImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyR
 
         // Check if KNMP already exists (by name and village)
         $existingKnmp = Knmp::where('nama', trim($row['nama']))
-            ->where('village_id', $village->id)
+            ->where('desa_kelurahan', $village->id)
             ->first();
 
         if ($existingKnmp) {
@@ -176,10 +164,10 @@ class KnmpImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyR
 
         return new Knmp([
             'nama' => trim($row['nama']),
-            'province_id' => $province->id,
-            'regency_id' => $regency->id,
-            'district_id' => $district->id,
-            'village_id' => $village->id,
+            'provinsi' => $province->id,
+            'kabupaten_kota' => $regency->id,
+            'kecamatan' => $district->id,
+            'desa_kelurahan' => $village->id,
             'latitude' => $row['latitude'] ?? null,
             'longitude' => $row['longitude'] ?? null,
         ]);

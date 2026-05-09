@@ -80,7 +80,7 @@
                                     </div>
                                     <div class="location-value">
                                         <span
-                                            class="badge bg-primary text-white rounded-pill px-3">{{ $knmp->village->name ?? 'N/A' }}</span>
+                                            class="badge bg-primary text-white rounded-pill px-3">{{ $knmp->desa_kelurahan ?? 'N/A' }}</span>
                                     </div>
                                 </div>
                                 <div class="location-item">
@@ -90,7 +90,7 @@
                                     </div>
                                     <div class="location-value">
                                         <span
-                                            class="badge bg-info text-white rounded-pill px-3">{{ $knmp->district->name ?? 'N/A' }}</span>
+                                            class="badge bg-info text-white rounded-pill px-3">{{ $knmp->kecamatan ?? 'N/A' }}</span>
                                     </div>
                                 </div>
                                 <div class="location-item">
@@ -100,7 +100,7 @@
                                     </div>
                                     <div class="location-value">
                                         <span
-                                            class="badge bg-success text-white rounded-pill px-3">{{ $knmp->regency->name ?? 'N/A' }}</span>
+                                            class="badge bg-success text-white rounded-pill px-3">{{ $knmp->kabupaten_kota ?? 'N/A' }}</span>
                                     </div>
                                 </div>
                                 <div class="location-item">
@@ -110,7 +110,7 @@
                                     </div>
                                     <div class="location-value">
                                         <span
-                                            class="badge bg-warning text-white rounded-pill px-3">{{ $knmp->province->name ?? 'N/A' }}</span>
+                                            class="badge bg-warning text-white rounded-pill px-3">{{ $knmp->provinsi ?? 'N/A' }}</span>
                                     </div>
                                 </div>
                             </div>

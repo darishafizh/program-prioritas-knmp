@@ -345,10 +345,10 @@
                                 @foreach ($knmps as $knmp)
                                     <tr>
                                         <td>{{ ucwords(strtolower($knmp->nama ?? 'N/A')) }}</td>
-                                        <td>{{ ucwords(strtolower($knmp->village->name ?? 'N/A')) }}</td>
-                                        <td>{{ ucwords(strtolower($knmp->district->name ?? 'N/A')) }}</td>
-                                        <td>{{ ucwords(strtolower($knmp->regency->name ?? 'N/A')) }}</td>
-                                        <td>{{ ucwords(strtolower($knmp->province->name ?? 'N/A')) }}</td>
+                                        <td>{{ ucwords(strtolower($knmp->desa_kelurahan ?? 'N/A')) }}</td>
+                                        <td>{{ ucwords(strtolower($knmp->kecamatan ?? 'N/A')) }}</td>
+                                        <td>{{ ucwords(strtolower($knmp->kabupaten_kota ?? 'N/A')) }}</td>
+                                        <td>{{ ucwords(strtolower($knmp->provinsi ?? 'N/A')) }}</td>
                                         <td class="action-buttons">
                                             @if(Auth::user()->canInputData())
                                                 <a href="{{ route('forms.index', $knmp->nama) }}"
@@ -373,7 +373,18 @@
                                                 <i class="mdi mdi-image"></i>
                                             </button>
                                             @if(Auth::user()->isSuperAdmin())
-                                                <form action="{{ route('survey.destroy', hashid($knmp->id)) }}" method="POST"
+                                                <button type="button" class="btn btn-action btn-action-outline-success btn-edit-knmp"
+                                                    data-bs-toggle="modal" data-bs-target="#editKnmpModal"
+                                                    data-id="{{ $knmp->id }}"
+                                                    data-nama="{{ $knmp->nama }}"
+                                                    data-province="{{ $knmp->provinsi }}"
+                                                    data-regency="{{ $knmp->kabupaten_kota }}"
+                                                    data-district="{{ $knmp->kecamatan }}"
+                                                    data-village="{{ $knmp->desa_kelurahan }}"
+                                                    title="Edit KNMP">
+                                                    <i class="mdi mdi-pencil"></i>
+                                                </button>
+                                                <form action="{{ route('survey.destroy', $knmp->id) }}" method="POST"
                                                     class="d-inline delete-knmp-form">
                                                     @csrf
                                                     @method('DELETE')
@@ -397,8 +408,8 @@
         </div><!-- end col-->
     </div> <!-- end row-->
 
-    <!-- Add KNMP Modal (Admin Only) -->
     @if(Auth::user()->isSuperAdmin())
+    <!-- Add KNMP Modal (Admin Only) -->
         <div class="modal fade" id="addKnmpModal" tabindex="-1" aria-labelledby="addKnmpModalLabel" aria-hidden="true"
             style="z-index: 1055;">
             <div class="modal-dialog modal-dialog-centered" style="display: flex; justify-content: center; margin: auto;">
@@ -432,10 +443,10 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-medium">Provinsi <span class="text-danger">*</span></label>
-                                <select class="form-select" name="province_id" id="addProvinceSelect" required>
+                                <select class="form-select" name="provinsi" id="addProvinceSelect" required>
                                     <option value="">Pilih Provinsi</option>
                                     @foreach($provinces as $province)
-                                        <option value="{{ $province->id }}">{{ $province->name }}</option>
+                                        <option value="{{ $province->id }}">{{ $province->nama }}</option>
                                     @endforeach
                                 </select>
                                 <div class="invalid-feedback">
@@ -444,7 +455,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-medium">Kabupaten/Kota <span class="text-danger">*</span></label>
-                                <select class="form-select" name="regency_id" id="addRegencySelect" required>
+                                <select class="form-select" name="kabupaten_kota" id="addRegencySelect" required>
                                     <option value="">Pilih Kabupaten/Kota</option>
                                 </select>
                                 <div class="invalid-feedback">
@@ -453,7 +464,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-medium">Kecamatan <span class="text-danger">*</span></label>
-                                <select class="form-select" name="district_id" id="addDistrictSelect" required>
+                                <select class="form-select" name="kecamatan" id="addDistrictSelect" required>
                                     <option value="">Pilih Kecamatan</option>
                                 </select>
                                 <div class="invalid-feedback">
@@ -462,7 +473,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-medium">Desa <span class="text-danger">*</span></label>
-                                <select class="form-select" name="village_id" id="addVillageSelect" required>
+                                <select class="form-select" name="desa_kelurahan" id="addVillageSelect" required>
                                     <option value="">Pilih Desa</option>
                                 </select>
                                 <div class="invalid-feedback">
@@ -481,10 +492,94 @@
                 </div>
             </div>
         </div>
-    @endif
+
+    <!-- Edit KNMP Modal (Admin Only) -->
+        <div class="modal fade" id="editKnmpModal" tabindex="-1" aria-labelledby="editKnmpModalLabel" aria-hidden="true"
+            style="z-index: 1055;">
+            <div class="modal-dialog modal-dialog-centered" style="display: flex; justify-content: center; margin: auto;">
+                <div class="modal-content"
+                    style="border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.25);">
+                    <form action="" method="POST" id="editKnmpForm" novalidate>
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-header"
+                            style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 1.25rem 1.5rem; border: none;">
+                            <div class="d-flex align-items-center">
+                                <div
+                                    style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="mdi mdi-pencil" style="font-size: 1.5rem; color: #fff;"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <h5 class="modal-title mb-0 text-white" id="editKnmpModalLabel">Edit KNMP</h5>
+                                    <small style="color: rgba(255,255,255,0.7);">Perbarui data KNMP</small>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Nama KNMP <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="nama" id="edit_nama" placeholder="Masukkan nama KNMP" required
+                                    autocomplete="off">
+                                <div class="invalid-feedback">
+                                    Nama KNMP wajib diisi.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Provinsi <span class="text-danger">*</span></label>
+                                <select class="form-select" name="provinsi" id="editProvinceSelect" required>
+                                    <option value="">Pilih Provinsi</option>
+                                    @foreach($provinces as $province)
+                                        <option value="{{ $province->id }}">{{ $province->nama }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback">
+                                    Silakan pilih provinsi.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Kabupaten/Kota <span class="text-danger">*</span></label>
+                                <select class="form-select" name="kabupaten_kota" id="editRegencySelect" required>
+                                    <option value="">Pilih Kabupaten/Kota</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Silakan pilih kabupaten/kota.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Kecamatan <span class="text-danger">*</span></label>
+                                <select class="form-select" name="kecamatan" id="editDistrictSelect" required>
+                                    <option value="">Pilih Kecamatan</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Silakan pilih kecamatan.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">Desa <span class="text-danger">*</span></label>
+                                <select class="form-select" name="desa_kelurahan" id="editVillageSelect" required>
+                                    <option value="">Pilih Desa</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Silakan pilih desa.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-center gap-2"
+                            style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; background: #f8fafc;">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="mdi mdi-content-save me-1"></i>Simpan Perubahan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
 
     <!-- Import KNMP Modal (Admin Only) -->
-    @if(Auth::user()->isSuperAdmin())
         <div class="modal fade" id="importKnmpModal" tabindex="-1" aria-labelledby="importKnmpModalLabel" aria-hidden="true"
             style="z-index: 1055;">
             <div class="modal-dialog modal-dialog-centered" style="display: flex; justify-content: center; margin: auto;">
@@ -1059,57 +1154,67 @@
             $(".dataTables_length select").addClass("form-select form-select-sm");
             $(".dataTables_length label").addClass("form-label");
 
+            // Initialize Select2 for Add KNMP Modal
+            $('#addProvinceSelect, #addRegencySelect, #addDistrictSelect, #addVillageSelect').select2({
+                dropdownParent: $('#addKnmpModal'),
+                width: '100%',
+                placeholder: 'Cari atau pilih...'
+            });
+
             // Cascade dropdown logic for Add KNMP Modal
             $('#addProvinceSelect').on('change', function () {
                 var provinceId = $(this).val();
                 var regencySelect = $('#addRegencySelect');
                 var districtSelect = $('#addDistrictSelect');
                 var villageSelect = $('#addVillageSelect');
-
+ 
                 // Reset dependent dropdowns
                 regencySelect.html('<option value="">Pilih Kabupaten/Kota</option>');
                 districtSelect.html('<option value="">Pilih Kecamatan</option>');
                 villageSelect.html('<option value="">Pilih Desa</option>');
-
+ 
                 if (provinceId) {
                     $.get('/survey/locations/regencies/' + provinceId, function (data) {
                         data.forEach(function (regency) {
-                            regencySelect.append('<option value="' + regency.id + '">' + regency.name + '</option>');
+                            regencySelect.append('<option value="' + regency.id + '">' + regency.nama + '</option>');
                         });
+                        regencySelect.trigger('change');
                     });
                 }
             });
-
+ 
             $('#addRegencySelect').on('change', function () {
                 var regencyId = $(this).val();
                 var districtSelect = $('#addDistrictSelect');
                 var villageSelect = $('#addVillageSelect');
-
+ 
                 // Reset dependent dropdowns
                 districtSelect.html('<option value="">Pilih Kecamatan</option>');
                 villageSelect.html('<option value="">Pilih Desa</option>');
-
+ 
                 if (regencyId) {
                     $.get('/survey/locations/districts/' + regencyId, function (data) {
                         data.forEach(function (district) {
-                            districtSelect.append('<option value="' + district.id + '">' + district.name + '</option>');
+                            districtSelect.append('<option value="' + district.id + '">' + district.nama + '</option>');
                         });
+                        districtSelect.trigger('change');
                     });
                 }
             });
-
+ 
             $('#addDistrictSelect').on('change', function () {
                 var districtId = $(this).val();
                 var villageSelect = $('#addVillageSelect');
-
+ 
                 // Reset dependent dropdown
                 villageSelect.html('<option value="">Pilih Desa</option>');
-
+ 
                 if (districtId) {
                     $.get('/survey/locations/villages/' + districtId, function (data) {
                         data.forEach(function (village) {
-                            villageSelect.append('<option value="' + village.id + '">' + village.name + '</option>');
+                            villageSelect.append('<option value="' + village.id + '">' + village.nama + '</option>');
                         });
+                        villageSelect.trigger('change');
                     });
                 }
             });
@@ -1127,6 +1232,131 @@
             }
 
             // Reset form when modal is closed
+            $('#addKnmpModal').on('hidden.bs.modal', function () {
+                $(this).find('form').trigger('reset');
+                $(this).find('.select2').val(null).trigger('change');
+                $(this).find('form').removeClass('was-validated');
+            });
+ 
+            // Edit KNMP Logic
+            $('.btn-edit-knmp').on('click', function() {
+                var id = $(this).data('id');
+                var nama = $(this).data('nama');
+                var provinceId = $(this).data('province');
+                var regencyId = $(this).data('regency');
+                var districtId = $(this).data('district');
+                var villageId = $(this).data('village');
+
+                var form = $('#editKnmpForm');
+                form.attr('action', '/survey/' + id);
+                $('#edit_nama').val(nama);
+                
+                // Initialize Select2 for Edit Modal
+                $('#editProvinceSelect, #editRegencySelect, #editDistrictSelect, #editVillageSelect').select2({
+                    dropdownParent: $('#editKnmpModal'),
+                    width: '100%',
+                    placeholder: 'Cari atau pilih...'
+                });
+
+                // Clear dependent selects initially
+                $('#editRegencySelect').html('<option value="">Memuat...</option>');
+                $('#editDistrictSelect').html('<option value="">Memuat...</option>');
+                $('#editVillageSelect').html('<option value="">Memuat...</option>');
+
+                // Set Province
+                $('#editProvinceSelect').val(provinceId).trigger('change.select2');
+
+                // Sequential loading to ensure correct values are set
+                $.get('/survey/locations/regencies/' + provinceId, function (data) {
+                    var regencySelect = $('#editRegencySelect');
+                    regencySelect.html('<option value="">Pilih Kabupaten/Kota</option>');
+                    data.forEach(function (regency) {
+                        regencySelect.append('<option value="' + regency.id + '">' + regency.nama + '</option>');
+                    });
+                    regencySelect.val(regencyId).trigger('change.select2');
+
+                    $.get('/survey/locations/districts/' + regencyId, function (data) {
+                        var districtSelect = $('#editDistrictSelect');
+                        districtSelect.html('<option value="">Pilih Kecamatan</option>');
+                        data.forEach(function (district) {
+                            districtSelect.append('<option value="' + district.id + '">' + district.nama + '</option>');
+                        });
+                        districtSelect.val(districtId).trigger('change.select2');
+
+                        $.get('/survey/locations/villages/' + districtId, function (data) {
+                            var villageSelect = $('#editVillageSelect');
+                            villageSelect.html('<option value="">Pilih Desa</option>');
+                            data.forEach(function (village) {
+                                villageSelect.append('<option value="' + village.id + '">' + village.nama + '</option>');
+                            });
+                            villageSelect.val(villageId).trigger('change.select2');
+                        });
+                    });
+                });
+            });
+
+            // Cascade dropdown logic for Edit Modal (manual changes)
+            $('#editProvinceSelect').on('change', function (e) {
+                // Use a custom property to check if it's a manual change
+                if (e.originalEvent || (e.isTrigger && e.isTrigger !== 3)) {
+                    var provinceId = $(this).val();
+                    var regencySelect = $('#editRegencySelect');
+                    var districtSelect = $('#editDistrictSelect');
+                    var villageSelect = $('#editVillageSelect');
+
+                    regencySelect.html('<option value="">Pilih Kabupaten/Kota</option>');
+                    districtSelect.html('<option value="">Pilih Kecamatan</option>');
+                    villageSelect.html('<option value="">Pilih Desa</option>');
+
+                    if (provinceId) {
+                        $.get('/survey/locations/regencies/' + provinceId, function (data) {
+                            data.forEach(function (regency) {
+                                regencySelect.append('<option value="' + regency.id + '">' + regency.nama + '</option>');
+                            });
+                            regencySelect.trigger('change');
+                        });
+                    }
+                }
+            });
+
+            $('#editRegencySelect').on('change', function (e) {
+                if (e.originalEvent || (e.isTrigger && e.isTrigger !== 3)) {
+                    var regencyId = $(this).val();
+                    var districtSelect = $('#editDistrictSelect');
+                    var villageSelect = $('#editVillageSelect');
+
+                    districtSelect.html('<option value="">Pilih Kecamatan</option>');
+                    villageSelect.html('<option value="">Pilih Desa</option>');
+
+                    if (regencyId) {
+                        $.get('/survey/locations/districts/' + regencyId, function (data) {
+                            data.forEach(function (district) {
+                                districtSelect.append('<option value="' + district.id + '">' + district.nama + '</option>');
+                            });
+                            districtSelect.trigger('change');
+                        });
+                    }
+                }
+            });
+
+            $('#editDistrictSelect').on('change', function (e) {
+                if (e.originalEvent || (e.isTrigger && e.isTrigger !== 3)) {
+                    var districtId = $(this).val();
+                    var villageSelect = $('#editVillageSelect');
+
+                    villageSelect.html('<option value="">Pilih Desa</option>');
+
+                    if (districtId) {
+                        $.get('/survey/locations/villages/' + districtId, function (data) {
+                            data.forEach(function (village) {
+                                villageSelect.append('<option value="' + village.id + '">' + village.nama + '</option>');
+                            });
+                            villageSelect.trigger('change');
+                        });
+                    }
+                }
+            });
+
             var addKnmpModal = document.getElementById('addKnmpModal');
             if (addKnmpModal) {
                 addKnmpModal.addEventListener('hidden.bs.modal', function () {

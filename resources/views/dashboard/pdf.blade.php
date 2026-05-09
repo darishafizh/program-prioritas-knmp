@@ -104,6 +104,17 @@
             line-height: 0.75;
         }
         .doc-subtitle strong { font-weight: 600; color: #000; }
+        
+        .avg-progres-header {
+            text-align: right;
+            margin: 0 0 6px 0;
+            font-size: 10px;
+            color: #374151;
+        }
+        .avg-progres-header strong {
+            color: #000;
+            font-weight: 700;
+        }
 
         /* ============ TABLE ============ */
         table.progres-table {
@@ -310,6 +321,10 @@
                 Data per tanggal <strong>{{ $exportDate }}</strong>
             @endif
         </p>
+    </div>
+
+    <div class="avg-progres-header">
+        Rata-rata Progres Nasional: <strong>{{ number_format($avgProgres, 2, ',', '.') }}%</strong>
     </div>
 
     @if($tahap === 'all' && isset($tableDataByTahap) && count($tableDataByTahap) > 1)

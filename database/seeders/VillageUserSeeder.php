@@ -21,7 +21,7 @@ class VillageUserSeeder extends Seeder
 
         foreach ($knmps as $knmp) {
             // Get village name from relation or use knmp nama
-            $villageName = $knmp->village ? $knmp->village->name : $knmp->nama;
+            $villageName = $knmp->village ? $knmp->village->nama : $knmp->nama;
 
             // Generate username: lowercase, no spaces, no punctuation
             $username = $this->generateUsername($villageName);

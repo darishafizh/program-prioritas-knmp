@@ -352,7 +352,7 @@
                 <div class="card-header bg-white border-bottom pb-2 pt-3 px-4" style="min-height: 48px;">
                     <h5 class="header-title mb-0">
                         <i class="mdi mdi-chart-bar me-2 text-info"></i>
-                        10 KNMP Progres Tertinggi
+                        10 KNMP Deviasi Tertinggi
                     </h5>
                 </div>
                 <div class="card-body p-0" style="height: 300px;">
@@ -361,7 +361,7 @@
                             <thead class="table-light fade-sticky-header">
                                 <tr>
                                     <th class="ps-4" style="font-size: 0.75rem; text-transform: uppercase;">KNMP</th>
-                                    <th class="text-end pe-4" style="font-size: 0.75rem; text-transform: uppercase;">Progres</th>
+                                    <th class="text-end pe-4" style="font-size: 0.75rem; text-transform: uppercase;">Deviasi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -383,7 +383,7 @@
                 <div class="card-header bg-white border-bottom pb-2 pt-3 px-4" style="min-height: 48px;">
                     <h5 class="header-title mb-0">
                         <i class="mdi mdi-chart-bar me-2 text-info"></i>
-                        10 KNMP Progres Terendah
+                        10 KNMP Deviasi Terendah
                     </h5>
                 </div>
                 <div class="card-body p-0" style="height: 300px;">
@@ -392,7 +392,7 @@
                             <thead class="table-light fade-sticky-header">
                                 <tr>
                                     <th class="ps-4" style="font-size: 0.75rem; text-transform: uppercase;">KNMP</th>
-                                    <th class="text-end pe-4" style="font-size: 0.75rem; text-transform: uppercase;">Progres</th>
+                                    <th class="text-end pe-4" style="font-size: 0.75rem; text-transform: uppercase;">Deviasi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -613,7 +613,7 @@
     <div class="modal fade" id="importProgresNasionalModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ route('analytics.import_progres_nasional') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('dashboard.import_progres_nasional') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title">Import Progres Nasional</h5>

@@ -8,10 +8,10 @@ use App\Models\InformasiPendapatanRumahTangga;
 use App\Models\InformasiResponden;
 use App\Models\InformasiUsaha;
 use App\Models\Knmp as ModelsKnmp;
-use App\Models\KnmpDistricts;
-use App\Models\KnmpProvinces;
-use App\Models\KnmpRegencies;
-use App\Models\KnmpVillages;
+use App\Models\District;
+use App\Models\Province;
+use App\Models\Regency;
+use App\Models\Village;
 use App\Models\ProfileKnmp;
 use App\Models\ProgresKnmp;
 use App\Models\ProgresKnmpDetail;
@@ -28,8 +28,7 @@ class FormsController extends Controller
      */
     public function index($knmpName, Request $request)
     {
-        $knmp = ModelsKnmp::with(['province', 'regency', 'district', 'village'])
-            ->where('nama', $knmpName)->firstOrFail();
+        $knmp = ModelsKnmp::where('nama', $knmpName)->firstOrFail();
 
         // Get all respondents for this KNMP
         $respondenList = InformasiResponden::where('knmp_id', $knmp->id)
@@ -46,10 +45,10 @@ class FormsController extends Controller
             'sosial-kelembagaan'    => SosialKelembagaan::where('knmp_id', $knmp->id)->pluck('responden_id')->toArray(),
         ];
 
-        $provinces = KnmpProvinces::where('id', $knmp->province_id)->get();
-        $regencies = KnmpRegencies::where('id', $knmp->regency_id)->get();
-        $districts = KnmpDistricts::where('id', $knmp->district_id)->get();
-        $villages = KnmpVillages::where('id', $knmp->village_id)->get();
+        $provinces = collect([(object)['id' => $knmp->provinsi, 'nama' => $knmp->provinsi]]);
+        $regencies = collect([(object)['id' => $knmp->kabupaten_kota, 'nama' => $knmp->kabupaten_kota]]);
+        $districts = collect([(object)['id' => $knmp->kecamatan, 'nama' => $knmp->kecamatan]]);
+        $villages = collect([(object)['id' => $knmp->desa_kelurahan, 'nama' => $knmp->desa_kelurahan]]);
 
         // Get evidence uploads for this KNMP
         $buktiUploads = BuktiUpload::where('knmp_id', $knmp->id)

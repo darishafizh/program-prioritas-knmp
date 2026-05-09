@@ -42,7 +42,7 @@
             </div>
             <div class="col-md-4">
                 <h6>Lokasi</h6>
-                <p>{{ $knmp->village->name ?? 'N/A' }}, {{ $knmp->district->name ?? 'N/A' }}</p>
+                <p>{{ $knmp->village->nama ?? 'N/A' }}, {{ $knmp->district->nama ?? 'N/A' }}</p>
             </div>
             <div class="col-md-4">
                 <h6>Total File</h6>

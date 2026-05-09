@@ -2,7 +2,8 @@
     /** @var \App\Models\ProgresKnmpNasional $item */
     /** @var string $context  'top' | 'bottom' */
     $namaKnmp     = $item->knmp->nama ?? ('KNMP #'.$item->knmp_id);
-    $progresValue = round((float) $item->progres, 2);
+    $deviasiValue = isset($item->deviasi) ? round((float) $item->deviasi, 2) : 0;
+    $progresValue = (float) $item->progres;
     $isComplete   = !empty($item->is_complete);
     $isStagnan    = !empty($item->is_stagnan);
 
@@ -10,7 +11,7 @@
         ? 'text-danger'
         : ($isComplete
             ? 'text-success'
-            : ($context === 'top' ? 'text-success' : 'text-warning'));
+            : ($context === 'top' ? 'text-success' : 'text-danger'));
 
     $rowClass = $isStagnan ? 'knmp-rank-row knmp-rank-row--alert' : 'knmp-rank-row';
 
@@ -24,7 +25,8 @@
         $tooltipHtml .= '<div class="knmp-tt__title"><i class="mdi mdi-alert-circle-outline"></i> Progres Stagnan</div>';
         $tooltipHtml .= '<div class="knmp-tt__name">' . e($namaKnmp) . '</div>';
         $tooltipHtml .= '<div class="knmp-tt__rows">';
-        $tooltipHtml .= '<div class="knmp-tt__row"><span>Saat ini</span><strong>' . number_format($progresValue, 2, ',', '.') . '%</strong></div>';
+        $tooltipHtml .= '<div class="knmp-tt__row"><span>Progres Saat ini</span><strong>' . number_format($progresValue, 2, ',', '.') . '%</strong></div>';
+        $tooltipHtml .= '<div class="knmp-tt__row"><span>Deviasi</span><strong>' . ($deviasiValue > 0 ? '+' : '') . number_format($deviasiValue, 2, ',', '.') . '%</strong></div>';
         if ($past !== null) {
             $tooltipHtml .= '<div class="knmp-tt__row"><span>5 hari lalu' . ($tgl ? ' ('.$tgl.')' : '') . '</span><strong>' . number_format($past, 2, ',', '.') . '%</strong></div>';
             $tooltipHtml .= '<div class="knmp-tt__row knmp-tt__row--delta"><span>Selisih</span><strong>0,00%</strong></div>';
@@ -39,7 +41,7 @@
         $tooltipHtml .= '<div class="knmp-tt__hint">Progres mencapai 100%.</div>';
         $tooltipHtml .= '</div>';
     } else {
-        $tooltipHtml = '<div class="knmp-tt knmp-tt--plain">' . e($namaKnmp) . '</div>';
+        $tooltipHtml = '<div class="knmp-tt knmp-tt--plain">' . e($namaKnmp) . '<br><span class="text-muted" style="font-size: 0.7rem;">Progres: ' . number_format($progresValue, 2, ',', '.') . '%</span></div>';
     }
 @endphp
 
@@ -66,6 +68,6 @@
         </div>
     </td>
     <td class="text-end fw-bold pe-4 align-middle {{ $progresClass }}" style="font-size: 0.8rem;">
-        {{ number_format($progresValue, 2, ',', '.') }}%
+        {{ $deviasiValue > 0 ? '+' : '' }}{{ number_format($deviasiValue, 2, ',', '.') }}%
     </td>
 </tr>
