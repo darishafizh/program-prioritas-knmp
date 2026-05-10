@@ -19,6 +19,7 @@ use App\Http\Controllers\UsahaController;
 use App\Http\Controllers\PemasaranController;
 use App\Http\Controllers\PendapatanRtController;
 use App\Http\Controllers\SosialController;
+use App\Http\Controllers\KnmpTahapController;
 
 
 Route::get('/', function () {
@@ -243,5 +244,52 @@ Route::middleware('auth')->group(function () {
             ->name('profil_knmp');
         Route::get('/profil-knmp/create', [FormsController::class, 'profilKnmpCreate'])
             ->name('profil_knmp.create');
+    });
+
+    // ==============================
+    // KNMP TAHAP ROUTES
+    // ==============================
+    Route::group(['prefix' => 'knmp-tahap'], function () {
+
+        // --- Usulan ---
+        Route::get('/usulan', [KnmpTahapController::class, 'usulanIndex'])->name('usulan.index');
+        Route::get('/usulan/{knmp}', [KnmpTahapController::class, 'usulanShow'])->name('usulan.show');
+        Route::post('/usulan/{knmp}', [KnmpTahapController::class, 'usulanStore'])->name('usulan.store');
+        Route::post('/usulan-import', [KnmpTahapController::class, 'usulanImport'])->name('usulan.import');
+
+        // --- Survey Tahap ---
+        Route::get('/survey-tahap', [KnmpTahapController::class, 'surveyTahapIndex'])->name('survey_tahap.index');
+        Route::get('/survey-tahap/{knmp}', [KnmpTahapController::class, 'surveyTahapShow'])->name('survey_tahap.show');
+        Route::post('/survey-tahap/{knmp}', [KnmpTahapController::class, 'surveyTahapStore'])->name('survey_tahap.store');
+
+        // --- DED ---
+        Route::get('/ded', [KnmpTahapController::class, 'dedIndex'])->name('ded.index');
+        Route::get('/ded/{knmp}', [KnmpTahapController::class, 'dedShow'])->name('ded.show');
+        Route::post('/ded/{knmp}', [KnmpTahapController::class, 'dedStore'])->name('ded.store');
+
+        // --- Lelang ---
+        Route::get('/lelang', [KnmpTahapController::class, 'lelangIndex'])->name('lelang.index');
+        Route::get('/lelang/{knmp}', [KnmpTahapController::class, 'lelangShow'])->name('lelang.show');
+        Route::post('/lelang/{knmp}', [KnmpTahapController::class, 'lelangStore'])->name('lelang.store');
+        Route::post('/lelang/{knmp}/penyedia', [KnmpTahapController::class, 'penyediaStore'])->name('lelang.penyedia.store');
+
+        // --- Konstruksi ---
+        Route::get('/konstruksi', [KnmpTahapController::class, 'konstruksiIndex'])->name('konstruksi.index');
+        Route::get('/konstruksi/{knmp}', [KnmpTahapController::class, 'konstruksiShow'])->name('konstruksi.show');
+        Route::post('/konstruksi/{knmp}/timeline', [KnmpTahapController::class, 'timelineStore'])->name('konstruksi.timeline.store');
+        Route::post('/konstruksi/{knmp}/progres-harian', [KnmpTahapController::class, 'progresHarianStore'])->name('konstruksi.progres_harian.store');
+        Route::post('/konstruksi/{knmp}/dokumentasi', [KnmpTahapController::class, 'dokumentasiStore'])->name('konstruksi.dokumentasi.store');
+
+        // --- Serah Terima ---
+        Route::get('/serah-terima', [KnmpTahapController::class, 'serahTerimaIndex'])->name('serah_terima.index');
+        Route::get('/serah-terima/{knmp}', [KnmpTahapController::class, 'serahTerimaShow'])->name('serah_terima.show');
+        Route::post('/serah-terima/{knmp}', [KnmpTahapController::class, 'serahTerimaStore'])->name('serah_terima.store');
+
+        // --- Riwayat Tahap ---
+        Route::get('/riwayat', [KnmpTahapController::class, 'riwayatIndex'])->name('riwayat_tahap.index');
+
+        // --- Perpindahan Tahap ---
+        Route::post('/{knmp}/move', [KnmpTahapController::class, 'moveStage'])->name('knmp_tahap.move');
+        Route::post('/batch-move', [KnmpTahapController::class, 'batchMoveStage'])->name('knmp_tahap.batch_move');
     });
 });

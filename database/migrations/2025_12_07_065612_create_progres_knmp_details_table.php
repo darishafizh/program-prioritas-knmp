@@ -10,20 +10,22 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('progres_knmp_details', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('progres_id');
+        if (!Schema::hasTable('progres_knmp_details')) {
+            Schema::create('progres_knmp_details', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('progres_id');
 
-            $table->string('kode');
-            $table->string('komponen');
-            $table->integer('target')->nullable();
-            $table->integer('persen')->nullable();
-            $table->string('keterangan')->nullable();
+                $table->string('kode');
+                $table->string('komponen');
+                $table->integer('target')->nullable();
+                $table->integer('persen')->nullable();
+                $table->string('keterangan')->nullable();
 
-            $table->timestamps();
+                $table->timestamps();
 
-            $table->foreign('progres_id')->references('id')->on('progres_knmp')->onDelete('cascade');
-        });
+                $table->foreign('progres_id')->references('id')->on('progres_knmp')->onDelete('cascade');
+            });
+        }
     }
 
     /**

@@ -10,24 +10,26 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('activity_logs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('action'); // create, update, delete, login, logout
-            $table->string('model_type')->nullable(); // App\Models\InformasiResponden
-            $table->unsignedBigInteger('model_id')->nullable();
-            $table->text('description');
-            $table->json('old_values')->nullable();
-            $table->json('new_values')->nullable();
-            $table->string('ip_address', 45)->nullable();
-            $table->string('user_agent')->nullable();
-            $table->timestamps();
+        if (!Schema::hasTable('activity_logs')) {
+            Schema::create('activity_logs', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
+                $table->string('action'); // create, update, delete, login, logout
+                $table->string('model_type')->nullable(); // App\Models\InformasiResponden
+                $table->unsignedBigInteger('model_id')->nullable();
+                $table->text('description');
+                $table->json('old_values')->nullable();
+                $table->json('new_values')->nullable();
+                $table->string('ip_address', 45)->nullable();
+                $table->string('user_agent')->nullable();
+                $table->timestamps();
 
-            // Indexes for faster queries
-            $table->index(['user_id', 'created_at']);
-            $table->index(['model_type', 'model_id']);
-            $table->index('action');
-        });
+                // Indexes for faster queries
+                $table->index(['user_id', 'created_at']);
+                $table->index(['model_type', 'model_id']);
+                $table->index('action');
+            });
+        }
     }
 
     /**

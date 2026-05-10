@@ -9,11 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tanggapan_masyarakat', function (Blueprint $table) {
-
-            $table->foreignId('responden_id')
-                ->after('knmp_id')
-                ->constrained('informasi_responden')
-                ->cascadeOnDelete();
+            if (!Schema::hasColumn('tanggapan_masyarakat', 'responden_id')) {
+                $table->foreignId('responden_id')
+                    ->after('knmp_id')
+                    ->constrained('informasi_responden')
+                    ->cascadeOnDelete();
+            }
         });
     }
 

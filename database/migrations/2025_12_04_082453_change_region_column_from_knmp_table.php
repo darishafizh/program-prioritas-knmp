@@ -26,27 +26,43 @@ return new class extends Migration
             }
 
             // Tambah kolom baru CHAR (sesuai standard kode Kemendagri)
-            $table->char('province_id', 2)->nullable()->index();
-            $table->char('regency_id', 4)->nullable()->index();
-            $table->char('district_id', 7)->nullable()->index();
-            $table->char('village_id', 10)->nullable()->index();
+            if (!Schema::hasColumn('knmp', 'province_id')) {
+                $table->char('province_id', 2)->nullable()->index();
+            }
+            if (!Schema::hasColumn('knmp', 'regency_id')) {
+                $table->char('regency_id', 4)->nullable()->index();
+            }
+            if (!Schema::hasColumn('knmp', 'district_id')) {
+                $table->char('district_id', 7)->nullable()->index();
+            }
+            if (!Schema::hasColumn('knmp', 'village_id')) {
+                $table->char('village_id', 10)->nullable()->index();
+            }
 
-            // Tambahkan Foreign Key
-            $table->foreign('province_id')
-                ->references('id')->on('provinces')
-                ->nullOnDelete()->cascadeOnUpdate();
+            // Tambahkan Foreign Key jika tabel referensi ada
+            if (Schema::hasTable('provinces')) {
+                $table->foreign('province_id')
+                    ->references('id')->on('provinces')
+                    ->nullOnDelete()->cascadeOnUpdate();
+            }
 
-            $table->foreign('regency_id')
-                ->references('id')->on('regencies')
-                ->nullOnDelete()->cascadeOnUpdate();
+            if (Schema::hasTable('regencies')) {
+                $table->foreign('regency_id')
+                    ->references('id')->on('regencies')
+                    ->nullOnDelete()->cascadeOnUpdate();
+            }
 
-            $table->foreign('district_id')
-                ->references('id')->on('districts')
-                ->nullOnDelete()->cascadeOnUpdate();
+            if (Schema::hasTable('districts')) {
+                $table->foreign('district_id')
+                    ->references('id')->on('districts')
+                    ->nullOnDelete()->cascadeOnUpdate();
+            }
 
-            $table->foreign('village_id')
-                ->references('id')->on('villages')
-                ->nullOnDelete()->cascadeOnUpdate();
+            if (Schema::hasTable('villages')) {
+                $table->foreign('village_id')
+                    ->references('id')->on('villages')
+                    ->nullOnDelete()->cascadeOnUpdate();
+            }
         });
     }
 

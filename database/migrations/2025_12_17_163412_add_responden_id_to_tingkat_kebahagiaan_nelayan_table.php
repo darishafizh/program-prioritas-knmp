@@ -7,52 +7,58 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
+        // 1. Drop FK knmp_id safely
+        try {
+            Schema::table('tingkat_kebahagiaan_nelayan', function (Blueprint $table) {
+                $table->dropForeign(['knmp_id']);
+            });
+        } catch (\Exception $e) {}
+
         Schema::table('tingkat_kebahagiaan_nelayan', function (Blueprint $table) {
-
-            /**
-             * 1️⃣ DROP FK knmp_id TERLEBIH DAHULU
-             * karena unique lama dipakai oleh FK
-             */
-            $table->dropForeign(['knmp_id']);
-
-            /**
-             * 2️⃣ TAMBAH responden_id (nullable untuk data lama)
-             */
+            // 2. TAMBAH responden_id jika belum ada
             if (!Schema::hasColumn('tingkat_kebahagiaan_nelayan', 'responden_id')) {
                 $table->unsignedBigInteger('responden_id')
                     ->nullable()
                     ->after('knmp_id');
             }
-
-            /**
-             * 3️⃣ FK responden_id
-             */
-            $table->foreign('responden_id')
-                ->references('id')
-                ->on('informasi_responden')
-                ->cascadeOnDelete();
-
-            /**
-             * 4️⃣ DROP UNIQUE LAMA (SEKARANG AMAN)
-             */
-            $table->dropUnique('tingkat_kebahagiaan_nelayan_knmp_id_nomor_soal_unique');
-
-            /**
-             * 5️⃣ BUAT UNIQUE BARU (BENAR)
-             */
-            $table->unique(
-                ['knmp_id', 'responden_id', 'nomor_soal'],
-                'tkb_knmp_responden_soal_unique'
-            );
-
-            /**
-             * 6️⃣ PASANG KEMBALI FK knmp_id
-             */
-            $table->foreign('knmp_id')
-                ->references('id')
-                ->on('knmp')
-                ->cascadeOnDelete();
         });
+
+        // 3. FK responden_id safely
+        try {
+            Schema::table('tingkat_kebahagiaan_nelayan', function (Blueprint $table) {
+                $table->foreign('responden_id')
+                    ->references('id')
+                    ->on('informasi_responden')
+                    ->cascadeOnDelete();
+            });
+        } catch (\Exception $e) {}
+
+        // 4. DROP UNIQUE LAMA safely
+        try {
+            Schema::table('tingkat_kebahagiaan_nelayan', function (Blueprint $table) {
+                $table->dropUnique('tingkat_kebahagiaan_nelayan_knmp_id_nomor_soal_unique');
+            });
+        } catch (\Exception $e) {}
+
+        // 5. BUAT UNIQUE BARU safely
+        try {
+            Schema::table('tingkat_kebahagiaan_nelayan', function (Blueprint $table) {
+                $table->unique(
+                    ['knmp_id', 'responden_id', 'nomor_soal'],
+                    'tkb_knmp_responden_soal_unique'
+                );
+            });
+        } catch (\Exception $e) {}
+
+        // 6. PASANG KEMBALI FK knmp_id safely
+        try {
+            Schema::table('tingkat_kebahagiaan_nelayan', function (Blueprint $table) {
+                $table->foreign('knmp_id')
+                    ->references('id')
+                    ->on('knmp')
+                    ->cascadeOnDelete();
+            });
+        } catch (\Exception $e) {}
     }
 
     public function down(): void

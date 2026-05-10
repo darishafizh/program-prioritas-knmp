@@ -78,9 +78,7 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": [
-                "laravolt/indonesia"
-            ]
+            "dont-discover": []
         }
     },
     "config": {

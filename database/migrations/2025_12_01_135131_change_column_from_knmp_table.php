@@ -12,14 +12,31 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('knmp', function (Blueprint $table) {
-            $table->string('desa', 100)->after('nama')->nullable();
-            $table->string('kecamatan', 100)->after('desa')->nullable();
-            $table->string('kabupaten', 100)->after('kecamatan')->nullable();
-            $table->string('provinsi', 100)->after('kabupaten')->nullable();
-            $table->dropColumn('desa_id');
-            $table->dropColumn('kecamatan_id');
-            $table->dropColumn('kabupaten_id');
-            $table->dropColumn('provinsi_id');
+            if (!Schema::hasColumn('knmp', 'desa')) {
+                $table->string('desa', 100)->after('nama')->nullable();
+            }
+            if (!Schema::hasColumn('knmp', 'kecamatan')) {
+                $table->string('kecamatan', 100)->after('desa')->nullable();
+            }
+            if (!Schema::hasColumn('knmp', 'kabupaten')) {
+                $table->string('kabupaten', 100)->after('kecamatan')->nullable();
+            }
+            if (!Schema::hasColumn('knmp', 'provinsi')) {
+                $table->string('provinsi', 100)->after('kabupaten')->nullable();
+            }
+            
+            if (Schema::hasColumn('knmp', 'desa_id')) {
+                $table->dropColumn('desa_id');
+            }
+            if (Schema::hasColumn('knmp', 'kecamatan_id')) {
+                $table->dropColumn('kecamatan_id');
+            }
+            if (Schema::hasColumn('knmp', 'kabupaten_id')) {
+                $table->dropColumn('kabupaten_id');
+            }
+            if (Schema::hasColumn('knmp', 'provinsi_id')) {
+                $table->dropColumn('provinsi_id');
+            }
         });
     }
 

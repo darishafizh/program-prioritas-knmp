@@ -1,23 +1,23 @@
 .page-title-box {
     background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
     color: white;
-    padding: 20px 24px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 15px hsla(217, 91%, 60%, 0.3);
+    padding: 12px 18px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 10px hsla(217, 91%, 60%, 0.2);
 }
 
 .page-title-box h4 {
     color: white;
     font-weight: 700;
-    margin-bottom: 6px;
-    font-size: 0.95rem;
+    margin-bottom: 2px;
+    font-size: 0.85rem;
 }
 
 .page-title-box p {
     color: rgba(255, 255, 255, 0.9);
     margin: 0;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
 }
 
 .breadcrumb-nav {
@@ -46,24 +46,24 @@
 /* Header Info */
 .info-card {
     background: white;
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    border-left: 4px solid #3b82f6;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    border-left: 3px solid #3b82f6;
 }
 
 .info-card h6 {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 600;
     color: #999;
     text-transform: uppercase;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     letter-spacing: 0.5px;
 }
 
 .info-card p {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: #333;
     margin: 0;
@@ -130,7 +130,7 @@
 
 /* Responden Body */
 .responden-body {
-    padding: 14px 16px;
+    padding: 10px 14px;
 }
 
 .detail-row {
@@ -178,10 +178,10 @@
 }
 
 .responden-footer {
-    padding: 20px;
+    padding: 12px 14px;
     border-top: 1px solid #f0f0f0;
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .btn-edit {
@@ -603,10 +603,10 @@
 }
 
 .questionnaire-footer {
-    padding: 20px;
+    padding: 12px 14px;
     border-top: 1px solid #f0f0f0;
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .btn-view-pdf {

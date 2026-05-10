@@ -11,15 +11,15 @@ class Knmp extends Model
     protected $table = 'knmp';
     protected $primaryKey = 'id';
     protected $fillable = [
+        'batch_id',
+        'tahap_saat_ini',
         'nama',
-        'provinsi',
-        'kabupaten_kota',
+        'desa',
         'kecamatan',
-        'desa_kelurahan',
+        'kabupaten',
+        'provinsi',
         'latitude',
         'longitude',
-        'tahap',
-        'tanggal_mulai',
     ];
 
     public function getRouteKeyName()
@@ -27,6 +27,17 @@ class Knmp extends Model
         return 'nama';
     }
 
+    // =========================================
+    // Relasi Master/Referensi
+    // =========================================
+    public function batch()
+    {
+        return $this->belongsTo(Batch::class, 'batch_id');
+    }
+
+    // =========================================
+    // Relasi Wilayah (Legacy)
+    // =========================================
     public function province()
     {
         return $this->belongsTo(Province::class, 'provinsi');
@@ -34,7 +45,7 @@ class Knmp extends Model
 
     public function regency()
     {
-        return $this->belongsTo(Regency::class, 'kabupaten_kota');
+        return $this->belongsTo(Regency::class, 'kabupaten');
     }
 
     public function district()
@@ -44,9 +55,12 @@ class Knmp extends Model
 
     public function village()
     {
-        return $this->belongsTo(Village::class, 'desa_kelurahan');
+        return $this->belongsTo(Village::class, 'desa');
     }
 
+    // =========================================
+    // Relasi Survey / Kuesioner (Legacy)
+    // =========================================
     public function buktiUploads()
     {
         return $this->hasMany(BuktiUpload::class, 'knmp_id');
@@ -77,8 +91,67 @@ class Knmp extends Model
         return $this->hasOne(ProgresKnmpNasional::class, 'knmp_id')->latestOfMany('tanggal');
     }
 
+    // =========================================
+    // Relasi Tahapan Program Prioritas
+    // =========================================
+    public function riwayatTahap()
+    {
+        return $this->hasMany(RiwayatTahap::class, 'knmp_id')->orderByDesc('created_at');
+    }
+
+    public function tahapUsulan()
+    {
+        return $this->hasOne(TahapUsulan::class, 'knmp_id');
+    }
+
+    public function tahapSurvey()
+    {
+        return $this->hasOne(TahapSurvey::class, 'knmp_id');
+    }
+
+    public function tahapDed()
+    {
+        return $this->hasOne(TahapDed::class, 'knmp_id');
+    }
+
+    public function tahapLelang()
+    {
+        return $this->hasOne(TahapLelang::class, 'knmp_id');
+    }
+
+    public function tahapSerahTerima()
+    {
+        return $this->hasOne(TahapSerahTerima::class, 'knmp_id');
+    }
+
+    public function tahapKonstruksi()
+    {
+        return $this->hasMany(TahapKonstruksi::class, 'knmp_id');
+    }
+
     public function timeline()
     {
         return $this->hasMany(TimelinePengerjaan::class, 'knmp_id');
+    }
+
+    public function progresHarian()
+    {
+        return $this->hasMany(ProgresHarian::class, 'knmp_id');
+    }
+
+    // =========================================
+    // Accessor: label tahap
+    // =========================================
+    public function getTahapLabelAttribute(): string
+    {
+        return match ($this->tahap_saat_ini) {
+            'usulan'       => 'Usulan',
+            'survey'       => 'Survey',
+            'ded'          => 'DED',
+            'lelang'       => 'Lelang',
+            'konstruksi'   => 'Konstruksi',
+            'serah_terima' => 'Serah Terima',
+            default        => ucfirst($this->tahap_saat_ini ?? 'Usulan'),
+        };
     }
 }

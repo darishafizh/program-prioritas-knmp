@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bukti_uploads', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('knmp_id')->nullable();
-            $table->string('nama_file');
-            $table->string('path_file');
-            $table->string('tipe_file')->nullable();
-            $table->integer('ukuran_file')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('bukti_uploads')) {
+            Schema::create('bukti_uploads', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('knmp_id')->nullable();
+                $table->string('nama_file');
+                $table->string('path_file');
+                $table->string('tipe_file')->nullable();
+                $table->integer('ukuran_file')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('profile_knmp', function (Blueprint $table) {
-            $table->integer('jumlah_kapal')->nullable();
-            $table->integer('serapan_tenaga_kerja')->nullable();
+            if (!Schema::hasColumn('profile_knmp', 'jumlah_kapal')) {
+                $table->integer('jumlah_kapal')->nullable();
+            }
+            if (!Schema::hasColumn('profile_knmp', 'serapan_tenaga_kerja')) {
+                $table->integer('serapan_tenaga_kerja')->nullable();
+            }
         });
     }
 

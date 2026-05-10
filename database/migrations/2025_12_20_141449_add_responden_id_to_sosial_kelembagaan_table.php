@@ -8,13 +8,15 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('sosial_kelembagaan', function (Blueprint $table) {
-            $table->unsignedBigInteger('responden_id')
-                ->after('knmp_id');
+            if (!Schema::hasColumn('sosial_kelembagaan', 'responden_id')) {
+                $table->unsignedBigInteger('responden_id')
+                    ->after('knmp_id');
 
-            $table->foreign('responden_id')
-                ->references('id')
-                ->on('informasi_responden')
-                ->onDelete('cascade');
+                $table->foreign('responden_id')
+                    ->references('id')
+                    ->on('informasi_responden')
+                    ->onDelete('cascade');
+            }
         });
     }
 

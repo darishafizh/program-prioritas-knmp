@@ -10,17 +10,19 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('progres_knmp_nasional', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('knmp_id')->unique();
-            $table->decimal('progres', 5, 2)->default(0);
-            $table->timestamps();
+        if (!Schema::hasTable('progres_knmp_nasional')) {
+            Schema::create('progres_knmp_nasional', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('knmp_id')->unique();
+                $table->decimal('progres', 5, 2)->default(0);
+                $table->timestamps();
 
-            $table->foreign('knmp_id')
-                ->references('id')
-                ->on('knmp')
-                ->onDelete('cascade');
-        });
+                $table->foreign('knmp_id')
+                    ->references('id')
+                    ->on('knmp')
+                    ->onDelete('cascade');
+            });
+        }
     }
 
     /**

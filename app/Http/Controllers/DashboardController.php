@@ -67,7 +67,7 @@ class DashboardController extends Controller
             ->withCount('informasiResponden');
 
         if ($tahap !== 'all') {
-            $desa_knmp_query->where('tahap', $tahap);
+            $desa_knmp_query->where('tahap_saat_ini', $tahap);
         }
 
         $desa_knmp = $desa_knmp_query->get();
@@ -340,7 +340,7 @@ class DashboardController extends Controller
         $totalTenagaKerja = DB::table('progres_knmp')->whereIn('knmp_id', $knmpIds)->sum('tk_total') ?? 0;
 
         // Available tahap values for filter
-        $availableTahap = Knmp::whereNotNull('tahap')->distinct()->orderBy('tahap')->pluck('tahap')->toArray();
+        $availableTahap = Knmp::whereNotNull('tahap_saat_ini')->distinct()->orderBy('tahap_saat_ini')->pluck('tahap_saat_ini')->toArray();
 
 
         return view('dashboard.index', compact(
@@ -399,7 +399,7 @@ class DashboardController extends Controller
         ])->withCount('informasiResponden');
 
         if ($tahap !== 'all') {
-            $desa_knmp_query->where('tahap', $tahap);
+            $desa_knmp_query->where('tahap_saat_ini', $tahap);
         }
 
         $desa_knmp = $desa_knmp_query->get();
@@ -544,7 +544,7 @@ class DashboardController extends Controller
         ]);
 
         if ($tahap !== 'all') {
-            $desa_knmp_query->where('tahap', $tahap);
+            $desa_knmp_query->where('tahap_saat_ini', $tahap);
         }
 
         $desa_knmp = $desa_knmp_query->orderBy('id')->get();
@@ -633,7 +633,7 @@ class DashboardController extends Controller
             // Format baris 2: Kecamatan, Kabupaten, Provinsi
             $lokasi_parts = [];
             if ($knmp->kecamatan) $lokasi_parts[] = 'Kec. ' . ucwords(strtolower($knmp->kecamatan));
-            if ($knmp->kabupaten_kota) $lokasi_parts[] = ucwords(strtolower($knmp->kabupaten_kota));
+            if ($knmp->kabupaten) $lokasi_parts[] = ucwords(strtolower($knmp->kabupaten));
             if ($knmp->provinsi) $lokasi_parts[] = ucwords(strtolower($knmp->provinsi));
             $lokasi_baris_2 = implode(', ', $lokasi_parts);
 
@@ -672,7 +672,7 @@ class DashboardController extends Controller
                 'status_color' => $status_color,
                 'deviasi_formatted' => $deviasi_formatted,
                 'deviasi_color' => $deviasi_color,
-                'tahap' => $knmp->tahap,
+                'tahap' => $knmp->tahap_saat_ini,
             ];
         }
 
@@ -708,14 +708,14 @@ class DashboardController extends Controller
             }
 
             $provinceName = ucwords(strtolower($knmp->provinsi ?? 'Lainnya'));
-            $tahapKey = $knmp->tahap ?: 'Lainnya';
+            $tahapKey = $knmp->tahap_saat_ini ?: 'Lainnya';
 
             $lokasi_parts = [];
             if ($knmp->kecamatan) {
                 $lokasi_parts[] = 'Kec. ' . ucwords(strtolower($knmp->kecamatan));
             }
-            if ($knmp->kabupaten_kota) {
-                $lokasi_parts[] = ucwords(strtolower($knmp->kabupaten_kota));
+            if ($knmp->kabupaten) {
+                $lokasi_parts[] = ucwords(strtolower($knmp->kabupaten));
             }
             $lokasi = implode(', ', $lokasi_parts);
 
@@ -738,7 +738,7 @@ class DashboardController extends Controller
         if ($tahap !== 'all') {
             $tahapLabel = $tahap == 1 ? 'I' : ($tahap == 2 ? 'II' : ($tahap == 3 ? 'III' : $tahap));
         } else {
-            $availableTahaps = \App\Models\Knmp::whereNotNull('tahap')->distinct()->orderBy('tahap')->pluck('tahap')->toArray();
+            $availableTahaps = \App\Models\Knmp::whereNotNull('tahap_saat_ini')->distinct()->orderBy('tahap_saat_ini')->pluck('tahap_saat_ini')->toArray();
             $romanTahaps = array_map(function($t) {
                 return $t == 1 ? 'I' : ($t == 2 ? 'II' : ($t == 3 ? 'III' : $t));
             }, $availableTahaps);

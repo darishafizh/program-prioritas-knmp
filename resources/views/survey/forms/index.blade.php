@@ -57,8 +57,12 @@
                     </div>
                     <div class="ms-3">
                         <h4 class="mb-1 text-white fw-bold">{{ $knmp->nama ?? 'Nama KNMP Tidak Ditemukan' }}</h4>
-                        <p class="mb-0 text-white-50 small"><i class="mdi mdi-map-marker me-1"></i>Kampung Nelayan Merah
-                            Putih</p>
+                        <div class="d-flex align-items-center flex-wrap gap-2">
+                            <p class="mb-0 text-white-50 small"><i class="mdi mdi-map-marker me-1"></i>Kampung Nelayan Merah Putih</p>
+                            <span class="badge bg-white text-primary text-uppercase px-2 py-1 rounded-pill shadow-sm" style="font-size: 0.7rem; font-weight: 600;">
+                                <i class="mdi mdi-chart-timeline-variant me-1"></i>Tahap: {{ $knmp->tahap_label }}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -80,7 +84,7 @@
                                     </div>
                                     <div class="location-value">
                                         <span
-                                            class="badge bg-primary text-white rounded-pill px-3">{{ $knmp->desa_kelurahan ?? 'N/A' }}</span>
+                                            class="badge bg-primary text-white rounded-pill px-3">{{ $knmp->desa ?? 'N/A' }}</span>
                                     </div>
                                 </div>
                                 <div class="location-item">
@@ -100,7 +104,7 @@
                                     </div>
                                     <div class="location-value">
                                         <span
-                                            class="badge bg-success text-white rounded-pill px-3">{{ $knmp->kabupaten_kota ?? 'N/A' }}</span>
+                                            class="badge bg-success text-white rounded-pill px-3">{{ $knmp->kabupaten ?? 'N/A' }}</span>
                                     </div>
                                 </div>
                                 <div class="location-item">

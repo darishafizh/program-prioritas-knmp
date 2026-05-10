@@ -11,14 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('knmp', function (Blueprint $table) {
+        // Drop semua FK jika ada satu per satu agar bisa di-catch
+        try {
+            Schema::table('knmp', function (Blueprint $table) {
+                $table->dropForeign(['province_id']);
+            });
+        } catch (\Exception $e) {}
 
-            // Drop semua FK jika ada
-            $table->dropForeign(['province_id']);
-            $table->dropForeign(['regency_id']);
-            $table->dropForeign(['district_id']);
-            $table->dropForeign(['village_id']);
-        });
+        try {
+            Schema::table('knmp', function (Blueprint $table) {
+                $table->dropForeign(['regency_id']);
+            });
+        } catch (\Exception $e) {}
+
+        try {
+            Schema::table('knmp', function (Blueprint $table) {
+                $table->dropForeign(['district_id']);
+            });
+        } catch (\Exception $e) {}
+
+        try {
+            Schema::table('knmp', function (Blueprint $table) {
+                $table->dropForeign(['village_id']);
+            });
+        } catch (\Exception $e) {}
     }
 
     /**

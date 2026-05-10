@@ -105,17 +105,17 @@ class SurveyController extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'provinsi' => 'required|exists:provinces,id',
-            'kabupaten_kota' => 'required|exists:regencies,id',
+            'kabupaten' => 'required|exists:regencies,id',
             'kecamatan' => 'required|exists:districts,id',
-            'desa_kelurahan' => 'required|exists:villages,id',
+            'desa' => 'required|exists:villages,id',
         ]);
 
         ModelsKnmp::create([
             'nama' => $request->nama,
             'provinsi' => $request->provinsi,
-            'kabupaten_kota' => $request->kabupaten_kota,
+            'kabupaten' => $request->kabupaten,
             'kecamatan' => $request->kecamatan,
-            'desa_kelurahan' => $request->desa_kelurahan,
+            'desa' => $request->desa,
         ]);
 
         return redirect()->route('survey.index')->with('success', 'KNMP berhasil ditambahkan!');
@@ -163,17 +163,17 @@ class SurveyController extends Controller
         $request->validate([
             'nama' => 'required|string|max:255',
             'provinsi' => 'required|exists:provinces,id',
-            'kabupaten_kota' => 'required|exists:regencies,id',
+            'kabupaten' => 'required|exists:regencies,id',
             'kecamatan' => 'required|exists:districts,id',
-            'desa_kelurahan' => 'required|exists:villages,id',
+            'desa' => 'required|exists:villages,id',
         ]);
 
         $knmp->update([
             'nama' => $request->nama,
             'provinsi' => $request->provinsi,
-            'kabupaten_kota' => $request->kabupaten_kota,
+            'kabupaten' => $request->kabupaten,
             'kecamatan' => $request->kecamatan,
-            'desa_kelurahan' => $request->desa_kelurahan,
+            'desa' => $request->desa,
         ]);
 
         return redirect()->route('survey.index')->with('success', 'KNMP berhasil diperbarui!');

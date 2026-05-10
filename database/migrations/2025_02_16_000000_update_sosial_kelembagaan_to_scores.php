@@ -12,6 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Check if already converted to integer to avoid errors
+        if (Schema::hasColumn('sosial_kelembagaan', 'manfaat_kelompok') && Schema::getColumnType('sosial_kelembagaan', 'manfaat_kelompok') === 'int') {
+            return;
+        }
         // 1. Convert existing text data to scores using raw SQL
         // Q1: Anggota Kelompok
         DB::statement("UPDATE sosial_kelembagaan SET anggota_kelompok = '4' WHERE anggota_kelompok LIKE '%Ya, sangat aktif%'");

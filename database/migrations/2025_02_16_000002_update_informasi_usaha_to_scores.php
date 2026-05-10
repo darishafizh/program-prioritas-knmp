@@ -12,6 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Check if already converted to integer to avoid errors
+        if (Schema::hasColumn('informasi_usaha', 'jenis_bahan_baku') && Schema::getColumnType('informasi_usaha', 'jenis_bahan_baku') === 'int') {
+            return;
+        }
         // 1. Convert existing text data to scores using raw SQL
 
         // Jenis Bahan Baku

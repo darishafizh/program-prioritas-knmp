@@ -20,7 +20,7 @@ class InformasiUmumController extends Controller
         $user = auth()->user();
 
         // Filter KNMP list based on user access, only select needed columns and relationships for dropdown
-        $knmpQuery = Knmp::select('id', 'nama', 'provinsi', 'kabupaten_kota');
+        $knmpQuery = Knmp::select('id', 'nama', 'provinsi', 'kabupaten');
 
         // If user is a village user (not admin/super_admin), only show their assigned KNMP
         if ($user->isVillageUser() && !$user->isAdmin() && !$user->isSuperAdmin()) {

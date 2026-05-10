@@ -12,9 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Add tanggal column
+        // Add tanggal column if not exists
         Schema::table('progres_knmp_nasional', function (Blueprint $table) {
-            $table->date('tanggal')->nullable()->after('progres');
+            if (!Schema::hasColumn('progres_knmp_nasional', 'tanggal')) {
+                $table->date('tanggal')->nullable()->after('progres');
+            }
         });
     }
 

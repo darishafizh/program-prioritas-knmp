@@ -37,23 +37,39 @@
                         </a>
                         <ul class="header-dropdown-menu">
                             <li>
-                                <a href="{{ route('survey.index') }}" class="{{ request()->routeIs('survey.*') ? 'text-primary fw-bold' : '' }}">
+                                <a href="{{ route('usulan.index') }}" class="{{ request()->routeIs('usulan.*') ? 'text-primary fw-bold' : '' }}">
+                                    <i class="mdi mdi-clipboard-outline"></i> Usulan
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('survey.index') }}" class="{{ request()->routeIs('survey.*') || request()->routeIs('survey_tahap.*') ? 'text-primary fw-bold' : '' }}">
                                     <i class="mdi mdi-clipboard-text-outline"></i> Survey
                                 </a>
                             </li>
                             <li>
-                                <a href="#" class="{{ request()->routeIs('ded.*') ? 'text-primary fw-bold' : '' }}">
+                                <a href="{{ route('ded.index') }}" class="{{ request()->routeIs('ded.*') ? 'text-primary fw-bold' : '' }}">
                                     <i class="mdi mdi-drawing"></i> DED
                                 </a>
                             </li>
                             <li>
-                                <a href="#" class="{{ request()->routeIs('lelang.*') ? 'text-primary fw-bold' : '' }}">
+                                <a href="{{ route('lelang.index') }}" class="{{ request()->routeIs('lelang.*') ? 'text-primary fw-bold' : '' }}">
                                     <i class="mdi mdi-gavel"></i> Lelang
                                 </a>
                             </li>
                             <li>
-                                <a href="#" class="{{ request()->routeIs('konstruksi.*') ? 'text-primary fw-bold' : '' }}">
+                                <a href="{{ route('konstruksi.index') }}" class="{{ request()->routeIs('konstruksi.*') ? 'text-primary fw-bold' : '' }}">
                                     <i class="mdi mdi-office-building"></i> Konstruksi
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('serah_terima.index') }}" class="{{ request()->routeIs('serah_terima.*') ? 'text-primary fw-bold' : '' }}">
+                                    <i class="mdi mdi-handshake"></i> Serah Terima
+                                </a>
+                            </li>
+                            <li class="dropdown-divider"></li>
+                            <li>
+                                <a href="{{ route('riwayat_tahap.index') }}" class="{{ request()->routeIs('riwayat_tahap.*') ? 'text-primary fw-bold' : '' }}">
+                                    <i class="mdi mdi-history"></i> Riwayat Tahap
                                 </a>
                             </li>
                         </ul>

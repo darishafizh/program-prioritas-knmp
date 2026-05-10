@@ -62,7 +62,7 @@ class LoginController extends Controller
         }
 
         // Cari user dengan username yang case-sensitive (menggunakan BINARY comparison)
-        $user = User::whereRaw('BINARY username = ?', [$credentials['username']])->first();
+        $user = User::where('username', $credentials['username'])->first();
 
         // Jika username tidak ditemukan
         if (!$user) {

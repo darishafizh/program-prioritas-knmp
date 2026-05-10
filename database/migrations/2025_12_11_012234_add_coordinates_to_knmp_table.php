@@ -12,9 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('knmp', function (Blueprint $table) {
-            // Menambahkan kolom latitude dan longitude
-            $table->decimal('latitude', 10, 7)->nullable()->after('updated_at');
-            $table->decimal('longitude', 11, 7)->nullable()->after('latitude');
+            // Menambahkan kolom latitude dan longitude jika belum ada
+            if (!Schema::hasColumn('knmp', 'latitude')) {
+                $table->decimal('latitude', 10, 7)->nullable()->after('updated_at');
+            }
+            if (!Schema::hasColumn('knmp', 'longitude')) {
+                $table->decimal('longitude', 11, 7)->nullable()->after('latitude');
+            }
         });
     }
 

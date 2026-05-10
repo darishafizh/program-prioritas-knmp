@@ -39,7 +39,7 @@
                                     <option value="">-- Pilih KNMP --</option>
                                     @foreach ($knmpList as $item)
                                         <option value="{{ $item->id }}" {{ $selectedKnmpId == $item->id ? 'selected' : '' }}>
-                                            {{ $item->nama }} — {{ $item->kabupaten_kota ?? '' }}, {{ $item->provinsi ?? '' }}
+                                            {{ $item->nama }} — {{ $item->kabupaten ?? '' }}, {{ $item->provinsi ?? '' }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -58,7 +58,7 @@
                 <i class="mdi mdi-map-marker-check text-primary me-1" style="font-size:0.9rem;"></i>
                 {{ ucwords(strtolower($selectedKnmp->nama)) }}
             </h6>
-            <p class="mb-0 text-muted" style="font-size:0.7rem;">Kec. {{ ucwords(strtolower($selectedKnmp->kecamatan ?? '-')) }}, Kab. {{ ucwords(strtolower($selectedKnmp->kabupaten_kota ?? '-')) }}, Prov. {{ ucwords(strtolower($selectedKnmp->provinsi ?? '-')) }}</p>
+            <p class="mb-0 text-muted" style="font-size:0.7rem;">Kec. {{ ucwords(strtolower($selectedKnmp->kecamatan ?? '-')) }}, Kab. {{ ucwords(strtolower($selectedKnmp->kabupaten ?? '-')) }}, Prov. {{ ucwords(strtolower($selectedKnmp->provinsi ?? '-')) }}</p>
         </div>
 
         <!-- ROW 1: KPI Cards (5 cards) -->

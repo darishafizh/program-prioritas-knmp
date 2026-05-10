@@ -11,28 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('informasi_pendapatan_rumah_tangga', function (Blueprint $table) {
-            $table->id();
+        if (!Schema::hasTable('informasi_pendapatan_rumah_tangga')) {
+            Schema::create('informasi_pendapatan_rumah_tangga', function (Blueprint $table) {
+                $table->id();
 
-            $table->unsignedBigInteger('knmp_id');
-            $table->unsignedBigInteger('responden_id');
+                $table->unsignedBigInteger('knmp_id');
+                $table->unsignedBigInteger('responden_id');
 
-            $table->foreign('knmp_id')->references('id')->on('knmp')->onDelete('cascade');
-            $table->foreign('responden_id')->references('id')->on('informasi_responden')->onDelete('cascade');
+                $table->foreign('knmp_id')->references('id')->on('knmp')->onDelete('cascade');
+                $table->foreign('responden_id')->references('id')->on('informasi_responden')->onDelete('cascade');
 
-            $table->decimal('pendapatan_perikanan', 15, 2)->nullable();
-            $table->decimal('pendapatan_non_perikanan', 15, 2)->nullable();
-            $table->decimal('pendapatan_total', 15, 2)->nullable();
+                $table->decimal('pendapatan_perikanan', 15, 2)->nullable();
+                $table->decimal('pendapatan_non_perikanan', 15, 2)->nullable();
+                $table->decimal('pendapatan_total', 15, 2)->nullable();
 
-            $table->string('kontribusi_nelayan_persen')->nullable();
-            $table->string('jumlah_sumber_penghasilan')->nullable();
-            $table->string('ketergantungan_perikanan')->nullable();
-            $table->string('stabilitas_pendapatan')->nullable();
-            $table->string('keterlibatan_perempuan')->nullable();
-            $table->string('kontribusi_perempuan_persen')->nullable();
+                $table->string('kontribusi_nelayan_persen')->nullable();
+                $table->string('jumlah_sumber_penghasilan')->nullable();
+                $table->string('ketergantungan_perikanan')->nullable();
+                $table->string('stabilitas_pendapatan')->nullable();
+                $table->string('keterlibatan_perempuan')->nullable();
+                $table->string('kontribusi_perempuan_persen')->nullable();
 
-            $table->timestamps();
-        });
+                $table->timestamps();
+            });
+        }
     }
 
     /**

@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('knmp', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama', 255);
-            $table->unsignedBigInteger('provinsi_id')->nullable();
-            $table->unsignedBigInteger('kabupaten_id')->nullable();
-            $table->unsignedBigInteger('kecamatan_id')->nullable();
-            $table->unsignedBigInteger('desa_id')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('knmp')) {
+            Schema::create('knmp', function (Blueprint $table) {
+                $table->id();
+                $table->string('nama', 255);
+                $table->unsignedBigInteger('provinsi_id')->nullable();
+                $table->unsignedBigInteger('kabupaten_id')->nullable();
+                $table->unsignedBigInteger('kecamatan_id')->nullable();
+                $table->unsignedBigInteger('desa_id')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

@@ -204,12 +204,11 @@
                     <div class="widget-icon">
                         <i class="mdi mdi-home-city"></i>
                     </div>
-                    <h5>Total KNMP</h5>
-                    <h3>{{ number_format($totalKnmp ?? 0, 0, ',', '.') }}</h3>
-                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-map-marker-radius text-primary me-1"></i>
-                        Lokasi KNMP aktif
-                    </p>
+                    <div class="widget-content">
+                        <h5>Total KNMP</h5>
+                        <h3>{{ number_format($totalKnmp ?? 0, 0, ',', '.') }}</h3>
+                        <p class="widget-sub"><i class="mdi mdi-map-marker-radius text-primary me-1"></i>Lokasi KNMP aktif</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -218,15 +217,14 @@
             <div class="card widget-flat">
                 <div class="card-body">
                     <div class="widget-icon"
-                        style="background: linear-gradient(135deg, #10B981 0%, #34D399 100%); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);">
+                        style="background: linear-gradient(135deg, #10B981 0%, #34D399 100%); box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);">
                         <i class="mdi mdi-domain"></i>
                     </div>
-                    <h5>Ketersediaan Infrastruktur</h5>
-                    <h3>{{ number_format($ketersediaanInfrastruktur ?? 0, 2, ',', '.') }}%</h3>
-                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-check-circle text-success me-1"></i>
-                        Komponen infrastruktur tersedia
-                    </p>
+                    <div class="widget-content">
+                        <h5>Ketersediaan Infrastruktur</h5>
+                        <h3>{{ number_format($ketersediaanInfrastruktur ?? 0, 2, ',', '.') }}%</h3>
+                        <p class="widget-sub"><i class="mdi mdi-check-circle text-success me-1"></i>Komponen infrastruktur tersedia</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -235,15 +233,14 @@
             <div class="card widget-flat">
                 <div class="card-body">
                     <div class="widget-icon"
-                        style="background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);">
+                        style="background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%); box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);">
                         <i class="mdi mdi-cash-multiple"></i>
                     </div>
-                    <h5>Pendapatan RT Nelayan</h5>
-                    <h3>Rp {{ number_format($pendapatanRtNelayan ?? 0, 0, ',', '.') }}</h3>
-                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-trending-up text-success me-1"></i>
-                        Rata-rata pendapatan/orang/bulan
-                    </p>
+                    <div class="widget-content">
+                        <h5>Pendapatan RT Nelayan</h5>
+                        <h3>Rp {{ number_format($pendapatanRtNelayan ?? 0, 0, ',', '.') }}</h3>
+                        <p class="widget-sub"><i class="mdi mdi-trending-up text-success me-1"></i>Rata-rata pendapatan/orang/bulan</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -255,15 +252,14 @@
             <div class="card widget-flat">
                 <div class="card-body">
                     <div class="widget-icon"
-                        style="background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);">
+                        style="background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%); box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);">
                         <i class="mdi mdi-clipboard-check-outline"></i>
                     </div>
-                    <h5>Indeks Kesesuaian Kebutuhan</h5>
-                    <h3>{{ number_format($indeksKesesuaianKebutuhan ?? 0, 2, ',', '.') }}%</h3>
-                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-check-decagram text-warning me-1"></i>
-                        Responden menyatakan sesuai
-                    </p>
+                    <div class="widget-content">
+                        <h5>Indeks Kesesuaian Kebutuhan</h5>
+                        <h3>{{ number_format($indeksKesesuaianKebutuhan ?? 0, 2, ',', '.') }}%</h3>
+                        <p class="widget-sub"><i class="mdi mdi-check-decagram text-warning me-1"></i>Responden menyatakan sesuai</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -272,15 +268,14 @@
             <div class="card widget-flat">
                 <div class="card-body">
                     <div class="widget-icon"
-                        style="background: linear-gradient(135deg, #EC4899 0%, #F472B6 100%); box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);">
+                        style="background: linear-gradient(135deg, #EC4899 0%, #F472B6 100%); box-shadow: 0 2px 8px rgba(236, 72, 153, 0.2);">
                         <i class="mdi mdi-emoticon-happy"></i>
                     </div>
-                    <h5>Indeks Kesejahteraan Nelayan</h5>
-                    <h3>{{ number_format($indeksKesejahteraan ?? 0, 2, ',', '.') }}</h3>
-                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-thumb-up text-success me-1"></i>
-                        Skala 1-10
-                    </p>
+                    <div class="widget-content">
+                        <h5>Indeks Kesejahteraan Nelayan</h5>
+                        <h3>{{ number_format($indeksKesejahteraan ?? 0, 2, ',', '.') }}</h3>
+                        <p class="widget-sub"><i class="mdi mdi-thumb-up text-success me-1"></i>Skala 1-10</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -289,15 +284,14 @@
             <div class="card widget-flat">
                 <div class="card-body">
                     <div class="widget-icon"
-                        style="background: linear-gradient(135deg, #14B8A6 0%, #2DD4BF 100%); box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);">
+                        style="background: linear-gradient(135deg, #14B8A6 0%, #2DD4BF 100%); box-shadow: 0 2px 8px rgba(20, 184, 166, 0.2);">
                         <i class="mdi mdi-account-group"></i>
                     </div>
-                    <h5>Tingkat Kelembagaan Nelayan</h5>
-                    <h3>{{ number_format($tingkatKelembagaan ?? 0, 2, ',', '.') }}%</h3>
-                    <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-                        <i class="mdi mdi-account-multiple text-info me-1"></i>
-                        Nelayan dalam kelompok/koperasi
-                    </p>
+                    <div class="widget-content">
+                        <h5>Tingkat Kelembagaan Nelayan</h5>
+                        <h3>{{ number_format($tingkatKelembagaan ?? 0, 2, ',', '.') }}%</h3>
+                        <p class="widget-sub"><i class="mdi mdi-account-multiple text-info me-1"></i>Nelayan dalam kelompok/koperasi</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -345,9 +339,9 @@
                                 @foreach ($knmps as $knmp)
                                     <tr>
                                         <td>{{ ucwords(strtolower($knmp->nama ?? 'N/A')) }}</td>
-                                        <td>{{ ucwords(strtolower($knmp->desa_kelurahan ?? 'N/A')) }}</td>
+                                        <td>{{ ucwords(strtolower($knmp->desa ?? 'N/A')) }}</td>
                                         <td>{{ ucwords(strtolower($knmp->kecamatan ?? 'N/A')) }}</td>
-                                        <td>{{ ucwords(strtolower($knmp->kabupaten_kota ?? 'N/A')) }}</td>
+                                        <td>{{ ucwords(strtolower($knmp->kabupaten ?? 'N/A')) }}</td>
                                         <td>{{ ucwords(strtolower($knmp->provinsi ?? 'N/A')) }}</td>
                                         <td class="action-buttons">
                                             @if(Auth::user()->canInputData())
@@ -378,9 +372,9 @@
                                                     data-id="{{ $knmp->id }}"
                                                     data-nama="{{ $knmp->nama }}"
                                                     data-province="{{ $knmp->provinsi }}"
-                                                    data-regency="{{ $knmp->kabupaten_kota }}"
+                                                    data-regency="{{ $knmp->kabupaten }}"
                                                     data-district="{{ $knmp->kecamatan }}"
-                                                    data-village="{{ $knmp->desa_kelurahan }}"
+                                                    data-village="{{ $knmp->desa }}"
                                                     title="Edit KNMP">
                                                     <i class="mdi mdi-pencil"></i>
                                                 </button>
@@ -455,7 +449,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-medium">Kabupaten/Kota <span class="text-danger">*</span></label>
-                                <select class="form-select" name="kabupaten_kota" id="addRegencySelect" required>
+                                <select class="form-select" name="kabupaten" id="addRegencySelect" required>
                                     <option value="">Pilih Kabupaten/Kota</option>
                                 </select>
                                 <div class="invalid-feedback">
@@ -473,7 +467,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-medium">Desa <span class="text-danger">*</span></label>
-                                <select class="form-select" name="desa_kelurahan" id="addVillageSelect" required>
+                                <select class="form-select" name="desa" id="addVillageSelect" required>
                                     <option value="">Pilih Desa</option>
                                 </select>
                                 <div class="invalid-feedback">
@@ -540,7 +534,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-medium">Kabupaten/Kota <span class="text-danger">*</span></label>
-                                <select class="form-select" name="kabupaten_kota" id="editRegencySelect" required>
+                                <select class="form-select" name="kabupaten" id="editRegencySelect" required>
                                     <option value="">Pilih Kabupaten/Kota</option>
                                 </select>
                                 <div class="invalid-feedback">
@@ -558,7 +552,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-medium">Desa <span class="text-danger">*</span></label>
-                                <select class="form-select" name="desa_kelurahan" id="editVillageSelect" required>
+                                <select class="form-select" name="desa" id="editVillageSelect" required>
                                     <option value="">Pilih Desa</option>
                                 </select>
                                 <div class="invalid-feedback">

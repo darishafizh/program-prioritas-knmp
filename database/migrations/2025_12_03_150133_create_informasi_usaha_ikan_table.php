@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('informasi_usaha_ikan', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('informasi_usaha_id');
-            $table->foreign('informasi_usaha_id')->references('id')->on('informasi_usaha')->onDelete('cascade');
+        if (!Schema::hasTable('informasi_usaha_ikan')) {
+            Schema::create('informasi_usaha_ikan', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('informasi_usaha_id');
+                $table->foreign('informasi_usaha_id')->references('id')->on('informasi_usaha')->onDelete('cascade');
 
-            $table->string('jenis')->nullable();
-            $table->float('kg_trip')->nullable();
-            $table->float('persen')->nullable();
-            $table->timestamps();
-        });
+                $table->string('jenis')->nullable();
+                $table->float('kg_trip')->nullable();
+                $table->float('persen')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

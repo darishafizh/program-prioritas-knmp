@@ -11,35 +11,37 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tanggapan_masyarakat', function (Blueprint $table) {
-            $table->id();
+        if (!Schema::hasTable('tanggapan_masyarakat')) {
+            Schema::create('tanggapan_masyarakat', function (Blueprint $table) {
+                $table->id();
 
-            // ===============================
-            // RELASI KE KNMP (DESA)
-            // ===============================
-            $table->foreignId('knmp_id')
-                ->constrained('knmp')
-                ->cascadeOnDelete();
+                // ===============================
+                // RELASI KE KNMP (DESA)
+                // ===============================
+                $table->foreignId('knmp_id')
+                    ->constrained('knmp')
+                    ->cascadeOnDelete();
 
-            // ===============================
-            // RELASI KE RESPONDEN (WAJIB)
-            // ===============================
-            $table->foreignId('responden_id')
-                ->constrained('informasi_responden')
-                ->cascadeOnDelete();
+                // ===============================
+                // RELASI KE RESPONDEN (WAJIB)
+                // ===============================
+                $table->foreignId('responden_id')
+                    ->constrained('informasi_responden')
+                    ->cascadeOnDelete();
 
-            // ===============================
-            // ISI KUESIONER
-            // ===============================
-            $table->boolean('kesesuaian_kebutuhan')->nullable();
-            $table->text('item_tidak_sesuai')->nullable();
-            $table->string('tingkat_kesenangan')->nullable();
-            $table->text('alasan_tidak_senang')->nullable();
-            $table->text('harapan_masyarakat')->nullable();
-            $table->text('masukan_saran_perbaikan')->nullable();
+                // ===============================
+                // ISI KUESIONER
+                // ===============================
+                $table->boolean('kesesuaian_kebutuhan')->nullable();
+                $table->text('item_tidak_sesuai')->nullable();
+                $table->string('tingkat_kesenangan')->nullable();
+                $table->text('alasan_tidak_senang')->nullable();
+                $table->text('harapan_masyarakat')->nullable();
+                $table->text('masukan_saran_perbaikan')->nullable();
 
-            $table->timestamps();
-        });
+                $table->timestamps();
+            });
+        }
     }
 
     /**

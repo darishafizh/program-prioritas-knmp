@@ -9,17 +9,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('informasi_pemasaran', function (Blueprint $table) {
+            if (!Schema::hasColumn('informasi_pemasaran', 'responden_id')) {
+                // Tambah kolom
+                $table->unsignedBigInteger('responden_id')
+                    ->nullable()
+                    ->after('knmp_id');
 
-            // Tambah kolom
-            $table->unsignedBigInteger('responden_id')
-                ->nullable()
-                ->after('knmp_id');
-
-            // Foreign key
-            $table->foreign('responden_id')
-                ->references('id')
-                ->on('informasi_responden')
-                ->onDelete('cascade');
+                // Foreign key
+                $table->foreign('responden_id')
+                    ->references('id')
+                    ->on('informasi_responden')
+                    ->onDelete('cascade');
+            }
         });
     }
 

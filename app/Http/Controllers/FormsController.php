@@ -46,9 +46,9 @@ class FormsController extends Controller
         ];
 
         $provinces = collect([(object)['id' => $knmp->provinsi, 'nama' => $knmp->provinsi]]);
-        $regencies = collect([(object)['id' => $knmp->kabupaten_kota, 'nama' => $knmp->kabupaten_kota]]);
+        $regencies = collect([(object)['id' => $knmp->kabupaten, 'nama' => $knmp->kabupaten]]);
         $districts = collect([(object)['id' => $knmp->kecamatan, 'nama' => $knmp->kecamatan]]);
-        $villages = collect([(object)['id' => $knmp->desa_kelurahan, 'nama' => $knmp->desa_kelurahan]]);
+        $villages = collect([(object)['id' => $knmp->desa, 'nama' => $knmp->desa]]);
 
         // Get evidence uploads for this KNMP
         $buktiUploads = BuktiUpload::where('knmp_id', $knmp->id)

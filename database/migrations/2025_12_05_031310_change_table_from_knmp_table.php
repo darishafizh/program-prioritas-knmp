@@ -31,10 +31,18 @@ return new class extends Migration
         }
 
         Schema::table('knmp', function (Blueprint $table) {
-            $table->foreign('province_id')->references('id')->on('provinces')->onDelete('cascade');
-            $table->foreign('regency_id')->references('id')->on('regencies')->onDelete('cascade');
-            $table->foreign('district_id')->references('id')->on('districts')->onDelete('cascade');
-            $table->foreign('village_id')->references('id')->on('villages')->onDelete('cascade');
+            if (Schema::hasTable('provinces')) {
+                $table->foreign('province_id')->references('id')->on('provinces')->onDelete('cascade');
+            }
+            if (Schema::hasTable('regencies')) {
+                $table->foreign('regency_id')->references('id')->on('regencies')->onDelete('cascade');
+            }
+            if (Schema::hasTable('districts')) {
+                $table->foreign('district_id')->references('id')->on('districts')->onDelete('cascade');
+            }
+            if (Schema::hasTable('villages')) {
+                $table->foreign('village_id')->references('id')->on('villages')->onDelete('cascade');
+            }
         });
     }
 

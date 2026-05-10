@@ -25,6 +25,7 @@ use App\Exports\InformasiPendapatanRtTemplateExport;
 use App\Exports\SosialKelembagaanTemplateExport;
 use App\Imports\ProgresKnmpNasionalImport; // Added
 use App\Exports\ProgresKnmpNasionalTemplateExport; // Added
+use App\Exports\UsulanTemplateExport;
 
 class ImportController extends Controller
 {
@@ -433,6 +434,7 @@ class ImportController extends Controller
             'pendapatan-rt' => ['export' => InformasiPendapatanRtTemplateExport::class, 'filename' => 'template-pendapatan-rumah-tangga.xlsx', 'needs_responden' => true],
             'sosial-kelembagaan' => ['export' => SosialKelembagaanTemplateExport::class, 'filename' => 'template-sosial-kelembagaan.xlsx', 'needs_responden' => true],
             'progres-knmp-nasional' => ['export' => ProgresKnmpNasionalTemplateExport::class, 'filename' => 'template-progres-knmp-nasional.xlsx', 'needs_responden' => false],
+            'usulan-knmp' => ['export' => UsulanTemplateExport::class, 'filename' => 'template-usulan-knmp.xlsx', 'needs_responden' => false],
 
         ];
 
