@@ -14,12 +14,13 @@ class Knmp extends Model
         'batch_id',
         'tahap_saat_ini',
         'nama',
-        'desa',
+        'desa_kelurahan',
         'kecamatan',
-        'kabupaten',
+        'kabupaten_kota',
         'provinsi',
         'latitude',
         'longitude',
+        'status',
     ];
 
     public function getRouteKeyName()

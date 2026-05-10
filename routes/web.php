@@ -291,5 +291,7 @@ Route::middleware('auth')->group(function () {
         // --- Perpindahan Tahap ---
         Route::post('/{knmp}/move', [KnmpTahapController::class, 'moveStage'])->name('knmp_tahap.move');
         Route::post('/batch-move', [KnmpTahapController::class, 'batchMoveStage'])->name('knmp_tahap.batch_move');
+        Route::delete('/batch-delete', [KnmpTahapController::class, 'batchDestroy'])->name('knmp_tahap.batch_destroy');
+        Route::delete('/{knmp}', [KnmpTahapController::class, 'destroy'])->name('knmp_tahap.destroy');
     });
 });

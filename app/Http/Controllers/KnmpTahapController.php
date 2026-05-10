@@ -374,4 +374,26 @@ class KnmpTahapController extends Controller
 
         return redirect()->back()->with('success', 'Batch perpindahan tahap berhasil.');
     }
+    /**
+     * Hapus KNMP.
+     */
+    public function destroy(Knmp $knmp)
+    {
+        $knmp->delete();
+        return redirect()->back()->with('success', 'KNMP berhasil dihapus.');
+    }
+    /**
+     * Hapus beberapa KNMP sekaligus (batch).
+     */
+    public function batchDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'knmp_ids'   => 'required|array|min:1',
+            'knmp_ids.*' => 'exists:knmp,id',
+        ]);
+
+        Knmp::whereIn('id', $validated['knmp_ids'])->delete();
+
+        return redirect()->back()->with('success', 'Berhasil menghapus ' . count($validated['knmp_ids']) . ' data KNMP.');
+    }
 }

@@ -54,9 +54,20 @@
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <h4 class="header-title mb-0">Daftar KNMP — {{ $stageName ?? $title }}</h4>
                     @if(Auth::user()->isSuperAdmin())
-                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#batchMoveModal">
-                        <i class="mdi mdi-swap-horizontal me-1"></i>Batch Pindah Tahap
-                    </button>
+                    <div class="d-flex align-items-center gap-1">
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#batchMoveModal">
+                            <i class="mdi mdi-swap-horizontal me-1"></i>Batch Pindah Tahap
+                        </button>
+                        
+                        <form action="{{ route('knmp_tahap.batch_destroy') }}" method="POST" id="batchDeleteForm" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data KNMP yang dipilih?')">
+                            @csrf
+                            @method('DELETE')
+                            <div id="batchDeleteIds"></div>
+                            <button type="button" class="btn btn-sm btn-outline-danger" id="btnBatchDelete" style="display:none;">
+                                <i class="mdi mdi-trash-can-outline me-1"></i>Hapus Terpilih (<span id="batchDeleteCount">0</span>)
+                            </button>
+                        </form>
+                    </div>
                     @endif
                 </div>
 
@@ -98,6 +109,13 @@
                                             title="Pindah Tahap">
                                             <i class="mdi mdi-swap-horizontal"></i>
                                         </button>
+                                        <form action="{{ route('knmp_tahap.destroy', $knmp->nama) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data KNMP ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-action btn-action-outline-danger" title="Hapus">
+                                                <i class="mdi mdi-trash-can-outline"></i>
+                                            </button>
+                                        </form>
                                         @endif
                                     </td>
                                 </tr>
@@ -228,11 +246,52 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Check all
+    // Checkbox & Batch actions logic
     var checkAll = document.getElementById('checkAll');
+    var btnBatchDelete = document.getElementById('btnBatchDelete');
+    var batchDeleteCount = document.getElementById('batchDeleteCount');
+    var batchDeleteIdsContainer = document.getElementById('batchDeleteIds');
+
+    function updateBatchButtons() {
+        var checked = document.querySelectorAll('.knmp-check:checked');
+        if (btnBatchDelete) {
+            if (checked.length > 0) {
+                btnBatchDelete.style.display = 'inline-block';
+                batchDeleteCount.textContent = checked.length;
+            } else {
+                btnBatchDelete.style.display = 'none';
+            }
+        }
+    }
+
     if (checkAll) {
         checkAll.addEventListener('change', function() {
-            document.querySelectorAll('.knmp-check').forEach(function(cb) { cb.checked = checkAll.checked; });
+            document.querySelectorAll('.knmp-check').forEach(function(cb) { 
+                cb.checked = checkAll.checked; 
+            });
+            updateBatchButtons();
+        });
+    }
+
+    document.querySelectorAll('.knmp-check').forEach(function(cb) {
+        cb.addEventListener('change', updateBatchButtons);
+    });
+
+    if (btnBatchDelete) {
+        btnBatchDelete.addEventListener('click', function() {
+            var checked = document.querySelectorAll('.knmp-check:checked');
+            if (checked.length === 0) return;
+            
+            batchDeleteIdsContainer.innerHTML = '';
+            checked.forEach(function(cb) {
+                var inp = document.createElement('input');
+                inp.type = 'hidden'; 
+                inp.name = 'knmp_ids[]'; 
+                inp.value = cb.value;
+                batchDeleteIdsContainer.appendChild(inp);
+            });
+            
+            document.getElementById('batchDeleteForm').submit();
         });
     }
 

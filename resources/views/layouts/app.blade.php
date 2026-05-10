@@ -188,7 +188,9 @@
         .modal-dialog-centered {
             display: flex;
             align-items: center;
+            justify-content: center;
             min-height: calc(100% - 1rem);
+            margin: auto;
         }
 
         @media (min-width: 576px) {
@@ -443,6 +445,7 @@
                     || link.getAttribute('target') === '_blank'
                     || link.getAttribute('data-bs-toggle')
                     || link.classList.contains('dropdown-toggle')
+                    || link.classList.contains('no-loader')
                     || link.closest('.header-dropdown')) return;
                 showLoader();
             });

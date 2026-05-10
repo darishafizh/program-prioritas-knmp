@@ -25,7 +25,7 @@
                             <small class="text-muted" style="font-size:.625rem;">Upload file Excel untuk menambahkan KNMP baru ke tahap Usulan.</small>
                         </div>
                     </div>
-                    <a href="{{ route('forms.download_template', ['section' => 'usulan-knmp']) }}" class="btn btn-sm btn-outline-primary" style="font-size:.65rem;">
+                    <a href="{{ route('forms.download_template', ['section' => 'usulan-knmp']) }}" class="btn btn-sm btn-outline-primary no-loader" style="font-size:.65rem;">
                         <i class="mdi mdi-download me-1"></i>Download Template
                     </a>
                 </div>
@@ -44,7 +44,7 @@
                         </div>
                     </div>
                     <small class="text-muted d-block mt-1" style="font-size:.6rem;">
-                        Format kolom: <code>nama</code>, <code>provinsi</code>, <code>kabupaten_kota</code>, <code>kecamatan</code>, <code>desa_kelurahan</code>, <code>tanggal</code>, <code>catatan</code>
+                        Format kolom: <code>nama</code>, <code>provinsi</code>, <code>kabupaten_kota</code>, <code>kecamatan</code>, <code>desa_kelurahan</code>, <code>status</code>, <code>tanggal</code>, <code>catatan</code>
                     </small>
                 </form>
             </div>

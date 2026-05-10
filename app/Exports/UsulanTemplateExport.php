@@ -23,6 +23,7 @@ class UsulanTemplateExport implements FromCollection, WithHeadings, ShouldAutoSi
                 'kabupaten_kota' => 'SUKABUMI',
                 'kecamatan' => 'CIREUNGHAS',
                 'desa_kelurahan' => 'CIREUNGHAS',
+                'status' => 'Hub',
                 'tanggal' => date('Y-m-d'),
                 'catatan' => 'Catatan usulan contoh 1',
             ]
@@ -37,6 +38,7 @@ class UsulanTemplateExport implements FromCollection, WithHeadings, ShouldAutoSi
             'kabupaten_kota',
             'kecamatan',
             'desa_kelurahan',
+            'status',
             'tanggal',
             'catatan',
         ];
