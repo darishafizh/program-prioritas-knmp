@@ -44,7 +44,7 @@
                         </div>
                     </div>
                     <small class="text-muted d-block mt-1" style="font-size:.6rem;">
-                        Format kolom: <code>nama</code>, <code>provinsi</code>, <code>kabupaten_kota</code>, <code>kecamatan</code>, <code>desa_kelurahan</code>, <code>status</code>, <code>tanggal</code>, <code>catatan</code>
+                        Format kolom: <code>nama</code>, <code>provinsi</code>, <code>kabupaten</code>, <code>kecamatan</code>, <code>desa</code>, <code>status</code>, <code>tanggal</code>, <code>catatan</code>
                     </small>
                 </form>
             </div>

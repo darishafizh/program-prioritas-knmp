@@ -453,7 +453,7 @@
             // Show loader on form submissions
             document.addEventListener('submit', function(e) {
                 var form = e.target;
-                if (form.getAttribute('target') === '_blank') return;
+                if (form.getAttribute('target') === '_blank' || form.classList.contains('no-loader')) return;
                 showLoader();
             });
 
@@ -466,6 +466,49 @@
             window.addEventListener('pageshow', function(e) {
                 if (e.persisted) hideLoader();
             });
+
+            // 🌀 DOWNLOAD LOADER FIX:
+            // Poll for a cookie that indicates the file is ready
+            function getCookie(name) {
+                var parts = ("; " + document.cookie).split("; " + name + "=");
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            }
+
+            function deleteCookie(name) {
+                document.cookie = name + '=; Max-Age=-99999999; path=/;';
+            }
+
+            var downloadTimer;
+            document.addEventListener('click', function(e) {
+                var link = e.target.closest('a[href]');
+                if (!link) return;
+                // If it's a download link (no-loader or explicit download), start polling
+                if (link.classList.contains('no-loader') || link.hasAttribute('download')) {
+                    startDownloadPolling();
+                }
+            });
+
+            document.addEventListener('submit', function(e) {
+                var form = e.target;
+                if (form.classList.contains('no-loader')) {
+                    startDownloadPolling();
+                }
+            });
+
+            function startDownloadPolling() {
+                // Manually show the loader because we're starting a download that might take time
+                showLoader();
+                
+                if (downloadTimer) clearInterval(downloadTimer);
+                downloadTimer = setInterval(function() {
+                    var token = getCookie('fileDownload');
+                    if (token) {
+                        hideLoader();
+                        deleteCookie('fileDownload');
+                        clearInterval(downloadTimer);
+                    }
+                }, 500);
+            }
         })();
     </script>
 

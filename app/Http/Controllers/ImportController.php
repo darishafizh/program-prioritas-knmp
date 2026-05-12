@@ -23,8 +23,8 @@ use App\Exports\InformasiUsahaTemplateExport;
 use App\Exports\InformasiPemasaranTemplateExport;
 use App\Exports\InformasiPendapatanRtTemplateExport;
 use App\Exports\SosialKelembagaanTemplateExport;
-use App\Imports\ProgresKnmpNasionalImport; // Added
-use App\Exports\ProgresKnmpNasionalTemplateExport; // Added
+use App\Imports\ProgresHarianImport; // Added
+use App\Exports\ProgresHarianTemplateExport; // Added
 use App\Exports\UsulanTemplateExport;
 
 class ImportController extends Controller
@@ -365,16 +365,14 @@ class ImportController extends Controller
     /**
      * Import Progres KNMP Nasional (Analytics)
      */
-    public function importProgresKnmpNasional(Request $request)
+    public function importProgresHarian(Request $request)
     {
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv|max:10240',
-            'tanggal' => 'required|date',
         ]);
 
         try {
-            $tanggal = $request->input('tanggal');
-            $import = new ProgresKnmpNasionalImport($tanggal);
+            $import = new ProgresHarianImport();
             Excel::import($import, $request->file('file'));
 
             if ($import->totalFailures() > 0) {
@@ -397,14 +395,14 @@ class ImportController extends Controller
                 $failSummary = implode(', ', $details);
 
                 if ($import->successCount > 0) {
-                    $msg = "Import Selesai (Tanggal: {$tanggal}). Berhasil: {$import->successCount} data. Gagal: {$totalFail} data — {$failSummary}.";
+                    $msg = "Import Selesai. Berhasil: {$import->successCount} data. Gagal: {$totalFail} data — {$failSummary}.";
                 } else {
-                    $msg = "Import Gagal (Tanggal: {$tanggal}). Semua {$totalFail} data gagal diimport — {$failSummary}. Silakan periksa file dan coba lagi.";
+                    $msg = "Import Gagal. Semua {$totalFail} data gagal diimport — {$failSummary}. Silakan periksa file dan coba lagi.";
                 }
                 return back()->with('error', $msg);
             }
 
-            return back()->with('success', "Sukses! {$import->successCount} data Progres KNMP Nasional berhasil diimport untuk tanggal {$tanggal}.");
+            return back()->with('success', "Sukses! {$import->successCount} data Progres KNMP Nasional berhasil diimport.");
 
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
@@ -433,7 +431,7 @@ class ImportController extends Controller
             'informasi-pemasaran' => ['export' => InformasiPemasaranTemplateExport::class, 'filename' => 'template-informasi-pemasaran.xlsx', 'needs_responden' => true],
             'pendapatan-rt' => ['export' => InformasiPendapatanRtTemplateExport::class, 'filename' => 'template-pendapatan-rumah-tangga.xlsx', 'needs_responden' => true],
             'sosial-kelembagaan' => ['export' => SosialKelembagaanTemplateExport::class, 'filename' => 'template-sosial-kelembagaan.xlsx', 'needs_responden' => true],
-            'progres-knmp-nasional' => ['export' => ProgresKnmpNasionalTemplateExport::class, 'filename' => 'template-progres-knmp-nasional.xlsx', 'needs_responden' => false],
+            'progres-knmp-nasional' => ['export' => ProgresHarianTemplateExport::class, 'filename' => 'template-progres-knmp-nasional.xlsx', 'needs_responden' => false],
             'usulan-knmp' => ['export' => UsulanTemplateExport::class, 'filename' => 'template-usulan-knmp.xlsx', 'needs_responden' => false],
 
         ];
@@ -445,14 +443,19 @@ class ImportController extends Controller
         $template = $templates[$section];
         $respondenIds = $request->input('responden_ids', []);
 
-        // For sections that need responden, pass the IDs to the export class
-        if ($template['needs_responden'] && !empty($respondenIds)) {
+        // Specialized handling for sections
+        if ($section === 'progres-knmp-nasional') {
+            $tahap = $request->input('tahap');
+            $exportInstance = new $template['export']($tahap);
+        } elseif ($template['needs_responden'] && !empty($respondenIds)) {
             $exportInstance = new $template['export']($respondenIds);
         } else {
             $exportInstance = new $template['export']();
         }
 
-        return Excel::download($exportInstance, $template['filename']);
+        $response = Excel::download($exportInstance, $template['filename']);
+        $response->headers->setCookie(cookie('fileDownload', 'true', 1, null, null, false, false));
+        return $response;
     }
 
 

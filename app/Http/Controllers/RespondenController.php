@@ -190,7 +190,9 @@ class RespondenController extends Controller
         }
         $filename .= '-' . date('Y-m-d') . '.xlsx';
 
-        return Excel::download(new RespondenExport($knmpId), $filename);
+        $response = Excel::download(new RespondenExport($knmpId), $filename);
+        $response->headers->setCookie(cookie('fileDownload', 'true', 1, null, null, false, false));
+        return $response;
     }
 }
 

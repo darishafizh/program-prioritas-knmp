@@ -2177,7 +2177,7 @@ class TimelinePengerjaanSeeder extends Seeder
 
         // Insert the data into the database in chunks to avoid max placeholder limits
         foreach (array_chunk($data, 100) as $chunk) {
-            DB::table('timeline_pengerjaan')->insert($chunk);
+            DB::table('tahap_konstruksi')->insert($chunk);
         }
     }
 }

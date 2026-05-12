@@ -101,21 +101,48 @@
             else if (item.progres >= 75) colorClass = 'bg-primary';
             else if (item.progres >= 50) colorClass = 'bg-warning';
 
-            var textClass = item.progres >= 100 ? 'text-success' : '';
-            var progresFormatted = parseFloat(item.progres).toFixed(2).replace('.', ',');
+            var deltaHtml = '<span class="text-muted"><i class="mdi mdi-minus"></i> 0.00%</span>';
+            if (item.delta > 0) {
+                deltaHtml = '<span class="text-success"><i class="mdi mdi-arrow-up"></i> +' + parseFloat(item.delta).toFixed(2) + '%</span>';
+            } else if (item.delta < 0) {
+                deltaHtml = '<span class="text-danger"><i class="mdi mdi-arrow-down"></i> ' + parseFloat(item.delta).toFixed(2) + '%</span>';
+            }
+
+            var ketHtml = '<span class="text-muted">-</span>';
+            if (item.keterangan) {
+                var kets = item.keterangan.split(',');
+                ketHtml = '<div>';
+                for (var k = 0; k < kets.length; k++) {
+                    ketHtml += '<span class="badge bg-soft-info text-info me-1">' + kets[k].trim() + '</span>';
+                }
+                ketHtml += '</div>';
+            }
 
             html += '<tr>' +
                 '<td>' + (i + 1) + '</td>' +
                 '<td class="fw-semibold">' + escapeHtml(item.nama) + '</td>' +
+                '<td><span class="text-muted fst-italic">' + (item.nama_jasa_konstruksi || '-') + '</span></td>' +
                 '<td>' +
-                '<div class="progress" style="height: 8px;">' +
-                '<div class="progress-bar ' + colorClass + '" role="progressbar" ' +
-                'style="width: ' + item.progres + '%" ' +
-                'aria-valuenow="' + item.progres + '" aria-valuemin="0" aria-valuemax="100"></div>' +
-                '</div>' +
+                    '<div class="d-flex justify-content-between align-items-center mb-1">' +
+                        '<span class="fw-bold ' + (item.progres >= 100 ? 'text-success' : 'text-dark') + '" style="font-size: 0.85rem;">' +
+                            parseFloat(item.progres).toFixed(2).replace('.', ',') + '%' +
+                        '</span>' +
+                    '</div>' +
+                    '<div class="progress" style="height: 6px; background-color: #f1f3fa; border-radius: 3px;">' +
+                        '<div class="progress-bar ' + colorClass + '" role="progressbar" ' +
+                            'style="width: ' + item.progres + '%; border-radius: 3px;" ' +
+                            'aria-valuenow="' + item.progres + '" aria-valuemin="0" aria-valuemax="100"></div>' +
+                    '</div>' +
                 '</td>' +
-                '<td class="text-end fw-bold">' +
-                '<span class="' + textClass + '">' + progresFormatted + '%</span>' +
+                '<td class="text-end fw-bold">' + deltaHtml + '</td>' +
+                '<td class="d-flex align-items-center justify-content-between">' +
+                    ketHtml +
+                    '<button type="button" class="btn btn-sm btn-outline-primary ms-2 btn-edit-keterangan" ' +
+                        'data-id="' + item.id + '" ' +
+                        'data-knmp="' + escapeHtml(item.nama) + '" ' +
+                        'data-keterangan="' + (item.keterangan || '') + '">' +
+                        '<i class="mdi mdi-pencil"></i>' +
+                    '</button>' +
                 '</td>' +
                 '</tr>';
         }

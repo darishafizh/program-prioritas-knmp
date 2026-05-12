@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\ProgresKnmpNasional;
+use App\Models\ProgresHarian;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
-class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEmptyRows, WithCalculatedFormulas
+class ProgresHarianImport implements ToCollection, WithHeadingRow, SkipsEmptyRows, WithCalculatedFormulas
 {
     public $failures = [];
     public $successCount = 0;
@@ -18,15 +18,6 @@ class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEm
     public $notFoundCount = 0;
     public $emptyCount = 0;
     public $errorCount = 0;
-    protected $tanggal;
-
-    /**
-     * Constructor with date parameter
-     */
-    public function __construct($tanggal = null)
-    {
-        $this->tanggal = $tanggal ?? now()->toDateString();
-    }
 
     /**
      * Get total failure count
@@ -61,6 +52,26 @@ class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEm
                 continue;
             }
 
+            // Handle date parsing from Excel
+            $tanggal = null;
+            if (isset($row['tanggal_progres']) && $row['tanggal_progres'] !== '') {
+                try {
+                    if (is_numeric($row['tanggal_progres'])) {
+                        $tanggal = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_progres'])->format('Y-m-d');
+                    } else {
+                        $tanggal = \Carbon\Carbon::parse($row['tanggal_progres'])->format('Y-m-d');
+                    }
+                } catch (\Exception $e) {
+                    $this->errorCount++;
+                    Log::error("Import Progres Harian - Baris {$rowNumber}: Format tanggal tidak valid");
+                    continue; // Skip this row if date is invalid
+                }
+            } else {
+                $this->errorCount++;
+                Log::error("Import Progres Harian - Baris {$rowNumber}: Tanggal progres kosong");
+                continue; // Skip if date is empty
+            }
+
             $progresValue = $row['progres'] ?? 0;
             if (is_string($progresValue)) {
                 $progresValue = str_replace(',', '.', $progresValue);
@@ -68,18 +79,19 @@ class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEm
             $progresValue = (float) $progresValue;
 
             try {
-                ProgresKnmpNasional::updateOrCreate(
+                ProgresHarian::updateOrCreate(
                     [
                         'knmp_id' => $knmpId,
-                        'tanggal' => $this->tanggal
+                        'tanggal' => $tanggal
                     ],
                     [
-                        'progres' => $progresValue
+                        'progres' => $progresValue,
+                        'keterangan' => $row['keterangan'] ?? null,
                     ]
                 );
                 $this->successCount++;
             } catch (\Illuminate\Database\QueryException $e) {
-                Log::error("Import Progres KNMP Nasional - Baris {$rowNumber}", ['error' => $e->getMessage()]);
+                Log::error("Import Progres Harian - Baris {$rowNumber}", ['error' => $e->getMessage()]);
                 $errorCode = $e->errorInfo[1] ?? null;
                 if ($errorCode == 1062) {
                     $this->duplicateCount++;
@@ -87,7 +99,7 @@ class ProgresKnmpNasionalImport implements ToCollection, WithHeadingRow, SkipsEm
                     $this->errorCount++;
                 }
             } catch (\Exception $e) {
-                Log::error("Import Progres KNMP Nasional - Baris {$rowNumber}", ['error' => $e->getMessage()]);
+                Log::error("Import Progres Harian - Baris {$rowNumber}", ['error' => $e->getMessage()]);
                 $this->errorCount++;
             }
         }

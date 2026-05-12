@@ -1,7 +1,7 @@
 @php
-    /** @var \App\Models\ProgresKnmpNasional $item */
+    /** @var \App\Models\ProgresHarian $item */
     /** @var string $context  'top' | 'bottom' */
-    $namaKnmp     = $item->knmp->nama ?? ('KNMP #'.$item->knmp_id);
+    $namaKnmp     = $item->knmp_nama ?? ('KNMP #'.$item->knmp_id);
     $deviasiValue = isset($item->deviasi) ? round((float) $item->deviasi, 2) : 0;
     $progresValue = (float) $item->progres;
     $isComplete   = !empty($item->is_complete);
@@ -62,7 +62,7 @@
                     <i class="mdi mdi-check-decagram"></i>
                 </span>
             @endif
-            <span class="fw-medium text-truncate d-inline-block {{ $isStagnan ? 'text-danger' : 'text-dark' }}" style="max-width: 140px;">
+            <span class="fw-medium text-truncate d-inline-block {{ $isStagnan ? 'text-danger' : 'text-dark' }}" style="max-width: 320px;">
                 {{ $namaKnmp }}
             </span>
         </div>

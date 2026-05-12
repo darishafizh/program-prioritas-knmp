@@ -150,7 +150,9 @@ class SurveyController extends Controller
      */
     public function downloadTemplate()
     {
-        return Excel::download(new \App\Exports\KnmpTemplateExport, 'template_import_knmp.xlsx');
+        $response = Excel::download(new \App\Exports\KnmpTemplateExport, 'template_import_knmp.xlsx');
+        $response->headers->setCookie(cookie('fileDownload', 'true', 1, null, null, false, false));
+        return $response;
     }
 
     /**

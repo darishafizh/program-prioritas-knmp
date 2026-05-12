@@ -10,7 +10,7 @@ use App\Models\ProgresKnmpDetail;
 use App\Models\BuktiUpload;
 use App\Models\TanggapanMasyarakat;
 use App\Models\TingkatKebahagiaanNelayan;
-use App\Models\TimelinePengerjaan;
+use App\Models\TahapKonstruksi;
 use Illuminate\Http\Request;
 
 class InformasiUmumController extends Controller
@@ -215,54 +215,74 @@ class InformasiUmumController extends Controller
         // Fetch timeline data for S-Curve chart
         $timelineData = collect();
         $latestDeviasiData = null;
+        $progresFisikMingguan = [];
         if ($selectedKnmp) {
-            $timelineData = TimelinePengerjaan::where('knmp_id', $selectedKnmp->id)
+            $timelineData = $selectedKnmp->timeline()
+                ->whereNotNull('periode_mingguan')
                 ->orderBy('periode_mingguan', 'asc')
                 ->get();
             
-            // Dapatkan progres terbaru dari ProgresKnmpNasional untuk real-time deviasi
-            $latestProgres = \App\Models\ProgresKnmpNasional::where('knmp_id', $selectedKnmp->id)
-                ->whereNotNull('tanggal')
-                ->orderBy('tanggal', 'desc')
-                ->first();
+            // Ambil tanggal_mulai dari relasi konstruksiKnmp
+            $konstruksi = $selectedKnmp->konstruksiKnmp;
+            $startDate = $konstruksi ? $konstruksi->tanggal_mulai : null;
             
-            if ($latestProgres && $timelineData->count() > 0) {
-                // Logika Baru: Ambil minggu terakhir yang memiliki realisasi di timeline
-                $lastReportedTl = $timelineData->whereNotNull('bobot_realisasi_kumulatif')
-                    ->sortByDesc('periode_mingguan')
-                    ->first();
-                
-                if ($lastReportedTl) {
-                    $week = $lastReportedTl->periode_mingguan;
-                    $rencanaRaw = $lastReportedTl->bobot_rencana_kumulatif;
-                    
-                    // Kita tetap butuh startDate untuk mapping progres fisik di grafik
-                    if ($selectedKnmp->tanggal_mulai) {
-                        $startDate = \Carbon\Carbon::parse($selectedKnmp->tanggal_mulai);
-                    } else {
-                        $startDate = \Carbon\Carbon::parse('2025-12-28');
-                    }
-                } else {
-                    // Fallback: Gunakan tanggal_mulai dari database jika ada, jika tidak pakai fallback dinamis
-                    if ($selectedKnmp->tanggal_mulai) {
-                        $startDate = \Carbon\Carbon::parse($selectedKnmp->tanggal_mulai);
-                    } else {
-                        // Fallback: Hitung tanggal mulai dinamis: 28 Des 2025
-                        $totalWeeks = $timelineData->count();
-                        $startDate = \Carbon\Carbon::parse('2025-12-28');
-                    }
-                    $tanggalSekarang = \Carbon\Carbon::parse($latestProgres->tanggal);
-                    $diffDays = $startDate->diffInDays($tanggalSekarang, false);
-                    $week = $diffDays >= 0 ? ceil(($diffDays + 1) / 7) : 1;
-                    
-                    $tlRencana = $timelineData->where('periode_mingguan', $week)->first();
-                    if (!$tlRencana) {
-                        $tlRencana = $timelineData->sortByDesc('periode_mingguan')->first();
-                    }
-                    $rencanaRaw = $tlRencana ? $tlRencana->bobot_rencana_kumulatif : 0;
+            // Dapatkan semua progres harian untuk KNMP ini
+            $allProgresFisik = $selectedKnmp->progresHarian()
+                ->whereNotNull('tanggal')
+                ->orderBy('tanggal', 'asc')
+                ->get();
+            
+            if ($startDate && $allProgresFisik->count() > 0 && $timelineData->count() > 0) {
+                // === LOGIKA BARU: Hitung bobot_realisasi_kumulatif dari progres_harian ===
+                // Kelompokkan progres harian ke dalam periode mingguan berdasarkan tanggal_mulai
+                $realisasiPerMinggu = [];
+                foreach ($allProgresFisik as $p) {
+                    $tgl = \Carbon\Carbon::parse($p->tanggal);
+                    $diffDays = $startDate->diffInDays($tgl, false);
+                    if ($diffDays < 0) continue; // Abaikan data sebelum tanggal_mulai
+                    $week = (int) floor($diffDays / 7) + 1;
+                    // Ambil progres terakhir (terbesar tanggalnya) per minggu sebagai kumulatif
+                    $realisasiPerMinggu[$week] = (float)$p->progres;
                 }
-
+                
+                // Update bobot_realisasi_kumulatif pada setiap baris timeline
+                $totalPeriode = $timelineData->count();
+                $lastVal = null;
+                foreach ($timelineData as $tl) {
+                    $minggu = $tl->periode_mingguan;
+                    if (isset($realisasiPerMinggu[$minggu])) {
+                        $tl->bobot_realisasi_kumulatif = $realisasiPerMinggu[$minggu];
+                        $lastVal = $realisasiPerMinggu[$minggu];
+                    } else {
+                        // Carry over nilai dari minggu sebelumnya jika minggu ini belum ada input baru
+                        // tapi minggu tersebut sudah lewat
+                        $weekDate = $startDate->copy()->addWeeks($minggu);
+                        if ($lastVal !== null && $weekDate->isPast()) {
+                            $tl->bobot_realisasi_kumulatif = $lastVal;
+                        } else {
+                            $tl->bobot_realisasi_kumulatif = null;
+                        }
+                    }
+                }
+                
+                // Simpan mapping untuk grafik
+                $progresFisikMingguan = $realisasiPerMinggu;
+                
+                // Hitung deviasi real-time dari progres terakhir
+                $latestProgres = $allProgresFisik->last();
                 $realisasi = (float)$latestProgres->progres;
+                
+                // Hitung minggu saat ini berdasarkan tanggal progres terakhir
+                $diffDaysLatest = $startDate->diffInDays(\Carbon\Carbon::parse($latestProgres->tanggal), false);
+                $currentWeek = max(1, (int) floor($diffDaysLatest / 7) + 1);
+                
+                // Cari rencana untuk minggu saat ini
+                $tlRencana = $timelineData->where('periode_mingguan', $currentWeek)->first();
+                if (!$tlRencana) {
+                    // Jika minggu melampaui timeline, gunakan minggu terakhir
+                    $tlRencana = $timelineData->sortByDesc('periode_mingguan')->first();
+                }
+                $rencanaRaw = $tlRencana ? $tlRencana->bobot_rencana_kumulatif : 0;
                 
                 // Normalisasi jika data rencana menggunakan skala permil (max > 100)
                 $maxPlan = $timelineData->max('bobot_rencana_kumulatif');
@@ -274,23 +294,40 @@ class InformasiUmumController extends Controller
                     'rencana' => $rencanaPersen,
                     'realisasi' => $realisasi,
                     'deviasi' => round($realisasi - $rencanaPersen, 2),
+                    'minggu' => $currentWeek,
+                    'total_minggu' => $totalPeriode,
+                ];
+            } elseif ($allProgresFisik->count() > 0 && $timelineData->count() > 0) {
+                // Fallback jika tanggal_mulai belum diisi: tetap hitung deviasi dari data yang ada
+                $latestProgres = $allProgresFisik->last();
+                $realisasi = (float)$latestProgres->progres;
+                
+                // Ambil minggu terakhir yang memiliki realisasi di timeline
+                $lastReportedTl = $timelineData->whereNotNull('bobot_realisasi_kumulatif')
+                    ->filter(fn($tl) => $tl->bobot_realisasi_kumulatif > 0)
+                    ->sortByDesc('periode_mingguan')
+                    ->first();
+                
+                $week = $lastReportedTl ? $lastReportedTl->periode_mingguan : $timelineData->count();
+                $rencanaRaw = $lastReportedTl ? $lastReportedTl->bobot_rencana_kumulatif : 0;
+                
+                // Jika tidak ada realisasi, gunakan rencana terakhir
+                if (!$lastReportedTl) {
+                    $tlLast = $timelineData->sortByDesc('periode_mingguan')->first();
+                    $rencanaRaw = $tlLast ? $tlLast->bobot_rencana_kumulatif : 0;
+                }
+                
+                $maxPlan = $timelineData->max('bobot_rencana_kumulatif');
+                $scale = $maxPlan > 100 ? $maxPlan / 100 : 1;
+                $rencanaPersen = round($rencanaRaw / $scale, 2);
+                
+                $latestDeviasiData = [
+                    'rencana' => $rencanaPersen,
+                    'realisasi' => $realisasi,
+                    'deviasi' => round($realisasi - $rencanaPersen, 2),
                     'minggu' => $week,
                     'total_minggu' => $timelineData->count(),
                 ];
-
-                // Data Progres Fisik untuk Grafik (ProgresKnmpNasional mapped to Weeks)
-                $allProgresFisik = \App\Models\ProgresKnmpNasional::where('knmp_id', $selectedKnmp->id)
-                    ->orderBy('tanggal', 'asc')
-                    ->get();
-                
-                $progresFisikMingguan = [];
-                foreach ($allProgresFisik as $p) {
-                    $tgl = \Carbon\Carbon::parse($p->tanggal);
-                    $d = $startDate->diffInDays($tgl, false);
-                    $w = $d >= 0 ? ceil(($d + 1) / 7) : 1;
-                    // Ambil yang paling tinggi (kumulatif) per minggu
-                    $progresFisikMingguan[$w] = (float)$p->progres;
-                }
             }
         }
 

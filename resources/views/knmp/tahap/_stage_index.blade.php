@@ -90,9 +90,9 @@
                                 <tr>
                                     <td><input type="checkbox" class="knmp-check" value="{{ $knmp->id }}"></td>
                                     <td>{{ ucwords(strtolower($knmp->nama ?? 'N/A')) }}</td>
-                                    <td>{{ ucwords(strtolower($knmp->desa_kelurahan ?? 'N/A')) }}</td>
+                                    <td>{{ ucwords(strtolower($knmp->desa ?? 'N/A')) }}</td>
                                     <td>{{ ucwords(strtolower($knmp->kecamatan ?? 'N/A')) }}</td>
-                                    <td>{{ ucwords(strtolower($knmp->kabupaten_kota ?? 'N/A')) }}</td>
+                                    <td>{{ ucwords(strtolower($knmp->kabupaten ?? 'N/A')) }}</td>
                                     <td>{{ ucwords(strtolower($knmp->provinsi ?? 'N/A')) }}</td>
                                     <td><span class="badge bg-primary text-uppercase">{{ $knmp->tahap_label }}</span></td>
                                     <td class="action-buttons">

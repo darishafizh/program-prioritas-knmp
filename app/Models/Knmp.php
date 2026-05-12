@@ -14,9 +14,9 @@ class Knmp extends Model
         'batch_id',
         'tahap_saat_ini',
         'nama',
-        'desa_kelurahan',
+        'desa',
         'kecamatan',
-        'kabupaten_kota',
+        'kabupaten',
         'provinsi',
         'latitude',
         'longitude',
@@ -37,27 +37,8 @@ class Knmp extends Model
     }
 
     // =========================================
-    // Relasi Wilayah (Legacy)
+    // Relasi Wilayah (Legacy) - Disabled as per ERD update (columns are now strings)
     // =========================================
-    public function province()
-    {
-        return $this->belongsTo(Province::class, 'provinsi');
-    }
-
-    public function regency()
-    {
-        return $this->belongsTo(Regency::class, 'kabupaten');
-    }
-
-    public function district()
-    {
-        return $this->belongsTo(District::class, 'kecamatan');
-    }
-
-    public function village()
-    {
-        return $this->belongsTo(Village::class, 'desa');
-    }
 
     // =========================================
     // Relasi Survey / Kuesioner (Legacy)
@@ -84,12 +65,12 @@ class Knmp extends Model
 
     public function progresNasional()
     {
-        return $this->hasMany(ProgresKnmpNasional::class, 'knmp_id');
+        return $this->hasMany(ProgresHarian::class, 'knmp_id');
     }
 
     public function latestProgresNasional()
     {
-        return $this->hasOne(ProgresKnmpNasional::class, 'knmp_id')->latestOfMany('tanggal');
+        return $this->hasOne(ProgresHarian::class, 'knmp_id')->latestOfMany('tanggal');
     }
 
     // =========================================
@@ -125,19 +106,39 @@ class Knmp extends Model
         return $this->hasOne(TahapSerahTerima::class, 'knmp_id');
     }
 
+    public function konstruksiKnmp()
+    {
+        return $this->hasOne(KonstruksiKnmp::class, 'knmp_id');
+    }
+
+    public function dokumentasiKonstruksi()
+    {
+        return $this->hasMany(DokumentasiKonstruksi::class, 'knmp_id');
+    }
+
+    public function knmpKonstruksi()
+    {
+        return $this->hasMany(KnmpKonstruksi::class, 'knmp_id');
+    }
+
     public function tahapKonstruksi()
     {
-        return $this->hasMany(TahapKonstruksi::class, 'knmp_id');
+        return $this->hasManyThrough(TahapKonstruksi::class, KonstruksiKnmp::class, 'knmp_id', 'knmp_konstruksi_id');
     }
 
     public function timeline()
     {
-        return $this->hasMany(TimelinePengerjaan::class, 'knmp_id');
+        return $this->hasManyThrough(TahapKonstruksi::class, KonstruksiKnmp::class, 'knmp_id', 'knmp_konstruksi_id');
     }
 
     public function progresHarian()
     {
         return $this->hasMany(ProgresHarian::class, 'knmp_id');
+    }
+
+    public function latestTahapKonstruksi()
+    {
+        return $this->hasOneThrough(TahapKonstruksi::class, KonstruksiKnmp::class, 'knmp_id', 'knmp_konstruksi_id')->latestOfMany();
     }
 
     // =========================================

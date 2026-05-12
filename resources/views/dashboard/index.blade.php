@@ -356,23 +356,33 @@
                     </h5>
                 </div>
                 <div class="card-body p-0" style="height: 300px;">
-                    <div class="table-responsive" style="height: 300px; overflow-y: auto;">
-                        <table class="table table-sm table-centered table-hover mb-0">
-                            <thead class="table-light fade-sticky-header">
-                                <tr>
-                                    <th class="ps-4" style="font-size: 0.75rem; text-transform: uppercase;">KNMP</th>
-                                    <th class="text-end pe-4" style="font-size: 0.75rem; text-transform: uppercase;">Deviasi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($top10Knmp ?? [] as $item)
-                                    @include('dashboard._knmp_rank_row', ['item' => $item, 'context' => 'top'])
-                                @empty
-                                    <tr><td colspan="2" class="text-center text-muted py-4 align-middle" style="font-size: 0.8rem;">Tidak ada data</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                    @if($tahap !== 'all' && ($tahapSelesaiStatus[$tahap] ?? false))
+                        <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
+                            <div class="rounded-circle bg-soft-success d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.1);">
+                                <i class="mdi mdi-check-decagram text-success" style="font-size: 3.5rem;"></i>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-2">Tahap {{ $tahap }} Selesai!</h6>
+                            <p class="text-muted small mb-0 px-3">Seluruh KNMP pada tahap ini telah mencapai progres pembangunan 100%.</p>
+                        </div>
+                    @else
+                        <div class="table-responsive" style="height: 300px; overflow-y: auto;">
+                            <table class="table table-sm table-centered table-hover mb-0">
+                                <thead class="table-light fade-sticky-header">
+                                    <tr>
+                                        <th class="ps-4" style="font-size: 0.75rem; text-transform: uppercase; width: 65%;">KNMP</th>
+                                        <th class="text-end pe-4" style="font-size: 0.75rem; text-transform: uppercase; width: 35%;">Deviasi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($top10Knmp ?? [] as $item)
+                                        @include('dashboard._knmp_rank_row', ['item' => $item, 'context' => 'top'])
+                                    @empty
+                                        <tr><td colspan="2" class="text-center text-muted py-4 align-middle" style="font-size: 0.8rem;">Tidak ada data performa aktif</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -387,23 +397,33 @@
                     </h5>
                 </div>
                 <div class="card-body p-0" style="height: 300px;">
-                    <div class="table-responsive" style="height: 300px; overflow-y: auto;">
-                        <table class="table table-sm table-centered table-hover mb-0">
-                            <thead class="table-light fade-sticky-header">
-                                <tr>
-                                    <th class="ps-4" style="font-size: 0.75rem; text-transform: uppercase;">KNMP</th>
-                                    <th class="text-end pe-4" style="font-size: 0.75rem; text-transform: uppercase;">Deviasi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($bottom10Knmp ?? [] as $item)
-                                    @include('dashboard._knmp_rank_row', ['item' => $item, 'context' => 'bottom'])
-                                @empty
-                                    <tr><td colspan="2" class="text-center text-muted py-4 align-middle" style="font-size: 0.8rem;">Tidak ada data</td></tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                    @if($tahap !== 'all' && ($tahapSelesaiStatus[$tahap] ?? false))
+                        <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
+                            <div class="rounded-circle bg-soft-success d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.1);">
+                                <i class="mdi mdi-check-decagram text-success" style="font-size: 3.5rem;"></i>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-2">Tahap {{ $tahap }} Selesai!</h6>
+                            <p class="text-muted small mb-0 px-3">Seluruh KNMP pada tahap ini telah mencapai progres pembangunan 100%.</p>
+                        </div>
+                    @else
+                        <div class="table-responsive" style="height: 300px; overflow-y: auto;">
+                            <table class="table table-sm table-centered table-hover mb-0">
+                                <thead class="table-light fade-sticky-header">
+                                    <tr>
+                                        <th class="ps-4" style="font-size: 0.75rem; text-transform: uppercase; width: 65%;">KNMP</th>
+                                        <th class="text-end pe-4" style="font-size: 0.75rem; text-transform: uppercase; width: 35%;">Deviasi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($bottom10Knmp ?? [] as $item)
+                                        @include('dashboard._knmp_rank_row', ['item' => $item, 'context' => 'bottom'])
+                                    @empty
+                                        <tr><td colspan="2" class="text-center text-muted py-4 align-middle" style="font-size: 0.8rem;">Tidak ada data performa aktif</td></tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -420,140 +440,180 @@
                     </h5>
                     <div class="d-flex align-items-center flex-wrap gap-2">
                         <!-- Delta Period Filter -->
-                        <div class="input-group input-group-sm me-2 search-field-enhanced flex-nowrap" style="width: 240px;">
-                            <span class="input-group-text"><i class="mdi mdi-swap-vertical text-info"></i> Delta</span>
-                            <select class="form-select" id="deltaPeriodFilter" onchange="filterByDate(document.getElementById('progresDateFilter')?.value)" style="cursor: pointer; font-weight: 500; color: #4b5563;">
+                        <div class="input-group input-group-sm search-field-enhanced flex-nowrap" style="width:240px;">
+                            <span class="input-group-text"><i class="mdi mdi-swap-vertical text-info"></i>&nbsp;Delta</span>
+                            <select class="form-select" id="deltaPeriodFilter" onchange="filterByDate(document.getElementById('progresDateFilter')?.value)" style="cursor:pointer;font-weight:500;color:#4b5563;">
                                 <option value="latest" {{ ($deltaPeriod ?? 'latest') == 'latest' ? 'selected' : '' }}>Terakhir Diupdate</option>
                                 <option value="weekly" {{ ($deltaPeriod ?? 'latest') == 'weekly' ? 'selected' : '' }}>Mingguan</option>
                             </select>
                         </div>
-                        
-                        <!-- Date Filter Calendar -->
-                        <div class="input-group input-group-sm me-2 search-field-enhanced flex-nowrap" style="width: 200px;" title="Pilih Tanggal Progres">
+                        <!-- Date Filter -->
+                        <div class="input-group input-group-sm search-field-enhanced flex-nowrap" style="width:200px;" title="Pilih Tanggal Progres">
                             <span class="input-group-text"><i class="mdi mdi-calendar-month text-primary"></i></span>
-                            <input type="text" class="form-control flatpickr-dashboard" id="progresDateFilter" 
-                                value="{{ $selectedProgresDate ?? date('Y-m-d') }}" 
-                                style="cursor: pointer; font-weight: 500; color: #4b5563; min-width: 130px; background: transparent;">
+                            <input type="text" class="form-control flatpickr-dashboard" id="progresDateFilter"
+                                value="{{ $selectedProgresDate ?? date('Y-m-d') }}"
+                                style="cursor:pointer;font-weight:500;color:#4b5563;min-width:130px;background:transparent;">
                         </div>
-
-                        <!-- Search Input -->
-                        <div class="input-group input-group-sm search-field-enhanced" style="width: 220px;">
+                        <!-- Search -->
+                        <div class="input-group input-group-sm search-field-enhanced" style="width:240px;">
                             <span class="input-group-text"><i class="mdi mdi-magnify"></i></span>
-                            <input type="text" id="paramsSearch" class="form-control" placeholder="Cari KNMP..."
-                                onkeyup="filterTable()">
+                            <input type="text" id="knmpDtSearch" class="form-control" placeholder="Cari KNMP, Penyedia...">
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-                        <div class="d-flex align-items-center">
-                            <div class="bg-light p-3 rounded me-3">
-                                <h2 class="mb-0 text-primary" id="kpi-progresNasionalAvg">
-                                    {{ number_format($progresNasionalAvg, 2) }}%</h2>
-                                <small class="text-muted">Rata-rata Nasional</small>
+
+                    {{-- Stats & Action Row --}}
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+                        <div class="d-flex align-items-center flex-wrap gap-3">
+                            <!-- Avg chip -->
+                            <div class="d-flex align-items-center gap-2 rounded-3 px-3 py-2" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #bfdbfe;">
+                                <div>
+                                    <div class="fw-bold text-primary" style="font-size:1.35rem;line-height:1;" id="kpi-progresNasionalAvg">{{ number_format($progresNasionalAvg, 2) }}%</div>
+                                    <div class="text-muted" style="font-size:0.7rem;white-space:nowrap;">Rata-rata Nasional</div>
+                                </div>
                             </div>
-                            <div>
-                                <p class="mb-1 text-muted">Statistik Import Data:</p>
-                                <div class="d-flex gap-3">
-                                    <span class="badge bg-soft-info text-info p-2" id="kpi-progresCount">
-                                        <i class="mdi mdi-map-marker me-1"></i> {{ count($progresNasional) }} Lokasi
+                            <!-- Stats -->
+                            <div class="d-flex flex-column gap-1">
+                                <div class="text-muted fw-semibold" style="font-size:0.7rem;text-transform:uppercase;letter-spacing:.04em;">Statistik Import Data</div>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <span class="badge bg-soft-info text-info px-2 py-1" id="kpi-progresCount" style="font-size:0.75rem;">
+                                        <i class="mdi mdi-map-marker me-1"></i>{{ count($progresNasional) }} Lokasi
                                     </span>
-                                    <span class="badge bg-soft-success text-success p-2" id="kpi-progresSelesai">
-                                        <i class="mdi mdi-check-circle me-1"></i>
-                                        {{ $progresNasional->where('progres', 100)->count() }} Selesai (100%)
+                                    <span class="badge bg-soft-success text-success px-2 py-1" id="kpi-progresSelesai" style="font-size:0.75rem;">
+                                        <i class="mdi mdi-check-circle me-1"></i>{{ $progresNasional->where('progres', 100)->count() }} Selesai
+                                    </span>
+                                    <span class="badge bg-soft-warning text-warning px-2 py-1" style="font-size:0.75rem;">
+                                        <i class="mdi mdi-progress-clock me-1"></i>{{ $progresNasional->where('progres', '<', 100)->count() }} On-Progress
                                     </span>
                                 </div>
                             </div>
-                            
-                            <!-- Sparkline Chart -->
-                            <div class="ms-4 px-2 pt-1" style="width: 150px; height: 60px; overflow: hidden;">
+                            <!-- Sparkline -->
+                            <div class="ms-2" style="width:150px;height:52px;overflow:hidden;">
                                 <div id="trendNasionalChart"></div>
                             </div>
                         </div>
-                        
                         <!-- Action Buttons -->
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#importProgresNasionalModal">
-                                <i class="mdi mdi-upload me-1"></i> Import/Update
+                        <div class="d-flex gap-2 align-items-center flex-wrap">
+                            <button type="button" class="btn btn-primary btn-sm d-flex align-items-center justify-content-center gap-1"
+                                data-bs-toggle="modal" data-bs-target="#importProgresNasionalModal" style="font-weight:500; height:32px; padding:0 16px;">
+                                <i class="mdi mdi-upload"></i> Import / Update
                             </button>
-                            <a href="{{ route('forms.download_template', ['section' => 'progres-knmp-nasional']) }}"
-                                class="btn btn-outline-secondary">
-                                <i class="mdi mdi-download me-1"></i> Template
-                            </a>
+                            <form action="{{ route('forms.download_template', ['section' => 'progres-knmp-nasional']) }}" method="GET" class="d-flex gap-1 m-0 no-loader align-items-center">
+                                <select name="tahap" class="form-select form-select-sm" style="min-width:130px;cursor:pointer;font-size:0.8rem; height:32px;">
+                                    <option value="all">Semua Tahap</option>
+                                    @foreach($availableTahap as $t)
+                                        <option value="{{ $t }}">Tahap {{ $t }}</option>
+                                    @endforeach
+                                </select>
+                                <button type="submit" class="btn btn-outline-secondary btn-sm text-nowrap d-flex align-items-center justify-content-center gap-1" style="font-weight:500; height:32px; padding:0 24px; min-width:140px;">
+                                    <i class="mdi mdi-download"></i>&nbsp;Template
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- Per-page selector & info --}}
+                    <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-2" style="font-size:0.82rem;color:#6b7280;">
+                            <span>Tampilkan</span>
+                            <select id="knmpDtPageSize" class="form-select form-select-sm" style="width:80px;font-size:0.82rem;">
+                                <option value="10">10</option>
+                                <option value="25" selected>25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                                <option value="-1">Semua</option>
+                            </select>
+                            <span>data</span>
                         </div>
                     </div>
 
                     @if(count($progresNasional) > 0)
-                        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-                            <table class="table table-centered table-nowrap mb-0">
-                                <thead class="table-light fade-sticky-header">
+                        <div class="table-responsive" style="border-radius:8px;border:1px solid #f1f5f9;">
+                            <table class="table table-centered table-hover table-nowrap mb-0" id="knmpProgresTable">
+                                <thead class="table-light">
                                     <tr>
-                                        <th style="width: 30px;">#</th>
-                                        <th onclick="sortTable(1)" style="cursor: pointer;" class="sortable">
-                                            Nama KNMP <i class="mdi mdi-sort ms-1 text-muted"></i>
-                                        </th>
-                                        <th style="width: 400px;">Penyedia Jasa Konstruksi</th>
-                                        <th style="width: 200px; cursor: pointer;" class="sortable" onclick="sortTable(3)">
-                                            Progres <i class="mdi mdi-sort ms-1 text-muted"></i>
-                                        </th>
-                                        <th style="width: 140px; white-space: nowrap;" class="text-end sortable"
-                                            onclick="sortTable(4)">
-                                            Delta <i class="mdi mdi-sort ms-1 text-muted"></i>
-                                        </th>
+                                        <th class="knmp-dt-sort" data-col="0" style="width:40px;cursor:pointer;user-select:none;"># <i class="mdi mdi-sort ms-1 text-muted opacity-50"></i></th>
+                                        <th class="knmp-dt-sort" data-col="1" style="cursor:pointer;user-select:none;">Nama KNMP <i class="mdi mdi-sort ms-1 text-muted opacity-50"></i></th>
+                                        <th style="width:340px;">Penyedia Jasa Konstruksi</th>
+                                        <th class="knmp-dt-sort" data-col="3" style="width:200px;cursor:pointer;user-select:none;">Progres <i class="mdi mdi-sort ms-1 text-muted opacity-50"></i></th>
+                                        <th class="knmp-dt-sort text-end" data-col="4" style="width:130px;cursor:pointer;user-select:none;white-space:nowrap;">Delta <i class="mdi mdi-sort ms-1 text-muted opacity-50"></i></th>
+                                        <th class="knmp-dt-sort" data-col="5" style="width:160px;cursor:pointer;user-select:none;">Keterangan <i class="mdi mdi-sort ms-1 text-muted opacity-50"></i></th>
                                     </tr>
                                 </thead>
                                 <tbody id="progres-nasional-tbody">
                                     @foreach($progresNasional as $index => $item)
-                                        <tr>
-                                            <td>{{ $index + 1 }}</td>
-                                            <td class="fw-semibold">
-                                                {{ $item->knmp ? $item->knmp->nama : 'KNMP #' . $item->knmp_id }}
-                                            </td>
-                                            <td>
-                                                <span class="text-muted fst-italic">{{ $item->knmp->penyedia_jasa_konstruksi ?? '-' }}</span>
-                                            </td>
+                                        @php
+                                            $colorClass = 'bg-danger';
+                                            if ($item->progres >= 100)     $colorClass = 'bg-success';
+                                            elseif ($item->progres >= 75)  $colorClass = 'bg-primary';
+                                            elseif ($item->progres >= 50)  $colorClass = 'bg-warning';
+                                        @endphp
+                                        <tr data-progres="{{ $item->progres }}"
+                                            data-delta="{{ $item->delta ?? 0 }}"
+                                            data-search="{{ strtolower(($item->knmp_nama ?? '') . ' ' . ($item->nama_jasa_konstruksi ?? '') . ' ' . ($item->keterangan ?? '')) }}">
+                                            <td class="knmp-dt-rownum">{{ $index + 1 }}</td>
+                                            <td class="fw-semibold">{{ $item->knmp_nama ?? 'KNMP #' . $item->knmp_id }}</td>
+                                            <td><span class="text-muted fst-italic" style="font-size:0.85rem;">{{ $item->nama_jasa_konstruksi ?? '-' }}</span></td>
                                             <td>
                                                 <div class="d-flex justify-content-between align-items-center mb-1">
-                                                    <span class="fw-bold {{ $item->progres >= 100 ? 'text-success' : 'text-dark' }}" style="font-size: 0.85rem;">
+                                                    <span class="fw-bold {{ $item->progres >= 100 ? 'text-success' : 'text-dark' }}" style="font-size:0.85rem;">
                                                         {{ number_format($item->progres, 2) }}%
                                                     </span>
                                                 </div>
-                                                <div class="progress" style="height: 6px; background-color: #f1f3fa; border-radius: 3px;">
-                                                    @php
-                                                        $colorClass = 'bg-danger';
-                                                        if ($item->progres >= 100)
-                                                            $colorClass = 'bg-success';
-                                                        elseif ($item->progres >= 75)
-                                                            $colorClass = 'bg-primary';
-                                                        elseif ($item->progres >= 50)
-                                                            $colorClass = 'bg-warning';
-                                                    @endphp
+                                                <div class="progress" style="height:6px;background-color:#f1f3fa;border-radius:3px;">
                                                     <div class="progress-bar {{ $colorClass }}" role="progressbar"
-                                                        style="width: {{ $item->progres }}%; border-radius: 3px;" aria-valuenow="{{ $item->progres }}"
-                                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                                        style="width:{{ min($item->progres, 100) }}%;border-radius:3px;"
+                                                        aria-valuenow="{{ $item->progres }}" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
                                             </td>
                                             <td class="text-end fw-bold">
-                                                @if($item->delta > 0)
+                                                @if(($item->delta ?? 0) > 0)
                                                     <span class="text-success"><i class="mdi mdi-arrow-up"></i> +{{ number_format($item->delta, 2) }}%</span>
-                                                @elseif($item->delta < 0)
+                                                @elseif(($item->delta ?? 0) < 0)
                                                     <span class="text-danger"><i class="mdi mdi-arrow-down"></i> {{ number_format($item->delta, 2) }}%</span>
                                                 @else
                                                     <span class="text-muted"><i class="mdi mdi-minus"></i> 0.00%</span>
                                                 @endif
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-between gap-1">
+                                                    <div>
+                                                        @if($item->keterangan)
+                                                            @foreach(explode(',', $item->keterangan) as $ket)
+                                                                <span class="badge bg-soft-info text-info me-1" style="font-size:0.72rem;">{{ trim($ket) }}</span>
+                                                            @endforeach
+                                                        @else
+                                                            <span class="text-muted" style="font-size:0.8rem;">-</span>
+                                                        @endif
+                                                    </div>
+                                                    <button type="button" class="btn btn-sm btn-outline-primary btn-edit-keterangan flex-shrink-0"
+                                                        data-id="{{ $item->id }}"
+                                                        data-knmp="{{ $item->knmp_nama ?? 'KNMP #' . $item->knmp_id }}"
+                                                        data-keterangan="{{ $item->keterangan }}"
+                                                        style="padding:2px 6px;font-size:0.75rem;">
+                                                        <i class="mdi mdi-pencil"></i>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
+
+                        {{-- Pagination --}}
+                        <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2">
+                            <div style="font-size:0.8rem;color:#6b7280;" id="knmpDtInfoBottom"></div>
+                            <nav aria-label="Navigasi Halaman">
+                                <ul class="pagination pagination-sm mb-0" id="knmpDtPages" style="gap:3px;"></ul>
+                            </nav>
+                        </div>
                     @else
                         <div class="text-center py-5 text-muted">
                             <i class="mdi mdi-database-off fs-1"></i>
                             <p class="mt-2">Belum ada data progres nasional.</p>
-                            <button type="button" class="btn btn-sm btn-primary mt-2" data-bs-toggle="modal"
-                                data-bs-target="#importProgresNasionalModal">
+                            <button type="button" class="btn btn-sm btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#importProgresNasionalModal">
                                 Import Data Sekarang
                             </button>
                         </div>
@@ -562,6 +622,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Modal Export PDF -->
     <div class="modal fade" id="exportPdfModal" tabindex="-1" aria-hidden="true">
@@ -621,16 +682,10 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Tanggal Data <span class="text-danger">*</span></label>
-                            <input type="date" name="tanggal" class="form-control" value="{{ date('Y-m-d') }}" required>
-                            <small class="text-muted">Pilih tanggal untuk data progres yang akan diimport.</small>
-                        </div>
-                        <div class="mb-3">
                             <label class="form-label">File Excel (.xlsx)</label>
                             <input type="file" name="file" class="form-control" accept=".xlsx, .xls, .csv" required>
-                            <small class="text-muted d-block mt-1">Format: knmp_id, progres</small>
-                            <small class="text-muted">Data akan ditambahkan untuk tanggal yang dipilih. Data lama tidak akan
-                                dihapus.</small>
+                            <small class="text-muted d-block mt-1">Format: knmp_id, nama knmp, tanggal_progres, progres, keterangan</small>
+                            <small class="text-muted">Isi tanggal pada file excel untuk setiap data. Data akan diperbarui berdasarkan tanggal progresnya.</small>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -707,30 +762,232 @@
         </div>
     </div>
 
+    <!-- Modal Edit Keterangan -->
+    <div class="modal fade" id="editKeteranganModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="editKeteranganForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Keterangan - <span id="edit-ket-knmp-name"></span></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Variabel Pemantauan (Bisa pilih lebih dari satu)</label>
+                            <select name="keterangan[]" id="edit-keterangan-select" class="form-control select2" multiple="multiple" style="width: 100%;">
+                                <optgroup label="1. Variabel Sumber Daya (Input)">
+                                    <option value="Tenaga Kerja (Manpower)">Tenaga Kerja (Manpower)</option>
+                                    <option value="Ketersediaan Material">Ketersediaan Material</option>
+                                    <option value="Kesiapan Alat Berat">Kesiapan Alat Berat</option>
+                                </optgroup>
+                                <optgroup label="2. Variabel Lingkungan & Eksternal">
+                                    <option value="Kondisi Cuaca">Kondisi Cuaca</option>
+                                    <option value="Kondisi Geologis/Medan">Kondisi Geologis/Medan</option>
+                                    <option value="Sosial-Masyarakat">Sosial-Masyarakat</option>
+                                </optgroup>
+                                <optgroup label="3. Variabel Manajemen & Teknis">
+                                    <option value="Kualitas Dokumentasi Teknis">Kualitas Dokumentasi Teknis</option>
+                                    <option value="Proses Perizinan">Proses Perizinan</option>
+                                    <option value="Logistik & Rantai Pasok">Logistik & Rantai Pasok</option>
+                                </optgroup>
+                                <optgroup label="4. Variabel Finansial Lapangan">
+                                    <option value="Arus Kas Proyek (Cash Flow)">Arus Kas Proyek (Cash Flow)</option>
+                                </optgroup>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
-    {{-- Filtering and Sorting Scripts for KNMP Progress Table --}}
+    {{-- KNMP DataTable Engine --}}
     <script>
-        function filterTable() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("paramsSearch");
-            filter = input.value.toUpperCase();
-            var tbody = document.querySelector(".table-responsive table tbody");
-            if (!tbody) return; // Guard clause
-            tr = tbody.getElementsByTagName("tr");
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[1];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
+        (function () {
+            'use strict';
+
+            const TABLE_ID      = 'knmpProgresTable';
+            const SEARCH_ID     = 'knmpDtSearch';
+            const PAGESIZE_ID   = 'knmpDtPageSize';
+            const PAGES_ID      = 'knmpDtPages';
+            const INFO_TOP_ID   = 'knmpDtInfo';
+            const INFO_BOT_ID   = 'knmpDtInfoBottom';
+
+            let allRows       = [];
+            let filteredRows  = [];
+            let currentPage   = 1;
+            let pageSize      = 25;
+            let sortCol       = -1;
+            let sortDir       = 'asc';
+
+            function init() {
+                const tbody = document.querySelector('#' + TABLE_ID + ' tbody');
+                if (!tbody) return;
+                allRows = Array.from(tbody.querySelectorAll('tr'));
+                filteredRows = allRows.slice();
+                render();
+                bindEvents();
             }
-        }
+
+            function bindEvents() {
+                // Search
+                const searchEl = document.getElementById(SEARCH_ID);
+                if (searchEl) {
+                    searchEl.addEventListener('input', function () {
+                        currentPage = 1;
+                        applyFilter();
+                    });
+                }
+                // Page size
+                const psEl = document.getElementById(PAGESIZE_ID);
+                if (psEl) {
+                    psEl.addEventListener('change', function () {
+                        pageSize = parseInt(this.value, 10);
+                        currentPage = 1;
+                        render();
+                    });
+                }
+                // Column sort
+                document.querySelectorAll('#' + TABLE_ID + ' .knmp-dt-sort').forEach(function (th) {
+                    th.addEventListener('click', function () {
+                        const col = parseInt(this.dataset.col, 10);
+                        if (sortCol === col) {
+                            sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+                        } else {
+                            sortCol = col;
+                            sortDir = 'asc';
+                        }
+                        // Update header icons
+                        document.querySelectorAll('#' + TABLE_ID + ' .knmp-dt-sort').forEach(function (h) {
+                            const ic = h.querySelector('i');
+                            h.classList.remove('sort-active');
+                            if (ic) ic.className = 'mdi mdi-sort ms-1 text-muted opacity-50';
+                        });
+                        this.classList.add('sort-active');
+                        const icon = this.querySelector('i');
+                        if (icon) icon.className = 'mdi mdi-sort-' + (sortDir === 'asc' ? 'ascending' : 'descending') + ' ms-1 fw-bold';
+                        applySort();
+                    });
+                });
+            }
+
+            function getCellVal(row, col) {
+                // Use data attributes for numeric cols
+                if (col === 3) return parseFloat(row.dataset.progres || 0);
+                if (col === 4) return parseFloat(row.dataset.delta || 0);
+                const cells = row.querySelectorAll('td');
+                return cells[col] ? (cells[col].textContent || '').trim().toLowerCase() : '';
+            }
+
+            function applyFilter() {
+                const q = (document.getElementById(SEARCH_ID)?.value || '').toLowerCase().trim();
+                filteredRows = allRows.filter(function (row) {
+                    if (!q) return true;
+                    return (row.dataset.search || '').includes(q);
+                });
+                if (sortCol >= 0) applySort(false);
+                else render();
+            }
+
+            function applySort(doRender) {
+                filteredRows.sort(function (a, b) {
+                    const av = getCellVal(a, sortCol);
+                    const bv = getCellVal(b, sortCol);
+                    let cmp = 0;
+                    if (typeof av === 'number') cmp = av - bv;
+                    else cmp = av < bv ? -1 : av > bv ? 1 : 0;
+                    return sortDir === 'asc' ? cmp : -cmp;
+                });
+                if (doRender !== false) render();
+            }
+
+            function render() {
+                const tbody = document.querySelector('#' + TABLE_ID + ' tbody');
+                if (!tbody) return;
+
+                const total = filteredRows.length;
+                const ps    = pageSize === -1 ? total : pageSize;
+                const pages = ps > 0 ? Math.ceil(total / ps) : 1;
+                if (currentPage > pages) currentPage = pages || 1;
+
+                const start = ps === total && pageSize === -1 ? 0 : (currentPage - 1) * ps;
+                const end   = pageSize === -1 ? total : Math.min(start + ps, total);
+
+                // Hide all, then show current slice
+                allRows.forEach(function (r) { r.style.display = 'none'; });
+                filteredRows.slice(start, end).forEach(function (r, i) {
+                    r.style.display = '';
+                    const numCell = r.querySelector('.knmp-dt-rownum');
+                    if (numCell) numCell.textContent = start + i + 1;
+                });
+
+                // Info
+                const from = total === 0 ? 0 : start + 1;
+                const infoText = 'Menampilkan ' + from + '\u2013' + end + ' dari ' + total + ' data';
+                if (document.getElementById(INFO_TOP_ID)) document.getElementById(INFO_TOP_ID).textContent = infoText;
+                if (document.getElementById(INFO_BOT_ID)) document.getElementById(INFO_BOT_ID).textContent = infoText;
+
+                renderPagination(pages);
+            }
+
+            function renderPagination(pages) {
+                const ul = document.getElementById(PAGES_ID);
+                if (!ul) return;
+                ul.innerHTML = '';
+
+                if (pages <= 1) return;
+
+                function mkLi(label, page, disabled, active) {
+                    const li = document.createElement('li');
+                    li.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
+                    const a = document.createElement('a');
+                    a.className = 'page-link';
+                    a.style.cssText = 'border-radius:6px!important;font-size:0.8rem;padding:4px 9px;';
+                    a.href = '#';
+                    a.innerHTML = label;
+                    if (!disabled && !active) {
+                        a.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            currentPage = page;
+                            render();
+                        });
+                    }
+                    li.appendChild(a);
+                    return li;
+                }
+
+                ul.appendChild(mkLi('<i class="mdi mdi-chevron-left"></i>', currentPage - 1, currentPage === 1, false));
+
+                const delta = 2;
+                let lo = Math.max(1, currentPage - delta);
+                let hi = Math.min(pages, currentPage + delta);
+                if (lo > 1) {
+                    ul.appendChild(mkLi('1', 1, false, false));
+                    if (lo > 2) ul.appendChild(mkLi('...', null, true, false));
+                }
+                for (let p = lo; p <= hi; p++) {
+                    ul.appendChild(mkLi(p, p, false, p === currentPage));
+                }
+                if (hi < pages) {
+                    if (hi < pages - 1) ul.appendChild(mkLi('...', null, true, false));
+                    ul.appendChild(mkLi(pages, pages, false, false));
+                }
+
+                ul.appendChild(mkLi('<i class="mdi mdi-chevron-right"></i>', currentPage + 1, currentPage === pages, false));
+            }
+
+            document.addEventListener('DOMContentLoaded', init);
+        })();
 
         function filterByDate(date) {
             const url = new URL(window.location.href);
@@ -745,86 +1002,6 @@
             window.location.href = url.toString();
         }
 
-        let sortDirections = [true, true, true, true, true];
-
-        function sortTable(n) {
-            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-            table = document.querySelector(".table-responsive table");
-            if (!table) return; // Guard clause
-            switching = true;
-            dir = sortDirections[n] ? "asc" : "desc";
-
-            // 1. Reset all headers styling
-            const headers = table.querySelectorAll("th.sortable");
-            headers.forEach((th) => {
-                th.classList.remove('sort-active');
-                const icon = th.querySelector("i");
-                if (icon) {
-                    icon.className = "mdi mdi-sort ms-1 opacity-25"; // default faint icon
-                }
-            });
-
-            // 2. Highlight active header
-            const headersAll = table.querySelectorAll("th");
-            // Find the header corresponding to column n
-            let currentHeader = null;
-            if (headersAll.length > n) currentHeader = headersAll[n];
-
-            if (currentHeader) {
-                currentHeader.classList.add('sort-active');
-                const currentIcon = currentHeader.querySelector("i");
-                if (currentIcon) {
-                    currentIcon.className = dir === "asc"
-                        ? "mdi mdi-sort-ascending ms-1 fw-bold"
-                        : "mdi mdi-sort-descending ms-1 fw-bold";
-                }
-            }
-
-            while (switching) {
-                switching = false;
-                rows = table.rows;
-                // Loop starts at 1 to skip header
-                for (i = 1; i < (rows.length - 1); i++) {
-                    shouldSwitch = false;
-                    x = rows[i].getElementsByTagName("td")[n];
-                    y = rows[i + 1].getElementsByTagName("td")[n];
-
-                    if (!x || !y) continue;
-
-                    let xVal = x.textContent || x.innerText;
-                    let yVal = y.textContent || y.innerText;
-                    if (n === 3 || n === 4) {
-                        xVal = parseFloat(xVal.replace('%', '').replace('+', '').replace(',', '.'));
-                        yVal = parseFloat(yVal.replace('%', '').replace('+', '').replace(',', '.'));
-                    } else {
-                        xVal = xVal.toLowerCase();
-                        yVal = yVal.toLowerCase();
-                    }
-                    if (dir == "asc") {
-                        if (xVal > yVal) { shouldSwitch = true; break; }
-                    } else if (dir == "desc") {
-                        if (xVal < yVal) { shouldSwitch = true; break; }
-                    }
-                }
-                if (shouldSwitch) {
-                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                    switching = true;
-                    switchcount++;
-                } else {
-                    if (switchcount == 0 && dir == "asc") {
-                        dir = "desc";
-                        switching = true;
-                    }
-                }
-            }
-            sortDirections[n] = (dir === "asc");
-            // Renumber rows
-            rows = table.rows;
-            for (i = 1; i < rows.length; i++) {
-                let numCell = rows[i].getElementsByTagName("td")[0];
-                if (numCell) numCell.innerHTML = i;
-            }
-        }
     </script>
     {{-- Pass data to JavaScript --}}
     <script>
@@ -909,6 +1086,31 @@
                 } else {
                     document.getElementById('sebaranProgresChart').innerHTML = '<div class="d-flex h-100 justify-content-center align-items-center text-muted"><p class="mb-0">Tidak ada data</p></div>';
                 }
+            }
+        });
+        // Handle Edit Keterangan Modal
+        $('.btn-edit-keterangan').on('click', function() {
+            const id = $(this).data('id');
+            const knmpName = $(this).data('knmp');
+            const currentKet = $(this).data('keterangan') || '';
+            
+            $('#edit-ket-knmp-name').text(knmpName);
+            $('#editKeteranganForm').attr('action', `/dashboard/progres-nasional/${id}`);
+            
+            // Set values in select2
+            const values = currentKet.split(',').map(s => s.trim()).filter(s => s !== '');
+            $('#edit-keterangan-select').val(values).trigger('change');
+            
+            $('#editKeteranganModal').modal('show');
+        });
+
+        $(document).ready(function() {
+            if ($.fn.select2) {
+                $('#edit-keterangan-select').select2({
+                    dropdownParent: $('#editKeteranganModal'),
+                    placeholder: "Pilih variabel...",
+                    allowClear: true
+                });
             }
         });
     </script>

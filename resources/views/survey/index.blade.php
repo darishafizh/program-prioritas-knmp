@@ -339,9 +339,9 @@
                                 @foreach ($knmps as $knmp)
                                     <tr>
                                         <td>{{ ucwords(strtolower($knmp->nama ?? 'N/A')) }}</td>
-                                        <td>{{ ucwords(strtolower($knmp->desa ?? 'N/A')) }}</td>
+                                        <td>{{ ucwords(strtolower($knmp->desa_kelurahan ?? 'N/A')) }}</td>
                                         <td>{{ ucwords(strtolower($knmp->kecamatan ?? 'N/A')) }}</td>
-                                        <td>{{ ucwords(strtolower($knmp->kabupaten ?? 'N/A')) }}</td>
+                                        <td>{{ ucwords(strtolower($knmp->kabupaten_kota ?? 'N/A')) }}</td>
                                         <td>{{ ucwords(strtolower($knmp->provinsi ?? 'N/A')) }}</td>
                                         <td class="action-buttons">
                                             @if(Auth::user()->canInputData())
@@ -372,9 +372,9 @@
                                                     data-id="{{ $knmp->id }}"
                                                     data-nama="{{ $knmp->nama }}"
                                                     data-province="{{ $knmp->provinsi }}"
-                                                    data-regency="{{ $knmp->kabupaten }}"
+                                                    data-regency="{{ $knmp->kabupaten_kota }}"
                                                     data-district="{{ $knmp->kecamatan }}"
-                                                    data-village="{{ $knmp->desa }}"
+                                                    data-village="{{ $knmp->desa_kelurahan }}"
                                                     title="Edit KNMP">
                                                     <i class="mdi mdi-pencil"></i>
                                                 </button>

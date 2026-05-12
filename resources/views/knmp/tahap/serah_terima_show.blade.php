@@ -71,7 +71,7 @@
                 <table class="table table-sm table-borderless mb-0">
                     <tr><td class="text-muted">Nama</td><td class="fw-medium">{{ $knmp->nama }}</td></tr>
                     <tr><td class="text-muted">Provinsi</td><td>{{ $knmp->provinsi ?? 'N/A' }}</td></tr>
-                    <tr><td class="text-muted">Kabupaten</td><td>{{ $knmp->kabupaten_kota ?? 'N/A' }}</td></tr>
+                    <tr><td class="text-muted">Kabupaten</td><td>{{ $knmp->kabupaten ?? 'N/A' }}</td></tr>
                     <tr><td class="text-muted">Tahap</td><td><span class="badge text-white text-uppercase" style="background:#8b5cf6;">{{ $knmp->tahap_label }}</span></td></tr>
                 </table>
             </div>

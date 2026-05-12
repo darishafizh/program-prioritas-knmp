@@ -251,7 +251,7 @@
                             style="z-index: 400;">
                             <h6 class="mb-1 fw-bold text-dark" style="font-size:0.75rem;"><i class="mdi mdi-map-marker text-danger me-1"></i>Lokasi</h6>
                             <p class="mb-0 text-muted" style="font-size:0.65rem; line-height:1.2;">
-                                {{ $selectedKnmp->village->nama ?? '' }}, {{ $selectedKnmp->district->nama ?? '' }}
+                                {{ $selectedKnmp->desa ?? '' }}, {{ $selectedKnmp->kecamatan ?? '' }}
                             </p>
                         </div>
 
@@ -430,7 +430,7 @@
                             $lastDeviasi = round($lastReal - $lastRencana, 2);
                             $currentWeek = $tlWithRealisasi->count();
 
-                            // OVERRIDE dengan data deviasi real-time dari ProgresKnmpNasional jika tersedia
+                            // OVERRIDE dengan data deviasi real-time dari ProgresHarian jika tersedia
                             if (isset($latestDeviasiData)) {
                                 $lastRencana = $latestDeviasiData['rencana'];
                                 $lastReal = $latestDeviasiData['realisasi'];

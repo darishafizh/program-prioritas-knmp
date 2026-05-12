@@ -352,9 +352,10 @@
                     <tr>
                         <th style="width: 20px;">No</th>
                         <th>Nama KNMP dan Lokasi</th>
-                        <th style="width: 30%;">Penyedia Jasa Konstruksi</th>
-                        <th style="width: 40px;">Progres Konstruksi (%)</th>
-                        <th style="width: 18%;">Keterangan</th>
+                        <th style="width: 20%;">Penyedia Jasa Konstruksi</th>
+                        <th style="width: 35px;">Progres (%)</th>
+                        <th style="width: 60px;">Status</th>
+                        <th style="width: 80px;">Keterangan</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -371,13 +372,16 @@
                             <td class="col-progres">
                                 {{ number_format($row['progres'], 2, ',', '.') }}
                             </td>
-                            <td class="text-center" style="vertical-align: middle;">
-                                <div style="font-weight: 700; color: {{ $row['status_color'] }}; font-size: 10px; text-transform: capitalize; line-height: 0.75; margin: 0 0 1px 0;">{{ $row['status_text'] }}</div>
+                             <td class="text-center" style="vertical-align: middle;">
+                                <div style="font-weight: 700; color: {{ $row['status_color'] }}; font-size: 8px; text-transform: capitalize; line-height: 0.75; margin: 0 0 1px 0;">{{ $row['status_text'] }}</div>
                                 @if($row['deviasi_formatted'])
-                                    <div style="font-size: 8px; font-weight: 500; color: {{ $row['deviasi_color'] }}; line-height: 0.75; margin: 0;">
+                                    <div style="font-size: 7px; font-weight: 500; color: {{ $row['deviasi_color'] }}; line-height: 0.75; margin: 0;">
                                         {{ $row['deviasi_formatted'] }}
                                     </div>
                                 @endif
+                            </td>
+                            <td class="text-center" style="vertical-align: middle; font-size: 8px;">
+                                {{ $row['keterangan'] ?? '-' }}
                             </td>
                         </tr>
                     @empty
@@ -455,9 +459,10 @@
                         <tr>
                             <th style="width: 20px;">No</th>
                             <th>Nama KNMP dan Lokasi</th>
-                            <th style="width: 30%;">Penyedia Jasa Konstruksi</th>
-                            <th style="width: 40px;">Progres Konstruksi (%)</th>
-                            <th style="width: 18%;">Keterangan</th>
+                            <th style="width: 20%;">Penyedia Jasa Konstruksi</th>
+                            <th style="width: 35px;">Progres (%)</th>
+                            <th style="width: 60px;">Status</th>
+                            <th style="width: 80px;">Keterangan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -474,13 +479,16 @@
                                 <td class="col-progres">
                                     {{ number_format($row['progres'], 2, ',', '.') }}
                                 </td>
-                                <td class="text-center" style="vertical-align: middle;">
-                                    <div style="font-weight: 700; color: {{ $row['status_color'] }}; font-size: 10px; text-transform: capitalize; line-height: 0.75; margin: 0 0 1px 0;">{{ $row['status_text'] }}</div>
+                                 <td class="text-center" style="vertical-align: middle;">
+                                    <div style="font-weight: 700; color: {{ $row['status_color'] }}; font-size: 8px; text-transform: capitalize; line-height: 0.75; margin: 0 0 1px 0;">{{ $row['status_text'] }}</div>
                                     @if($row['deviasi_formatted'])
-                                        <div style="font-size: 8px; font-weight: 500; color: {{ $row['deviasi_color'] }}; line-height: 0.75; margin: 0;">
+                                        <div style="font-size: 7px; font-weight: 500; color: {{ $row['deviasi_color'] }}; line-height: 0.75; margin: 0;">
                                             {{ $row['deviasi_formatted'] }}
                                         </div>
                                     @endif
+                                </td>
+                                <td class="text-center" style="vertical-align: middle; font-size: 8px;">
+                                    {{ $row['keterangan'] ?? '-' }}
                                 </td>
                             </tr>
                         @empty

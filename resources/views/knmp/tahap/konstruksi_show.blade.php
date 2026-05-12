@@ -46,6 +46,37 @@
 </div>
 @endif
 
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white py-3">
+        <h5 class="card-title mb-0 fw-bold"><i class="mdi mdi-settings-outline me-2 text-primary"></i>Pengaturan Konstruksi</h5>
+    </div>
+    <div class="card-body">
+        <form action="{{ route('konstruksi.update_settings', $knmp->nama) }}" method="POST">
+            @csrf
+            <div class="row align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Tanggal Mulai Konstruksi</label>
+                    <input type="date" class="form-control" name="tanggal_mulai" value="{{ $konstruksi && $konstruksi->tanggal_mulai ? $konstruksi->tanggal_mulai->format('Y-m-d') : '' }}" required>
+                    <small class="text-muted">Tanggal ini menjadi acuan perhitungan minggu ke-1.</small>
+                </div>
+                <div class="col-md-8 text-md-end mt-3 mt-md-0">
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                        <i class="mdi mdi-sync me-1"></i> Simpan & Sinkronisasi Realisasi
+                    </button>
+                    @if($konstruksi && $konstruksi->tanggal_mulai)
+                    <button type="button" onclick="event.preventDefault(); document.getElementById('sync-form').submit();" class="btn btn-outline-info px-4 ms-2">
+                        <i class="mdi mdi-refresh me-1"></i> Sinkronisasi Ulang
+                    </button>
+                    @endif
+                </div>
+            </div>
+        </form>
+        <form id="sync-form" action="{{ route('konstruksi.sync_realisasi', $knmp->nama) }}" method="POST" style="display: none;">
+            @csrf
+        </form>
+    </div>
+</div>
+
 <ul class="nav nav-tabs" id="konstruksiTabs" role="tablist">
     <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tabTimeline"><i class="mdi mdi-chart-line me-1"></i>Timeline <span class="badge bg-primary ms-1">{{ $timeline->count() }}</span></a></li>
     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabProgres"><i class="mdi mdi-calendar-clock me-1"></i>Progres Harian <span class="badge bg-info ms-1">{{ $progresHarian->count() }}</span></a></li>
@@ -63,13 +94,11 @@
                 @if($timeline->count() > 0)
                 <div class="table-responsive">
                     <table class="table table-sm table-bordered table-striped">
-                        <thead class="table-light"><tr><th>Minggu</th><th>Mulai</th><th>Selesai</th><th>Rencana %</th><th>Realisasi %</th><th>Status</th></tr></thead>
+                        <thead class="table-light"><tr><th>Minggu</th><th>Rencana %</th><th>Realisasi %</th><th>Status</th></tr></thead>
                         <tbody>
                             @foreach($timeline as $t)
                             <tr>
-                                <td>{{ $t->periode_minggu }}</td>
-                                <td>{{ $t->tanggal_mulai ? $t->tanggal_mulai->format('d/m/Y') : '-' }}</td>
-                                <td>{{ $t->tanggal_selesai_rencana ? $t->tanggal_selesai_rencana->format('d/m/Y') : '-' }}</td>
+                                <td>{{ $t->periode_mingguan }}</td>
                                 <td>{{ $t->bobot_rencana_kumulatif ?? '-' }}%</td>
                                 <td>{{ $t->bobot_realisasi_kumulatif ?? '-' }}%</td>
                                 <td>
@@ -138,8 +167,7 @@
 <form action="{{ route('konstruksi.timeline.store', $knmp->nama) }}" method="POST">@csrf
 <div class="modal-header" style="background:linear-gradient(135deg,#ef4444,#dc2626);border:none;"><h5 class="modal-title text-white">Tambah Timeline</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
 <div class="modal-body p-4">
-    <div class="row"><div class="col-6 mb-3"><label class="form-label">Mulai *</label><input type="date" class="form-control" name="tanggal_mulai" required></div><div class="col-6 mb-3"><label class="form-label">Selesai Rencana *</label><input type="date" class="form-control" name="tanggal_selesai_rencana" required></div></div>
-    <div class="mb-3"><label class="form-label">Minggu Ke *</label><input type="number" class="form-control" name="periode_minggu" min="1" required></div>
+    <div class="mb-3"><label class="form-label">Minggu Ke *</label><input type="number" class="form-control" name="periode_mingguan" min="1" required></div>
     <div class="row"><div class="col-6 mb-3"><label class="form-label">Rencana %</label><input type="number" step="0.01" class="form-control" name="bobot_rencana_kumulatif" min="0" max="100"></div><div class="col-6 mb-3"><label class="form-label">Realisasi %</label><input type="number" step="0.01" class="form-control" name="bobot_realisasi_kumulatif" min="0" max="100"></div></div>
     <div class="mb-3"><label class="form-label">Status</label><select class="form-select" name="status"><option value="">-</option><option value="on_track">On Track</option><option value="terlambat">Terlambat</option><option value="selesai">Selesai</option></select></div>
 </div>

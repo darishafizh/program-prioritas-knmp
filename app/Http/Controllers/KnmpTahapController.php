@@ -11,7 +11,6 @@ use App\Models\TahapDed;
 use App\Models\TahapLelang;
 use App\Models\TahapSerahTerima;
 use App\Models\TahapKonstruksi;
-use App\Models\TimelinePengerjaan;
 use App\Models\ProgresHarian;
 use App\Services\KnmpStageService;
 use App\Imports\UsulanImport;
@@ -149,7 +148,7 @@ class KnmpTahapController extends Controller
     public function dedStore(Request $request, Knmp $knmp)
     {
         $validated = $request->validate([
-            'nomor_dokumen'     => 'required|string|max:255',
+            'nomor_document'     => 'required|string|max:255',
             'tanggal_pengesahan'=> 'nullable|date',
             'file_url'          => 'nullable|string',
             'catatan'           => 'nullable|string',
@@ -220,13 +219,25 @@ class KnmpTahapController extends Controller
      */
     public function konstruksiShow(Knmp $knmp)
     {
-        $timeline      = TimelinePengerjaan::where('knmp_id', $knmp->id)->orderBy('periode_minggu')->get();
-        $progresHarian = ProgresHarian::where('knmp_id', $knmp->id)->orderByDesc('tanggal')->get();
-        $tahapKonstruksi = TahapKonstruksi::where('knmp_id', $knmp->id)->with('penyediaJasa')->get();
+        // Ambil data konstruksi utama
+        $konstruksi = $knmp->konstruksiKnmp;
+        
+        // Ambil timeline (tahap_konstruksi) dari relasi konstruksi
+        $tahapKonstruksi = $konstruksi ? $konstruksi->timeline()->orderBy('periode_mingguan')->get() : collect();
 
-        return view('knmp.tahap.konstruksi_show', compact(
-            'knmp', 'timeline', 'progresHarian', 'tahapKonstruksi'
-        ));
+        $progresHarian = ProgresHarian::where('knmp_id', $knmp->id)
+            ->orderByDesc('tanggal')
+            ->get();
+
+        return view('knmp.tahap.konstruksi_show', [
+            'knmp'            => $knmp,
+            'timeline'        => $tahapKonstruksi,
+            'progresHarian'   => $progresHarian,
+            'tahapKonstruksi' => $tahapKonstruksi,
+            'konstruksi'      => $konstruksi,
+            'knmpKonstruksi'  => $knmp->knmpKonstruksi,
+            'dokumentasi'     => $knmp->dokumentasiKonstruksi
+        ]);
     }
 
     /**
@@ -235,15 +246,14 @@ class KnmpTahapController extends Controller
     public function timelineStore(Request $request, Knmp $knmp)
     {
         $validated = $request->validate([
-            'tanggal_mulai'            => 'required|date',
-            'tanggal_selesai_rencana'  => 'required|date|after_or_equal:tanggal_mulai',
-            'periode_minggu'           => 'required|integer|min:1',
+            'periode_mingguan'          => 'required|integer|min:1',
             'bobot_rencana_kumulatif'  => 'nullable|numeric|min:0|max:100',
             'bobot_realisasi_kumulatif'=> 'nullable|numeric|min:0|max:100',
             'status'                   => 'nullable|in:on_track,terlambat,selesai',
         ]);
 
-        TimelinePengerjaan::create(array_merge($validated, ['knmp_id' => $knmp->id]));
+        $konstruksi = $knmp->konstruksiKnmp()->firstOrCreate(['knmp_id' => $knmp->id]);
+        $konstruksi->timeline()->create($validated);
 
         return redirect()->back()->with('success', 'Data timeline berhasil disimpan.');
     }
@@ -264,20 +274,105 @@ class KnmpTahapController extends Controller
     }
 
     /**
-     * Simpan data tahap konstruksi (penyedia jasa, bobot, dll).
+     * Update pengaturan konstruksi (tanggal_mulai) dan sinkronisasi realisasi dari progres harian.
      */
-    public function tahapKonstruksiStore(Request $request, Knmp $knmp)
+    public function updateKonstruksiSettings(Request $request, Knmp $knmp)
     {
         $validated = $request->validate([
-            'jasa_konstruksi_id'        => 'nullable|exists:penyedia_jasa_konstruksi,id',
-            'periode_mingguan'          => 'nullable|integer|min:1',
-            'bobot_rencana_kumulatif'   => 'nullable|numeric|min:0|max:100',
-            'bobot_realisasi_kumulatif' => 'nullable|numeric|min:0|max:100',
+            'tanggal_mulai' => 'required|date',
         ]);
 
-        TahapKonstruksi::create(array_merge($validated, ['knmp_id' => $knmp->id]));
+        $tanggalMulai = $validated['tanggal_mulai'];
 
-        return redirect()->back()->with('success', 'Data tahap konstruksi berhasil disimpan.');
+        // 1. Update atau buat record konstruksi_knmp
+        $knmp->konstruksiKnmp()->updateOrCreate(
+            ['knmp_id' => $knmp->id],
+            ['tanggal_mulai' => $tanggalMulai]
+        );
+
+        // 2. Jalankan logika sinkronisasi realisasi dari progres_harian
+        $this->syncRealisasi($knmp, $tanggalMulai);
+
+        return redirect()->back()->with('success', 'Pengaturan konstruksi dan sinkronisasi realisasi berhasil diperbarui.');
+    }
+
+    /**
+     * Logika untuk menghitung periode mingguan bobot realisasi kumulatif dari progres harian.
+     */
+    private function syncRealisasi(Knmp $knmp, $tanggalMulai)
+    {
+        $startDate = \Carbon\Carbon::parse($tanggalMulai);
+        
+        // Ambil semua progres harian untuk KNMP ini
+        $allProgresFisik = ProgresHarian::where('knmp_id', $knmp->id)
+            ->whereNotNull('tanggal')
+            ->orderBy('tanggal', 'asc')
+            ->get();
+            
+        if ($allProgresFisik->isEmpty()) {
+            return;
+        }
+
+        // Kelompokkan progres harian ke dalam periode mingguan berdasarkan tanggal_mulai
+        $realisasiPerMinggu = [];
+        foreach ($allProgresFisik as $p) {
+            $tgl = \Carbon\Carbon::parse($p->tanggal);
+            $diffDays = $startDate->diffInDays($tgl, false);
+            
+            // Abaikan data sebelum tanggal_mulai
+            if ($diffDays < 0) continue; 
+            
+            $week = (int) floor($diffDays / 7) + 1;
+            
+            // Ambil progres terakhir (terbesar tanggalnya) per minggu sebagai kumulatif
+            // Karena ini kumulatif, nilai terakhir di minggu tersebut adalah capaian sampai minggu itu
+            $realisasiPerMinggu[$week] = (float)$p->progres;
+        }
+
+        // Update bobot_realisasi_kumulatif pada setiap baris timeline (tahap_konstruksi)
+        $konstruksi = $knmp->konstruksiKnmp;
+        if (!$konstruksi) return;
+
+        $timeline = $konstruksi->timeline;
+        
+        foreach ($timeline as $tl) {
+            $minggu = $tl->periode_mingguan;
+            
+            // Jika ada data realisasi untuk minggu ini, update
+            if (isset($realisasiPerMinggu[$minggu])) {
+                $tl->update([
+                    'bobot_realisasi_kumulatif' => $realisasiPerMinggu[$minggu]
+                ]);
+            } else {
+                $prevMaxWeek = 0;
+                $prevValue = null;
+                foreach($realisasiPerMinggu as $w => $val) {
+                    if ($w < $minggu && $w > $prevMaxWeek) {
+                        $prevMaxWeek = $w;
+                        $prevValue = $val;
+                    }
+                }
+                
+                if ($prevValue !== null && $startDate->copy()->addWeeks($minggu)->isPast()) {
+                    $tl->update([
+                        'bobot_realisasi_kumulatif' => $prevValue
+                    ]);
+                }
+            }
+        }
+    }
+
+    public function syncRealisasiAction(Knmp $knmp)
+    {
+        $konstruksi = $knmp->konstruksiKnmp;
+            
+        if (!$konstruksi || !$konstruksi->tanggal_mulai) {
+            return redirect()->back()->with('error', 'Tanggal mulai belum diatur. Silakan atur tanggal mulai terlebih dahulu.');
+        }
+        
+        $this->syncRealisasi($knmp, $konstruksi->tanggal_mulai);
+        
+        return redirect()->back()->with('success', 'Sinkronisasi realisasi berhasil dilakukan.');
     }
 
     // =========================================================

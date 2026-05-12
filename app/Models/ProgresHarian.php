@@ -8,7 +8,12 @@ class ProgresHarian extends Model
 {
     protected $table = 'progres_harian';
 
-    protected $fillable = ['knmp_id', 'tanggal', 'progres'];
+    protected $fillable = [
+        'knmp_id',
+        'progres',
+        'keterangan',
+        'tanggal',
+    ];
 
     protected $casts = [
         'tanggal' => 'date',

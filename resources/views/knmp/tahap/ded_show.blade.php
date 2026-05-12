@@ -39,7 +39,7 @@
                     @csrf
                     <div class="mb-3">
                         <label class="form-label fw-medium">Nomor Dokumen <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="nomor_dokumen" value="{{ $data->nomor_dokumen ?? '' }}" placeholder="Nomor dokumen DED" required>
+                        <input type="text" class="form-control" name="nomor_document" value="{{ $data->nomor_document ?? '' }}" placeholder="Nomor dokumen DED" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-medium">Tanggal Pengesahan</label>
@@ -71,7 +71,7 @@
                 <table class="table table-sm table-borderless mb-0">
                     <tr><td class="text-muted">Nama</td><td class="fw-medium">{{ $knmp->nama }}</td></tr>
                     <tr><td class="text-muted">Provinsi</td><td>{{ $knmp->provinsi ?? 'N/A' }}</td></tr>
-                    <tr><td class="text-muted">Kabupaten</td><td>{{ $knmp->kabupaten_kota ?? 'N/A' }}</td></tr>
+                    <tr><td class="text-muted">Kabupaten</td><td>{{ $knmp->kabupaten ?? 'N/A' }}</td></tr>
                     <tr><td class="text-muted">Tahap</td><td><span class="badge bg-success text-uppercase">{{ $knmp->tahap_label }}</span></td></tr>
                 </table>
             </div>

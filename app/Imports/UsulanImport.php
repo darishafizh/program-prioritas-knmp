@@ -44,9 +44,9 @@ class UsulanImport implements ToModel, WithHeadingRow, SkipsEmptyRows, WithCalcu
             $knmp = Knmp::create([
                 'nama'           => $namaRaw,
                 'provinsi'       => $provinsi,
-                'kabupaten_kota' => $kabupaten,
+                'kabupaten'      => $kabupaten,
                 'kecamatan'      => $kecamatan,
-                'desa_kelurahan' => $desaRaw,
+                'desa'           => $desaRaw,
                 'status'         => $status,
                 'tahap_saat_ini' => 'usulan',
             ]);

@@ -8,7 +8,7 @@ class TahapDed extends Model
 {
     protected $table = 'tahap_ded';
 
-    protected $fillable = ['knmp_id', 'nomor_dokumen', 'tanggal_pengesahan', 'file_url', 'catatan'];
+    protected $fillable = ['knmp_id', 'nomor_document', 'tanggal_pengesahan', 'file_url', 'catatan'];
 
     protected $casts = ['tanggal_pengesahan' => 'date'];
 

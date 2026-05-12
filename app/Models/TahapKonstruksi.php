@@ -9,8 +9,7 @@ class TahapKonstruksi extends Model
     protected $table = 'tahap_konstruksi';
 
     protected $fillable = [
-        'knmp_id',
-        'jasa_konstruksi_id',
+        'knmp_konstruksi_id',
         'periode_mingguan',
         'bobot_rencana_kumulatif',
         'bobot_realisasi_kumulatif',
@@ -22,13 +21,8 @@ class TahapKonstruksi extends Model
         'bobot_realisasi_kumulatif' => 'decimal:2',
     ];
 
-    public function knmp()
+    public function konstruksi()
     {
-        return $this->belongsTo(Knmp::class, 'knmp_id');
-    }
-
-    public function penyediaJasa()
-    {
-        return $this->belongsTo(PenyediaJasaKonstruksi::class, 'jasa_konstruksi_id');
+        return $this->belongsTo(KonstruksiKnmp::class, 'knmp_konstruksi_id');
     }
 }

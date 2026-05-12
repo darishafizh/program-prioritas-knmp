@@ -52,9 +52,13 @@ Route::middleware('auth')->group(function () {
     // ==============================
     // DASHBOARD IMPORT (Super Admin Only)
     // ==============================
-    Route::post('/dashboard/import-progres-nasional', [\App\Http\Controllers\ImportController::class, 'importProgresKnmpNasional'])
+    Route::post('/dashboard/import-progres-nasional', [\App\Http\Controllers\ImportController::class, 'importProgresHarian'])
         ->middleware('role:super_admin')
         ->name('dashboard.import_progres_nasional');
+    
+    Route::put('/dashboard/progres-nasional/{id}', [DashboardController::class, 'updateKeterangan'])
+        ->middleware('role:super_admin')
+        ->name('dashboard.update_keterangan');
 
 
 
@@ -279,6 +283,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/konstruksi/{knmp}/timeline', [KnmpTahapController::class, 'timelineStore'])->name('konstruksi.timeline.store');
         Route::post('/konstruksi/{knmp}/progres-harian', [KnmpTahapController::class, 'progresHarianStore'])->name('konstruksi.progres_harian.store');
         Route::post('/konstruksi/{knmp}/dokumentasi', [KnmpTahapController::class, 'dokumentasiStore'])->name('konstruksi.dokumentasi.store');
+        Route::post('/konstruksi/{knmp}/update-settings', [KnmpTahapController::class, 'updateKonstruksiSettings'])->name('konstruksi.update_settings');
+        Route::post('/konstruksi/{knmp}/sync-realisasi', [KnmpTahapController::class, 'syncRealisasiAction'])->name('konstruksi.sync_realisasi');
 
         // --- Serah Terima ---
         Route::get('/serah-terima', [KnmpTahapController::class, 'serahTerimaIndex'])->name('serah_terima.index');
