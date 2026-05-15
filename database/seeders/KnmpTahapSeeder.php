@@ -12,7 +12,10 @@ class KnmpTahapSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Knmp::whereBetween('id', [1, 65])->update(['tahap' => 1]);
-        \App\Models\Knmp::whereBetween('id', [109, 143])->update(['tahap' => 2]);
+        // Batch 1 -> Usulan
+        \App\Models\Knmp::where('batch_id', 1)->update(['tahap_saat_ini' => 'usulan']);
+        
+        // Batch 2 -> Konstruksi
+        \App\Models\Knmp::where('batch_id', 2)->update(['tahap_saat_ini' => 'konstruksi']);
     }
 }

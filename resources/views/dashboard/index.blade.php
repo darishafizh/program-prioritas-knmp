@@ -75,7 +75,6 @@
         }
 
         /* Fix modal centering - override app.css margin */
-        #importProgresNasionalModal .modal-dialog,
         #exportPdfModal .modal-dialog {
             margin: auto !important;
         }
@@ -297,7 +296,7 @@
                                         style="width: auto; font-weight: 500; font-size: 0.78rem;" onchange="this.form.submit()">
                                         <option value="all" {{ ($tahap ?? 'all') == 'all' ? 'selected' : '' }}>Semua Tahap</option>
                                         @foreach($availableTahap as $t)
-                                            <option value="{{ $t }}" {{ ($tahap ?? '') == (string)$t ? 'selected' : '' }}>Tahap {{ $t }}</option>
+                                            <option value="{{ $t->id }}" {{ ($tahap ?? '') == (string)$t->id ? 'selected' : '' }}>{{ $t->nama_tahap }} - {{ $t->tahun }}</option>
                                         @endforeach
                                     </select>
                                 </form>
@@ -321,12 +320,79 @@
         <div class="col-12">
             <h5 class="fw-bold text-dark mb-0" style="font-size: 1rem;">
                 <i class="mdi mdi-flag-variant text-primary me-1"></i>
-                Kampung Nelayan Merah Putih Tahap {{ $tahap == 1 ? 'I' : ($tahap == 2 ? 'II' : ($tahap == 3 ? 'III' : $tahap)) }}
+                Kampung Nelayan Merah Putih {{ $tahapLabel ?? 'Semua Tahap' }}
             </h5>
             <p class="text-muted mb-0" style="font-size: 0.75rem;">Menampilkan data untuk {{ $totalKnmp }} lokasi KNMP pada tahap ini.</p>
         </div>
     </div>
     @endif
+
+    {{-- KPI Cards Nasional --}}
+    <div class="row mb-3">
+        {{-- Card 1: Rata-rata Nasional --}}
+        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+            <div class="card widget-flat border-0 shadow-sm h-100" style="border-radius: 12px;">
+                <div class="card-body p-2 d-block">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-semibold mb-0" style="color: #475569; font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">RATA-RATA NASIONAL</h5>
+                        <div style="background: #eff6ff; color: #3b82f6; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <i class="mdi mdi-chart-bar" style="font-size: 1.2rem;"></i>
+                        </div>
+                    </div>
+                    <h3 class="mb-1" style="font-size: 2rem; font-weight: 800; color: #0f172a; line-height: 1;" id="kpi-progresNasionalAvg">{{ number_format($progresNasionalAvg, 2) }}%</h3>
+                    <p class="mb-0" style="color: #64748b; font-size: 0.8rem;">Persentase progres rata-rata</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- Card 2: Total Lokasi --}}
+        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+            <div class="card widget-flat border-0 shadow-sm h-100" style="border-radius: 12px;">
+                <div class="card-body p-2 d-block">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-semibold mb-0" style="color: #475569; font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">TOTAL LOKASI</h5>
+                        <div style="background: #f8fafc; color: #475569; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <i class="mdi mdi-map-marker-multiple" style="font-size: 1.2rem;"></i>
+                        </div>
+                    </div>
+                    <h3 class="mb-1" style="font-size: 2rem; font-weight: 800; color: #0f172a; line-height: 1;" id="kpi-progresCount">{{ count($progresNasional) }}</h3>
+                    <p class="mb-0" style="color: #64748b; font-size: 0.8rem;">Total lokasi KNMP</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- Card 3: Selesai --}}
+        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+            <div class="card widget-flat border-0 shadow-sm h-100" style="border-radius: 12px;">
+                <div class="card-body p-2 d-block">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-semibold mb-0" style="color: #475569; font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">TOTAL SELESAI</h5>
+                        <div style="background: #ecfdf5; color: #047857; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <i class="mdi mdi-check-circle-outline" style="font-size: 1.2rem;"></i>
+                        </div>
+                    </div>
+                    <h3 class="mb-1" style="font-size: 2rem; font-weight: 800; color: #0f172a; line-height: 1;" id="kpi-progresSelesai">{{ $progresNasional->where('progres', 100)->count() }}</h3>
+                    <p class="mb-0" style="color: #64748b; font-size: 0.8rem;">Progres telah 100%</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- Card 4: On Progress --}}
+        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+            <div class="card widget-flat border-0 shadow-sm h-100" style="border-radius: 12px;">
+                <div class="card-body p-2 d-block">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-semibold mb-0" style="color: #475569; font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase;">ON PROGRES</h5>
+                        <div style="background: #fffbeb; color: #b45309; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <i class="mdi mdi-clock-outline" style="font-size: 1.2rem;"></i>
+                        </div>
+                    </div>
+                    <h3 class="mb-1" style="font-size: 2rem; font-weight: 800; color: #0f172a; line-height: 1;" id="kpi-progresOnProgress">{{ $progresNasional->where('progres', '<', 100)->count() }}</h3>
+                    <p class="mb-0" style="color: #64748b; font-size: 0.8rem;">Progres di bawah 100%</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- ANALISIS PROGRES --}}
     <div class="row mb-4">
@@ -439,14 +505,7 @@
                         Progres Pembangunan KNMP Nasional
                     </h5>
                     <div class="d-flex align-items-center flex-wrap gap-2">
-                        <!-- Delta Period Filter -->
-                        <div class="input-group input-group-sm search-field-enhanced flex-nowrap" style="width:240px;">
-                            <span class="input-group-text"><i class="mdi mdi-swap-vertical text-info"></i>&nbsp;Delta</span>
-                            <select class="form-select" id="deltaPeriodFilter" onchange="filterByDate(document.getElementById('progresDateFilter')?.value)" style="cursor:pointer;font-weight:500;color:#4b5563;">
-                                <option value="latest" {{ ($deltaPeriod ?? 'latest') == 'latest' ? 'selected' : '' }}>Terakhir Diupdate</option>
-                                <option value="weekly" {{ ($deltaPeriod ?? 'latest') == 'weekly' ? 'selected' : '' }}>Mingguan</option>
-                            </select>
-                        </div>
+
                         <!-- Date Filter -->
                         <div class="input-group input-group-sm search-field-enhanced flex-nowrap" style="width:200px;" title="Pilih Tanggal Progres">
                             <span class="input-group-text"><i class="mdi mdi-calendar-month text-primary"></i></span>
@@ -463,55 +522,7 @@
                 </div>
                 <div class="card-body">
 
-                    {{-- Stats & Action Row --}}
-                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
-                        <div class="d-flex align-items-center flex-wrap gap-3">
-                            <!-- Avg chip -->
-                            <div class="d-flex align-items-center gap-2 rounded-3 px-3 py-2" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1px solid #bfdbfe;">
-                                <div>
-                                    <div class="fw-bold text-primary" style="font-size:1.35rem;line-height:1;" id="kpi-progresNasionalAvg">{{ number_format($progresNasionalAvg, 2) }}%</div>
-                                    <div class="text-muted" style="font-size:0.7rem;white-space:nowrap;">Rata-rata Nasional</div>
-                                </div>
-                            </div>
-                            <!-- Stats -->
-                            <div class="d-flex flex-column gap-1">
-                                <div class="text-muted fw-semibold" style="font-size:0.7rem;text-transform:uppercase;letter-spacing:.04em;">Statistik Import Data</div>
-                                <div class="d-flex gap-2 flex-wrap">
-                                    <span class="badge bg-soft-info text-info px-2 py-1" id="kpi-progresCount" style="font-size:0.75rem;">
-                                        <i class="mdi mdi-map-marker me-1"></i>{{ count($progresNasional) }} Lokasi
-                                    </span>
-                                    <span class="badge bg-soft-success text-success px-2 py-1" id="kpi-progresSelesai" style="font-size:0.75rem;">
-                                        <i class="mdi mdi-check-circle me-1"></i>{{ $progresNasional->where('progres', 100)->count() }} Selesai
-                                    </span>
-                                    <span class="badge bg-soft-warning text-warning px-2 py-1" style="font-size:0.75rem;">
-                                        <i class="mdi mdi-progress-clock me-1"></i>{{ $progresNasional->where('progres', '<', 100)->count() }} On-Progress
-                                    </span>
-                                </div>
-                            </div>
-                            <!-- Sparkline -->
-                            <div class="ms-2" style="width:150px;height:52px;overflow:hidden;">
-                                <div id="trendNasionalChart"></div>
-                            </div>
-                        </div>
-                        <!-- Action Buttons -->
-                        <div class="d-flex gap-2 align-items-center flex-wrap">
-                            <button type="button" class="btn btn-primary btn-sm d-flex align-items-center justify-content-center gap-1"
-                                data-bs-toggle="modal" data-bs-target="#importProgresNasionalModal" style="font-weight:500; height:32px; padding:0 16px;">
-                                <i class="mdi mdi-upload"></i> Import / Update
-                            </button>
-                            <form action="{{ route('forms.download_template', ['section' => 'progres-knmp-nasional']) }}" method="GET" class="d-flex gap-1 m-0 no-loader align-items-center">
-                                <select name="tahap" class="form-select form-select-sm" style="min-width:130px;cursor:pointer;font-size:0.8rem; height:32px;">
-                                    <option value="all">Semua Tahap</option>
-                                    @foreach($availableTahap as $t)
-                                        <option value="{{ $t }}">Tahap {{ $t }}</option>
-                                    @endforeach
-                                </select>
-                                <button type="submit" class="btn btn-outline-secondary btn-sm text-nowrap d-flex align-items-center justify-content-center gap-1" style="font-weight:500; height:32px; padding:0 24px; min-width:140px;">
-                                    <i class="mdi mdi-download"></i>&nbsp;Template
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+
 
                     {{-- Per-page selector & info --}}
                     <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
@@ -536,8 +547,7 @@
                                         <th class="knmp-dt-sort" data-col="0" style="width:40px;cursor:pointer;user-select:none;"># <i class="mdi mdi-sort ms-1 text-muted opacity-50"></i></th>
                                         <th class="knmp-dt-sort" data-col="1" style="cursor:pointer;user-select:none;">Nama KNMP <i class="mdi mdi-sort ms-1 text-muted opacity-50"></i></th>
                                         <th style="width:340px;">Penyedia Jasa Konstruksi</th>
-                                        <th class="knmp-dt-sort" data-col="3" style="width:200px;cursor:pointer;user-select:none;">Progres <i class="mdi mdi-sort ms-1 text-muted opacity-50"></i></th>
-                                        <th class="knmp-dt-sort text-end" data-col="4" style="width:130px;cursor:pointer;user-select:none;white-space:nowrap;">Delta <i class="mdi mdi-sort ms-1 text-muted opacity-50"></i></th>
+                                        <th class="knmp-dt-sort" data-col="3" style="width:250px;cursor:pointer;user-select:none;">Progres <i class="mdi mdi-sort ms-1 text-muted opacity-50"></i></th>
                                         <th class="knmp-dt-sort" data-col="5" style="width:160px;cursor:pointer;user-select:none;">Keterangan <i class="mdi mdi-sort ms-1 text-muted opacity-50"></i></th>
                                     </tr>
                                 </thead>
@@ -550,7 +560,7 @@
                                             elseif ($item->progres >= 50)  $colorClass = 'bg-warning';
                                         @endphp
                                         <tr data-progres="{{ $item->progres }}"
-                                            data-delta="{{ $item->delta ?? 0 }}"
+                                            data-deviasi="{{ $item->deviasi ?? 0 }}"
                                             data-search="{{ strtolower(($item->knmp_nama ?? '') . ' ' . ($item->nama_jasa_konstruksi ?? '') . ' ' . ($item->keterangan ?? '')) }}">
                                             <td class="knmp-dt-rownum">{{ $index + 1 }}</td>
                                             <td class="fw-semibold">{{ $item->knmp_nama ?? 'KNMP #' . $item->knmp_id }}</td>
@@ -560,21 +570,20 @@
                                                     <span class="fw-bold {{ $item->progres >= 100 ? 'text-success' : 'text-dark' }}" style="font-size:0.85rem;">
                                                         {{ number_format($item->progres, 2) }}%
                                                     </span>
+                                                    @php $dev = $item->deviasi ?? 0; @endphp
+                                                    @if($dev > 0)
+                                                        <span class="fw-semibold text-success" style="font-size: 0.7rem;">+{{ number_format($dev, 2, '.', ',') }}%</span>
+                                                    @elseif($dev < 0)
+                                                        <span class="fw-semibold text-danger" style="font-size: 0.7rem;">{{ number_format($dev, 2, '.', ',') }}%</span>
+                                                    @else
+                                                        <span class="fw-semibold text-muted" style="font-size: 0.7rem;">0.00%</span>
+                                                    @endif
                                                 </div>
                                                 <div class="progress" style="height:6px;background-color:#f1f3fa;border-radius:3px;">
                                                     <div class="progress-bar {{ $colorClass }}" role="progressbar"
                                                         style="width:{{ min($item->progres, 100) }}%;border-radius:3px;"
                                                         aria-valuenow="{{ $item->progres }}" aria-valuemin="0" aria-valuemax="100"></div>
                                                 </div>
-                                            </td>
-                                            <td class="text-end fw-bold">
-                                                @if(($item->delta ?? 0) > 0)
-                                                    <span class="text-success"><i class="mdi mdi-arrow-up"></i> +{{ number_format($item->delta, 2) }}%</span>
-                                                @elseif(($item->delta ?? 0) < 0)
-                                                    <span class="text-danger"><i class="mdi mdi-arrow-down"></i> {{ number_format($item->delta, 2) }}%</span>
-                                                @else
-                                                    <span class="text-muted"><i class="mdi mdi-minus"></i> 0.00%</span>
-                                                @endif
                                             </td>
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-between gap-1">
@@ -587,13 +596,6 @@
                                                             <span class="text-muted" style="font-size:0.8rem;">-</span>
                                                         @endif
                                                     </div>
-                                                    <button type="button" class="btn btn-sm btn-outline-primary btn-edit-keterangan flex-shrink-0"
-                                                        data-id="{{ $item->id }}"
-                                                        data-knmp="{{ $item->knmp_nama ?? 'KNMP #' . $item->knmp_id }}"
-                                                        data-keterangan="{{ $item->keterangan }}"
-                                                        style="padding:2px 6px;font-size:0.75rem;">
-                                                        <i class="mdi mdi-pencil"></i>
-                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -613,9 +615,7 @@
                         <div class="text-center py-5 text-muted">
                             <i class="mdi mdi-database-off fs-1"></i>
                             <p class="mt-2">Belum ada data progres nasional.</p>
-                            <button type="button" class="btn btn-sm btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#importProgresNasionalModal">
-                                Import Data Sekarang
-                            </button>
+
                         </div>
                     @endif
                 </div>
@@ -645,7 +645,7 @@
                             <select name="tahap" class="form-select" style="border-radius: 8px;">
                                 <option value="all" {{ ($tahap ?? 'all') == 'all' ? 'selected' : '' }}>Semua Tahap</option>
                                 @foreach($availableTahap as $t)
-                                    <option value="{{ $t }}" {{ ($tahap ?? '') == (string)$t ? 'selected' : '' }}>Tahap {{ $t }}</option>
+                                    <option value="{{ $t->id }}" {{ ($tahap ?? '') == (string)$t->id ? 'selected' : '' }}>{{ $t->nama_tahap }} - {{ $t->tahun }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -671,41 +671,28 @@
     </div>
 
     <!-- Modal Import -->
-    <div class="modal fade" id="importProgresNasionalModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="{{ route('dashboard.import_progres_nasional') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title">Import Progres Nasional</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">File Excel (.xlsx)</label>
-                            <input type="file" name="file" class="form-control" accept=".xlsx, .xls, .csv" required>
-                            <small class="text-muted d-block mt-1">Format: knmp_id, nama knmp, tanggal_progres, progres, keterangan</small>
-                            <small class="text-muted">Isi tanggal pada file excel untuk setiap data. Data akan diperbarui berdasarkan tanggal progresnya.</small>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Import</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+
 
     {{-- MAP SECTION --}}
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="header-title mb-0">
-                        <i class="mdi mdi-map-marker-multiple me-2 text-danger"></i>Sebaran Lokasi KNMP
-                    </h5>
-                    <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size: 0.7rem;">{{ $totalKnmp }} Lokasi</span>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="header-title mb-0">
+                            <i class="mdi mdi-map-marker-multiple me-2 text-danger"></i>Sebaran Lokasi KNMP
+                        </h5>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <div class="d-flex align-items-center gap-1">
+                            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#10b981;"></span>
+                            <span style="font-size:0.75rem;color:#64748b;">Selesai (100%)</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-1">
+                            <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#ef4444;"></span>
+                            <span style="font-size:0.75rem;color:#64748b;">Belum Selesai</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body p-0">
                     <div style="position: relative;">
@@ -884,7 +871,7 @@
             function getCellVal(row, col) {
                 // Use data attributes for numeric cols
                 if (col === 3) return parseFloat(row.dataset.progres || 0);
-                if (col === 4) return parseFloat(row.dataset.delta || 0);
+                if (col === 4) return parseFloat(row.dataset.deviasi || 0);
                 const cells = row.querySelectorAll('td');
                 return cells[col] ? (cells[col].textContent || '').trim().toLowerCase() : '';
             }
@@ -992,9 +979,6 @@
         function filterByDate(date) {
             const url = new URL(window.location.href);
             if (date) url.searchParams.set('progres_date', date);
-            
-            const deltaPeriod = document.getElementById('deltaPeriodFilter')?.value || 'latest';
-            url.searchParams.set('delta_period', deltaPeriod);
 
             // Preserve existing filters
             if (!url.searchParams.has('period')) url.searchParams.set('period', '{{ $period ?? "all" }}');

@@ -2,9 +2,22 @@
     'title'       => 'Tahap Survey',
     'stageName'   => 'Survey',
     'icon'        => 'mdi-clipboard-text-outline',
+    'lucideIcon'  => 'search',
     'color'       => '#06b6d4',
     'colorEnd'    => '#0891b2',
     'colorShadow' => 'rgba(6, 182, 212, 0.3)',
     'showRoute'   => 'survey_tahap.show',
+    'importRoute' => route('survey.import'),
     'knmps'       => $knmps,
+    'templateSection' => 'survey-knmp',
+    'columns'     => [
+        ['label' => 'Lokasi KNMP', 'key' => 'nama', 'type' => 'lokasi'],
+        ['label' => 'Status', 'key' => 'status', 'type' => 'badge_status'],
+        ['label' => 'Jml Responden', 'key' => 'informasi_responden_count', 'type' => 'raw',
+         'render' => function($k) { return '<span class="badge bg-info">'.$k->informasi_responden_count.'</span>'; }],
+    ],
+    'extraActions' => function($knmp) {
+        $url = route('forms.index', $knmp->nama);
+        return '<a href="'.$url.'" class="btn btn-action btn-action-outline-info" title="Lihat Responden"><i data-lucide="users"></i></a>';
+    },
 ])

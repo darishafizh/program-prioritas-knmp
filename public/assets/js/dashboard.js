@@ -567,7 +567,8 @@ function initDashboardMap() {
         });
     }
 
-    var defaultIcon = createMarkerIcon('#dc2626');
+    var greenIcon = createMarkerIcon('#10b981');
+    var redIcon = createMarkerIcon('#ef4444');
     var activeIcon = createMarkerIcon('#2563eb');
     var activeMarker = null;
 
@@ -665,13 +666,20 @@ function initDashboardMap() {
     // Add markers
     desaKNMP.forEach(function (item) {
         if (item.latitude !== null && item.longitude !== null) {
-            var marker = L.marker([item.latitude, item.longitude], { icon: defaultIcon });
+            var isSelesai = false;
+            if (item.latest_progres_nasional) {
+                isSelesai = Number(item.latest_progres_nasional.progres) >= 100;
+            }
+            var itemIcon = isSelesai ? greenIcon : redIcon;
+            
+            var marker = L.marker([item.latitude, item.longitude], { icon: itemIcon });
+            marker.originalIcon = itemIcon;
             marker.addTo(map);
 
             marker.on('click', function () {
                 // Reset previous active marker
                 if (activeMarker) {
-                    activeMarker.setIcon(defaultIcon);
+                    activeMarker.setIcon(activeMarker.originalIcon);
                 }
                 activeMarker = marker;
                 marker.setIcon(activeIcon);
@@ -683,7 +691,7 @@ function initDashboardMap() {
     // Click on map background → hide info card
     map.on('click', function (e) {
         if (activeMarker) {
-            activeMarker.setIcon(defaultIcon);
+            activeMarker.setIcon(activeMarker.originalIcon);
             activeMarker = null;
         }
         if (infoCard) infoCard.style.display = 'none';

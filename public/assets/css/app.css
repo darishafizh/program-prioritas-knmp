@@ -319,6 +319,8 @@ p { margin-bottom: var(--space-4); color: var(--muted); }
     gap: 0.75rem;
 }
 
+
+
 .widget-icon {
     width: 40px;
     height: 40px;
@@ -514,6 +516,25 @@ p { margin-bottom: var(--space-4); color: var(--muted); }
     height: 32px;
 }
 
+/* ==================== Stage Action Buttons (Consistent Size) ==================== */
+.btn-stage-action {
+    min-width: 0;
+    padding: 6px 14px !important;
+    font-size: 0.65rem !important;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    height: 32px;
+    line-height: 1;
+}
+
+.btn-stage-action svg {
+    width: 14px;
+    height: 14px;
+}
+
 /* ==================== Forms — Compact ==================== */
 .form-label {
     display: block;
@@ -636,6 +657,100 @@ p { margin-bottom: var(--space-4); color: var(--muted); }
 .input-group-sm .input-group-text {
     padding: 10px 14px;
     font-size: var(--font-size-sm);
+}
+
+/* ==================== Import Modal Dropzone ==================== */
+.import-dropzone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    background: var(--lighter);
+}
+
+.import-dropzone:hover,
+.import-dropzone.dragover {
+    border-color: var(--success);
+    background: rgba(16, 185, 129, 0.04);
+}
+
+.import-dropzone-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.75rem;
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+.import-dropzone-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 0.15rem;
+}
+
+.import-dropzone-sub {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin: 0;
+}
+
+.import-file-preview {
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    background: var(--lighter);
+}
+
+.import-file-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(16, 185, 129, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--success);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.import-file-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.import-file-size {
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin: 0;
+}
+
+.import-file-remove {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    transition: all var(--transition-fast);
+}
+
+.import-file-remove:hover {
+    background: var(--danger-light);
+    color: var(--danger);
 }
 
 /* ==================== Tables — Compact ==================== */
@@ -1332,6 +1447,12 @@ p { margin-bottom: var(--space-4); color: var(--muted); }
     font-size: 0.9rem;
     transition: all 0.2s ease;
     border: 1.5px solid transparent;
+}
+
+.btn-action i, .btn-action svg {
+    font-size: 14px !important;
+    width: 14px !important;
+    height: 14px !important;
 }
 
 /* Button 1: Fill Primary */

@@ -254,7 +254,7 @@ Route::middleware('auth')->group(function () {
     // KNMP TAHAP ROUTES
     // ==============================
     Route::group(['prefix' => 'knmp-tahap'], function () {
-
+        Route::get('/master', [KnmpTahapController::class, 'masterIndex'])->name('knmp.master');
         // --- Usulan ---
         Route::get('/usulan', [KnmpTahapController::class, 'usulanIndex'])->name('usulan.index');
         Route::get('/usulan/{knmp}', [KnmpTahapController::class, 'usulanShow'])->name('usulan.show');

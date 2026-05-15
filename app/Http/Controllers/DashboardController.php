@@ -55,9 +55,13 @@ class DashboardController extends Controller
             $greetingIcon = 'mdi-weather-night';
         }
 
-        // Filter tahap
+        // Filter tahap (sekarang menggunakan batch_id)
         $tahap = $request->get('tahap', 'all');
-        $tahapLabel = $tahap !== 'all' ? 'Tahap ' . $tahap : 'Semua Tahap';
+        $tahapLabel = 'Semua Tahap';
+        if ($tahap !== 'all') {
+            $batchObj = \App\Models\Batch::find($tahap);
+            $tahapLabel = $batchObj ? $batchObj->nama_tahap : 'Tahap ' . $tahap;
+        }
 
         $desa_knmp_query = Knmp::with([
             'profileKnmp',
@@ -67,7 +71,7 @@ class DashboardController extends Controller
             ->withCount('informasiResponden');
 
         if ($tahap !== 'all') {
-            $desa_knmp_query->where('tahap_saat_ini', $tahap);
+            $desa_knmp_query->where('batch_id', $tahap);
         }
 
         $desa_knmp = $desa_knmp_query->get();
@@ -162,11 +166,22 @@ class DashboardController extends Controller
         $trendAverages = $trendDataQuery->pluck('avg_progres')->map(fn($val) => round($val, 2))->toArray();
 
         // Query progres data up to selected date (OPTIMIZED)
-        $latestIdsQuery = ProgresHarian::whereIn('knmp_id', $knmpIds);
-        if ($selectedProgresDate) {
-            $latestIdsQuery->where('tanggal', '<=', $selectedProgresDate);
-        }
-        $latestIds = $latestIdsQuery->selectRaw('MAX(id) as id')->groupBy('knmp_id')->pluck('id');
+        $latestIds = DB::table('progres_harian as ph')
+            ->selectRaw('MAX(ph.id) as id')
+            ->joinSub(function ($query) use ($knmpIds, $selectedProgresDate) {
+                $query->from('progres_harian')
+                    ->select('knmp_id', DB::raw('MAX(tanggal) as max_tanggal'))
+                    ->whereIn('knmp_id', $knmpIds);
+                if ($selectedProgresDate) {
+                    $query->where('tanggal', '<=', $selectedProgresDate);
+                }
+                $query->groupBy('knmp_id');
+            }, 'max_dates', function ($join) {
+                $join->on('ph.knmp_id', '=', 'max_dates.knmp_id')
+                     ->on('ph.tanggal', '=', 'max_dates.max_tanggal');
+            })
+            ->groupBy('ph.knmp_id', 'ph.tanggal')
+            ->pluck('id');
 
         $progresNasional = DB::table('progres_harian as ph')
             ->join('knmp as k', 'ph.knmp_id', '=', 'k.id')
@@ -181,6 +196,7 @@ class DashboardController extends Controller
                 'k.provinsi',
                 'k.kecamatan',
                 'k.tahap_saat_ini',
+                'k.batch_id',
                 'b.nama_tahap as batch_nama',
                 'kk.tanggal_mulai',
                 'pj.nama as nama_jasa_konstruksi'
@@ -193,10 +209,19 @@ class DashboardController extends Controller
         // Fetch previous progress data to calculate delta (OPTIMIZED)
         $previousProgresData = [];
         if ($previousDate) {
-            $prevIds = ProgresHarian::whereIn('knmp_id', $knmpIds)
-                ->where('tanggal', '<=', $previousDate)
-                ->selectRaw('MAX(id) as id')
-                ->groupBy('knmp_id')
+            $prevIds = DB::table('progres_harian as ph')
+                ->selectRaw('MAX(ph.id) as id')
+                ->joinSub(function ($query) use ($knmpIds, $previousDate) {
+                    $query->from('progres_harian')
+                        ->select('knmp_id', DB::raw('MAX(tanggal) as max_tanggal'))
+                        ->whereIn('knmp_id', $knmpIds)
+                        ->where('tanggal', '<=', $previousDate)
+                        ->groupBy('knmp_id');
+                }, 'max_dates', function ($join) {
+                    $join->on('ph.knmp_id', '=', 'max_dates.knmp_id')
+                         ->on('ph.tanggal', '=', 'max_dates.max_tanggal');
+                })
+                ->groupBy('ph.knmp_id', 'ph.tanggal')
                 ->pluck('id');
             
             $previousProgresData = ProgresHarian::whereIn('id', $prevIds)
@@ -246,7 +271,8 @@ class DashboardController extends Controller
                 ->get()
                 ->groupBy('knmp_konstruksi_id');
 
-            $progresDateObj = $selectedProgresDate ? \Carbon\Carbon::parse($selectedProgresDate) : \Carbon\Carbon::now();
+            // Tanggal acuan: gunakan tanggal saat ini untuk menentukan minggu keberapa
+            $todayDate = $selectedProgresDate ? \Carbon\Carbon::parse($selectedProgresDate) : \Carbon\Carbon::now();
 
             foreach ($progresNasional as $item) {
                 $kId = $item->knmp_id;
@@ -264,11 +290,11 @@ class DashboardController extends Controller
                 if (!$startDate || $timelines->isEmpty()) {
                     $rencanaRaw = 0;
                 } else {
-                    // Hitung minggu keberapa selectedProgresDate berada
-                    $diffDays = $startDate->diffInDays($progresDateObj, false);
-                    $currentWeek = $diffDays < 0 ? 1 : (int) floor($diffDays / 7) + 1;
+                    // Hitung minggu saat ini: dari tanggal_mulai ke tanggal hari ini
+                    $diffDays = $startDate->diffInDays($todayDate, false);
+                    $currentWeek = max(1, (int) floor($diffDays / 7) + 1);
                     
-                    // Cari rencana untuk minggu tersebut
+                    // Cari bobot rencana kumulatif untuk minggu tersebut
                     $tlRencana = $timelines->where('periode_mingguan', $currentWeek)->first();
                     if (!$tlRencana) {
                         // Jika sudah lewat total minggu, gunakan minggu terakhir
@@ -277,13 +303,15 @@ class DashboardController extends Controller
                     $rencanaRaw = $tlRencana ? $tlRencana->bobot_rencana_kumulatif : 0;
                 }
                 
-                // Update item rencana_kumulatif agar sesuai dengan minggu yang dihitung
+                // Simpan data rencana pada item
                 $item->rencana_kumulatif = $rencanaRaw;
 
+                // Normalisasi jika data rencana menggunakan skala permil (max > 100)
                 $maxPlan = $timelines->max('bobot_rencana_kumulatif') ?? 100;
                 $scale = $maxPlan > 100 ? $maxPlan / 100 : 1;
-                $rencanaPersen = (float)$rencanaRaw / $scale;
+                $rencanaPersen = round((float)$rencanaRaw / $scale, 2);
                 
+                // Deviasi = progres terbaru - rencana di minggu saat ini
                 $deviasiData[$kId] = round($progresAktual - $rencanaPersen, 2);
             }
         }
@@ -297,20 +325,26 @@ class DashboardController extends Controller
             return (float)$item->progres < 100;
         });
 
-        // 2. Performa 10 KNMP tertinggi deviasinya
+        // 2. Performa 10 KNMP tertinggi deviasinya (deviasi >= 0)
         $top10Knmp = $activeProgresNasional
+            ->filter(function($item) {
+                return (float)$item->deviasi >= 0;
+            })
             ->sortByDesc('deviasi')
             ->take(10)
             ->values();
 
-        // 3. Performa 10 KNMP terendah deviasinya
+        // 3. Performa 10 KNMP terendah deviasinya (deviasi < 0)
         $bottom10Knmp = $activeProgresNasional
+            ->filter(function($item) {
+                return (float)$item->deviasi < 0;
+            })
             ->sortBy('deviasi')
             ->take(10)
             ->values();
 
         // Cek status penyelesaian per tahap (apakah semua 100%)
-        $tahapSelesaiStatus = $progresNasional->groupBy('tahap_saat_ini')->map(function ($items) {
+        $tahapSelesaiStatus = $progresNasional->groupBy('batch_id')->map(function ($items) {
             return $items->count() > 0 && $items->every(function ($item) {
                 return (float)$item->progres >= 100;
             });
@@ -371,7 +405,7 @@ class DashboardController extends Controller
         $totalTenagaKerja = DB::table('progres_knmp')->whereIn('knmp_id', $knmpIds)->sum('tk_total') ?? 0;
 
         // Available tahap values for filter
-        $availableTahap = Knmp::whereNotNull('tahap_saat_ini')->distinct()->orderBy('tahap_saat_ini')->pluck('tahap_saat_ini')->toArray();
+        $availableTahap = \App\Models\Batch::orderBy('id')->get();
 
 
         return view('dashboard.index', compact(
@@ -431,7 +465,7 @@ class DashboardController extends Controller
         ])->withCount('informasiResponden');
 
         if ($tahap !== 'all') {
-            $desa_knmp_query->where('tahap_saat_ini', $tahap);
+            $desa_knmp_query->where('batch_id', $tahap);
         }
 
         $desa_knmp = $desa_knmp_query->get();
@@ -477,11 +511,22 @@ class DashboardController extends Controller
                 ->whereNotNull('tanggal')->orderBy('tanggal', 'desc')->value('tanggal');
         }
         // Mendapatkan ID terbaru per KNMP
-        $latestIdsQuery = DB::table('progres_harian')->whereIn('knmp_id', $knmpIds);
-        if ($selectedProgresDate) {
-            $latestIdsQuery->where('tanggal', '<=', $selectedProgresDate);
-        }
-        $latestIds = $latestIdsQuery->selectRaw('MAX(id) as id')->groupBy('knmp_id')->pluck('id');
+        $latestIds = DB::table('progres_harian as ph')
+            ->selectRaw('MAX(ph.id) as id')
+            ->joinSub(function ($query) use ($knmpIds, $selectedProgresDate) {
+                $query->from('progres_harian')
+                    ->select('knmp_id', DB::raw('MAX(tanggal) as max_tanggal'))
+                    ->whereIn('knmp_id', $knmpIds);
+                if ($selectedProgresDate) {
+                    $query->where('tanggal', '<=', $selectedProgresDate);
+                }
+                $query->groupBy('knmp_id');
+            }, 'max_dates', function ($join) {
+                $join->on('ph.knmp_id', '=', 'max_dates.knmp_id')
+                     ->on('ph.tanggal', '=', 'max_dates.max_tanggal');
+            })
+            ->groupBy('ph.knmp_id', 'ph.tanggal')
+            ->pluck('id');
 
         $progresNasional = DB::table('progres_harian as ph')
             ->join('knmp as k', 'ph.knmp_id', '=', 'k.id')
@@ -496,6 +541,7 @@ class DashboardController extends Controller
                 'k.provinsi',
                 'k.kecamatan',
                 'k.tahap_saat_ini',
+                'k.batch_id',
                 'b.nama_tahap as batch_nama',
                 'kk.tanggal_mulai',
                 'pj.nama as nama_jasa_konstruksi'
@@ -519,10 +565,19 @@ class DashboardController extends Controller
 
         $previousProgresData = [];
         if ($previousDate) {
-            $prevIds = ProgresHarian::whereIn('knmp_id', $knmpIds)
-                ->where('tanggal', '<=', $previousDate)
-                ->selectRaw('MAX(id) as id')
-                ->groupBy('knmp_id')
+            $prevIds = DB::table('progres_harian as ph')
+                ->selectRaw('MAX(ph.id) as id')
+                ->joinSub(function ($query) use ($knmpIds, $previousDate) {
+                    $query->from('progres_harian')
+                        ->select('knmp_id', DB::raw('MAX(tanggal) as max_tanggal'))
+                        ->whereIn('knmp_id', $knmpIds)
+                        ->where('tanggal', '<=', $previousDate)
+                        ->groupBy('knmp_id');
+                }, 'max_dates', function ($join) {
+                    $join->on('ph.knmp_id', '=', 'max_dates.knmp_id')
+                         ->on('ph.tanggal', '=', 'max_dates.max_tanggal');
+                })
+                ->groupBy('ph.knmp_id', 'ph.tanggal')
                 ->pluck('id');
             
             $previousProgresData = ProgresHarian::whereIn('id', $prevIds)
@@ -596,7 +651,7 @@ class DashboardController extends Controller
         }
 
         // Available tahap values for filter
-        $availableTahap = Knmp::whereNotNull('tahap_saat_ini')->distinct()->orderBy('tahap_saat_ini')->pluck('tahap_saat_ini')->toArray();
+        $availableTahap = \App\Models\Batch::orderBy('id')->get();
 
         // Ketersediaan Infrastruktur
         $infraColumns = [
@@ -681,7 +736,7 @@ class DashboardController extends Controller
         $desa_knmp_query = Knmp::query();
 
         if ($tahap !== 'all') {
-            $desa_knmp_query->where('tahap_saat_ini', $tahap);
+            $desa_knmp_query->where('batch_id', $tahap);
         }
 
         $knmpIds = $desa_knmp_query->pluck('id')->toArray();
@@ -692,11 +747,22 @@ class DashboardController extends Controller
                 ->whereNotNull('tanggal')->orderBy('tanggal', 'desc')->value('tanggal');
         }
 
-        $latestIdsQuery = DB::table('progres_harian')->whereIn('knmp_id', $knmpIds);
-        if ($selectedProgresDate) {
-            $latestIdsQuery->where('tanggal', '<=', $selectedProgresDate);
-        }
-        $latestIds = $latestIdsQuery->selectRaw('MAX(id) as id')->groupBy('knmp_id')->pluck('id');
+        $latestIds = DB::table('progres_harian as ph')
+            ->selectRaw('MAX(ph.id) as id')
+            ->joinSub(function ($query) use ($knmpIds, $selectedProgresDate) {
+                $query->from('progres_harian')
+                    ->select('knmp_id', DB::raw('MAX(tanggal) as max_tanggal'))
+                    ->whereIn('knmp_id', $knmpIds);
+                if ($selectedProgresDate) {
+                    $query->where('tanggal', '<=', $selectedProgresDate);
+                }
+                $query->groupBy('knmp_id');
+            }, 'max_dates', function ($join) {
+                $join->on('ph.knmp_id', '=', 'max_dates.knmp_id')
+                     ->on('ph.tanggal', '=', 'max_dates.max_tanggal');
+            })
+            ->groupBy('ph.knmp_id', 'ph.tanggal')
+            ->pluck('id');
 
         // Mengambil data utama menggunakan JOIN (5 Table: knmp, progres_harian, batch, tahap_konstruksi, penyedia_jasa_konstruksi)
         $desa_knmp_data = DB::table('progres_harian as ph')
@@ -712,6 +778,7 @@ class DashboardController extends Controller
                 'k.provinsi',
                 'k.kecamatan',
                 'k.tahap_saat_ini',
+                'k.batch_id',
                 'b.nama_tahap as batch_nama',
                 'kk.tanggal_mulai',
                 'pj.nama as nama_jasa_konstruksi'
@@ -735,7 +802,8 @@ class DashboardController extends Controller
                 ->get()
                 ->groupBy('knmp_konstruksi_id');
 
-            $progresDateObj = $selectedProgresDate ? \Carbon\Carbon::parse($selectedProgresDate) : \Carbon\Carbon::now();
+            // Tanggal acuan: gunakan tanggal saat ini untuk menentukan minggu keberapa
+            $todayDate = $selectedProgresDate ? \Carbon\Carbon::parse($selectedProgresDate) : \Carbon\Carbon::now();
 
             foreach ($desa_knmp_data as $item) {
                 $kId = $item->knmp_id;
@@ -753,8 +821,11 @@ class DashboardController extends Controller
                 if (!$startDate || $timelines->isEmpty()) {
                     $rencanaRaw = 0;
                 } else {
-                    $diffDays = $startDate->diffInDays($progresDateObj, false);
-                    $currentWeek = $diffDays < 0 ? 1 : (int) floor($diffDays / 7) + 1;
+                    // Hitung minggu saat ini: dari tanggal_mulai ke tanggal hari ini
+                    $diffDays = $startDate->diffInDays($todayDate, false);
+                    $currentWeek = max(1, (int) floor($diffDays / 7) + 1);
+
+                    // Cari bobot rencana kumulatif untuk minggu tersebut
                     $tlRencana = $timelines->where('periode_mingguan', $currentWeek)->first();
                     if (!$tlRencana) {
                         $tlRencana = $timelines->sortByDesc('periode_mingguan')->first();
@@ -764,10 +835,12 @@ class DashboardController extends Controller
                 
                 $item->rencana_kumulatif = $rencanaRaw;
 
+                // Normalisasi jika data rencana menggunakan skala permil (max > 100)
                 $maxPlan = $timelines->max('bobot_rencana_kumulatif') ?? 100;
                 $scale = $maxPlan > 100 ? $maxPlan / 100 : 1;
-                $rencanaPersen = (float)$rencanaRaw / $scale;
+                $rencanaPersen = round((float)$rencanaRaw / $scale, 2);
                 
+                // Deviasi = progres terbaru - rencana di minggu saat ini
                 $deviasiData[$kId] = round($progresAktual - $rencanaPersen, 2);
             }
         }
@@ -808,7 +881,7 @@ class DashboardController extends Controller
             }
  
             if ($deviasi !== null) {
-                $deviasi_formatted = ($deviasi >= 0 ? '+ ' : '- ') . number_format(abs($deviasi), 2, ',', '.') . '%';
+                $deviasi_formatted = ($deviasi >= 0 ? '+' : '-') . number_format(abs($deviasi), 2, '.', ',') . '%';
                 $deviasi_color = $deviasi >= 0 ? '#10b981' : '#ef4444';
             }
  

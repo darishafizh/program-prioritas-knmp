@@ -32,6 +32,16 @@ class KnmpTahapController extends Controller
     // =========================================================
 
     /**
+     * Halaman Master KNMP (Seluruh Data tanpa filter tahap).
+     */
+    public function masterIndex()
+    {
+        $knmps = Knmp::all();
+        $availableTahap = \App\Models\Batch::orderBy('id')->get();
+        return view('knmp.tahap.master_index', compact('knmps', 'availableTahap'));
+    }
+
+    /**
      * Halaman daftar KNMP pada tahap Usulan.
      */
     public function usulanIndex()
@@ -91,7 +101,9 @@ class KnmpTahapController extends Controller
      */
     public function surveyTahapIndex()
     {
-        $knmps = Knmp::where('tahap_saat_ini', 'survey')->get();
+        $knmps = Knmp::where('tahap_saat_ini', 'survey')
+            ->withCount('informasiResponden')
+            ->get();
         return view('knmp.tahap.survey_index', compact('knmps'));
     }
 
@@ -209,9 +221,12 @@ class KnmpTahapController extends Controller
     public function konstruksiIndex()
     {
         $knmps = Knmp::where('tahap_saat_ini', 'konstruksi')
-            ->withCount(['timeline', 'progresHarian'])
+            ->with(['konstruksiKnmp.penyediaJasa', 'latestProgresNasional'])
             ->get();
-        return view('knmp.tahap.konstruksi_index', compact('knmps'));
+            
+        $availableTahap = \App\Models\Batch::orderBy('id')->get();
+        
+        return view('knmp.tahap.konstruksi_index', compact('knmps', 'availableTahap'));
     }
 
     /**

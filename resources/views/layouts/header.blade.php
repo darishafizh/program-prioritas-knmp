@@ -37,6 +37,12 @@
                         </a>
                         <ul class="header-dropdown-menu">
                             <li>
+                                <a href="{{ route('knmp.master') }}" class="{{ request()->routeIs('knmp.master') ? 'text-primary fw-bold' : '' }}">
+                                    <i class="mdi mdi-database"></i> Master KNMP
+                                </a>
+                            </li>
+                            <li class="dropdown-divider"></li>
+                            <li>
                                 <a href="{{ route('usulan.index') }}" class="{{ request()->routeIs('usulan.*') ? 'text-primary fw-bold' : '' }}">
                                     <i class="mdi mdi-clipboard-outline"></i> Usulan
                                 </a>
