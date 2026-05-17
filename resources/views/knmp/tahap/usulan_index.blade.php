@@ -1,4 +1,4 @@
-@extends('knmp.tahap._stage_index', [
+@include('knmp.tahap._stage_index', [
     'title'       => 'Tahap Usulan',
     'stageName'   => 'Usulan',
     'icon'        => 'mdi-clipboard-outline',
@@ -15,3 +15,4 @@
         ['label' => 'Status', 'key' => 'status', 'type' => 'badge_status'],
     ]
 ])
+

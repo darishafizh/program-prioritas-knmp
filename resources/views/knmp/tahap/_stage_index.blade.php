@@ -37,7 +37,7 @@
                         <i data-lucide="{{ $lucideIcon ?? 'clipboard-list' }}" style="width: 18px; height: 18px;"></i>
                     </div>
                 </div>
-                <h3 class="mb-1" style="font-size: 2rem; font-weight: 800; color: #0f172a; line-height: 1;">{{ $knmps->count() }}</h3>
+                <h3 class="mb-1" style="font-size: 2rem; font-weight: 700; color: #1e293b; line-height: 1;">{{ $knmps->count() }}</h3>
                 <p class="mb-0" style="color: #64748b; font-size: 0.8rem;">KNMP pada tahap ini</p>
             </div>
         </div>
@@ -53,7 +53,11 @@
                         <i data-lucide="anchor" style="width: 18px; height: 18px;"></i>
                     </div>
                 </div>
-                <h3 class="mb-1" style="font-size: 2rem; font-weight: 800; color: #0f172a; line-height: 1;">{{ $knmps->filter(function($k) { return stripos($k->status ?? '', 'Hub') !== false; })->count() }}</h3>
+                <h3 class="mb-1" style="font-size: 2rem; font-weight: 700; color: #1e293b; line-height: 1;">
+                    {{ $knmps->filter(function($k) { 
+                        return stripos($k->status ?? '', 'Hub') !== false; 
+                    })->count() }}
+                </h3>
                 <p class="mb-0" style="color: #64748b; font-size: 0.8rem;">Berstatus Hub</p>
             </div>
         </div>
@@ -69,7 +73,12 @@
                         <i data-lucide="life-buoy" style="width: 18px; height: 18px;"></i>
                     </div>
                 </div>
-                <h3 class="mb-1" style="font-size: 2rem; font-weight: 800; color: #0f172a; line-height: 1;">{{ $knmps->filter(function($k) { return stripos($k->status ?? '', 'Penyangga') !== false; })->count() }}</h3>
+                <h3 class="mb-1" style="font-size: 2rem; font-weight: 700; color: #1e293b; line-height: 1;">
+                    {{ $knmps->filter(function($k) { 
+                        $status = $k->status ?? (in_array($k->batch_id, [1, 2]) ? 'Penyangga' : '');
+                        return stripos($status, 'Penyangga') !== false; 
+                    })->count() }}
+                </h3>
                 <p class="mb-0" style="color: #64748b; font-size: 0.8rem;">Berstatus Penyangga</p>
             </div>
         </div>
@@ -88,22 +97,25 @@
                     <h4 class="header-title mb-0">Daftar KNMP — {{ $stageName ?? $title }}</h4>
                     @if(Auth::user()->isSuperAdmin())
                     <div class="d-flex align-items-center gap-1">
-                        {{-- Standardized Template Button --}}
-                        <button type="button" class="btn btn-secondary btn-sm d-flex align-items-center justify-content-center gap-1"
-                            data-bs-toggle="modal" data-bs-target="#templateStageModal" style="font-weight:500; height:32px; padding:0 24px;">
-                            <i data-lucide="download" style="width: 16px; height: 16px;"></i>&nbsp;Template
-                        </button>
+                        @if(!($hideStageActions ?? false))
+                            {{-- Standardized Template Button --}}
+                            <button type="button" class="btn btn-secondary btn-sm d-flex align-items-center justify-content-center gap-1"
+                                data-bs-toggle="modal" data-bs-target="#templateStageModal" style="font-weight:500; height:32px; padding:0 24px;">
+                                <i data-lucide="download" style="width: 16px; height: 16px;"></i>&nbsp;Template
+                            </button>
 
-                        {{-- Standardized Import Button --}}
-                        <button type="button" class="btn btn-success btn-sm d-flex align-items-center justify-content-center gap-1"
-                            data-bs-toggle="modal" data-bs-target="#importStageModal" style="font-weight:500; height:32px; padding:0 16px;">
-                            <i data-lucide="upload" style="width: 16px; height: 16px;"></i> Import
-                        </button>
+                            {{-- Standardized Import Button --}}
+                            <button type="button" class="btn btn-success btn-sm d-flex align-items-center justify-content-center gap-1"
+                                data-bs-toggle="modal" data-bs-target="#importStageModal" style="font-weight:500; height:32px; padding:0 16px;">
+                                <i data-lucide="upload" style="width: 16px; height: 16px;"></i> Import
+                            </button>
 
-                        <button type="button" class="btn btn-primary btn-sm d-flex align-items-center justify-content-center gap-1" 
-                            data-bs-toggle="modal" data-bs-target="#batchMoveModal" style="font-weight:500; height:32px; padding:0 16px;">
-                            <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i> Pindah Tahap
-                        </button>
+                            <button type="button" class="btn btn-primary btn-sm d-flex align-items-center justify-content-center gap-1" 
+                                data-bs-toggle="modal" data-bs-target="#batchMoveModal" style="font-weight:500; height:32px; padding:0 16px;">
+                                <i data-lucide="arrow-left-right" style="width: 16px; height: 16px;"></i> Pindah Tahap
+                            </button>
+                        @endif
+
                         
                         <form action="{{ route('knmp_tahap.batch_destroy') }}" method="POST" id="batchDeleteForm" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data KNMP yang dipilih?')">
                             @csrf

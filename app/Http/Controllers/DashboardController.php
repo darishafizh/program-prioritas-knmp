@@ -77,65 +77,104 @@ class DashboardController extends Controller
         $desa_knmp = $desa_knmp_query->get();
         $knmpIds = $desa_knmp->pluck('id')->toArray();
 
+        // --- GET AVAILABLE DATES EARLY ---
+        $availableProgressDates = ProgresHarian::join('konstruksi_knmp as kk', 'progres_harian.knmp_konstruksi_id', '=', 'kk.id')
+            ->whereIn('kk.knmp_id', $knmpIds)
+            ->selectRaw('DISTINCT progres_harian.tanggal')
+            ->whereNotNull('progres_harian.tanggal')
+            ->orderBy('progres_harian.tanggal', 'desc')
+            ->pluck('tanggal')
+            ->toArray();
+
+        $selectedProgresDate = $request->get('progres_date');
+        if (!$selectedProgresDate && count($availableProgressDates) > 0) {
+            $selectedProgresDate = $availableProgressDates[0];
+        }
+
         // 1. Hitung responden yang telah mengisi survey
         $surveyQuery = InformasiResponden::query()
             ->whereIn('knmp_id', $knmpIds)
-            ->whereExists(function ($query) {
+            ->whereExists(function ($query) use ($selectedProgresDate) {
                 $query->select(DB::raw(1))
                     ->from('tingkat_kebahagiaan_nelayan')
                     ->whereColumn('tingkat_kebahagiaan_nelayan.responden_id', 'informasi_responden.id');
+                if ($selectedProgresDate) {
+                    $query->whereDate('tingkat_kebahagiaan_nelayan.created_at', '<=', $selectedProgresDate);
+                }
             });
+
         if ($startDate) {
             $surveyQuery->where('created_at', '>=', $startDate);
         }
+        if ($selectedProgresDate) {
+            $surveyQuery->whereDate('tanggal_wawancara', '<=', $selectedProgresDate);
+        }
         $totalSurveyTerisi = $surveyQuery->distinct('id')->count();
 
-        // 2. Hitung Tingkat Kelengkapan Data (Persentase form yang diisi)
-        // Setiap responden seharusnya mengisi 10 form (A-J)
-        $totalResponden = InformasiResponden::whereIn('knmp_id', $knmpIds)->count();
-        $responden_dengan_data = InformasiResponden::whereIn('knmp_id', $knmpIds)->where(function ($query) {
-            $query->whereHas('tingkatKebahagiaan')
-                ->orWhereHas('tanggapanMasyarakat')
-                ->orWhereHas('informasiUsaha')
-                ->orWhereHas('informasiPemasaran')
-                ->orWhereHas('pendapatanRt')
-                ->orWhereHas('sosialKelembagaan');
-        })->count();
+        // 2. Hitung Tingkat Kelengkapan Data
+        $totalRespondenQuery = InformasiResponden::whereIn('knmp_id', $knmpIds);
+        if ($selectedProgresDate) {
+            $totalRespondenQuery->whereDate('tanggal_wawancara', '<=', $selectedProgresDate);
+        }
+        $totalResponden = $totalRespondenQuery->count();
+
+        $responden_dengan_data_query = InformasiResponden::whereIn('knmp_id', $knmpIds)->where(function ($query) use ($selectedProgresDate) {
+            $query->whereHas('tingkatKebahagiaan', function($q) use ($selectedProgresDate) {
+                if ($selectedProgresDate) $q->whereDate('created_at', '<=', $selectedProgresDate);
+            })
+            ->orWhereHas('tanggapanMasyarakat', function($q) use ($selectedProgresDate) {
+                if ($selectedProgresDate) $q->whereDate('created_at', '<=', $selectedProgresDate);
+            })
+            ->orWhereHas('informasiUsaha', function($q) use ($selectedProgresDate) {
+                if ($selectedProgresDate) $q->whereDate('created_at', '<=', $selectedProgresDate);
+            })
+            ->orWhereHas('informasiPemasaran', function($q) use ($selectedProgresDate) {
+                if ($selectedProgresDate) $q->whereDate('created_at', '<=', $selectedProgresDate);
+            })
+            ->orWhereHas('pendapatanRt', function($q) use ($selectedProgresDate) {
+                if ($selectedProgresDate) $q->whereDate('created_at', '<=', $selectedProgresDate);
+            })
+            ->orWhereHas('sosialKelembagaan', function($q) use ($selectedProgresDate) {
+                if ($selectedProgresDate) $q->whereDate('created_at', '<=', $selectedProgresDate);
+            });
+        });
+        if ($selectedProgresDate) {
+            $responden_dengan_data_query->whereDate('tanggal_wawancara', '<=', $selectedProgresDate);
+        }
+        $responden_dengan_data = $responden_dengan_data_query->count();
 
         $tingkatKelengkapanData = $totalResponden > 0
             ? round(($responden_dengan_data / $totalResponden) * 100, 2)
             : 0;
 
-        // 3. Hitung Rata-rata Capaian Indikator (dari progres_knmp_details)
-        $capaianIndikator = DB::table('progres_knmp_details')
-            ->whereIn('progres_id', function ($q) use ($knmpIds) {
+        // 3. Hitung Rata-rata Capaian Indikator
+        $capaianIndikatorQuery = DB::table('progres_knmp_details')
+            ->whereIn('progres_id', function ($q) use ($knmpIds, $selectedProgresDate) {
                 $q->select('id')->from('progres_knmp')->whereIn('knmp_id', $knmpIds);
-            })
-            ->avg('persen') ?? 0;
+                if ($selectedProgresDate) {
+                    $q->whereDate('created_at', '<=', $selectedProgresDate);
+                }
+            });
+        if ($selectedProgresDate) {
+            $capaianIndikatorQuery->whereDate('created_at', '<=', $selectedProgresDate);
+        }
+        $capaianIndikator = $capaianIndikatorQuery->avg('persen') ?? 0;
 
         // 4. Hitung Rata-rata Indeks Kebahagiaan Nelayan
-        $rataRataKebahagiaan = TingkatKebahagiaanNelayan::whereHas('responden', function ($q) use ($knmpIds) {
+        $rataRataKebahagiaanQuery = TingkatKebahagiaanNelayan::whereHas('responden', function ($q) use ($knmpIds, $selectedProgresDate) {
             $q->whereIn('knmp_id', $knmpIds);
-        })->avg('skor_nilai') ?? 0;
+            if ($selectedProgresDate) {
+                $q->whereDate('tanggal_wawancara', '<=', $selectedProgresDate);
+            }
+        });
+        if ($selectedProgresDate) {
+            $rataRataKebahagiaanQuery->whereDate('created_at', '<=', $selectedProgresDate);
+        }
+        $rataRataKebahagiaan = $rataRataKebahagiaanQuery->avg('skor_nilai') ?? 0;
 
         // ===================================
         // DATA UNTUK STATISTIK NASIONAL
         // ===================================
-
-        // Progres KNMP Nasional (dari tabel progres_harian)
-        // Get available dates for filter dropdown (filtered by tahap via knmp_id)
-        $availableProgressDates = ProgresHarian::whereIn('knmp_id', $knmpIds)
-            ->selectRaw('DISTINCT tanggal')
-            ->whereNotNull('tanggal')
-            ->orderBy('tanggal', 'desc')
-            ->pluck('tanggal')
-            ->toArray();
-
-        // Get selected date from request or use latest available
-        $selectedProgresDate = $request->get('progres_date');
-        if (!$selectedProgresDate && count($availableProgressDates) > 0) {
-            $selectedProgresDate = $availableProgressDates[0]; // Latest date
-        }
 
         $deltaPeriod = $request->get('delta_period', 'latest');
         
@@ -157,40 +196,52 @@ class DashboardController extends Controller
         }
 
         // Data for Trend Line Chart
-        $trendDataQuery = ProgresHarian::whereIn('knmp_id', $knmpIds)
-            ->select('tanggal', DB::raw('AVG(progres) as avg_progres'))
-            ->groupBy('tanggal')
-            ->orderBy('tanggal', 'asc')
+        $trendDataQuery = ProgresHarian::join('konstruksi_knmp as kk', 'progres_harian.knmp_konstruksi_id', '=', 'kk.id')
+            ->whereIn('kk.knmp_id', $knmpIds);
+        
+        if ($selectedProgresDate) {
+            $trendDataQuery->where('progres_harian.tanggal', '<=', $selectedProgresDate);
+        }
+
+        $trendDataQuery = $trendDataQuery->select('progres_harian.tanggal', DB::raw('AVG(progres_harian.progres) as avg_progres'))
+            ->groupBy('progres_harian.tanggal')
+            ->orderBy('progres_harian.tanggal', 'asc')
             ->get();
+
         $trendDates = $trendDataQuery->pluck('tanggal')->map(fn($date) => \Carbon\Carbon::parse($date)->format('d M y'))->toArray();
         $trendAverages = $trendDataQuery->pluck('avg_progres')->map(fn($val) => round($val, 2))->toArray();
 
         // Query progres data up to selected date (OPTIMIZED)
         $latestIds = DB::table('progres_harian as ph')
+            ->join('konstruksi_knmp as kk', 'ph.knmp_konstruksi_id', '=', 'kk.id')
             ->selectRaw('MAX(ph.id) as id')
             ->joinSub(function ($query) use ($knmpIds, $selectedProgresDate) {
-                $query->from('progres_harian')
-                    ->select('knmp_id', DB::raw('MAX(tanggal) as max_tanggal'))
-                    ->whereIn('knmp_id', $knmpIds);
+                $query->from('progres_harian as ph2')
+                    ->join('konstruksi_knmp as kk2', 'ph2.knmp_konstruksi_id', '=', 'kk2.id')
+                    ->select('kk2.knmp_id', DB::raw('MAX(ph2.tanggal) as max_tanggal'))
+                    ->whereIn('kk2.knmp_id', $knmpIds);
                 if ($selectedProgresDate) {
-                    $query->where('tanggal', '<=', $selectedProgresDate);
+                    $query->where('ph2.tanggal', '<=', $selectedProgresDate);
                 }
-                $query->groupBy('knmp_id');
+                $query->groupBy('kk2.knmp_id');
             }, 'max_dates', function ($join) {
-                $join->on('ph.knmp_id', '=', 'max_dates.knmp_id')
+                $join->on('kk.knmp_id', '=', 'max_dates.knmp_id')
                      ->on('ph.tanggal', '=', 'max_dates.max_tanggal');
             })
-            ->groupBy('ph.knmp_id', 'ph.tanggal')
+            ->groupBy('kk.knmp_id', 'ph.tanggal')
             ->pluck('id');
 
+
         $progresNasional = DB::table('progres_harian as ph')
-            ->join('knmp as k', 'ph.knmp_id', '=', 'k.id')
+            ->join('konstruksi_knmp as kk', 'ph.knmp_konstruksi_id', '=', 'kk.id')
+            ->join('knmp as k', 'kk.knmp_id', '=', 'k.id')
             ->leftJoin('batch as b', 'k.batch_id', '=', 'b.id')
-            ->leftJoin('konstruksi_knmp as kk', 'k.id', '=', 'kk.knmp_id')
             ->leftJoin('penyedia_jasa_konstruksi as pj', 'kk.jasa_konstruksi_id', '=', 'pj.id')
             ->whereIn('ph.id', $latestIds)
+
             ->select(
                 'ph.*',
+                'kk.knmp_id',
                 'k.nama as knmp_nama',
                 'k.kabupaten',
                 'k.provinsi',
@@ -200,6 +251,7 @@ class DashboardController extends Controller
                 'b.nama_tahap as batch_nama',
                 'kk.tanggal_mulai',
                 'pj.nama as nama_jasa_konstruksi'
+
             )
             ->orderBy('ph.progres', 'desc')
             ->get();
@@ -210,23 +262,27 @@ class DashboardController extends Controller
         $previousProgresData = [];
         if ($previousDate) {
             $prevIds = DB::table('progres_harian as ph')
+                ->join('konstruksi_knmp as kk', 'ph.knmp_konstruksi_id', '=', 'kk.id')
                 ->selectRaw('MAX(ph.id) as id')
                 ->joinSub(function ($query) use ($knmpIds, $previousDate) {
-                    $query->from('progres_harian')
-                        ->select('knmp_id', DB::raw('MAX(tanggal) as max_tanggal'))
-                        ->whereIn('knmp_id', $knmpIds)
-                        ->where('tanggal', '<=', $previousDate)
-                        ->groupBy('knmp_id');
+                    $query->from('progres_harian as ph2')
+                        ->join('konstruksi_knmp as kk2', 'ph2.knmp_konstruksi_id', '=', 'kk2.id')
+                        ->select('kk2.knmp_id', DB::raw('MAX(ph2.tanggal) as max_tanggal'))
+                        ->whereIn('kk2.knmp_id', $knmpIds)
+                        ->where('ph2.tanggal', '<=', $previousDate)
+                        ->groupBy('kk2.knmp_id');
                 }, 'max_dates', function ($join) {
-                    $join->on('ph.knmp_id', '=', 'max_dates.knmp_id')
+                    $join->on('kk.knmp_id', '=', 'max_dates.knmp_id')
                          ->on('ph.tanggal', '=', 'max_dates.max_tanggal');
                 })
-                ->groupBy('ph.knmp_id', 'ph.tanggal')
+                ->groupBy('kk.knmp_id', 'ph.tanggal')
                 ->pluck('id');
             
-            $previousProgresData = ProgresHarian::whereIn('id', $prevIds)
-                ->pluck('progres', 'knmp_id')
+            $previousProgresData = ProgresHarian::join('konstruksi_knmp as kk', 'progres_harian.knmp_konstruksi_id', '=', 'kk.id')
+                ->whereIn('progres_harian.id', $prevIds)
+                ->pluck('progres_harian.progres', 'kk.knmp_id')
                 ->toArray();
+
         }
 
         // Attach delta to each KNMP
@@ -359,14 +415,16 @@ class DashboardController extends Controller
 
         $pastProgresData = collect();
         if (count($allCheckIds) > 0) {
-            $pastProgresData = ProgresHarian::whereIn('knmp_id', $allCheckIds)
-                ->where('tanggal', '<=', $fiveDaysAgo)
-                ->orderBy('tanggal', 'desc')
-                ->get()
+            $pastProgresData = ProgresHarian::join('konstruksi_knmp as kk', 'progres_harian.knmp_konstruksi_id', '=', 'kk.id')
+                ->whereIn('kk.knmp_id', $allCheckIds)
+                ->where('progres_harian.tanggal', '<=', $fiveDaysAgo)
+                ->orderBy('progres_harian.tanggal', 'desc')
+                ->get(['progres_harian.*', 'kk.knmp_id'])
                 ->groupBy('knmp_id')
                 ->map(function ($items) {
                     return $items->first();
                 });
+
         }
 
         $applyStagnanFlag = function ($collection) use ($pastProgresData) {
@@ -402,7 +460,12 @@ class DashboardController extends Controller
         $progressNasional = $targetKnmp > 0 ? min(round(($totalKnmpNasional / $targetKnmp) * 100, 1), 100) : 0;
 
         // Total Tenaga Kerja Terserap
-        $totalTenagaKerja = DB::table('progres_knmp')->whereIn('knmp_id', $knmpIds)->sum('tk_total') ?? 0;
+        $totalTenagaKerjaQuery = DB::table('progres_knmp')->whereIn('knmp_id', $knmpIds);
+        if ($selectedProgresDate) {
+            $totalTenagaKerjaQuery->whereDate('created_at', '<=', $selectedProgresDate);
+        }
+        $totalTenagaKerja = $totalTenagaKerjaQuery->sum('tk_total') ?? 0;
+
 
         // Available tahap values for filter
         $availableTahap = \App\Models\Batch::orderBy('id')->get();
@@ -471,71 +534,133 @@ class DashboardController extends Controller
         $desa_knmp = $desa_knmp_query->get();
         $knmpIds = $desa_knmp->pluck('id')->toArray();
 
+        // Get available dates early
+        $availableProgressDates = ProgresHarian::join('konstruksi_knmp as kk', 'progres_harian.knmp_konstruksi_id', '=', 'kk.id')
+            ->whereIn('kk.knmp_id', $knmpIds)
+            ->selectRaw('DISTINCT progres_harian.tanggal')
+            ->whereNotNull('progres_harian.tanggal')
+            ->orderBy('progres_harian.tanggal', 'desc')
+            ->pluck('tanggal')
+            ->toArray();
+
+        // Progres KNMP Nasional
+        $selectedProgresDate = $request->get('progres_date');
+        if (!$selectedProgresDate && count($availableProgressDates) > 0) {
+            $selectedProgresDate = $availableProgressDates[0];
+        }
+
         // 1. Responden yang telah mengisi survey
         $surveyQuery = InformasiResponden::query()
-            ->whereExists(function ($query) {
+            ->whereIn('knmp_id', $knmpIds)
+            ->whereExists(function ($query) use ($selectedProgresDate) {
                 $query->select(DB::raw(1))
                     ->from('tingkat_kebahagiaan_nelayan')
                     ->whereColumn('tingkat_kebahagiaan_nelayan.responden_id', 'informasi_responden.id');
+                if ($selectedProgresDate) {
+                    $query->whereDate('tingkat_kebahagiaan_nelayan.created_at', '<=', $selectedProgresDate);
+                }
             });
+
         if ($startDate) {
             $surveyQuery->where('created_at', '>=', $startDate);
         }
+        if ($selectedProgresDate) {
+            $surveyQuery->whereDate('tanggal_wawancara', '<=', $selectedProgresDate);
+        }
         $totalSurveyTerisi = $surveyQuery->distinct('id')->count();
 
-        // 2. Tingkat Kelengkapan Data
-        $totalResponden = InformasiResponden::count();
-        $responden_dengan_data = InformasiResponden::where(function ($query) {
-            $query->whereHas('tingkatKebahagiaan')
-                ->orWhereHas('tanggapanMasyarakat')
-                ->orWhereHas('informasiUsaha')
-                ->orWhereHas('informasiPemasaran')
-                ->orWhereHas('pendapatanRt')
-                ->orWhereHas('sosialKelembagaan');
-        })->count();
+        // 2. Hitung Tingkat Kelengkapan Data
+        $totalRespondenQuery = InformasiResponden::whereIn('knmp_id', $knmpIds);
+        if ($selectedProgresDate) {
+            $totalRespondenQuery->whereDate('tanggal_wawancara', '<=', $selectedProgresDate);
+        }
+        $totalResponden = $totalRespondenQuery->count();
+
+        $responden_dengan_data_query = InformasiResponden::whereIn('knmp_id', $knmpIds)->where(function ($query) use ($selectedProgresDate) {
+            $query->whereHas('tingkatKebahagiaan', function($q) use ($selectedProgresDate) {
+                if ($selectedProgresDate) $q->whereDate('created_at', '<=', $selectedProgresDate);
+            })
+            ->orWhereHas('tanggapanMasyarakat', function($q) use ($selectedProgresDate) {
+                if ($selectedProgresDate) $q->whereDate('created_at', '<=', $selectedProgresDate);
+            })
+            ->orWhereHas('informasiUsaha', function($q) use ($selectedProgresDate) {
+                if ($selectedProgresDate) $q->whereDate('created_at', '<=', $selectedProgresDate);
+            })
+            ->orWhereHas('informasiPemasaran', function($q) use ($selectedProgresDate) {
+                if ($selectedProgresDate) $q->whereDate('created_at', '<=', $selectedProgresDate);
+            })
+            ->orWhereHas('pendapatanRt', function($q) use ($selectedProgresDate) {
+                if ($selectedProgresDate) $q->whereDate('created_at', '<=', $selectedProgresDate);
+            })
+            ->orWhereHas('sosialKelembagaan', function($q) use ($selectedProgresDate) {
+                if ($selectedProgresDate) $q->whereDate('created_at', '<=', $selectedProgresDate);
+            });
+        });
+        if ($selectedProgresDate) {
+            $responden_dengan_data_query->whereDate('tanggal_wawancara', '<=', $selectedProgresDate);
+        }
+        $responden_dengan_data = $responden_dengan_data_query->count();
+
         $tingkatKelengkapanData = $totalResponden > 0
             ? round(($responden_dengan_data / $totalResponden) * 100, 2) : 0;
 
         // 3. Rata-rata Capaian Indikator
-        $capaianIndikator = DB::table('progres_knmp_details')->avg('persen') ?? 0;
+        $capaianIndikatorQuery = DB::table('progres_knmp_details')
+            ->whereIn('progres_id', function ($q) use ($knmpIds, $selectedProgresDate) {
+                $q->select('id')->from('progres_knmp')->whereIn('knmp_id', $knmpIds);
+                if ($selectedProgresDate) {
+                    $q->whereDate('created_at', '<=', $selectedProgresDate);
+                }
+            });
+        if ($selectedProgresDate) {
+            $capaianIndikatorQuery->whereDate('created_at', '<=', $selectedProgresDate);
+        }
+        $capaianIndikator = $capaianIndikatorQuery->avg('persen') ?? 0;
 
         // 4. Rata-rata Indeks Kebahagiaan
-        $rataRataKebahagiaan = TingkatKebahagiaanNelayan::whereHas('responden', function ($q) use ($knmpIds) {
+        $rataRataKebahagiaanQuery = TingkatKebahagiaanNelayan::whereHas('responden', function ($q) use ($knmpIds, $selectedProgresDate) {
             $q->whereIn('knmp_id', $knmpIds);
-        })->avg('skor_nilai') ?? 0;
-
-        // Progres KNMP Nasional
-        $selectedProgresDate = $request->get('progres_date');
-        if (!$selectedProgresDate) {
-            $selectedProgresDate = ProgresHarian::selectRaw('DISTINCT tanggal')
-                ->whereNotNull('tanggal')->orderBy('tanggal', 'desc')->value('tanggal');
+            if ($selectedProgresDate) {
+                $q->whereDate('tanggal_wawancara', '<=', $selectedProgresDate);
+            }
+        });
+        if ($selectedProgresDate) {
+            $rataRataKebahagiaanQuery->whereDate('created_at', '<=', $selectedProgresDate);
         }
+        $rataRataKebahagiaan = $rataRataKebahagiaanQuery->avg('skor_nilai') ?? 0;
+
+
         // Mendapatkan ID terbaru per KNMP
         $latestIds = DB::table('progres_harian as ph')
+            ->join('konstruksi_knmp as kk', 'ph.knmp_konstruksi_id', '=', 'kk.id')
             ->selectRaw('MAX(ph.id) as id')
             ->joinSub(function ($query) use ($knmpIds, $selectedProgresDate) {
-                $query->from('progres_harian')
-                    ->select('knmp_id', DB::raw('MAX(tanggal) as max_tanggal'))
-                    ->whereIn('knmp_id', $knmpIds);
+                $query->from('progres_harian as ph2')
+                    ->join('konstruksi_knmp as kk2', 'ph2.knmp_konstruksi_id', '=', 'kk2.id')
+                    ->select('kk2.knmp_id', DB::raw('MAX(ph2.tanggal) as max_tanggal'))
+                    ->whereIn('kk2.knmp_id', $knmpIds);
                 if ($selectedProgresDate) {
-                    $query->where('tanggal', '<=', $selectedProgresDate);
+                    $query->where('ph2.tanggal', '<=', $selectedProgresDate);
                 }
-                $query->groupBy('knmp_id');
+                $query->groupBy('kk2.knmp_id');
             }, 'max_dates', function ($join) {
-                $join->on('ph.knmp_id', '=', 'max_dates.knmp_id')
+                $join->on('kk.knmp_id', '=', 'max_dates.knmp_id')
                      ->on('ph.tanggal', '=', 'max_dates.max_tanggal');
             })
-            ->groupBy('ph.knmp_id', 'ph.tanggal')
+            ->groupBy('kk.knmp_id', 'ph.tanggal')
             ->pluck('id');
 
+
         $progresNasional = DB::table('progres_harian as ph')
-            ->join('knmp as k', 'ph.knmp_id', '=', 'k.id')
+            ->join('konstruksi_knmp as kk', 'ph.knmp_konstruksi_id', '=', 'kk.id')
+            ->join('knmp as k', 'kk.knmp_id', '=', 'k.id')
             ->leftJoin('batch as b', 'k.batch_id', '=', 'b.id')
-            ->leftJoin('konstruksi_knmp as kk', 'k.id', '=', 'kk.knmp_id')
             ->leftJoin('penyedia_jasa_konstruksi as pj', 'kk.jasa_konstruksi_id', '=', 'pj.id')
             ->whereIn('ph.id', $latestIds)
+
             ->select(
                 'ph.*',
+                'kk.knmp_id',
                 'k.nama as knmp_nama',
                 'k.kabupaten',
                 'k.provinsi',
@@ -546,16 +671,19 @@ class DashboardController extends Controller
                 'kk.tanggal_mulai',
                 'pj.nama as nama_jasa_konstruksi'
             )
+
             ->orderBy('ph.progres', 'desc')
             ->get();
         
         // --- START DELTA CALCULATION ---
-        $availableProgressDates = ProgresHarian::whereIn('knmp_id', $knmpIds)
-            ->selectRaw('DISTINCT tanggal')
-            ->whereNotNull('tanggal')
-            ->orderBy('tanggal', 'desc')
+        $availableProgressDates = ProgresHarian::join('konstruksi_knmp as kk', 'progres_harian.knmp_konstruksi_id', '=', 'kk.id')
+            ->whereIn('kk.knmp_id', $knmpIds)
+            ->selectRaw('DISTINCT progres_harian.tanggal')
+            ->whereNotNull('progres_harian.tanggal')
+            ->orderBy('progres_harian.tanggal', 'desc')
             ->pluck('tanggal')
             ->toArray();
+
 
         $previousDate = null;
         $currentIndex = array_search($selectedProgresDate, $availableProgressDates);
@@ -566,23 +694,27 @@ class DashboardController extends Controller
         $previousProgresData = [];
         if ($previousDate) {
             $prevIds = DB::table('progres_harian as ph')
+                ->join('konstruksi_knmp as kk', 'ph.knmp_konstruksi_id', '=', 'kk.id')
                 ->selectRaw('MAX(ph.id) as id')
                 ->joinSub(function ($query) use ($knmpIds, $previousDate) {
-                    $query->from('progres_harian')
-                        ->select('knmp_id', DB::raw('MAX(tanggal) as max_tanggal'))
-                        ->whereIn('knmp_id', $knmpIds)
-                        ->where('tanggal', '<=', $previousDate)
-                        ->groupBy('knmp_id');
+                    $query->from('progres_harian as ph2')
+                        ->join('konstruksi_knmp as kk2', 'ph2.knmp_konstruksi_id', '=', 'kk2.id')
+                        ->select('kk2.knmp_id', DB::raw('MAX(ph2.tanggal) as max_tanggal'))
+                        ->whereIn('kk2.knmp_id', $knmpIds)
+                        ->where('ph2.tanggal', '<=', $previousDate)
+                        ->groupBy('kk2.knmp_id');
                 }, 'max_dates', function ($join) {
-                    $join->on('ph.knmp_id', '=', 'max_dates.knmp_id')
+                    $join->on('kk.knmp_id', '=', 'max_dates.knmp_id')
                          ->on('ph.tanggal', '=', 'max_dates.max_tanggal');
                 })
-                ->groupBy('ph.knmp_id', 'ph.tanggal')
+                ->groupBy('kk.knmp_id', 'ph.tanggal')
                 ->pluck('id');
             
-            $previousProgresData = ProgresHarian::whereIn('id', $prevIds)
-                ->pluck('progres', 'knmp_id')
+            $previousProgresData = ProgresHarian::join('konstruksi_knmp as kk', 'progres_harian.knmp_konstruksi_id', '=', 'kk.id')
+                ->whereIn('progres_harian.id', $prevIds)
+                ->pluck('progres_harian.progres', 'kk.knmp_id')
                 ->toArray();
+
         }
 
         foreach ($progresNasional as $item) {
@@ -659,7 +791,11 @@ class DashboardController extends Controller
             'infra_ipal', 'infra_dermaga_tambat', 'infra_tpi', 'infra_cold_storage',
             'infra_pabrik_es', 'infra_kantor_koperasi', 'infra_bengkel_nelayan', 'infra_waserda'
         ];
-        $profiles = ProfileKnmp::select($infraColumns)->whereIn('knmp_id', $knmpIds)->get();
+        $profilesQuery = ProfileKnmp::select($infraColumns)->whereIn('knmp_id', $knmpIds);
+        if ($selectedProgresDate) {
+            $profilesQuery->whereDate('created_at', '<=', $selectedProgresDate);
+        }
+        $profiles = $profilesQuery->get();
         $totalPercentage = 0;
         $countProfiles = $profiles->count();
         foreach ($profiles as $profile) {
@@ -672,28 +808,46 @@ class DashboardController extends Controller
         $ketersediaanInfrastruktur = $countProfiles > 0 ? round($totalPercentage / $countProfiles, 2) : 0;
  
         // Indeks Kesesuaian Kebutuhan
-        $respondenIds = InformasiResponden::whereIn('knmp_id', $knmpIds)->pluck('id');
-        $totalTanggapan = TanggapanMasyarakat::whereIn('responden_id', $respondenIds)->count();
-        $sesuaiKebutuhan = TanggapanMasyarakat::whereIn('responden_id', $respondenIds)->where('kesesuaian_kebutuhan', 1)->count();
+        $totalTanggapanQuery = TanggapanMasyarakat::whereIn('responden_id', $respondenIds);
+        $sesuaiKebutuhanQuery = TanggapanMasyarakat::whereIn('responden_id', $respondenIds)->where('kesesuaian_kebutuhan', 1);
+        if ($selectedProgresDate) {
+            $totalTanggapanQuery->whereDate('created_at', '<=', $selectedProgresDate);
+            $sesuaiKebutuhanQuery->whereDate('created_at', '<=', $selectedProgresDate);
+        }
+        $totalTanggapan = $totalTanggapanQuery->count();
+        $sesuaiKebutuhan = $sesuaiKebutuhanQuery->count();
         $indeksKesesuaianKebutuhan = $totalTanggapan > 0 ? round(($sesuaiKebutuhan / $totalTanggapan) * 100, 2) : 0;
-;
 
         // Pendapatan RT Nelayan
-        $pendapatanRtNelayan = InformasiPendapatanRumahTangga::whereIn('responden_id', $respondenIds)->avg('pendapatan_total') ?? 0;
+        $pendapatanRtQuery = InformasiPendapatanRumahTangga::whereIn('responden_id', $respondenIds);
+        if ($selectedProgresDate) {
+            $pendapatanRtQuery->whereDate('created_at', '<=', $selectedProgresDate);
+        }
+        $pendapatanRtNelayan = $pendapatanRtQuery->avg('pendapatan_total') ?? 0;
 
         // Indeks Kesejahteraan
         $indeksKesejahteraan = round($rataRataKebahagiaan, 2);
 
         // Tingkat Kelembagaan
-        $totalSosial = SosialKelembagaan::whereIn('responden_id', $respondenIds)->count();
-        $anggotaKelompokKoperasi = SosialKelembagaan::whereIn('responden_id', $respondenIds)->where(function ($q) {
+        $totalSosialQuery = SosialKelembagaan::whereIn('responden_id', $respondenIds);
+        $anggotaKelompokKoperasiQuery = SosialKelembagaan::whereIn('responden_id', $respondenIds)->where(function ($q) {
             $q->where('anggota_kelompok', '>=', 3)->orWhere('anggota_koperasi', '>=', 3);
-        })->count();
+        });
+        if ($selectedProgresDate) {
+            $totalSosialQuery->whereDate('created_at', '<=', $selectedProgresDate);
+            $anggotaKelompokKoperasiQuery->whereDate('created_at', '<=', $selectedProgresDate);
+        }
+        $totalSosial = $totalSosialQuery->count();
+        $anggotaKelompokKoperasi = $anggotaKelompokKoperasiQuery->count();
         $tingkatKelembagaan = $totalSosial > 0
             ? round(($anggotaKelompokKoperasi / $totalSosial) * 100, 2) : 0;
 
         // Total Tenaga Kerja
-        $totalTenagaKerja = DB::table('progres_knmp')->whereIn('knmp_id', $knmpIds)->sum('tk_total') ?? 0;
+        $totalTenagaKerjaQuery = DB::table('progres_knmp')->whereIn('knmp_id', $knmpIds);
+        if ($selectedProgresDate) {
+            $totalTenagaKerjaQuery->whereDate('created_at', '<=', $selectedProgresDate);
+        }
+        $totalTenagaKerja = $totalTenagaKerjaQuery->sum('tk_total') ?? 0;
 
         // Progres Nasional table data
         $progresNasionalData = $progresNasional->map(function ($item) {
@@ -743,36 +897,43 @@ class DashboardController extends Controller
 
         // Mendapatkan ID progres terbaru per KNMP
         if (!$selectedProgresDate) {
-            $selectedProgresDate = ProgresHarian::whereIn('knmp_id', $knmpIds)
-                ->whereNotNull('tanggal')->orderBy('tanggal', 'desc')->value('tanggal');
+            $selectedProgresDate = ProgresHarian::join('konstruksi_knmp as kk', 'progres_harian.knmp_konstruksi_id', '=', 'kk.id')
+                ->whereIn('kk.knmp_id', $knmpIds)
+                ->whereNotNull('progres_harian.tanggal')->orderBy('progres_harian.tanggal', 'desc')->value('progres_harian.tanggal');
         }
 
+
         $latestIds = DB::table('progres_harian as ph')
+            ->join('konstruksi_knmp as kk', 'ph.knmp_konstruksi_id', '=', 'kk.id')
             ->selectRaw('MAX(ph.id) as id')
             ->joinSub(function ($query) use ($knmpIds, $selectedProgresDate) {
-                $query->from('progres_harian')
-                    ->select('knmp_id', DB::raw('MAX(tanggal) as max_tanggal'))
-                    ->whereIn('knmp_id', $knmpIds);
+                $query->from('progres_harian as ph2')
+                    ->join('konstruksi_knmp as kk2', 'ph2.knmp_konstruksi_id', '=', 'kk2.id')
+                    ->select('kk2.knmp_id', DB::raw('MAX(ph2.tanggal) as max_tanggal'))
+                    ->whereIn('kk2.knmp_id', $knmpIds);
                 if ($selectedProgresDate) {
-                    $query->where('tanggal', '<=', $selectedProgresDate);
+                    $query->where('ph2.tanggal', '<=', $selectedProgresDate);
                 }
-                $query->groupBy('knmp_id');
+                $query->groupBy('kk2.knmp_id');
             }, 'max_dates', function ($join) {
-                $join->on('ph.knmp_id', '=', 'max_dates.knmp_id')
+                $join->on('kk.knmp_id', '=', 'max_dates.knmp_id')
                      ->on('ph.tanggal', '=', 'max_dates.max_tanggal');
             })
-            ->groupBy('ph.knmp_id', 'ph.tanggal')
+            ->groupBy('kk.knmp_id', 'ph.tanggal')
             ->pluck('id');
+
 
         // Mengambil data utama menggunakan JOIN (5 Table: knmp, progres_harian, batch, tahap_konstruksi, penyedia_jasa_konstruksi)
         $desa_knmp_data = DB::table('progres_harian as ph')
-            ->join('knmp as k', 'ph.knmp_id', '=', 'k.id')
+            ->join('konstruksi_knmp as kk', 'ph.knmp_konstruksi_id', '=', 'kk.id')
+            ->join('knmp as k', 'kk.knmp_id', '=', 'k.id')
             ->leftJoin('batch as b', 'k.batch_id', '=', 'b.id')
-            ->leftJoin('konstruksi_knmp as kk', 'k.id', '=', 'kk.knmp_id')
             ->leftJoin('penyedia_jasa_konstruksi as pj', 'kk.jasa_konstruksi_id', '=', 'pj.id')
             ->whereIn('ph.id', $latestIds)
+
             ->select(
                 'ph.*',
+                'kk.knmp_id',
                 'k.nama as knmp_nama',
                 'k.kabupaten',
                 'k.provinsi',
@@ -783,6 +944,7 @@ class DashboardController extends Controller
                 'kk.tanggal_mulai',
                 'pj.nama as nama_jasa_konstruksi'
             )
+
             ->get();
 
         $avgProgres = !$desa_knmp_data->isEmpty() ? round($desa_knmp_data->avg('progres'), 2) : 0;

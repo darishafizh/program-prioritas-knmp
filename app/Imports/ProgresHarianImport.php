@@ -35,7 +35,7 @@ class ProgresHarianImport implements ToCollection, WithHeadingRow, SkipsEmptyRow
      */
     public function collection(Collection $rows)
     {
-        $existingKnmpIds = \App\Models\Knmp::pluck('id')->toArray();
+        $existingKnmps = \App\Models\Knmp::with('konstruksiKnmp')->get()->keyBy('id');
 
         foreach ($rows as $index => $row) {
             $rowNumber = $index + 2;
@@ -47,10 +47,24 @@ class ProgresHarianImport implements ToCollection, WithHeadingRow, SkipsEmptyRow
 
             $knmpId = (int) $row['knmp_id'];
 
-            if (!in_array($knmpId, $existingKnmpIds)) {
+            if (!$existingKnmps->has($knmpId)) {
                 $this->notFoundCount++;
                 continue;
             }
+
+            $knmp = $existingKnmps->get($knmpId);
+            
+            // Ensure KonstruksiKnmp exists for this KNMP
+            $konstruksi = $knmp->konstruksiKnmp;
+            if (!$konstruksi) {
+                // If it doesn't exist, we create it so we can attach progress
+                // This might happen if someone imports progress before the stage is officially set to 'konstruksi'
+                $konstruksi = \App\Models\KonstruksiKnmp::create([
+                    'knmp_id' => $knmpId
+                ]);
+            }
+
+            $knmpKonstruksiId = $konstruksi->id;
 
             // Handle date parsing from Excel
             $tanggal = null;
@@ -81,7 +95,7 @@ class ProgresHarianImport implements ToCollection, WithHeadingRow, SkipsEmptyRow
             try {
                 ProgresHarian::updateOrCreate(
                     [
-                        'knmp_id' => $knmpId,
+                        'knmp_konstruksi_id' => $knmpKonstruksiId,
                         'tanggal' => $tanggal
                     ],
                     [
@@ -104,4 +118,5 @@ class ProgresHarianImport implements ToCollection, WithHeadingRow, SkipsEmptyRow
             }
         }
     }
+
 }

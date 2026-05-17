@@ -65,13 +65,14 @@ class Knmp extends Model
 
     public function progresNasional()
     {
-        return $this->hasMany(ProgresHarian::class, 'knmp_id');
+        return $this->hasManyThrough(ProgresHarian::class, KonstruksiKnmp::class, 'knmp_id', 'knmp_konstruksi_id');
     }
 
     public function latestProgresNasional()
     {
-        return $this->hasOne(ProgresHarian::class, 'knmp_id')->latestOfMany('tanggal');
+        return $this->hasOneThrough(ProgresHarian::class, KonstruksiKnmp::class, 'knmp_id', 'knmp_konstruksi_id')->latestOfMany('tanggal');
     }
+
 
     // =========================================
     // Relasi Tahapan Program Prioritas
@@ -133,8 +134,9 @@ class Knmp extends Model
 
     public function progresHarian()
     {
-        return $this->hasMany(ProgresHarian::class, 'knmp_id');
+        return $this->hasManyThrough(ProgresHarian::class, KonstruksiKnmp::class, 'knmp_id', 'knmp_konstruksi_id');
     }
+
 
     public function latestTahapKonstruksi()
     {
@@ -142,18 +144,29 @@ class Knmp extends Model
     }
 
     // =========================================
+    // Mutator: Memastikan tahap_saat_ini selalu konsisten (lowercase & underscore)
+    // =========================================
+    public function setTahapSaatIniAttribute($value)
+    {
+        $this->attributes['tahap_saat_ini'] = str_replace(' ', '_', strtolower($value));
+    }
+
+    // =========================================
     // Accessor: label tahap
     // =========================================
     public function getTahapLabelAttribute(): string
     {
-        return match ($this->tahap_saat_ini) {
+        // Normalisasi untuk pengecekan (biar aman jika ada input manual "Serah Terima")
+        $val = str_replace(' ', '_', strtolower($this->tahap_saat_ini ?? 'usulan'));
+
+        return match ($val) {
             'usulan'       => 'Usulan',
             'survey'       => 'Survey',
             'ded'          => 'DED',
             'lelang'       => 'Lelang',
             'konstruksi'   => 'Konstruksi',
             'serah_terima' => 'Serah Terima',
-            default        => ucfirst($this->tahap_saat_ini ?? 'Usulan'),
+            default        => ucfirst(str_replace('_', ' ', $val)),
         };
     }
 }

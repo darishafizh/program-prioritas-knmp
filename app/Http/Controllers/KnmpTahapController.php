@@ -240,9 +240,8 @@ class KnmpTahapController extends Controller
         // Ambil timeline (tahap_konstruksi) dari relasi konstruksi
         $tahapKonstruksi = $konstruksi ? $konstruksi->timeline()->orderBy('periode_mingguan')->get() : collect();
 
-        $progresHarian = ProgresHarian::where('knmp_id', $knmp->id)
-            ->orderByDesc('tanggal')
-            ->get();
+        $progresHarian = $knmp->konstruksiKnmp ? $knmp->konstruksiKnmp->progresHarian()->orderByDesc('tanggal')->get() : collect();
+
 
         return view('knmp.tahap.konstruksi_show', [
             'knmp'            => $knmp,
@@ -283,7 +282,9 @@ class KnmpTahapController extends Controller
             'progres' => 'nullable|numeric|min:0|max:100',
         ]);
 
-        ProgresHarian::create(array_merge($validated, ['knmp_id' => $knmp->id]));
+        $konstruksi = $knmp->konstruksiKnmp()->firstOrCreate(['knmp_id' => $knmp->id]);
+        $konstruksi->progresHarian()->create($validated);
+
 
         return redirect()->back()->with('success', 'Progres harian berhasil disimpan.');
     }
@@ -318,11 +319,12 @@ class KnmpTahapController extends Controller
     {
         $startDate = \Carbon\Carbon::parse($tanggalMulai);
         
-        // Ambil semua progres harian untuk KNMP ini
-        $allProgresFisik = ProgresHarian::where('knmp_id', $knmp->id)
+        // Ambil semua progres harian untuk KNMP ini via konstruksi
+        $allProgresFisik = $knmp->konstruksiKnmp ? $knmp->konstruksiKnmp->progresHarian()
             ->whereNotNull('tanggal')
             ->orderBy('tanggal', 'asc')
-            ->get();
+            ->get() : collect();
+
             
         if ($allProgresFisik->isEmpty()) {
             return;

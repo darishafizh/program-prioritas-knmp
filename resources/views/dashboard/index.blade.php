@@ -272,12 +272,10 @@
                 <div class="card-body py-2 px-3">
                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                         <div class="d-flex align-items-center flex-wrap gap-3">
-                            <div class="d-flex align-items-center">
-                                <i class="mdi mdi-filter-outline text-muted me-2" style="font-size: 1rem;"></i>
-                                <span class="text-muted me-2" style="font-size: 0.78rem;">Periode:</span>
-                                <form method="GET" action="{{ route('dashboard.index') }}" class="d-inline" id="filterForm">
-                                    <input type="hidden" name="tahap" value="{{ $tahap ?? 'all' }}">
-                                    <input type="hidden" name="progres_date" value="{{ $selectedProgresDate ?? '' }}">
+                            <form method="GET" action="{{ route('dashboard.index') }}" class="d-inline-flex align-items-center flex-wrap gap-3" id="mainFilterForm">
+                                <div class="d-flex align-items-center">
+                                    <i class="mdi mdi-filter-outline text-muted me-2" style="font-size: 1rem;"></i>
+                                    <span class="text-muted me-2" style="font-size: 0.78rem;">Periode:</span>
                                     <select name="period" class="form-select form-select-sm border-0 bg-light"
                                         style="width: auto; font-weight: 500; font-size: 0.78rem;" onchange="this.form.submit()">
                                         <option value="all" {{ ($period ?? 'all') == 'all' ? 'selected' : '' }}>Semua Waktu</option>
@@ -285,13 +283,9 @@
                                         <option value="month" {{ ($period ?? '') == 'month' ? 'selected' : '' }}>Bulan Ini</option>
                                         <option value="year" {{ ($period ?? '') == 'year' ? 'selected' : '' }}>Tahun Ini</option>
                                     </select>
-                                </form>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <span class="text-muted me-2" style="font-size: 0.78rem;">Tahap:</span>
-                                <form method="GET" action="{{ route('dashboard.index') }}" class="d-inline" id="tahapFilterForm">
-                                    <input type="hidden" name="period" value="{{ $period ?? 'all' }}">
-                                    <input type="hidden" name="progres_date" value="{{ $selectedProgresDate ?? '' }}">
+                                </div>
+                                <div class="d-flex align-items-center border-start ps-3">
+                                    <span class="text-muted me-2" style="font-size: 0.78rem;">Tahap:</span>
                                     <select name="tahap" class="form-select form-select-sm border-0 bg-light"
                                         style="width: auto; font-weight: 500; font-size: 0.78rem;" onchange="this.form.submit()">
                                         <option value="all" {{ ($tahap ?? 'all') == 'all' ? 'selected' : '' }}>Semua Tahap</option>
@@ -299,8 +293,19 @@
                                             <option value="{{ $t->id }}" {{ ($tahap ?? '') == (string)$t->id ? 'selected' : '' }}>{{ $t->nama_tahap }} - {{ $t->tahun }}</option>
                                         @endforeach
                                     </select>
-                                </form>
-                            </div>
+                                </div>
+                                <div class="d-flex align-items-center border-start ps-3">
+                                    <span class="text-muted me-2" style="font-size: 0.78rem;">Tanggal Progres:</span>
+                                    <div class="input-group input-group-sm bg-light rounded" style="width:160px;">
+                                        <span class="input-group-text border-0 bg-transparent pe-1"><i class="mdi mdi-calendar-month text-primary" style="font-size: 0.9rem;"></i></span>
+                                        <input type="text" name="progres_date" class="form-control form-control-sm border-0 bg-transparent flatpickr-dashboard" 
+                                            id="mainProgresDateFilter"
+                                            value="{{ $selectedProgresDate ?? date('Y-m-d') }}"
+                                            style="cursor:pointer;font-weight:600;font-size: 0.78rem;color:#374151;padding-left: 0;"
+                                            onchange="this.form.submit()">
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                         <div>
                             <button type="button" class="btn btn-sm btn-danger d-flex align-items-center gap-1 shadow-sm"
@@ -339,7 +344,7 @@
                             <i class="mdi mdi-chart-bar" style="font-size: 1.2rem;"></i>
                         </div>
                     </div>
-                    <h3 class="mb-1" style="font-size: 2rem; font-weight: 800; color: #0f172a; line-height: 1;" id="kpi-progresNasionalAvg">{{ number_format($progresNasionalAvg, 2) }}%</h3>
+                    <h3 class="mb-1" style="font-size: 2rem; font-weight: 700; color: #1e293b; line-height: 1;" id="kpi-progresNasionalAvg">{{ number_format($progresNasionalAvg, 2) }}%</h3>
                     <p class="mb-0" style="color: #64748b; font-size: 0.8rem;">Persentase progres rata-rata</p>
                 </div>
             </div>
@@ -355,7 +360,7 @@
                             <i class="mdi mdi-map-marker-multiple" style="font-size: 1.2rem;"></i>
                         </div>
                     </div>
-                    <h3 class="mb-1" style="font-size: 2rem; font-weight: 800; color: #0f172a; line-height: 1;" id="kpi-progresCount">{{ count($progresNasional) }}</h3>
+                    <h3 class="mb-1" style="font-size: 2rem; font-weight: 700; color: #1e293b; line-height: 1;" id="kpi-progresCount">{{ count($progresNasional) }}</h3>
                     <p class="mb-0" style="color: #64748b; font-size: 0.8rem;">Total lokasi KNMP</p>
                 </div>
             </div>
@@ -371,7 +376,7 @@
                             <i class="mdi mdi-check-circle-outline" style="font-size: 1.2rem;"></i>
                         </div>
                     </div>
-                    <h3 class="mb-1" style="font-size: 2rem; font-weight: 800; color: #0f172a; line-height: 1;" id="kpi-progresSelesai">{{ $progresNasional->where('progres', 100)->count() }}</h3>
+                    <h3 class="mb-1" style="font-size: 2rem; font-weight: 700; color: #1e293b; line-height: 1;" id="kpi-progresSelesai">{{ $progresNasional->where('progres', 100)->count() }}</h3>
                     <p class="mb-0" style="color: #64748b; font-size: 0.8rem;">Progres telah 100%</p>
                 </div>
             </div>
@@ -387,7 +392,7 @@
                             <i class="mdi mdi-clock-outline" style="font-size: 1.2rem;"></i>
                         </div>
                     </div>
-                    <h3 class="mb-1" style="font-size: 2rem; font-weight: 800; color: #0f172a; line-height: 1;" id="kpi-progresOnProgress">{{ $progresNasional->where('progres', '<', 100)->count() }}</h3>
+                    <h3 class="mb-1" style="font-size: 2rem; font-weight: 700; color: #1e293b; line-height: 1;" id="kpi-progresOnProgress">{{ $progresNasional->where('progres', '<', 100)->count() }}</h3>
                     <p class="mb-0" style="color: #64748b; font-size: 0.8rem;">Progres di bawah 100%</p>
                 </div>
             </div>
@@ -506,13 +511,6 @@
                     </h5>
                     <div class="d-flex align-items-center flex-wrap gap-2">
 
-                        <!-- Date Filter -->
-                        <div class="input-group input-group-sm search-field-enhanced flex-nowrap" style="width:200px;" title="Pilih Tanggal Progres">
-                            <span class="input-group-text"><i class="mdi mdi-calendar-month text-primary"></i></span>
-                            <input type="text" class="form-control flatpickr-dashboard" id="progresDateFilter"
-                                value="{{ $selectedProgresDate ?? date('Y-m-d') }}"
-                                style="cursor:pointer;font-weight:500;color:#4b5563;min-width:130px;background:transparent;">
-                        </div>
                         <!-- Search -->
                         <div class="input-group input-group-sm search-field-enhanced" style="width:240px;">
                             <span class="input-group-text"><i class="mdi mdi-magnify"></i></span>
@@ -1012,10 +1010,7 @@
                     dateFormat: 'Y-m-d',
                     altInput: true,
                     altFormat: 'd M Y',
-                    allowInput: false,
-                    onChange: function(selectedDates, dateStr, instance) {
-                        filterByDate(dateStr);
-                    }
+                    allowInput: false
                 });
             }
 

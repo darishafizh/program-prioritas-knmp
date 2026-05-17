@@ -1,4 +1,4 @@
-@extends('knmp.tahap._stage_index', [
+@include('knmp.tahap._stage_index', [
     'title'       => 'Master KNMP',
     'stageName'   => 'Master Data',
     'icon'        => 'mdi-database',
@@ -11,9 +11,12 @@
     'knmps'       => $knmps,
     'availableTahap' => $availableTahap,
     'templateSection' => 'usulan-knmp',
+    'hideStageActions' => true,
     'columns'     => [
         ['label' => 'Lokasi KNMP', 'key' => 'nama', 'type' => 'lokasi'],
         ['label' => 'Status', 'key' => 'status', 'type' => 'badge_status'],
         ['label' => 'Tahap Saat Ini', 'key' => 'tahap_label', 'type' => 'badge_primary'],
     ]
 ])
+
+

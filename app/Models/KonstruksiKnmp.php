@@ -32,4 +32,10 @@ class KonstruksiKnmp extends Model
     {
         return $this->hasMany(TahapKonstruksi::class, 'knmp_konstruksi_id');
     }
+
+    public function progresHarian()
+    {
+        return $this->hasMany(ProgresHarian::class, 'knmp_konstruksi_id');
+    }
 }
+

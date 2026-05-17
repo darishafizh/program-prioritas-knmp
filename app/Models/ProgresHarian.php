@@ -9,7 +9,7 @@ class ProgresHarian extends Model
     protected $table = 'progres_harian';
 
     protected $fillable = [
-        'knmp_id',
+        'knmp_konstruksi_id',
         'progres',
         'keterangan',
         'tanggal',
@@ -20,8 +20,9 @@ class ProgresHarian extends Model
         'progres' => 'decimal:2',
     ];
 
-    public function knmp()
+    public function konstruksiKnmp()
     {
-        return $this->belongsTo(Knmp::class, 'knmp_id');
+        return $this->belongsTo(KonstruksiKnmp::class, 'knmp_konstruksi_id');
     }
+
 }
